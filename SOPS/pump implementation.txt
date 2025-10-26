@@ -84,3 +84,24 @@ C:\laragon\www\iorpms(main -> origin)
 
 # https://claude.ai/chat/a7b25ef5-46b9-4f88-9afc-58fbae50f028 for pump testing
 # https://chat.deepseek.com/a/chat/s/66481197-e0a9-4520-8cf7-76fbe97f04ce for pump configuration testing
+
+
+#RESET PORT in powershell
+
+# Completely reset the FTDI device
+Write-Host "Resetting FTDI device..." -ForegroundColor Yellow
+
+# Disable the device
+Disable-PnpDevice -InstanceId "FTDIBUS\VID_0403+PID_6001+A801LNTTA\0000" -Confirm:$false
+Start-Sleep -Seconds 3
+
+# Enable the device
+Enable-PnpDevice -InstanceId "FTDIBUS\VID_0403+PID_6001+A801LNTTA\0000" -Confirm:$false
+Start-Sleep -Seconds 5
+
+Write-Host "FTDI device reset completed" -ForegroundColor Green
+
+# Test again
+Write-Host "Testing after reset..." -ForegroundColor Cyan
+$result = [FTDIPumpTester]::TestCOM3()
+Write-Host "Result: $result" -ForegroundColor $(if ($result -like "SUCCESS*") { "Green" } else { "Red" })
