@@ -1,0 +1,86 @@
+C:\laragon\www\iorpms(main -> origin)
+? composer remove sanchescom/php-serial
+./composer.json has been updated
+Running composer update sanchescom/php-serial
+Loading composer repositories with package information
+Updating dependencies
+Lock file operations: 0 installs, 0 updates, 1 removal
+  - Removing sanchescom/php-serial (1.0.1)
+Writing lock file
+Installing dependencies from lock file (including require-dev)
+Package operations: 0 installs, 0 updates, 1 removal
+  - Removing sanchescom/php-serial (1.0.1)
+Generating autoload files
+No installed packages - skipping audit.
+
+C:\laragon\www\iorpms(main -> origin)
+? composer update
+Loading composer repositories with package information
+Updating dependencies
+Nothing to modify in lock file
+Writing lock file
+Installing dependencies from lock file (including require-dev)
+Nothing to install, update or remove
+Generating autoload files
+No installed packages - skipping audit.
+
+C:\laragon\www\iorpms(main -> origin)
+? composer config minimum-stability dev
+
+C:\laragon\www\iorpms(main -> origin)
+? composer config prefer-stable true
+
+C:\laragon\www\iorpms(main -> origin)
+? composer require gregwar/php-serial:dev-master
+./composer.json has been updated
+Running composer update gregwar/php-serial
+Loading composer repositories with package information
+Updating dependencies
+Lock file operations: 1 install, 0 updates, 0 removals
+  - Locking gregwar/php-serial (dev-master ebad100)
+Writing lock file
+Installing dependencies from lock file (including require-dev)
+Package operations: 1 install, 0 updates, 0 removals
+  - Downloading gregwar/php-serial (dev-master ebad100)
+  - Installing gregwar/php-serial (dev-master ebad100): Extracting archive
+Generating autoload files
+No security vulnerability advisories found.
+
+C:\laragon\www\iorpms(main -> origin)
+? dir composer.json
+ Volume in drive C has no label.
+ Volume Serial Number is 3EAA-3280
+
+ Directory of C:\laragon\www\iorpms
+
+2025-10-26  08:55 AM               456 composer.json
+               1 File(s)            456 bytes
+               0 Dir(s)  108,185,886,720 bytes free
+
+C:\laragon\www\iorpms(main -> origin)
+? type composer.json
+{
+    "name": "lyanisitti/iorpms",
+    "description": "Methadone dispensing system with pump",
+    "type": "project",
+    "require": {
+        "php": ">=7.4",
+        "gregwar/php-serial": "dev-master"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Lyani Sitti",
+            "email": "33978205+sittilyani@users.noreply.github.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
+
+C:\laragon\www\iorpms(main -> origin)
+?
+
+
+# https://claude.ai/chat/a7b25ef5-46b9-4f88-9afc-58fbae50f028 for pump testing
+# https://chat.deepseek.com/a/chat/s/66481197-e0a9-4520-8cf7-76fbe97f04ce for pump configuration testing

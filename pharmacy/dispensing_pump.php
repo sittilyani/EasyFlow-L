@@ -26,7 +26,7 @@ if (isset($_GET['message'])) {
     </style>
 </head>
 <body>
-    <h2 style="color: #2C3162; ">Dispensing without Pump</h2>
+    <h2 style="color: #2C3162; ">Controlled Drugs Dispensing Form</h2>
 
     <form id="searchForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="GET">
     <div class="header">
@@ -53,6 +53,7 @@ $sql = "SELECT * FROM patients WHERE (mat_id LIKE '%$search%'
         OR peer_edu_name LIKE '%$search%'
         OR peer_edu_phone LIKE '%$search%'
         OR cso LIKE '%$search%'
+        OR drugname LIKE '%$search%'
         OR dosage LIKE '%$search%'
         OR current_status LIKE '%$search%')
         AND current_status IN ('Active', 'LTFU', 'Defaulted')";
@@ -108,8 +109,8 @@ if ($result->num_rows > 0) {
                 </td>
                 <td>
                     <a href='../pharmacy/view-missed.php?mat_id=" . $row['mat_id'] . "'>View</a> &#124;
-                    <a href='dispensingData.php?mat_id=" . $row['mat_id'] . "'>DISPENSE</a> &#124;
-                    <a href='multi_dispensing.php?mat_id=" . $row['mat_id'] . "'>MDD</a> &#124;
+                    <a href='dispensingData_pump.php?mat_id=" . $row['mat_id'] . "'>DISPENSE</a> &#124;
+                    <a href='multi_dispensing.php?mat_id=" . $row['mat_id'] . "'>MDD</a>
                 </td>
             </tr>";
     }

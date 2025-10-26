@@ -21,9 +21,6 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['userrole'])) {
 // Get the user_id from the query parameter (if applicable)
 $userId = isset($_GET['mat_id']) ? $_GET['mat_id'] : null;
 
-// Variable to track if we should redirect
-$shouldRedirect = false;
-
 // Process form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_dispensing'])) {
     $errorMessages = [];
@@ -116,11 +113,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_dispensing']))
 
         $conn->commit();
 
-        // Set redirect flag if there are success messages and no errors
-        if (!empty($successMessages) && empty($errorMessages)) {
-            $shouldRedirect = true;
-        }
-
         // Display success/error messages
         if (!empty($successMessages)) {
             echo '<div class="alert alert-success">';
@@ -130,9 +122,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_dispensing']))
                 echo '<li>' . $msg . '</li>';
             }
             echo '</ul>';
-            if ($shouldRedirect) {
-                echo '<p><strong>Redirecting to dispensing page in 2 seconds...</strong></p>';
-            }
             echo '</div>';
         }
 
@@ -162,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_dispensing']))
     <script src="../assets/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="../assets/fontawesome/css/font-awesome.min.css" type="text/css">
     <style>
-
+        
 
         .header {
             margin-bottom: 20px;
@@ -232,15 +221,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_dispensing']))
             margin-bottom: 0;
         }
     </style>
-
-    <?php if ($shouldRedirect): ?>
-    <script>
-        // Redirect after 2 seconds
-        setTimeout(function() {
-            window.location.href = 'dispensing.php';
-        }, 2000);
-    </script>
-    <?php endif; ?>
 </head>
 <body>
     <h2 style="color: #2C3162;">Prison Module - Bulk Dispensing</h2>

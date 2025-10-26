@@ -170,7 +170,7 @@ $user_id = $_SESSION['user_id'] ?? '';
     // Auto logout after inactivity
     let timeout;
     const warningTime = 60; // Show warning 60 seconds before logout
-    const logoutTime = 300; // Logout after 300 seconds (5 minutes)
+    const logoutTime = 600; // Logout after 600 seconds (5 minutes)
 
     function resetTimer() {
         clearTimeout(timeout);

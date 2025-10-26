@@ -421,7 +421,7 @@ if ($statusResult->num_rows > 0) {
             </div>
         </div>
 
-        <form id="dispenseForm" action="dispensingData_process.php" method="post" onsubmit="return validateForm()">
+        <form id="dispenseForm" action="dispensingData_process_with_pump.php" method="post" onsubmit="return validateForm()">
         <div class="form-container">
 
             <div class="form-group-column">

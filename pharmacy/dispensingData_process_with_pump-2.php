@@ -36,6 +36,78 @@ function displayMessagesAndRedirect($conn, $successes, $errors, $mat_id) {
     exit();
 }
 
+// Masterflex MMDC03 Pump Configuration - SIMULATION MODE
+define('PUMP_ENABLED', false); // Set to false for testing without pump
+define('PUMP_MODEL', 'Masterflex MMDC03');
+define('PUMP_SERIAL_PORT', 'COM1');
+define('PUMP_BAUD_RATE', 9600);
+
+// Safety limits
+define('MAX_DAILY_DOSAGE_MG', 120);
+define('METHADONE_CONCENTRATION', 10);
+
+// Pump Simulation Class
+class MasterflexPump {
+    public function connect() {
+        if (!PUMP_ENABLED) {
+            error_log("PUMP SIMULATION: Masterflex MMDC03 connected successfully");
+            return true;
+        }
+
+        // For now, just simulate connection
+        error_log("PUMP SIMULATION: Would connect to " . PUMP_SERIAL_PORT);
+        return true;
+    }
+
+    public function dispense($amount_ml) {
+        error_log("PUMP SIMULATION: Dispensing " . number_format($amount_ml, 2) . " ml on " . PUMP_SERIAL_PORT);
+
+        // Simulate pump operation delay
+        sleep(3);
+
+        // Log the command that would be sent
+        $command = "VOL " . number_format($amount_ml, 2) . "\r\n";
+        error_log("WOULD SEND COMMAND: " . trim($command));
+
+        return true; // Always succeed in simulation
+    }
+
+    public function disconnect() {
+        error_log("PUMP SIMULATION: Masterflex pump disconnected");
+    }
+
+    public function isReady() {
+        return true;
+    }
+}
+
+// Safety validation functions
+function validateDosageSafety($dosage_mg, $mat_id, $conn) {
+    // Check maximum dosage limit
+    if ($dosage_mg > MAX_DAILY_DOSAGE_MG) {
+        throw new Exception("Dosage exceeds maximum safe limit of " . MAX_DAILY_DOSAGE_MG . " mg");
+    }
+
+    // Check for duplicate dispensing on same day
+    $check_query = "SELECT COUNT(*) as count FROM pharmacy WHERE mat_id = ? AND visitDate = CURDATE()";
+    $check_stmt = $conn->prepare($check_query);
+    $check_stmt->bind_param('s', $mat_id);
+    $check_stmt->execute();
+    $result = $check_stmt->get_result();
+    $row = $result->fetch_assoc();
+    $check_stmt->close();
+
+    if ($row['count'] > 0) {
+        throw new Exception("Patient has already been dispensed today");
+    }
+
+    return true;
+}
+
+function dosageToMl($dosage_mg) {
+    return $dosage_mg / METHADONE_CONCENTRATION;
+}
+
 // ==============================================================================
 // 1. ROUTINE DISPENSING LOGIC (Part 1)
 // Executed only if mat_id and drugname are set (assumes primary MAT drug)
@@ -109,6 +181,9 @@ if ($mat_id && isset($_POST['drugname']) && !empty($_POST['drugname'])) {
             $routineErrors[] = "Routine Dispensing Failed: **$drugname** is **OUT OF STOCK** (Current: $currentStock, Required: $dosage).";
         }
 
+        // Additional safety validation for pump-eligible drugs
+        validateDosageSafety($dosage, $mat_id, $conn);
+
         // If no errors, proceed with insertion and update
         if (empty($routineErrors)) {
             $insertQuery = "INSERT INTO pharmacy (visitDate, mat_id, mat_number, clientName, nickName, age, sex, p_address, cso, drugname, dosage, reasons, current_status, pharm_officer_name)
@@ -131,9 +206,34 @@ if ($mat_id && isset($_POST['drugname']) && !empty($_POST['drugname'])) {
                 $updateStatusStmt->execute();
                 $updateStatusStmt->close();
 
+                // If this is methadone and dosage > 0, trigger pump (inside transaction for rollback on failure)
+                if (strtolower($drugname) === 'methadone' && $dosage > 0) {
+                    $pump = new MasterflexPump();
+
+                    if ($pump->connect()) {
+                        // Convert dosage to ml for the pump
+                        $dosage_ml = dosageToMl($dosage);
+
+                        if ($pump->isReady()) {
+                            if ($pump->dispense($dosage_ml)) {
+                                error_log("PUMP SIMULATION: Successfully dispensed $dosage mg ($dosage_ml ml) for MAT ID: $mat_id");
+                                $successMessages[] = "Routine Drug ($drugname) dispensed successfully! (Dosage: $dosage) - Pump simulation completed.";
+                            } else {
+                                throw new Exception("Pump dispensing failed");
+                            }
+                        } else {
+                            throw new Exception("Pump is not ready");
+                        }
+                        $pump->disconnect();
+                    } else {
+                        throw new Exception("Failed to connect to pump");
+                    }
+                } else {
+                    $successMessages[] = "Routine Drug ($drugname) dispensed successfully! (Dosage: $dosage)";
+                }
+
                 $conn->commit();
                 $routineDispenseSuccess = true;
-                $successMessages[] = "Routine Drug ($drugname) dispensed successfully! (Dosage: $dosage)";
             } else {
                 throw new Exception("Database error inserting routine record: " . $stmt->error);
             }

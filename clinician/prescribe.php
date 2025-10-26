@@ -90,9 +90,9 @@ if (isset($_GET['message'])) {
                     <td>" . $row['dosage'] . "</td>
                     <td>" . $row['current_status'] . "</td>
                     <td>
-                        <a href='../patients/view_patient.php?p_id=" . $row['p_id'] . "'>View</a> &#124;
-                       <a href='../clinician/opiod_dose_update.php?p_id=" . $row['p_id'] . "' >Prescribe</a> &#124;
-                       <a href='../referrals/referral.php?mat_id=" . $row['mat_id'] . "'>Refer</a>
+                        <a href='../pharmacy/view-missed.php?mat_id=" . $row['mat_id'] . "'>View</a> &#124;
+                       <a href='../clinician/opiod_dose_update.php?p_id=" . $row['p_id'] . "' >Update</a> &#124;
+        
                     </td>
                 </tr>";
         }

@@ -88,7 +88,7 @@ if (isset($_GET['message'])) {
                     <td>" . htmlspecialchars($row['age']) . "</td>
                     <td>" . htmlspecialchars($row['sex']) . "</td>
                     <td>" . htmlspecialchars($row['p_address']) . "</td>
-                    <td>" . htmlspecialchars($row['cso']) . "</td>
+                    <td>" . $row['cso'] . "</td>
                     <td>" . htmlspecialchars($row['drugname']) . "</td>
                     <td>" . htmlspecialchars($row['dosage']) . "</td>
                     <td>" . htmlspecialchars($row['current_status']) . "</td>

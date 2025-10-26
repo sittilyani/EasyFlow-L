@@ -47,8 +47,10 @@ $user_id = $_SESSION['user_id'] ?? '';
     <!-- Home link - will navigate away from this page -->
                 <a href="../dashboard/dashboard.php" class="home-link">
                     <i class="fa fa-home"></i>Home </a>
-                <a href="../pharmacy/dispensing.php" target="contentFrame" class="nav-link">
-                    <i class="fa fa-ban"></i>Controlled Drugs Dispensing</a>
+                <a href="../pharmacy/dispensing.php" target="contentFrame" class="nav-link" style="background: #66ccff; color: #000000; margin-top: 10px;">
+                    <i class="fa fa-ban"></i>Dispense without pump</a>
+                <a href="../pharmacy/dispensing_pump.php" target="contentFrame" class="nav-link" style="background: yellow; color: #000000; margin-top: 10px;">
+                    <i class="fa fa-ban"></i>Dispense with Pump</a>
                 <a href="../clinician/other_prescriptions.php" target="contentFrame" class="nav-link">
                     <i class="fa fa-adjust"></i>General Prescriptions</a>
                 <a href="../pharmacy/prisons_module.php" target="contentFrame" class="nav-link">
@@ -189,7 +191,7 @@ $user_id = $_SESSION['user_id'] ?? '';
     // Auto logout after inactivity
     let timeout;
     const warningTime = 60; // Show warning 60 seconds before logout
-    const logoutTime = 300; // Logout after 300 seconds (5 minutes)
+    const logoutTime = 600; // Logout after 600 seconds (5 minutes)
 
     function resetTimer() {
         clearTimeout(timeout);

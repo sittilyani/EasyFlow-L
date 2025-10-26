@@ -72,6 +72,9 @@ SET psycho_social_tca = next_appointment,
     admin_tca = next_appointment
 WHERE next_appointment IS NOT NULL;
 
+# 24-10-2025
+hide next_appointment from Register New client
+change from date to text in patients table
 
 
 
@@ -595,4 +598,127 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+# 24-10-2025
+ALTER TABLE `patients`
+drop column next_appointment,
+ADD  `next_appointment` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP after results;
+
+#Update next_appointment
+
+update patients
+set next_appointment = '2025-12-15';
+
+#scripts
+
+test_pump.php
+MasterflexPump.php
+uncomment extension = mysql in php.ini
+
+notepad C:\laragon\bin\php\php-8.1.10-Win32-vs16-x64\php.ini
+uncomment duplicate extension=mysql
+uncomment php_dio.dll
+uncoment ;extension=snmp
+
+Check loaded modules in terminal:
+
+php -m
+
+Ensure mysqli appears once, and dio and snmp are absent. correct
+
+#Navigate to Project:
+# In Laragon’s terminal:
+
+cd C:\laragon\www\iorpms
+
+
+#Complete composer init:
+#If you haven’t finished composer init (your earlier output showed it started):
+
+composer init
+
+Try WAMP
+# Install all VC ++ redistributable
+
+
+# Trigger Statements
+# For updating full_name in table tblusers
+
+DELIMITER $$
+
+CREATE TRIGGER trg_populate_full_name
+BEFORE INSERT ON tblusers
+FOR EACH ROW
+BEGIN
+    SET NEW.full_name = CONCAT(NEW.first_name, ' ', NEW.last_name);
+END$$
+
+DELIMITER ;
+
+MySQL Trigger:
+sql
+
+DELIMITER $$
+
+CREATE TRIGGER trg_populate_full_name
+BEFORE INSERT ON tblusers
+FOR EACH ROW
+BEGIN
+    SET NEW.full_name = CONCAT(NEW.first_name, ' ', NEW.last_name);
+END$$
+
+DELIMITER ;
+
+For UPDATE operations as well:
+sqlDELIMITER $$
+
+CREATE TRIGGER trg_populate_full_name_insert
+BEFORE INSERT ON tblusers
+FOR EACH ROW
+BEGIN
+    SET NEW.full_name = CONCAT(NEW.first_name, ' ', NEW.last_name);
+END$$
+
+CREATE TRIGGER trg_populate_full_name_update
+BEFORE UPDATE ON tblusers
+FOR EACH ROW
+BEGIN
+    SET NEW.full_name = CONCAT(NEW.first_name, ' ', NEW.last_name);
+END$$
+
+DELIMITER ;
+
+-- PostgreSQL Trigger:
+-- sql
+
+
+CREATE OR REPLACE FUNCTION populate_full_name()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.full_name := NEW.first_name || ' ' || NEW.last_name;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_populate_full_name
+BEFORE INSERT OR UPDATE ON tblusers
+FOR EACH ROW
+EXECUTE FUNCTION populate_full_name();
+
+
+-- SQL Server Trigger:
+-- sql
+
+CREATE TRIGGER trg_populate_full_name
+ON tblusers
+INSTEAD OF INSERT
+AS
+BEGIN
+    INSERT INTO tblusers (first_name, last_name, full_name)
+    SELECT first_name, last_name, CONCAT(first_name, ' ', last_name)
+    FROM inserted;
+END;
+
+
+
 

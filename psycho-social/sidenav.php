@@ -50,7 +50,7 @@ $user_id = $_SESSION['user_id'] ?? '';
     </a>
 
                 <a href="../psycho-social/view_all_patients.php" target="contentFrame" class="nav-link">
-                    <i class="fa fa-user-circle"></i>Daily Activity Register</a>
+                    <i class="fa fa-user-circle"></i>Psychosocial Intake Form 2A</a>
 
                 <a href="../psycho-social/all_patients_psychosocial.php" target="contentFrame" class="nav-link">
                     <i class="fa fa-user-circle"></i>Psychosocial Intake Form 1A</a>
@@ -63,7 +63,7 @@ $user_id = $_SESSION['user_id'] ?? '';
                 <a href="../psycho-social/" target="contentFrame" class="nav-link">
                     <i class="fa fa-user-circle"></i>Psychosocial RX Plan Form 2B</a>
                 <a href="../psycho-social/psychiatric_encounter_form.php" target="contentFrame" class="nav-link">
-                    <i class="fa fa-user-circle"></i>Pyschiatric Encounter Form</a>
+                    <i class="fa fa-user-circle"></i>Pyschiatric Encounter Form 3J</a>
                 <a href="../psycho-social/pychosocial_rx_plan.php" target="contentFrame" class="nav-link">
                     <i class="fa fa-user-circle"></i>Pyschiatric Treatment Plan</a>
                 <a href="../clinician/other_prescriptions.php" target="contentFrame" class="nav-link">
@@ -187,7 +187,7 @@ $user_id = $_SESSION['user_id'] ?? '';
     // Auto logout after inactivity
     let timeout;
     const warningTime = 60; // Show warning 60 seconds before logout
-    const logoutTime = 300; // Logout after 300 seconds (5 minutes)
+    const logoutTime = 600; // Logout after 600 seconds (5 minutes)
 
     function resetTimer() {
         clearTimeout(timeout);

@@ -1,0 +1,925 @@
+operable program or batch file.
+
+C:\laragon\www
+λ notepad C:\laragon\bin\php\php-8.1.10-Win32-vs16-x64\php.ini
+
+C:\laragon\www
+λ notepad C:\laragon\bin\php\php-8.1.10-Win32-vs16-x64\php.ini
+
+C:\laragon\www
+λ php --ini
+
+Warning: PHP Startup: Unable to load dynamic library 'php_dio.dll' (tried: C:/laragon/bin/php/php-8.1.10-Win32-vs16-x64/ext\php_dio.dll (The specified module could not be found), C:/laragon/bin/php/php-8.1.10-Win32-vs16-x64/ext\php_php_dio.dll.dll (The specified module could not be found)) in Unknown on line 0
+MIB search path: c:/usr/share/snmp/mibs
+Cannot find module (IP-MIB): At line 0 in (none)
+Cannot find module (IF-MIB): At line 0 in (none)
+Cannot find module (TCP-MIB): At line 0 in (none)
+Cannot find module (UDP-MIB): At line 0 in (none)
+Cannot find module (HOST-RESOURCES-MIB): At line 0 in (none)
+Cannot find module (SNMPv2-MIB): At line 0 in (none)
+Cannot find module (SNMPv2-SMI): At line 0 in (none)
+Cannot find module (NOTIFICATION-LOG-MIB): At line 0 in (none)
+Cannot find module (UCD-SNMP-MIB): At line 0 in (none)
+Cannot find module (UCD-DEMO-MIB): At line 0 in (none)
+Cannot find module (SNMP-TARGET-MIB): At line 0 in (none)
+Cannot find module (NET-SNMP-AGENT-MIB): At line 0 in (none)
+Cannot find module (DISMAN-EVENT-MIB): At line 0 in (none)
+Cannot find module (SNMP-VIEW-BASED-ACM-MIB): At line 0 in (none)
+Cannot find module (SNMP-COMMUNITY-MIB): At line 0 in (none)
+Cannot find module (SNMP-FRAMEWORK-MIB): At line 0 in (none)
+Cannot find module (SNMP-MPD-MIB): At line 0 in (none)
+Cannot find module (SNMP-USER-BASED-SM-MIB): At line 0 in (none)
+Cannot find module (SNMP-NOTIFICATION-MIB): At line 0 in (none)
+Cannot find module (SNMPv2-TM): At line 0 in (none)
+Configuration File (php.ini) Path:
+Loaded Configuration File:         C:\laragon\bin\php\php-8.1.10-Win32-vs16-x64\php.ini
+Scan for additional .ini files in: (none)
+Additional .ini files parsed:      (none)
+
+C:\laragon\www
+λ notepad C:\laragon\bin\php\php-8.1.10-Win32-vs16-x64\php.ini
+
+C:\laragon\www
+λ php --ini
+MIB search path: c:/usr/share/snmp/mibs
+Cannot find module (IP-MIB): At line 0 in (none)
+Cannot find module (IF-MIB): At line 0 in (none)
+Cannot find module (TCP-MIB): At line 0 in (none)
+Cannot find module (UDP-MIB): At line 0 in (none)
+Cannot find module (HOST-RESOURCES-MIB): At line 0 in (none)
+Cannot find module (SNMPv2-MIB): At line 0 in (none)
+Cannot find module (SNMPv2-SMI): At line 0 in (none)
+Cannot find module (NOTIFICATION-LOG-MIB): At line 0 in (none)
+Cannot find module (UCD-SNMP-MIB): At line 0 in (none)
+Cannot find module (UCD-DEMO-MIB): At line 0 in (none)
+Cannot find module (SNMP-TARGET-MIB): At line 0 in (none)
+Cannot find module (NET-SNMP-AGENT-MIB): At line 0 in (none)
+Cannot find module (DISMAN-EVENT-MIB): At line 0 in (none)
+Cannot find module (SNMP-VIEW-BASED-ACM-MIB): At line 0 in (none)
+Cannot find module (SNMP-COMMUNITY-MIB): At line 0 in (none)
+Cannot find module (SNMP-FRAMEWORK-MIB): At line 0 in (none)
+Cannot find module (SNMP-MPD-MIB): At line 0 in (none)
+Cannot find module (SNMP-USER-BASED-SM-MIB): At line 0 in (none)
+Cannot find module (SNMP-NOTIFICATION-MIB): At line 0 in (none)
+Cannot find module (SNMPv2-TM): At line 0 in (none)
+Configuration File (php.ini) Path:
+Loaded Configuration File:         C:\laragon\bin\php\php-8.1.10-Win32-vs16-x64\php.ini
+Scan for additional .ini files in: (none)
+Additional .ini files parsed:      (none)
+
+C:\laragon\www
+λ notepad C:\laragon\bin\php\php-8.1.10-Win32-vs16-x64\php.ini
+
+C:\laragon\www
+λ php --ini
+Configuration File (php.ini) Path:
+Loaded Configuration File:         C:\laragon\bin\php\php-8.1.10-Win32-vs16-x64\php.ini
+Scan for additional .ini files in: (none)
+Additional .ini files parsed:      (none)
+
+C:\laragon\www
+λ php -m
+[PHP Modules]
+bcmath
+calendar
+Core
+ctype
+curl
+date
+dom
+exif
+fileinfo
+filter
+gd
+hash
+iconv
+intl
+json
+libxml
+mbstring
+mysqli
+mysqlnd
+odbc
+openssl
+pcre
+PDO
+pdo_mysql
+Phar
+readline
+Reflection
+session
+SimpleXML
+SPL
+standard
+tokenizer
+xml
+xmlreader
+xmlwriter
+xsl
+zip
+zlib
+
+[Zend Modules]
+
+
+C:\laragon\www
+λ cd C:\laragon\www\iorpms
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer init
+
+
+  Welcome to the Composer config generator
+
+
+
+This command will guide you through creating your composer.json config.
+
+Package name (<vendor>/<name>) [lyani sitti/iorpms]:
+The package name lyani sitti/iorpms is invalid, it should be lowercase and have a vendor name, a forward slash, and a package name, matching: [a-z0-9_.-]+/[a-z0-9_.-]+ Package name (<vendor>/<name>) [lyani sitti/iorpms]: lyani-sitti/iorpms
+Description []: methadone dispensing system with pump control
+Author [Lyani Sitti <33978205+sittilyani@users.noreply.github.com>, n to skip]: github.com/sittilyani/iorpms
+Invalid author string.  Must be in the formats: Jane Doe or John Smith <john@example.com>
+Author [Lyani Sitti <33978205+sittilyani@users.noreply.github.com>, n to skip]: github.com/sittilyani@gmail.com
+Invalid author string.  Must be in the formats: Jane Doe or John Smith <john@example.com>
+Author [Lyani Sitti <33978205+sittilyani@users.noreply.github.com>, n to skip]: sittilyani@gmail.com
+Invalid author string.  Must be in the formats: Jane Doe or John Smith <john@example.com>
+Author [Lyani Sitti <33978205+sittilyani@users.noreply.github.com>, n to skip]: Lyani Sitti <sittilyani@gmail.com>
+Minimum Stability []: stable
+Package Type (e.g. library, project, metapackage, composer-plugin) []: library
+License []: MIT
+
+Define your dependencies.
+
+Would you like to define your dependencies (require) interactively [yes]? n
+Would you like to define your dev dependencies (require-dev) interactively [yes]? n
+Add PSR-4 autoload mapping? Maps namespace "LyaniSitti\Iorpms" to the entered relative path. [src/, n to skip]: n
+
+{
+    "name": "lyani-sitti/iorpms",
+    "description": "methadone dispensing system with pump control",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Lyani Sitti",
+            "email": "sittilyani@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
+
+Do you confirm generation [yes]? yes
+Would you like the vendor directory added to your .gitignore [yes]? yes
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer require gazsp/php-serial
+
+In PackageDiscoveryTrait.php line 364:
+
+  Could not find a matching version of package gazsp/php-serial. Check the package spelling, your version constraint and that the package is available in a stability
+   which matches your minimum-stability (stable).
+
+
+require [--dev] [--dry-run] [--prefer-source] [--prefer-dist] [--prefer-install PREFER-INSTALL] [--fixed] [--no-suggest] [--no-progress] [--no-update] [--no-install] [--no-audit] [--audit-format AUDIT-FORMAT] [--update-no-dev] [-w|--update-with-dependencies] [-W|--update-with-all-dependencies] [--with-dependencies] [--with-all-dependencies] [--ignore-platform-req IGNORE-PLATFORM-REQ] [--ignore-platform-reqs] [--prefer-stable] [--prefer-lowest] [--sort-packages] [-o|--optimize-autoloader] [-a|--classmap-authoritative] [--apcu-autoloader] [--apcu-autoloader-prefix APCU-AUTOLOADER-PREFIX] [--] [<packages>...]
+
+
+C:\laragon\www\iorpms(main -> origin)
+λ C:\laragon\www\iorpms(main -> origin)
+'C:\laragon\www\iorpms' is not recognized as an internal or external command,
+operable program or batch file.
+
+C:\laragon\www\iorpms(main -> origin)
+λ λ composer require gazsp/php-serial
+'λ' is not recognized as an internal or external command,
+operable program or batch file.
+
+C:\laragon\www\iorpms(main -> origin)
+λ
+C:\laragon\www\iorpms(main -> origin)
+λ In PackageDiscoveryTrait.php line 364:
+'In' is not recognized as an internal or external command,
+operable program or batch file.
+
+C:\laragon\www\iorpms(main -> origin)
+λ
+C:\laragon\www\iorpms(main -> origin)
+λ   Could not find a matching version of package gazsp/php-serial. Check the package spelling, your version constraint and that the package is available in a stability 'Could' is not recognized as an internal or external command,
+operable program or batch file.
+
+C:\laragon\www\iorpms(main -> origin)
+λ    which matches your minimum-stability (stable).
+which: no matches in (/c/Users/Lyani Sitti/AppData/Local/Yarn/config/global/node_modules/.bin:/c/Users/Lyani Sitti/AppData/Roaming/npm:/c/Users/Lyani Sitti/AppData/Roaming/Composer/vendor/bin:/c/laragon/bin/laragon/utils:/c/laragon/bin/mysql/mysql-8.0.30-winx64/bin:/c/laragon/bin/php/php-8.1.10-Win32-vs16-x64:/c/laragon/bin/composer:/c/laragon/bin/apache/httpd-2.4.54-win64-VS16/bin:/c/laragon/bin/redis/redis-x64-5.0.14.1:/c/laragon/bin/nodejs/node-v18:/c/laragon/bin/python/python-3.10:/c/laragon/bin/python/python-3.10/Scripts:/c/laragon/bin/nginx/nginx-1.22.0:/c/laragon/bin/notepad++:/c/laragon/bin/telnet:/c/laragon/bin/ngrok:/bin:/cmd:/usr/bin:/mingw64/bin:/c/laragon/bin:/c/laragon/usr/bin:/c/laragon/bin/cmder/vendor/conemu-maximus5/ConEmu/Scripts:/c/laragon/bin/cmder/vendor/conemu-maximus5:/c/laragon/bin/cmder/vendor/conemu-maximus5/ConEmu:/c/WINDOWS/system32:/c/WINDOWS:/c/WINDOWS/System32/Wbem:/c/WINDOWS/System32/WindowsPowerShell/v1.0:/c/WINDOWS/System32/OpenSSH:/c/Program Files/nodejs:/c/Program Files (x86)/Microsoft SQL Server/160/DTS/Binn:/c/Program Files (x86)/Microsoft SQL Server/160/Tools/Binn:/c/Program Files/Microsoft SQL Server/160/Tools/Binn:/c/Program Files/Microsoft SQL Server/Client SDK/ODBC/170/Tools/Binn:/c/Program Files/Microsoft SQL Server/160/DTS/Binn:/c/Program Files/Microsoft SQL Server/170/DTS/Binn:/c/Program Files/Git/cmd:/c/Users/Lyani Sitti/AppData/Local/Microsoft/WindowsApps:/c/Users/Lyani Sitti/AppData/Roaming/npm:/c/Users/Lyani Sitti/AppData/Local/GitHubDesktop/bin:/c/Program Files/Git/mingw64/bin:/c/Program Files/Git/usr/bin:/c/laragon/bin/cmder/vendor/bin:/c/laragon/bin/cmder)
+which: no your in (/c/Users/Lyani Sitti/AppData/Local/Yarn/config/global/node_modules/.bin:/c/Users/Lyani Sitti/AppData/Roaming/npm:/c/Users/Lyani Sitti/AppData/Roaming/Composer/vendor/bin:/c/laragon/bin/laragon/utils:/c/laragon/bin/mysql/mysql-8.0.30-winx64/bin:/c/laragon/bin/php/php-8.1.10-Win32-vs16-x64:/c/laragon/bin/composer:/c/laragon/bin/apache/httpd-2.4.54-win64-VS16/bin:/c/laragon/bin/redis/redis-x64-5.0.14.1:/c/laragon/bin/nodejs/node-v18:/c/laragon/bin/python/python-3.10:/c/laragon/bin/python/python-3.10/Scripts:/c/laragon/bin/nginx/nginx-1.22.0:/c/laragon/bin/notepad++:/c/laragon/bin/telnet:/c/laragon/bin/ngrok:/bin:/cmd:/usr/bin:/mingw64/bin:/c/laragon/bin:/c/laragon/usr/bin:/c/laragon/bin/cmder/vendor/conemu-maximus5/ConEmu/Scripts:/c/laragon/bin/cmder/vendor/conemu-maximus5:/c/laragon/bin/cmder/vendor/conemu-maximus5/ConEmu:/c/WINDOWS/system32:/c/WINDOWS:/c/WINDOWS/System32/Wbem:/c/WINDOWS/System32/WindowsPowerShell/v1.0:/c/WINDOWS/System32/OpenSSH:/c/Program Files/nodejs:/c/Program Files (x86)/Microsoft SQL Server/160/DTS/Binn:/c/Program Files (x86)/Microsoft SQL Server/160/Tools/Binn:/c/Program Files/Microsoft SQL Server/160/Tools/Binn:/c/Program Files/Microsoft SQL Server/Client SDK/ODBC/170/Tools/Binn:/c/Program Files/Microsoft SQL Server/160/DTS/Binn:/c/Program Files/Microsoft SQL Server/170/DTS/Binn:/c/Program Files/Git/cmd:/c/Users/Lyani Sitti/AppData/Local/Microsoft/WindowsApps:/c/Users/Lyani Sitti/AppData/Roaming/npm:/c/Users/Lyani Sitti/AppData/Local/GitHubDesktop/bin:/c/Program Files/Git/mingw64/bin:/c/Program Files/Git/usr/bin:/c/laragon/bin/cmder/vendor/bin:/c/laragon/bin/cmder)
+which: no minimum-stability in (/c/Users/Lyani Sitti/AppData/Local/Yarn/config/global/node_modules/.bin:/c/Users/Lyani Sitti/AppData/Roaming/npm:/c/Users/Lyani Sitti/AppData/Roaming/Composer/vendor/bin:/c/laragon/bin/laragon/utils:/c/laragon/bin/mysql/mysql-8.0.30-winx64/bin:/c/laragon/bin/php/php-8.1.10-Win32-vs16-x64:/c/laragon/bin/composer:/c/laragon/bin/apache/httpd-2.4.54-win64-VS16/bin:/c/laragon/bin/redis/redis-x64-5.0.14.1:/c/laragon/bin/nodejs/node-v18:/c/laragon/bin/python/python-3.10:/c/laragon/bin/python/python-3.10/Scripts:/c/laragon/bin/nginx/nginx-1.22.0:/c/laragon/bin/notepad++:/c/laragon/bin/telnet:/c/laragon/bin/ngrok:/bin:/cmd:/usr/bin:/mingw64/bin:/c/laragon/bin:/c/laragon/usr/bin:/c/laragon/bin/cmder/vendor/conemu-maximus5/ConEmu/Scripts:/c/laragon/bin/cmder/vendor/conemu-maximus5:/c/laragon/bin/cmder/vendor/conemu-maximus5/ConEmu:/c/WINDOWS/system32:/c/WINDOWS:/c/WINDOWS/System32/Wbem:/c/WINDOWS/System32/WindowsPowerShell/v1.0:/c/WINDOWS/System32/OpenSSH:/c/Program Files/nodejs:/c/Program Files (x86)/Microsoft SQL Server/160/DTS/Binn:/c/Program Files (x86)/Microsoft SQL Server/160/Tools/Binn:/c/Program Files/Microsoft SQL Server/160/Tools/Binn:/c/Program Files/Microsoft SQL Server/Client SDK/ODBC/170/Tools/Binn:/c/Program Files/Microsoft SQL Server/160/DTS/Binn:/c/Program Files/Microsoft SQL Server/170/DTS/Binn:/c/Program Files/Git/cmd:/c/Users/Lyani Sitti/AppData/Local/Microsoft/WindowsApps:/c/Users/Lyani Sitti/AppData/Roaming/npm:/c/Users/Lyani Sitti/AppData/Local/GitHubDesktop/bin:/c/Program Files/Git/mingw64/bin:/c/Program Files/Git/usr/bin:/c/laragon/bin/cmder/vendor/bin:/c/laragon/bin/cmder)
+which: no (stable). in (/c/Users/Lyani Sitti/AppData/Local/Yarn/config/global/node_modules/.bin:/c/Users/Lyani Sitti/AppData/Roaming/npm:/c/Users/Lyani Sitti/AppData/Roaming/Composer/vendor/bin:/c/laragon/bin/laragon/utils:/c/laragon/bin/mysql/mysql-8.0.30-winx64/bin:/c/laragon/bin/php/php-8.1.10-Win32-vs16-x64:/c/laragon/bin/composer:/c/laragon/bin/apache/httpd-2.4.54-win64-VS16/bin:/c/laragon/bin/redis/redis-x64-5.0.14.1:/c/laragon/bin/nodejs/node-v18:/c/laragon/bin/python/python-3.10:/c/laragon/bin/python/python-3.10/Scripts:/c/laragon/bin/nginx/nginx-1.22.0:/c/laragon/bin/notepad++:/c/laragon/bin/telnet:/c/laragon/bin/ngrok:/bin:/cmd:/usr/bin:/mingw64/bin:/c/laragon/bin:/c/laragon/usr/bin:/c/laragon/bin/cmder/vendor/conemu-maximus5/ConEmu/Scripts:/c/laragon/bin/cmder/vendor/conemu-maximus5:/c/laragon/bin/cmder/vendor/conemu-maximus5/ConEmu:/c/WINDOWS/system32:/c/WINDOWS:/c/WINDOWS/System32/Wbem:/c/WINDOWS/System32/WindowsPowerShell/v1.0:/c/WINDOWS/System32/OpenSSH:/c/Program Files/nodejs:/c/Program Files (x86)/Microsoft SQL Server/160/DTS/Binn:/c/Program Files (x86)/Microsoft SQL Server/160/Tools/Binn:/c/Program Files/Microsoft SQL Server/160/Tools/Binn:/c/Program Files/Microsoft SQL Server/Client SDK/ODBC/170/Tools/Binn:/c/Program Files/Microsoft SQL Server/160/DTS/Binn:/c/Program Files/Microsoft SQL Server/170/DTS/Binn:/c/Program Files/Git/cmd:/c/Users/Lyani Sitti/AppData/Local/Microsoft/WindowsApps:/c/Users/Lyani Sitti/AppData/Roaming/npm:/c/Users/Lyani Sitti/AppData/Local/GitHubDesktop/bin:/c/Program Files/Git/mingw64/bin:/c/Program Files/Git/usr/bin:/c/laragon/bin/cmder/vendor/bin:/c/laragon/bin/cmder)
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer require gregwar/php-serial
+
+In PackageDiscoveryTrait.php line 327:
+
+  Could not find a version of package gregwar/php-serial matching your minimum-stability (stable). Require it with an explicit version constraint allowing its desire
+  d stability.
+
+
+require [--dev] [--dry-run] [--prefer-source] [--prefer-dist] [--prefer-install PREFER-INSTALL] [--fixed] [--no-suggest] [--no-progress] [--no-update] [--no-install] [--no-audit] [--audit-format AUDIT-FORMAT] [--update-no-dev] [-w|--update-with-dependencies] [-W|--update-with-all-dependencies] [--with-dependencies] [--with-all-dependencies] [--ignore-platform-req IGNORE-PLATFORM-REQ] [--ignore-platform-reqs] [--prefer-stable] [--prefer-lowest] [--sort-packages] [-o|--optimize-autoloader] [-a|--classmap-authoritative] [--apcu-autoloader] [--apcu-autoloader-prefix APCU-AUTOLOADER-PREFIX] [--] [<packages>...]
+
+
+C:\laragon\www\iorpms(main -> origin)
+λ php -m
+[PHP Modules]
+bcmath
+calendar
+Core
+ctype
+curl
+date
+dom
+exif
+fileinfo
+filter
+gd
+hash
+iconv
+intl
+json
+libxml
+mbstring
+mysqli
+mysqlnd
+odbc
+openssl
+pcre
+PDO
+pdo_mysql
+Phar
+readline
+Reflection
+session
+SimpleXML
+SPL
+standard
+tokenizer
+xml
+xmlreader
+xmlwriter
+xsl
+zip
+zlib
+
+[Zend Modules]
+
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer require gazsp/php-serial
+
+In PackageDiscoveryTrait.php line 364:
+
+  Could not find a matching version of package gazsp/php-serial. Check the package spelling, your version constraint and that the package is available in a stability
+   which matches your minimum-stability (stable).
+
+
+require [--dev] [--dry-run] [--prefer-source] [--prefer-dist] [--prefer-install PREFER-INSTALL] [--fixed] [--no-suggest] [--no-progress] [--no-update] [--no-install] [--no-audit] [--audit-format AUDIT-FORMAT] [--update-no-dev] [-w|--update-with-dependencies] [-W|--update-with-all-dependencies] [--with-dependencies] [--with-all-dependencies] [--ignore-platform-req IGNORE-PLATFORM-REQ] [--ignore-platform-reqs] [--prefer-stable] [--prefer-lowest] [--sort-packages] [-o|--optimize-autoloader] [-a|--classmap-authoritative] [--apcu-autoloader] [--apcu-autoloader-prefix APCU-AUTOLOADER-PREFIX] [--] [<packages>...]
+
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer require gregwar/php-serial
+
+In PackageDiscoveryTrait.php line 327:
+
+  Could not find a version of package gregwar/php-serial matching your minimum-stability (stable). Require it with an explicit version constraint allowing its desire
+  d stability.
+
+
+require [--dev] [--dry-run] [--prefer-source] [--prefer-dist] [--prefer-install PREFER-INSTALL] [--fixed] [--no-suggest] [--no-progress] [--no-update] [--no-install] [--no-audit] [--audit-format AUDIT-FORMAT] [--update-no-dev] [-w|--update-with-dependencies] [-W|--update-with-all-dependencies] [--with-dependencies] [--with-all-dependencies] [--ignore-platform-req IGNORE-PLATFORM-REQ] [--ignore-platform-reqs] [--prefer-stable] [--prefer-lowest] [--sort-packages] [-o|--optimize-autoloader] [-a|--classmap-authoritative] [--apcu-autoloader] [--apcu-autoloader-prefix APCU-AUTOLOADER-PREFIX] [--] [<packages>...]
+
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer clear-cache
+Cache directory does not exist (cache-vcs-dir):
+Clearing cache (cache-repo-dir): C:\Users\Lyani Sitti\AppData\Local\Composer\repo
+Cache directory does not exist (cache-files-dir):
+Clearing cache (cache-dir): C:\Users\Lyani Sitti\AppData\Local\Composer
+All caches cleared.
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer require gregwar/php-serial
+
+In Factory.php line 321:
+
+  "./composer.json" does not match the expected JSON schema:
+   - minimum-stability : Does not have a value in the enumeration ["dev","alpha","beta","rc","RC","stable"]
+
+
+require [--dev] [--dry-run] [--prefer-source] [--prefer-dist] [--prefer-install PREFER-INSTALL] [--fixed] [--no-suggest] [--no-progress] [--no-update] [--no-install] [--no-audit] [--audit-format AUDIT-FORMAT] [--update-no-dev] [-w|--update-with-dependencies] [-W|--update-with-all-dependencies] [--with-dependencies] [--with-all-dependencies] [--ignore-platform-req IGNORE-PLATFORM-REQ] [--ignore-platform-reqs] [--prefer-stable] [--prefer-lowest] [--sort-packages] [-o|--optimize-autoloader] [-a|--classmap-authoritative] [--apcu-autoloader] [--apcu-autoloader-prefix APCU-AUTOLOADER-PREFIX] [--] [<packages>...]
+
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer require gazsp/php-serial
+
+In Factory.php line 321:
+
+  "./composer.json" does not match the expected JSON schema:
+   - minimum-stability : Does not have a value in the enumeration ["dev","alpha","beta","rc","RC","stable"]
+
+
+require [--dev] [--dry-run] [--prefer-source] [--prefer-dist] [--prefer-install PREFER-INSTALL] [--fixed] [--no-suggest] [--no-progress] [--no-update] [--no-install] [--no-audit] [--audit-format AUDIT-FORMAT] [--update-no-dev] [-w|--update-with-dependencies] [-W|--update-with-all-dependencies] [--with-dependencies] [--with-all-dependencies] [--ignore-platform-req IGNORE-PLATFORM-REQ] [--ignore-platform-reqs] [--prefer-stable] [--prefer-lowest] [--sort-packages] [-o|--optimize-autoloader] [-a|--classmap-authoritative] [--apcu-autoloader] [--apcu-autoloader-prefix APCU-AUTOLOADER-PREFIX] [--] [<packages>...]
+
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer require gregwar/php-serial
+
+In Factory.php line 321:
+
+  "./composer.json" does not match the expected JSON schema:
+   - minimum-stability : Does not have a value in the enumeration ["dev","alpha","beta","rc","RC","stable"]
+
+
+require [--dev] [--dry-run] [--prefer-source] [--prefer-dist] [--prefer-install PREFER-INSTALL] [--fixed] [--no-suggest] [--no-progress] [--no-update] [--no-install] [--no-audit] [--audit-format AUDIT-FORMAT] [--update-no-dev] [-w|--update-with-dependencies] [-W|--update-with-all-dependencies] [--with-dependencies] [--with-all-dependencies] [--ignore-platform-req IGNORE-PLATFORM-REQ] [--ignore-platform-reqs] [--prefer-stable] [--prefer-lowest] [--sort-packages] [-o|--optimize-autoloader] [-a|--classmap-authoritative] [--apcu-autoloader] [--apcu-autoloader-prefix APCU-AUTOLOADER-PREFIX] [--] [<packages>...]
+
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer require gazsp/php-serial
+
+In PackageDiscoveryTrait.php line 364:
+
+  Could not find a matching version of package gazsp/php-serial. Check the package spelling, your version constraint and that the package is available in a stability
+   which matches your minimum-stability (dev).
+
+
+require [--dev] [--dry-run] [--prefer-source] [--prefer-dist] [--prefer-install PREFER-INSTALL] [--fixed] [--no-suggest] [--no-progress] [--no-update] [--no-install] [--no-audit] [--audit-format AUDIT-FORMAT] [--update-no-dev] [-w|--update-with-dependencies] [-W|--update-with-all-dependencies] [--with-dependencies] [--with-all-dependencies] [--ignore-platform-req IGNORE-PLATFORM-REQ] [--ignore-platform-reqs] [--prefer-stable] [--prefer-lowest] [--sort-packages] [-o|--optimize-autoloader] [-a|--classmap-authoritative] [--apcu-autoloader] [--apcu-autoloader-prefix APCU-AUTOLOADER-PREFIX] [--] [<packages>...]
+
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer require gregwar/php-serial
+Using version dev-master for gregwar/php-serial
+./composer.json has been updated
+Running composer update gregwar/php-serial
+Loading composer repositories with package information
+Updating dependencies
+Lock file operations: 1 install, 0 updates, 0 removals
+  - Locking gregwar/php-serial (dev-master ebad100)
+Writing lock file
+Installing dependencies from lock file (including require-dev)
+Package operations: 1 install, 0 updates, 0 removals
+  - Downloading gregwar/php-serial (dev-master ebad100)
+  - Installing gregwar/php-serial (dev-master ebad100): Extracting archive
+Generating autoload files
+No security vulnerability advisories found
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Gregwar\Serial\SerialPort" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Sanchescom\Serial\Serial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer require gazsp/php-serial
+
+In PackageDiscoveryTrait.php line 364:
+
+  Could not find a matching version of package gazsp/php-serial. Check the package spelling, your version constraint and that the package is available in a stability
+   which matches your minimum-stability (dev).
+
+
+require [--dev] [--dry-run] [--prefer-source] [--prefer-dist] [--prefer-install PREFER-INSTALL] [--fixed] [--no-suggest] [--no-progress] [--no-update] [--no-install] [--no-audit] [--audit-format AUDIT-FORMAT] [--update-no-dev] [-w|--update-with-dependencies] [-W|--update-with-all-dependencies] [--with-dependencies] [--with-all-dependencies] [--ignore-platform-req IGNORE-PLATFORM-REQ] [--ignore-platform-reqs] [--prefer-stable] [--prefer-lowest] [--sort-packages] [-o|--optimize-autoloader] [-a|--classmap-authoritative] [--apcu-autoloader] [--apcu-autoloader-prefix APCU-AUTOLOADER-PREFIX] [--] [<packages>...]
+
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Array and string offset access syntax with curly braces is no longer supported in C:\laragon\www\iorpms\vendor\gregwar\php-serial\PhpSerial\PhpSerial.php on line 310
+
+C:\laragon\www\iorpms(main -> origin)
+λ Fatal error: Array and string offset access syntax with curly braces is no longer supported in C:\laragon\www\iorpms\vendor\gregwar\php-serial\PhpSerial\PhpSerial.php on line 310
+'Fatal' is not recognized as an internal or external command,
+operable program or batch file.
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer remove gregwar/php-serial
+./composer.json has been updated
+Running composer update gregwar/php-serial
+Loading composer repositories with package information
+Updating dependencies
+Lock file operations: 0 installs, 0 updates, 1 removal
+  - Removing gregwar/php-serial (dev-master ebad100)
+Writing lock file
+Installing dependencies from lock file (including require-dev)
+Package operations: 0 installs, 0 updates, 1 removal
+  - Removing gregwar/php-serial (dev-master ebad100)
+Generating autoload files
+No installed packages - skipping audit.
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer require sanchescom/php-serial
+Cannot use sanchescom/php-serial's latest version 9999999-dev as it requires php ^7.2 which is not satisfied by your platform.
+Using version ^1.0 for sanchescom/php-serial
+./composer.json has been updated
+Running composer update sanchescom/php-serial
+Loading composer repositories with package information
+Updating dependencies
+Lock file operations: 1 install, 0 updates, 0 removals
+  - Locking sanchescom/php-serial (1.0.1)
+Writing lock file
+Installing dependencies from lock file (including require-dev)
+Package operations: 1 install, 0 updates, 0 removals
+  - Downloading sanchescom/php-serial (1.0.1)
+  - Installing sanchescom/php-serial (1.0.1): Extracting archive
+Generating autoload files
+No security vulnerability advisories found
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Sanchescom\Serial\Serial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+
+Fatal error: Cannot use Sanchescom\PhpSerial\PhpSerial as PhpSerial because the name is already in use in C:\laragon\www\iorpms\test_serial.php on line 12
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer remove gregwar/php-serial
+gregwar/php-serial is not required in your composer.json and has not been removed
+./composer.json has been updated
+Running composer update gregwar/php-serial
+Loading composer repositories with package information
+Package "gregwar/php-serial" listed for update is not locked.
+Updating dependencies
+Nothing to modify in lock file
+Installing dependencies from lock file (including require-dev)
+Nothing to install, update or remove
+Generating autoload files
+No security vulnerability advisories found
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer require sanchescom/php-serial
+Cannot use sanchescom/php-serial's latest version 9999999-dev as it requires php ^7.2 which is not satisfied by your platform.
+Using version ^1.0 for sanchescom/php-serial
+./composer.json has been updated
+Running composer update sanchescom/php-serial
+Loading composer repositories with package information
+Updating dependencies
+Nothing to modify in lock file
+Installing dependencies from lock file (including require-dev)
+Nothing to install, update or remove
+Generating autoload files
+No security vulnerability advisories found
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer require sanchescom/php-serial
+Cannot use sanchescom/php-serial's latest version 9999999-dev as it requires php ^7.2 which is not satisfied by your platform.
+Using version ^1.0 for sanchescom/php-serial
+./composer.json has been updated
+Running composer update sanchescom/php-serial
+Loading composer repositories with package information
+Updating dependencies
+Nothing to modify in lock file
+Installing dependencies from lock file (including require-dev)
+Nothing to install, update or remove
+Generating autoload files
+No security vulnerability advisories found
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer require sanchescom/php-serial
+Cannot use sanchescom/php-serial's latest version 9999999-dev as it requires php ^7.2 which is not satisfied by your platform.
+Using version ^1.0 for sanchescom/php-serial
+./composer.json has been updated
+Running composer update sanchescom/php-serial
+Loading composer repositories with package information
+Updating dependencies
+Nothing to modify in lock file
+Installing dependencies from lock file (including require-dev)
+Nothing to install, update or remove
+Generating autoload files
+No security vulnerability advisories found
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+
+Fatal error: Cannot use Sanchescom\PhpSerial\PhpSerial as PhpSerial because the name is already in use in C:\laragon\www\iorpms\test_serial.php on line 12
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer require sanchescom/php-serial
+
+In JsonFile.php line 340:
+
+  "./composer.json" does not contain valid JSON
+  Parse error on line 14:
+  ...stable": true    }}
+  --------------------^
+  Expected: 'EOF'
+
+
+require [--dev] [--dry-run] [--prefer-source] [--prefer-dist] [--prefer-install PREFER-INSTALL] [--fixed] [--no-suggest] [--no-progress] [--no-update] [--no-install] [--no-audit] [--audit-format AUDIT-FORMAT] [--update-no-dev] [-w|--update-with-dependencies] [-W|--update-with-all-dependencies] [--with-dependencies] [--with-all-dependencies] [--ignore-platform-req IGNORE-PLATFORM-REQ] [--ignore-platform-reqs] [--prefer-stable] [--prefer-lowest] [--sort-packages] [-o|--optimize-autoloader] [-a|--classmap-authoritative] [--apcu-autoloader] [--apcu-autoloader-prefix APCU-AUTOLOADER-PREFIX] [--] [<packages>...]
+
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer require sanchescom/php-serial
+
+In JsonFile.php line 340:
+
+  "./composer.json" does not contain valid JSON
+  Parse error on line 13:
+  ...-stable": true
+  --------------------^
+  Expected one of: '}', ','
+
+
+require [--dev] [--dry-run] [--prefer-source] [--prefer-dist] [--prefer-install PREFER-INSTALL] [--fixed] [--no-suggest] [--no-progress] [--no-update] [--no-install] [--no-audit] [--audit-format AUDIT-FORMAT] [--update-no-dev] [-w|--update-with-dependencies] [-W|--update-with-all-dependencies] [--with-dependencies] [--with-all-dependencies] [--ignore-platform-req IGNORE-PLATFORM-REQ] [--ignore-platform-reqs] [--prefer-stable] [--prefer-lowest] [--sort-packages] [-o|--optimize-autoloader] [-a|--classmap-authoritative] [--apcu-autoloader] [--apcu-autoloader-prefix APCU-AUTOLOADER-PREFIX] [--] [<packages>...]
+
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer require sanchescom/php-serial
+Cannot use sanchescom/php-serial's latest version 2.0.3 as it requires php ^7.2 which is not satisfied by your platform.
+Using version ^1.0 for sanchescom/php-serial
+./composer.json has been updated
+Running composer update sanchescom/php-serial
+Loading composer repositories with package information
+Updating dependencies
+Nothing to modify in lock file
+Writing lock file
+Installing dependencies from lock file (including require-dev)
+Nothing to install, update or remove
+Generating autoload files
+No security vulnerability advisories found
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Sanchescom\Serial\Serial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Serial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Sanchescom\PhPSerial\PhpSerial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Sanchescom\PhpSerial\PhpSerial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Sanchescom\Serial\Serial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer remove sanchescom/php-serial
+./composer.json has been updated
+Running composer update sanchescom/php-serial
+Loading composer repositories with package information
+Updating dependencies
+Lock file operations: 0 installs, 0 updates, 1 removal
+  - Removing sanchescom/php-serial (1.0.1)
+Writing lock file
+Installing dependencies from lock file (including require-dev)
+Package operations: 0 installs, 0 updates, 1 removal
+  - Removing sanchescom/php-serial (1.0.1)
+Generating autoload files
+No installed packages - skipping audit.
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer clear-cache
+Cache directory does not exist (cache-vcs-dir):
+Clearing cache (cache-repo-dir): C:\Users\Lyani Sitti\AppData\Local\Composer\repo
+Clearing cache (cache-files-dir): C:\Users\Lyani Sitti\AppData\Local\Composer\files
+Clearing cache (cache-dir): C:\Users\Lyani Sitti\AppData\Local\Composer
+All caches cleared.
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer require sanchescom/php-serial:^1.0
+The "1.0" constraint for "sanchescom/php-serial" appears too strict and will likely not match what you want. See https://getcomposer.org/constraints
+./composer.json has been updated
+Running composer update sanchescom/php-serial
+Loading composer repositories with package information
+Updating dependencies
+Lock file operations: 1 install, 0 updates, 0 removals
+  - Locking sanchescom/php-serial (1.0.0)
+Writing lock file
+Installing dependencies from lock file (including require-dev)
+Package operations: 1 install, 0 updates, 0 removals
+  - Downloading sanchescom/php-serial (1.0.0)
+  - Installing sanchescom/php-serial (1.0.0): Extracting archive
+Generating autoload files
+No security vulnerability advisories found
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Sanchescom\Serial\Serial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Sanchescom\Serial\PhpSerial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Sanchescom\Serial\PhpSerial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+
+Parse error: syntax error, unexpected token "-", expecting "," or ";" in C:\laragon\www\iorpms\test_serial.php on line 3
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+
+Parse error: syntax error, unexpected token "-", expecting "," or ";" in C:\laragon\www\iorpms\test_serial.php on line 3
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Serial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "serial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Sanchescom\Phpserial\PhpSerial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Sanchescom\Serial\PhpSerial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Sanchescom\Serial\PhpSerial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Sanchescom\PhpSerial\PhpSerial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+
+Parse error: syntax error, unexpected fully qualified name "\PhpSerial", expecting "{" in C:\laragon\www\iorpms\test_serial.php on line 3
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Sanchescom\serial\PhpSerial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Sanchescom\Serial\PhpSerial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer dump-autoload
+Generating autoload files
+Generated autoload files
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer remove sanchescom/php-serial
+./composer.json has been updated
+Running composer update sanchescom/php-serial
+Loading composer repositories with package information
+Updating dependencies
+Lock file operations: 0 installs, 0 updates, 1 removal
+  - Removing sanchescom/php-serial (1.0.0)
+Writing lock file
+Installing dependencies from lock file (including require-dev)
+Package operations: 0 installs, 0 updates, 1 removal
+  - Removing sanchescom/php-serial (1.0.0)
+Generating autoload files
+No installed packages - skipping audit.
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer clear-cache
+Cache directory does not exist (cache-vcs-dir):
+Clearing cache (cache-repo-dir): C:\Users\Lyani Sitti\AppData\Local\Composer\repo
+Clearing cache (cache-files-dir): C:\Users\Lyani Sitti\AppData\Local\Composer\files
+Clearing cache (cache-dir): C:\Users\Lyani Sitti\AppData\Local\Composer
+All caches cleared.
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer require sanchescom/php-serial:^1.0
+The "1.0" constraint for "sanchescom/php-serial" appears too strict and will likely not match what you want. See https://getcomposer.org/constraints
+./composer.json has been updated
+Running composer update sanchescom/php-serial
+Loading composer repositories with package information
+Updating dependencies
+Lock file operations: 1 install, 0 updates, 0 removals
+  - Locking sanchescom/php-serial (1.0.0)
+Writing lock file
+Installing dependencies from lock file (including require-dev)
+Package operations: 1 install, 0 updates, 0 removals
+  - Downloading sanchescom/php-serial (1.0.0)
+  - Installing sanchescom/php-serial (1.0.0): Extracting archive
+Generating autoload files
+No security vulnerability advisories found
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial_port.php
+Serial library installed successfully!
+Serial class loaded: No
+
+Fatal error: Uncaught Error: Class "Sanchescom\Serial\PhpSerial" not found in C:\laragon\www\iorpms\test_serial_port.php:9
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial_port.php on line 9
+
+C:\laragon\www\iorpms(main -> origin)
+λ notepad C:\laragon\logs\php_error_log
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer remove sanchescom/php-serial
+./composer.json has been updated
+Running composer update sanchescom/php-serial
+Loading composer repositories with package information
+Updating dependencies
+Lock file operations: 0 installs, 0 updates, 1 removal
+  - Removing sanchescom/php-serial (1.0.0)
+Writing lock file
+Installing dependencies from lock file (including require-dev)
+Package operations: 0 installs, 0 updates, 1 removal
+  - Removing sanchescom/php-serial (1.0.0)
+Generating autoload files
+No installed packages - skipping audit.
+
+C:\laragon\www\iorpms(main -> origin)
+λ composer require hyperthese/php-serial
+Using version ^1.0 for hyperthese/php-serial
+./composer.json has been updated
+Running composer update hyperthese/php-serial
+Loading composer repositories with package information
+Updating dependencies
+Lock file operations: 1 install, 0 updates, 0 removals
+  - Locking hyperthese/php-serial (1.0.1)
+Writing lock file
+Installing dependencies from lock file (including require-dev)
+Package operations: 1 install, 0 updates, 0 removals
+  - Downloading hyperthese/php-serial (1.0.1)
+  - Installing hyperthese/php-serial (1.0.1): Extracting archive
+Generating autoload files
+No security vulnerability advisories found
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Hyperthese\Serial\Serial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Serial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Serial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Serial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Serial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Hyperthese\Serial\PhpSerial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Array and string offset access syntax with curly braces is no longer supported in C:\laragon\www\iorpms\vendor\hyperthese\php-serial\src\PhpSerial.php on line 318
+
+C:\laragon\www\iorpms(main -> origin)
+λ php test_serial.php
+Serial library installed successfully!
+
+Fatal error: Uncaught Error: Class "Sanchescom\Serial\PhpSerial" not found in C:\laragon\www\iorpms\test_serial.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\laragon\www\iorpms\test_serial.php on line 6
+
+C:\laragon\www\iorpms(main -> origin)
+λ

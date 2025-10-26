@@ -240,9 +240,9 @@ $stmt->close();
             <img src="../assets/images/Government of Kenya.png" width="80" height="60" alt="Government Logo">
             <div class="header-center">
                 <h2>MEDICALLY ASSISTED THERAPY</h2>
-                <h4>CLIENT CONSENT FORM</h4>
+                <h4>PSYCHO-SOCIAL INTAKE FORM</h4>
             </div>
-            <p>FORM 1A VER. APR. 2023</p>
+            <p>FORM 2A VER. APR. 2023</p>
         </div>
 
         <form id="intakeForm" method="POST" action="psychosocial_intake_form_process.php">

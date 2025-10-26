@@ -449,9 +449,9 @@ if (isset($_SESSION['user_id']) && isset($conn)) {
                 ?>
             </select>
         </div>
-        <div class="form-group">
-            <label for="next_appointment">Next appointment <span style='color: red; font-weight: bold;'>&#10033;</span></label>
-            <input type="date" name="next_appointment" required>
+        <div class="form-group" style="display: none;">
+            <label for="next_appointment">Next appointment</label>
+            <input type="text" name="next_appointment">
         </div>
         <div class="form-group">
             <label for="hcw_name">Name of service provider <span style='color: red; font-weight: bold;'>&#10033;</span></label>

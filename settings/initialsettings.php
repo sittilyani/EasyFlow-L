@@ -136,19 +136,21 @@ $current_setup_email = $email ?? '';
         <form method="post" action="initialsettings.php">
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="facility_id">Select Facility Name:</label>
-                    <select name="facility_id" id="facility_id" required>
+                    <label for="facilityname">Select Facility Name:</label>
+                    <select name="facilityname" id="facilityname" required>
                         <option value="">-- Select Facility --</option>
                         <?php
                         if (isset($conn) && $conn instanceof mysqli) {
-                            $result = $conn->query("SELECT id, facilityname FROM facilities ORDER BY facilityname ASC");
-                            if ($result) {
+                           $result = $conn->query("SELECT id, facilityname FROM facilities WHERE facilityname LIKE '%MAT%' ");
+                            if ($result && $result->num_rows > 0) {
                                 while ($row = $result->fetch_assoc()) {
                                     $selected = ($current_setup_facility_id == $row['id']) ? 'selected' : '';
                                     echo "<option value='{$row['id']}' {$selected}>{$row['facilityname']}</option>";
                                 }
+                            } else {
+                                echo "<option value=''>No MAT facilities found</option>";
                             }
-                        }
+                           }
                         ?>
                     </select>
                 </div>
