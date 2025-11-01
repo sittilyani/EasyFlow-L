@@ -1,7 +1,7 @@
 <?php
 include '../includes/config.php';
 
-$results_per_page = 5;
+$results_per_page = 30;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $results_per_page;
 

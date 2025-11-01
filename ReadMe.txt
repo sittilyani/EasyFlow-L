@@ -627,13 +627,13 @@ php -m
 Ensure mysqli appears once, and dio and snmp are absent. correct
 
 #Navigate to Project:
-# In Laragon’s terminal:
+# In Laragon s terminal:
 
 cd C:\laragon\www\iorpms
 
 
 #Complete composer init:
-#If you haven’t finished composer init (your earlier output showed it started):
+#If you haven t finished composer init (your earlier output showed it started):
 
 composer init
 

@@ -1,42 +1,25 @@
 <?php
 require_once 'vendor/autoload.php';
+use Gregwar\Serial\PhpSerial;
 
-use PhpSerial\PhpSerial;
+echo "Serial library installed successfully!\n";
+echo "Serial class loaded: " . (class_exists('Gregwar\\Serial\\PhpSerial') ? 'Yes' : 'No') . "\n";
 
-echo "=== Testing Serial Port Communication ===\n\n";
-
-// Try different COM ports
-$ports_to_try = ['COM1', 'COM3', 'COM4', 'COM5', 'COM6'];
-
-foreach ($ports_to_try as $port) {
-    echo "Trying $port...\n";
-
+try {
     $serial = new PhpSerial();
-
-    try {
-        $serial->deviceSet($port);
-        $serial->confBaudRate(9600); // Check your pump's manual for correct baud rate
-        $serial->confParity("none");
-        $serial->confCharacterLength(8);
-        $serial->confStopBits(1);
-        $serial->confFlowControl("none");
-
-        if ($serial->deviceOpen('r+b')) {
-            echo "? Successfully opened $port!\n";
-
-            // Try to send a simple command
-            $serial->sendMessage("\r\n"); // Send carriage return
-            sleep(1);
-
-            $response = $serial->readPort();
-            echo "Response: " . ($response ?: "No response") . "\n";
-
-            $serial->deviceClose();
-            echo "Port closed.\n\n";
-            break; // Stop if we found a working port
-        }
-    } catch (Exception $e) {
-        echo "? Failed: " . $e->getMessage() . "\n\n";
+    $serial->deviceSet('COM3'); // Replace with your actual port
+    $serial->confBaudRate(9600);
+    $serial->confParity('none');
+    $serial->confCharacterLength(8);
+    $serial->confStopBits(1);
+    if ($serial->deviceOpen()) {
+        echo "Serial port COM3 opened successfully!\n";
+        $serial->deviceClose();
+        echo "Serial port closed.\n";
+    } else {
+        echo "Failed to open serial port COM3.\n";
     }
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage() . "\n";
 }
 ?>

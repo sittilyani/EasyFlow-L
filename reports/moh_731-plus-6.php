@@ -16,7 +16,7 @@ $endDate = isset($_GET['end_date']) ? $_GET['end_date'] : $defaultEndDate;
 $startDate = date('Y-m-d', strtotime($startDate));
 $endDate = date('Y-m-d', strtotime($endDate));
 
-// Sample data pulling - replace with actual queries
+
 // For now, using placeholders with 0
 $ever_inducted_male = 0;
 $ever_inducted_female = 0;

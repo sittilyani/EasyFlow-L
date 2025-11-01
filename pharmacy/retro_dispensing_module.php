@@ -261,7 +261,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_dispensing']))
             }
 
             // Get all inmates
-            $inmatesQuery = "SELECT * FROM patients WHERE  current_status IN ('Active')";
+            $inmatesQuery = "SELECT * FROM patients WHERE  current_status IN ('Active') AND p_address NOT IN ('inmate')";
             $inmatesResult = $conn->query($inmatesQuery);
 
             if ($inmatesResult && $inmatesResult->num_rows > 0) {

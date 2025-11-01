@@ -299,7 +299,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_dispensing']))
                 echo '<tr>';
                 echo '<th>p_ID</th>';
                 echo '<th>MAT ID</th>';
-                echo '<th>MAT Number</th>';
                 echo '<th>Client Name</th>';
                 echo '<th>Sex</th>';
                 echo '<th>Physical Address</th>';
@@ -320,7 +319,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_dispensing']))
                     echo '<tr>';
                     echo '<td>' . $inmate['p_id'] . '</td>';
                     echo '<td>' . $inmate['mat_id'] . '</td>';
-                    echo '<td>' . $inmate['mat_number'] . '</td>';
                     echo '<td>' . $inmate['clientName'] . '</td>';
                     echo '<td>' . $inmate['sex'] . '</td>';
                     echo '<td>' . $inmate['p_address'] . '</td>';
@@ -340,7 +338,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_dispensing']))
                     echo '</center>';
                     echo '</td>';
                     echo '<td>';
-                    echo '<a href="view.php?p_id=' . $inmate['p_id'] . '">View</a> | ';
+                    echo '<a href="view-missed.php?mat_id=' . $inmate['mat_id'] . '">View</a> | ';
                     echo '<a href="dispensingData.php?mat_id=' . $inmate['mat_id'] . '">DISPENSE</a> | ';
                     echo '<a href="../referrals/referral.php?mat_id=' . $inmate['mat_id'] . '">Refer</a> | ';
                     echo '<button type="button" class="remove-btn" onclick="removeRow(this)">Remove</button>';
