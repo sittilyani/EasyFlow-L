@@ -1,37 +1,43 @@
 <?php
-    // Include the database connection file
-    include_once('../includes/config.php');
+include '../includes/config.php'; // Include your database connection file
 
-    // Calculate default dates for the previous month
-    $defaultEndDate = date('Y-m-t', strtotime('last month')); // Last day of previous month
-    $defaultStartDate = date('Y-m-01', strtotime('last month')); // First day of previous month
+// Initialize the variable with 0
+$qty_in = 0;
 
-    // Get selected dates from form submission or use defaults
-    $startDate = isset($_GET['start_date']) ? $_GET['start_date'] : $defaultStartDate;
-    $endDate = isset($_GET['end_date']) ? $_GET['end_date'] : $defaultEndDate;
+// Calculate default dates for the previous month
+$defaultEndDate = date('Y-m-t', strtotime('last month')); // Last day of previous month
+$defaultStartDate = date('Y-m-01', strtotime('last month')); // First day of previous month
 
-    // Validate dates
-    $startDate = date('Y-m-d', strtotime($startDate));
-    $endDate = date('Y-m-d', strtotime($endDate));
+// Get selected dates from form submission or use defaults
+$startDate = isset($_GET['start_date']) ? $_GET['start_date'] : $defaultStartDate;
+$endDate = isset($_GET['end_date']) ? $_GET['end_date'] : $defaultEndDate;
 
-    $total_dispensed_naltrexone = 0;
+// Validate dates
+$startDate = date('Y-m-d', strtotime($startDate));
+$endDate = date('Y-m-d', strtotime($endDate));
 
-    // Define the SQL query to sum total naltrexone dispensed
-    $query = "SELECT SUM(dosage) AS total_dispensed_naltrexone
-            FROM pharmacy
-            WHERE drugname LIKE 'Naltrexone 150mg'
-            AND dispDate BETWEEN '$startDate' AND '$endDate'";
+// Query to retrieve sum of qty_in from stock_movements table for the selected period
+$sql = "SELECT SUM(qty_in) AS total_qty_in
+        FROM stock_movements
+        WHERE trans_date BETWEEN '$startDate' AND '$endDate'
+        AND drugname = 'Naltrexone 150mg'
+        AND transactionType = 'Receiving'";
 
-    $result = $conn->query($query);
+$result = $conn->query($sql);
 
-    if ($result) {
-        // Fetch the row
-        $row = $result->fetch_assoc();
-        // Handle NULL from SUM (when no records found)
-        $total_dispensed_naltrexone = $row['total_dispensed_naltrexone'] !== null ? $row['total_dispensed_naltrexone'] : 0;
-        // Output the total (round to 2 decimal places)
-        echo number_format($total_dispensed_naltrexone, 2);
-    } else {
-        echo "0.00"; // If query failed, display 0
-    }
+// Check if the query was successful
+if ($result) {
+    // Fetch the row
+    $row = $result->fetch_assoc();
+    // Assign the value to the variable (handle NULL from SUM)
+    $qty_in = $row['total_qty_in'] !== null ? $row['total_qty_in'] : 0;
+    // Output the quantity
+    echo $qty_in;
+} else {
+    // Query failed
+    echo "0";
+}
+
+// Close the database connection
+/*$conn->close();  */
 ?>

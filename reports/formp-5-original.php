@@ -1,13 +1,14 @@
 <?php
 session_start(); // Add this at the very beginning
 
-require_once '../includes/config.php';
+include '../includes/config.php';
 
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css" type="text/css">
     <title>Form P5</title>
 
     <style>
@@ -100,7 +101,6 @@ require_once '../includes/config.php';
         }
         .zero-dosage {
             color: red;
-            background: yellow;
         }
          th:nth-child(2),
         td:nth-child(2) {
@@ -109,9 +109,7 @@ require_once '../includes/config.php';
     </style>
 </head>
 <body>
-
 <div class="navheader">
-
 <form action="process_form.php" method="post">
     <label for="year">Year:</label>
     <select name="year" id="year">
@@ -264,7 +262,7 @@ if ($result->num_rows > 0) {
 
 $conn->close();
 ?>
-
+<script src="../assets/js/bootstrap.min.js"></script>
 <script>
     // Function to export table data to Excel
     function exportToExcel() {

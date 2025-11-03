@@ -1,423 +1,283 @@
 <?php
+// Require dompdf library
+require_once '../dompdf/autoload.inc.php';
+use Dompdf\Dompdf;
+include '../includes/config.php';
+
+// Calculate default dates for the previous month
+$defaultEndDate = date('Y-m-t', strtotime('last month')); // Last day of previous month
+$defaultStartDate = date('Y-m-01', strtotime('last month')); // First day of previous month
+
+// Get selected dates from form submission or use defaults
+$startDate = isset($_GET['start_date']) ? $_GET['start_date'] : $defaultStartDate;
+$endDate = isset($_GET['end_date']) ? $_GET['end_date'] : $defaultEndDate;
+
+// Validate dates
+$startDate = date('Y-m-d', strtotime($startDate));
+$endDate = date('Y-m-d', strtotime($endDate));
+
+// Sample data pulling - replace with actual queries
+// For now, using placeholders with 0
+$ever_inducted_male = 0;
+$ever_inducted_female = 0;
+$ever_inducted_total = $ever_inducted_male + $ever_inducted_female;
+$weaned_off_male = 0;
+$weaned_off_female = 0;
+$weaned_off_total = $weaned_off_male + $weaned_off_female;
+
+// Handle exports
+$export = isset($_GET['export']) ? $_GET['export'] : '';
 session_start();
 
-require_once '../includes/config.php'; // Include your database connection
+// Get the user_id from the query parameter (if applicable)
+$userId = isset($_GET['p_id']) ? $_GET['p_id'] : null;
+
+// Fetch the current settings for the user (if applicable)
+$currentSettings = [];
+if ($userId) {
+    $query = "SELECT * FROM patients WHERE p_id = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param('i', $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $currentSettings = $result->fetch_assoc();
+}
+
+// Fetch clinicians and counselors from tblusers
+$clinician_query = "SELECT full_name FROM tblusers WHERE userrole IN ('clinician', 'counselor', 'admin', 'super admin')";
+$clinician_result = mysqli_query($conn, $clinician_query);
+$clinicians = [];
+while ($row = mysqli_fetch_assoc($clinician_result)) {
+    $clinicians[] = $row['full_name'];
+}
 
 // Fetch facility settings
 $facilityName = "N/A";
 $countyName = "N/A";
-$scountyName = "N/A";
+$subcountyName = "N/A";
+$mflCode = "N/A";
 $facilityIncharge = "N/A";
 $facilityPhone = "N/A";
-
-$queryFacilitySettings = "SELECT facilityname, countyname, subcountyname, facilityincharge, facilityphone FROM facility_settings LIMIT 1"; // Assuming one row for settings
+$queryFacilitySettings = "SELECT facilityname, mflcode, countyname, subcountyname, facilityincharge, facilityphone FROM facility_settings LIMIT 1";
 $resultFacilitySettings = $conn->query($queryFacilitySettings);
-
 if ($resultFacilitySettings && $resultFacilitySettings->num_rows > 0) {
     $rowFacilitySettings = $resultFacilitySettings->fetch_assoc();
     $facilityName = htmlspecialchars($rowFacilitySettings['facilityname']);
     $countyName = htmlspecialchars($rowFacilitySettings['countyname']);
-    $scountyName = htmlspecialchars($rowFacilitySettings['subcountyname']);
+    $subcountyName = htmlspecialchars($rowFacilitySettings['subcountyname']);
+    $mflCode = $rowFacilitySettings['mflcode'];
     $facilityIncharge = htmlspecialchars($rowFacilitySettings['facilityincharge']);
     $facilityPhone = htmlspecialchars($rowFacilitySettings['facilityphone']);
 }
 
-// Fetch logged-in user's full name
-$loggedInUserId = $_SESSION['user_id']; // Adjust based on your session variable storing the user's ID
-$sqlFullName = "SELECT CONCAT(first_name, ' ', last_name) AS fullName, mobile FROM tblusers WHERE user_id = ?";
-$stmtFullName = $conn->prepare($sqlFullName);
-$stmtFullName->bind_param("i", $loggedInUserId);
-$stmtFullName->execute();
-$resultFullName = $stmtFullName->get_result();
-$userFullName = $resultFullName->fetch_assoc();
+// Check if the user is logged in and fetch their user_id
+if (!isset($_SESSION['user_id'])) {
+    die("You must be logged in to access this page.");
+}
+$loggedInUserId = $_SESSION['user_id'];
 
-// Fetch logged-in user's initials
-$sqlInitials = "SELECT CONCAT(LEFT(first_name, 1), '.', LEFT(last_name, 1)) AS initials FROM tblusers WHERE user_id = ?";
-$stmtInitials = $conn->prepare($sqlInitials);
-$stmtInitials->bind_param("i", $loggedInUserId);
-$stmtInitials->execute();
-$resultInitials = $stmtInitials->get_result();
-$userInitials = $resultInitials->fetch_assoc();
-
-// Get user's details
-$maticName = $userFullName['fullName'] ?? '';
-$maticMobile = $userFullName['mobile'] ?? '';
-$maticSign = $userInitials['initials'] ?? '';
-$maticDate = date('Y-m-d'); // Current date in Y-m-d format
-// Logged-in user details (from session, set upon login)
-$loggedInUserFullName = isset($_SESSION['loggedin_user_fullname']) ? htmlspecialchars($_SESSION['loggedin_user_fullname']) : 'N/A';
-$loggedInUserPhone = isset($_SESSION['loggedin_user_phone']) ? htmlspecialchars($_SESSION['loggedin_user_phone']) : 'N/A';
-$loggedInUserSignature = isset($_SESSION['loggedin_user_signature']) ? htmlspecialchars($_SESSION['loggedin_user_signature']) : ''; // Could be a path to an image or just a name
-
+// Fetch the logged-in user's name from tblusers
+$clinician_name = 'Unknown';
+$userQuery = "SELECT first_name, last_name FROM tblusers WHERE user_id = ?";
+$stmt = $conn->prepare($userQuery);
+$stmt->bind_param('i', $loggedInUserId);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+    $user = $result->fetch_assoc();
+    $clinician_name = $user['first_name'] . ' ' . $user['last_name'];
+}
+$stmt->close();
 ?>
 
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form P7 - Controlled Drugs Consumption Report</title>
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css" type="text/css">
+    <style>
+        body { font-family: Arial, sans-serif;  background-color: #f8f9fa; color: #333; padding: 30px; }
+            .container { width: 100%;   margin: 0 auto;    background: #fff;  padding: 20px;  border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);   }
+            .form-header {  display: grid; grid-template-columns: repeat(1fr, 2fr, 1fr); text-align: center; margin-bottom: 10px; }
+            h2, h3 { text-align: center;  margin-bottom: 10px; }
+            .section { margin-bottom: 20px;}
+            .section label {  display: inline-block; width: 250px; font-weight: bold; }
+            .section input, textarea {  width: calc(100% - 260px);  padding: 6px;  margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; }
+            .two-columns label {  width: 400px; }
+            table {width: 100%; border-collapse: collapse; margin-bottom: 20px;}
+            table, th, td { border: 1px solid #666; }
+            th, td {  padding: 8px; text-align: center;  font-size: 14px;}
+            textarea { width: 100%;  border-radius: 4px; }
+            .signatures {display: flex; justify-content: space-between; gap: 30px;  margin-top: 20px;}
+            .signature-block {flex: 1; border: 1px solid #ccc; padding: 15px; border-radius: 8px; background: #fdfdfd; }
+            .signature-block label {display: block; margin-top: 5px; font-weight: bold; }
+            .signature-block input { width: 100%; padding: 5px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;  }
+            .dates label {width: 250px; font-weight: bold; }
+            .dates input {width: calc(50% - 270px); margin-left: 10px; }
 
-        <link rel="stylesheet" href="../assets/css/bootstrap.min.css" type="text/css">
-        <link rel="stylesheet" href="stylep7.css" type="text/css">
-        <title>Form P 7</title>
-        <style>
-            @page { margin-left: 0.1in; margin-right: 0.1in; margin-top: 0.75in; margin-bottom: 0.75in; }
-            body { margin-left: 0.1in; margin-right: 0.1in; margin-top: 0.75in; margin-bottom: 0.75in; }
-            /* Styling for input fields to fit within table cells */
-            table input[type="text"],
-            table input[type="number"],
-            table input[type="date"] {
-                width: 100%;
-                box-sizing: border-box; /* Include padding and border in the element's total width and height */
-                padding: 2px 5px;
-                border: 1px solid #ccc;
-                font-size: 0.9em;
-            }
-            table .column-fit { /* A class to apply to columns where inputs should fit */
-                padding: 0; /* Remove padding from cell to allow input to take full width */
-            }
-            .comments-textarea {
-                width: 100%;
-                box-sizing: border-box;
-                min-height: 80px; /* Adjust as needed */
-                padding: 5px;
-                border: 1px solid #ccc;
-                font-size: 0.9em;
-            }
-        </style>
-    </head>
-    <body>
-        <table border="0" cellpadding="0" cellspacing="0" id="sheet0" class="sheet0 gridlines">
-            <col class="col0">
-            <col class="col1">
-            <col class="col2">
-            <col class="col3">
-            <col class="col4">
-            <col class="col5">
-            <col class="col6">
-            <col class="col7">
-            <col class="col8">
-            <col class="col9">
-            <col class="col10">
-            <tbody style = 'width: 100%';>
-                <tr class="row0">
-                    <td class="column0">&nbsp;</td>
-                    <td class="column1 style1 null style3" colspan="1">
+            .form-group-1 {padding: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 30px;}
+            .form-group-1 > div:last-child {grid-column: 1 / -1; display: flex; align-items: center; gap: 15px;}
+            .form-group-1 > div:last-child label {font-weight: bold; color: #2c3e50; margin: 0;}
+            .form-group-1 > div:last-child input[type="date"] {padding: 10px; border: 1px solid #dcdcdc; width: 45%; border-radius: 5px; font-size: 14px;}
+            .form-group {display: flex; flex-direction: column;}
+            .form-group label {margin-bottom: 8px; font-weight: bold; color: #2c3e50;}
+            .received-input{text-align: center; color: #333399; font-weight: bold;}
+            .int-input{width: 100%; height: 100%; background: yellow;}
+            .form-header {display: grid; grid-template-columns: 20% 60% 20%; align-items: center; margin-bottom: 10px; border: 1px solid black;  padding: 10px; }
+            .form-header .logo-left { text-align: center; }
+            .form-header .title-center {text-align: center; }
+            .form-header .form-version {text-align: center;}
+            .int-input {  width: 100%;  height: 100%; background: yellow;  border: none; text-align: center; padding: 8px; box-sizing: border-box; }
+            table td { padding: 0;  }
+            table td input.int-input {  height: 100%;  min-height: 40px;  }
+            .resupply-input { width: 100%;  height: 100%;  background: #90EE90;  border: none;  text-align: center;  padding: 8px; box-sizing: border-box; font-size: 14px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-header">
+            <div class="logo-left">
+                <img src="../assets/images/Government of Kenya.png" width="80" height="60" alt="">
+            </div>
+            <div class="title-center">
+                <h2>MEDICALLY ASSISTED THERAPY</h2>
+                <p>CONSUMPTION REQUEST AND REPORT</p>
+            </div>
+            <div class="form-version">
+                <p>FORM P7 VER. SEP. 2025</p>
+            </div>
+        </div>
+        <hr style="height: 2px; background-color: black; border: none;">
+        <form method="GET" action="">
+            <div class="form-group">
+                <div class="form-group-1">
+                    <div class="form-group">
+                        <label for="facilityname" class="required-field">Facility Name:</label>
+                        <input type="text" name="facilityname" class="readonly-input" readonly value="<?php echo $facilityName; ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="mflcode" class="required-field">MFL Code:</label>
+                        <input type="text" name="mflcode" value="<?php echo $mflCode; ?>" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="county">County:</label>
+                        <input type="text" name="county" class="readonly-input" readonly value="<?php echo $countyName; ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="sub_county">Sub County:</label>
+                        <input type="text" name="sub_county" class="read-only" readonly value="<?php echo $subcountyName; ?>">
+                    </div>
+                    <div>
+                        <label for="start_date">Start date:</label>
+                        <input type="date" name="start_date" value="<?php echo $startDate; ?>">
+                        <label for="end_date">End date:</label>
+                        <input type="date" name="end_date" value="<?php echo $endDate; ?>">
+                        <button type="submit" style="background: blue; color: white; width: 100px; height: 40px; border: none; border-radius: 5px;">Update Dates</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <hr style="height: 2px; background-color: black; border: none;">
+        <div class="form-group-1">
+            <label>Number of Clients Who Received Methadone:</label>
+            <input type="number" class='received-input' name="clients_methadone" value="<?php include '../countsFormp7/active_on_methadone.php' ?>">
 
-                        <img src="../assets/images/Government of Kenya.png" width="201" height="191" alt="Kenyan Logo">
-                    </td>
-                    <td class="column5 style1 null style3" colspan="7">
-                        <h2><b>MEDICALLY ASSISTED THERAPY CONTROLLED DRUGS CONSUMPTION REQUEST AND REPORT FORM</b></h2>
-                    </td>
-                    <td class="column9 style1 null style2" colspan="2">
-                        <b>FORM P7</b>
-                    </td>
+            <label>Number of Clients Who Received Naltrexone:</label>
+            <input type="number" class='received-input' name="clients_naltrexone" value="<?php include '../countsFormp7/active_on_naltrexone.php' ?>">
+
+            <label>Number of Clients Who Received Buprenorphine:</label>
+            <input type="number" class='received-input' name="clients_buprenorphine" value="<?php include '../countsFormp7/active_on_buprenorphine.php' ?>">
+
+            <label>Average doses consumed in the Reporting Month - Methadone:</label>
+            <input type="text" class='received-input' name="avg_methadone" value="<?php include '../countsFormp7/average_dose_methadone.php' ?>">
+            <label>Average doses consumed in the Reporting Month - Buprenorphine:</label>
+            <input type="text" class='received-input' name="avg_buprenorphine"value="<?php include '../countsFormp7/average_dose_buprenorphine.php' ?>">
+        </div>
+        <hr style="height: 2px; background-color: black; border: none;">
+        <table>
+
+            <thead>
+                <tr>
+                    <th>DRUG PRODUCT</th>
+                    <th>Basic Pack Size</th>
+                    <th>Beginning Balance</th>
+                    <th>Quantity Received this period</th>
+                    <th>Total Quantity dispensed in the month</th>
+                    <th>Losses</th>
+                    <th>Adjustments</th>
+                    <th>Physical Count at Store</th>
+                    <th>Days out of stock</th>
+                    <th>Quantity required for RESUPPLY (Continuing patients)</th>
                 </tr>
-                <tr class="row1">
-                    <td class="column0">&nbsp;</td>
-                    <td class="column1 style1 s style3" colspan="5">Facility: <b><?php echo $facilityName; ?></b></td>
-                    <td class="column6 style1 s style2" colspan="5">County: <b><?php echo $countyName; ?></b></td>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Methadone</td>
+                    <td>1000 ml</td>
+                    <td><?php include '../countsFormp7/MethadoneBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/MethadoneRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/Methadonedisp.php' ?></td><td><input type="int"  class="int-input" name="losses_methadone"></td><td><input type="int"  class="int-input" name="adjustments_methadone"></td><td><input type="int"  class="int-input" name="physical_count_methadone" value="<?php echo isset($_GET['physical_count_methadone']) ? $_GET['physical_count_methadone'] : ''; ?>" onchange="this.form.submit()"></td><td><input type="int" class="int-input" name="days_out_of_stock_methadone"></td><td><?php include '../countsFormP7/quantity_for_resupply_methadone.php'; ?></td>
                 </tr>
-                <tr class="row2">
-                    <td class="column0">&nbsp;</td>
-                    <td class="column6 style1 s style2" colspan="4">
-                        <?php
-                            // Already handled above with $facilityName
-                        ?>
-                    </td>
-                    <td class="column6 style1 s style2" colspan="4">
-                        <?php
-                            // Already handled above with $countyName
-                        ?>
-                    </td>
+                <tr>
+                    <td>Buprenorphine 2mg</td><td>28 tabs</td><td><?php include '../countsFormp7/Buprenorphine2mgBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/Buprenorphine2mgRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/Buprenorphine2mgdisp.php' ?></td><td><input type="int" class="int-input" name="losses_buprenorphine2mg"></td><td><input type="int" class="int-input" name = "adjustments_buprenorphine2mg"></td><td><input type="int" class="int-input" name="physical_count_buprenorphine2mg"></td><td><input type="int" class="int-input" name="days_out_of_stock_buprenorphine2mg"></td><td><?php include '../countsFormP7/quantity_for_resupply_buprenorphine2mg.php'; ?></td>
                 </tr>
-                <tr class="row3">
-                    <td class="column0">&nbsp;</td>
-                    <td class="column1 style24 s style25" colspan="2">Beginning Date</td>
-                    <td class="column3 style26 s style27 column-fit" colspan="3">
-                        <input type='text' name='beginning_date' id='beginning_date' value='<?php echo date('Y-m-01'); ?>' readonly>
-                    </td>
-                    <td class="column6 style24 s style25" colspan="3">Ending Date</td>
-                    <td class="column9 style28 s style28 column-fit" colspan="2">
-                        <input type='text' name='end_date' id='end_date' value='<?php echo date('Y-m-t'); ?>' readonly>
-                    </td>
+                <tr>
+                    <td>Buprenorphine 8mg</td><td>28 tabs</td><td><?php include '../countsFormp7/Buprenorphine8mgBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/Buprenorphine8mgRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/Buprenorphine8mgdisp.php' ?></td><td><input type="int" class="int-input" name="losses_buprenorphine8mg"></td><td><input type="int" class="int-input" name = "adjustments_buprenorphine8mg"></td><td><input type="int" class="int-input" name="physical_count_buprenorphine8mg"></td><td><input type="int" class="int-input" name="days_out_of_stock_buprenorphine8mg"></td><td><?php include '../countsFormP7/quantity_for_resupply_buprenorphine8mg.php'; ?></td>
                 </tr>
-                <tr class="row4">
-                    <td class="column0">&nbsp;</td>
-                    <td class="column1 style5 s style8" colspan="2">Active on Methadone</td>
-                    <td class="column3 style17 s style18" colspan="2">
-                        <?php
-                                // Include the database connection file
-                                include_once('../includes/config.php');
-
-                                // Define the date range for the last 6 days
-                                $startDate = date('Y-m-d', strtotime('-6 days'));
-                                $endDate = date('Y-m-d');
-
-                                // Define the SQL query to count active patients on Buprenorphine within the last 6 days
-                                $query = "SELECT
-                                    COUNT(DISTINCT mat_id) AS total_met_count
-                                FROM
-                                    patients
-                                WHERE
-                                    drugname = 'Methadone'
-                                    AND current_status = 'active'
-                                    AND comp_date BETWEEN '$startDate' AND '$endDate'";
-
-                                $result = $conn->query($query);
-
-                                if ($result && $result->num_rows > 0) {
-                                        // Fetch the count
-                                        $row = $result->fetch_assoc();
-                                        $total_met_count = $row['total_met_count'];
-
-                                        // Output the count
-                                        echo $total_met_count;
-                                } else {
-                                        echo "0"; // If no active patientss on Buprenorphine found within the last 6 days, display 0
-                                }
-                                ?>
-                    </td>
-                    <td class="column5 style8 s style6" colspan="2">Active of Buprenorphine</td>
-                    <td class="column7 style5 s style6" colspan="2">
-                        <?php
-                                // Include the database connection file
-                                include_once('../includes/config.php');
-
-                                // Define the date range for the last 6 days
-                                $startDate = date('Y-m-d', strtotime('-6 days'));
-                                $endDate = date('Y-m-d');
-
-                                // Define the SQL query to count active patients on Buprenorphine within the last 6 days
-                                $query = "SELECT
-                                    COUNT(DISTINCT mat_id) AS total_bup_count
-                                FROM
-                                    patients
-                                WHERE
-                                    drugname LIKE 'Buprenorphine%'
-                                    AND current_status = 'active'
-                                    AND comp_date BETWEEN '$startDate' AND '$endDate'";
-
-                                $result = $conn->query($query);
-
-                                if ($result && $result->num_rows > 0) {
-                                        // Fetch the count
-                                        $row = $result->fetch_assoc();
-                                        $total_bup_count = $row['total_bup_count'];
-
-                                        // Output the count
-                                        echo $total_bup_count;
-                                } else {
-                                        echo "0"; // If no active patientss on Buprenorphine found within the last 6 days, display 0
-                                }
-                                ?>
-                    </td>
-                    <td class="column9 style9 s">Active on Naltrexone</td>
-                    <td class="column10 style7 null">
-                        <?php
-                                // Include the database connection file
-                                include_once('../includes/config.php');
-
-                                // Define the date range for the last 6 days
-                                $startDate = date('Y-m-d', strtotime('-6 days'));
-                                $endDate = date('Y-m-d');
-
-                                // Define the SQL query to count active patients on Buprenorphine within the last 6 days
-                                $query = "SELECT
-                                    COUNT(DISTINCT mat_id) AS total_nal_count
-                                FROM
-                                    patients
-                                WHERE
-                                    drugname LIKE 'Naltrexone%'
-                                    AND current_status = 'active'
-                                    AND comp_date BETWEEN '$startDate' AND '$endDate'";
-
-                                $result = $conn->query($query);
-
-                                if ($result && $result->num_rows > 0) {
-                                        // Fetch the count
-                                        $row = $result->fetch_assoc();
-                                        $total_nal_count = $row['total_nal_count'];
-
-                                        // Output the count
-                                        echo $total_nal_count;
-                                } else {
-                                        echo "0"; // If no active patientss on Buprenorphine found within the last 6 days, display 0
-                                }
-                                ?>
-                    </td>
+                <tr>
+                    <td>Naltrexone tabs 50mg</td><td>28 tabs</td><td><?php include '../countsFormp7/Naltrexone50mgBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/Naltrexone50mgRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/Naltrexone50mgdisp.php' ?></td><td><input type="int" class="int-input" name="losses_naltrexone50mg"></td><td><input type="int" class="int-input" name = "adjustments_naltrexone50mg"></td><td><input type="int" class="int-input" name="physical_count_naltrexone50mg"></td><td><input type="int" class="int-input" name="days_out_of_stock_naltrexone50mg"></td><td><?php include '../countsFormP7/quantity_for_resupply_naltrexone50mg.php'; ?></td>
                 </tr>
-                <tr class="row5">
-                    <td class="column0 style10 null">#</td>
-                    <td class="column1 style11 s">DRUG PRODUCT</td>
-                    <td class="column2 style12 s">&nbsp;Basic Pack Size</td>
-                    <td class="column3 style16 s" style="white-space: nowrap;">&nbsp;&nbsp;Beginning Balance</td>
-                    <td class="column4 style16 s" style="white-space: nowrap;">&nbsp;&nbsp;Quantity Received this period</td>
-                    <td class="column5 style12 s" style="white-space: nowrap;">&nbsp;Total Quantity dispensed in the month</td>
-                    <td class="column6 style12 s">&nbsp;Losses</td>
-                    <td class="column7 style12 s">&nbsp;Adjustments</td>
-                    <td class="column8 style12 s" style="white-space: nowrap;">&nbsp;Physical Count at store</td>
-                    <td class="column9 style12 s">&nbsp;Days out of stock at the store</td>
-                    <td class="column10 style19 s" style="white-space: nowrap;">&nbsp;Quantity required for RESUPPLY (Continuing patientss)</td>
+                <tr>
+                    <td>Naltrexone tabs 100mg</td><td>28 tabs</td><td><?php include '../countsFormp7/Naltrexone100mgBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/Naltrexone100mgRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/Naltrexone100mgdisp.php' ?></td><td><input type="int" class="int-input" name="losses_naltrexone100mg"></td><td><input type="int" class="int-input" name = "adjustments_naltrexone100mg"></td><td><input type="int" class="int-input" name="physical_count_naltrexone100mg"></td><td><input type="int" class="int-input" name="days_out_of_stock_naltrexone100mg"></td><td><?php include '../countsFormP7/quantity_for_resupply_naltrexone100mg.php'; ?></td>
                 </tr>
-                <tr class="row5">
-                        <td class="column0 style10 null">#</td>
-                        <td class="column1 style11 s">DRUG PRODUCT</td>
-                        <td class="column2 style12 s">&nbsp;Basic Pack Size</td>
-                        <td class="column3 style16 s" style="white-space: nowrap;">&nbsp;&nbsp;Beginning Balance</td>
-                        <td class="column4 style16 s" style="white-space: nowrap;">&nbsp;&nbsp;Quantity Received this period</td>
-                        <td class="column5 style12 s" style="white-space: nowrap;">&nbsp;Total Quantity dispensed in themonth</td>
-                        <td class="column6 style12 s">&nbsp;Losses</td>
-                        <td class="column7 style12 s">&nbsp;Adjustments</td>
-                        <td class="column8 style12 s" style="white-space: nowrap;">&nbsp;Physical Count at store</td>
-                        <td class="column9 style12 s">&nbsp;Days out of stock at the store</td>
-                        <td class="column10 style19 s" style="white-space: nowrap;">&nbsp;Quantity required for RESUPPLY (Continuing patientss)</td>
-                    </tr>
-                    <tr class="row6">
-                        <td class="column0">&nbsp;</td>
-                        <td class="column1 style14 s">Methadone </td>
-                        <td class="column2 style20 s">
-                            <input type="text" name="bp1" id="bp1" value="1000 mL" readonly>
-                        </td>
-                        <td class="column3 style20 s"><?php include '../countsFormP7/MethadoneBB.php'; ?></td>
-                        <td class="column4 style20 s"><?php include '../countsFormP7/MethadoneRcvd.php'; ?></td>
-                        <td class="column5 style20 s"><?php include '../countsFormP7/Methadonedisp.php'; ?></td>
-                        <td class="column6 style20 s"><input type="number" name="l1" id="l1" value=""></td>
-                        <td class="column7 style20 s"><input type="number" name="ad1" id="ad1" value=""></td>
-                        <td class="column8 style20 s"><input type="number" name="ps1" id="ps1" value=""></td>
-                        <td class="column9 style20 s"><center><?php include '../countsFormP7/outofstockmethadone.php'; ?></center></td>
-                        <td class="column10 style20 s"><input type="number" name="qrfres" id="qrfres" value=""></td>
-                    </tr>
-                    <tr class="row7">
-                        <td class="column0">&nbsp;</td>
-                        <td class="column1 style14 s">Buprenorphine 2mg </td>
-                        <td class="column2 style20 s"><input type="text" name="bp1" id="bp1" value="10 tabs blister pack" readonly></td>
-                        <td class="column3 style20 s"><?php include '../countsFormP7/Buprenorphine2mgBB.php'; ?></td>
-                        <td class="column4 style20 s"><?php include '../countsFormP7/Buprenorphine2mgRcvd.php'; ?></td>
-                        <td class="column5 style20 s"><?php include '../countsFormP7/Buprenorphine2mgdisp.php'; ?></td>
-                        <td class="column6 style20 s"><input type="number" name="l2" id="l2" value=""></td>
-                        <td class="column7 style20 s"><input type="number" name="ad2" id="ad2" value=""></td>
-                        <td class="column8 style20 s"><input type="number" name="ps2" id="ps2" value=""></td>
-                        <td class="column9 style20 s"><center><?php include '../countsFormP7/outofstockbuprenorphine2mg.php'; ?></center></td>
-                        <td class="column10 style20 s"><input type="number" name="qrfres" id="qrfres" value=""></td>
-                    </tr>
-                    <tr class="row8">
-                        <td class="column0">&nbsp;</td>
-                        <td class="column1 style14 s">Buprenorphine 4mg </td>
-                        <td class="column2 style20 s"><input type="text" name="bp2" id="bp2" value="10 tabs blister pack" readonly></td>
-                        <td class="column3 style20 s"><?php include '../countsFormP7/Buprenorphine4mgBB.php'; ?></td>
-                        <td class="column4 style20 s"><?php include '../countsFormP7/Buprenorphine4mgRcvd.php'; ?></td>
-                        <td class="column5 style20 s"><?php include '../countsFormP7/Buprenorphine4mgdisp.php'; ?></td>
-                        <td class="column6 style20 s"><input type="number" name="l3" id="l3" value=""></td>
-                        <td class="column7 style20 s"><input type="number" name="ad3" id="ad3" value=""></td>
-                        <td class="column8 style20 s"><input type="number" name="ps3" id="ps3" value=""></td>
-                        <td class="column9 style20 s"><center><?php include '../countsFormP7/outofstockbuprenorphine4mg.php'; ?></center></td>
-                        <td class="column10 style20 s"><input type="number" name="qrfres" id="qrfres" value=""></td>
-                    </tr>
-                    <tr class="row9">
-                        <td class="column0">&nbsp;</td>
-                        <td class="column1 style14 s">Buprenorphine 8mg </td>
-                        <td class="column2 style20 s"><input type="text" name="bp3" id="bp3" value="10 tabs blister pack" readonly></td>
-                        <td class="column3 style20 s"><?php include '../countsFormP7/Buprenorphine8mgBB.php'; ?></td>
-                        <td class="column4 style20 s"><?php include '../countsFormP7/Buprenorphine8mgRcvd.php'; ?></td>
-                        <td class="column5 style20 s"><?php include '../countsFormP7/Buprenorphine8mgdisp.php'; ?></td>
-                        <td class="column6 style20 s"><input type="number" name="l4" id="l4" value=""></td>
-                        <td class="column7 style20 s"><input type="number" name="ad4" id="ad4" value=""></td>
-                        <td class="column8 style20 s"><input type="number" name="ps4" id="ps4" value=""></td>
-                        <td class="column9 style20 s"><center><?php include '../countsFormP7/outofstockbuprenorphine8mg.php'; ?></center></td>
-                        <td class="column10 style20 s"><input type="number" name="qrfres" id="qrfres" value=""></td>
-                    </tr>
-                    <tr class="row10">
-                        <td class="column0">&nbsp;</td>
-                        <td class="column1 style14 s">Naltrexone tabs 50mg </td>
-                        <td class="column2 style20 s"><input type="text" name="bp5" id="bp5" value="7 tabs blister pack" readonly></td>
-                        <td class="column3 style20 s"><?php include '../countsFormP7/Naltrexone50mgBB.php'; ?></td>
-                        <td class="column4 style20 s"><?php include '../countsFormP7/Naltrexone50mgRcvd.php'; ?></td>
-                        <td class="column5 style20 s"><?php include '../countsFormP7/Naltrexone50mgdisp.php'; ?></td>
-                        <td class="column6 style20 s"><input type="number" name="l5" id="l5" value=""></td>
-                        <td class="column7 style20 s"><input type="number" name="ad5" id="ad5" value=""></td>
-                        <td class="column8 style20 s"><input type="number" name="ps5" id="ps5" value=""></td>
-                        <td class="column9 style20 s"><center><?php include '../countsFormP7/outofstocknaltrexone50mg.php'; ?></center></td>
-                        <td class="column10 style20 s">-<input type="number" name="qrfres" id="qrfres" value=""></td>
-                    </tr>
-                    <tr class="row11">
-                        <td class="column0">&nbsp;</td>
-                        <td class="column1 style14 s">Naltrexone tabs 100mg </td>
-                        <td class="column2 style20 s"><input type="text" name="bp6" id="bp6" value="10 tabs blister pack" readonly></td>
-                        <td class="column3 style20 s"><?php include '../countsFormP7/Naltrexone100mgBB.php'; ?></td>
-                        <td class="column4 style20 s"><?php include '../countsFormP7/Naltrexone100mgRcvd.php'; ?></td>
-                        <td class="column5 style20 s"><?php include '../countsFormP7/Naltrexone100mgdisp.php'; ?></td>
-                        <td class="column6 style20 s"><input type="number" name="l6" id="l6" value=""></td>
-                        <td class="column7 style20 s"><input type="number" name="ad6" id="ad6" value=""></td>
-                        <td class="column8 style20 s"><input type="number" name="ps6" id="ps6" value=""></td>
-                        <td class="column9 style20 s"><center><?php include '../countsFormP7/outofstocknaltrexone100mg.php'; ?></center></td>
-                        <td class="column10 style20 s"><input type="number" name="qrfres" id="qrfres" value=""></td>
-                    </tr>
-                    <tr class="row12">
-                        <td class="column0">&nbsp;</td>
-                        <td class="column1 style14 s">Naltrexone tabs 150mg </td>
-                        <td class="column2 style20 s"><input type="text" name="bp7" id="bp7" value="10 tabs blister pack" readonly></td>
-                        <td class="column3 style20 s"><?php include '../countsFormP7/Naltrexone150mgBB.php'; ?></td>
-                        <td class="column4 style20 s"><?php include '../countsFormP7/Naltrexone150mgRcvd.php'; ?></td>
-                        <td class="column5 style20 s"><?php include '../countsFormP7/Naltrexone150mgdisp.php'; ?></td>
-                        <td class="column6 style20 s"><input type="number" name="l7" id="l7" value=""></td>
-                        <td class="column7 style20 s"><input type="number" name="ad7" id="ad7" value=""></td>
-                        <td class="column8 style20 s"><input type="number" name="ps7" id="ps7" value=""></td>
-                        <td class="column9 style20 s"><center><?php include '../countsFormP7/outofstocknaltrexone150mg.php'; ?></center></td>
-                        <td class="column10 style20 s"><input type="number" name="qrfres" id="qrfres" value=""></td>
-                    </tr>
-                    <tr class="row13">
-                        <td class="column0">&nbsp;</td>
-                        <td class="column1 style14 s">Naltrexone Implant</td>
-                        <td class="column2 style20 s"><input type="text" name="bp8" id="bp8" value="1 implant pack" readonly></td>
-                        <td class="column3 style20 s"><?php include '../countsFormP7/NaltrexoneImplantBB.php'; ?></td>
-                        <td class="column4 style20 s"><?php include '../countsFormP7/NaltrexoneImplantRcvd.php'; ?></td>
-                        <td class="column5 style20 s"><?php include '../countsFormP7/NaltrexoneImplantdisp.php'; ?></td>
-                        <td class="column6 style20 s"><input type="number" name="l8" id="l8" value=""></td>
-                        <td class="column7 style20 s"><input type="number" name="ad8" id="ad8" value=""></td>
-                        <td class="column8 style20 s"><input type="number" name="ps8" id="ps8" value=""></td>
-                        <td class="column9 style20 s"><center><?php include '../countsFormP7/outofstocknaltrexoneImplant.php'; ?></center></td>
-                        <td class="column10 style20 s"><input type="number" name="qrfres" id="qrfres" value=""></td>
-                    </tr>
-                    <tr class="row14">
-                        <td class="column0">&nbsp;</td>
-                        <td class="column1 style15 s style15" colspan="10" rowspan="2">Comments (Including explanation of losses and adjustments): TEXTBOXAREA</td>
-                    </tr>
-                    <tr class="row15">
-                        <td class="column0">&nbsp;</td>
-                    </tr>
-                <tr class="row16">
-                    <td class="column0">&nbsp;</td>
-                    <td class="column1 style1 s style3" colspan="2">Submitted By:</td>
-                    <td class="column3 style21 s style22 column-fit" colspan="2"><input type="text" name="submitted_by_name" id="submitted_by_name" value="<?php echo $maticName; ?>" readonly></td>
-                    <td class="column5 style21 s style22 column-fit" colspan="2"><input type="text" name="submitted_by_signature" id="submitted_by_signature" value="<?php echo $maticSign; ?>" readonly></td>
-                    <td class="column7 style21 s style22 column-fit" colspan="2"><input type="text" name="submitted_by_mobile" id="submitted_by_mobile" value="<?php echo $maticMobile; ?>" readonly></td>
-                    <td class="column9 style21 s style22 column-fit" colspan="2"><input type="date" name="submitted_date" id="submitted_date" value="<?php echo date('Y-m-d'); ?>" readonly></td>
+                <tr>
+                    <td>Naltrexone tabs 150mg</td><td>28 tabs</td><td><?php include '../countsFormp7/Naltrexone150mgBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/Naltrexone150mgRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/Naltrexone150mgdisp.php' ?></td><td><input type="int" class="int-input" name="losses_naltrexone150mg"></td><td><input type="int" class="int-input" name = "adjustments_naltrexone150mg"></td><td><input type="int" class="int-input" name="physical_count_naltrexone150mg"></td><td><input type="int" class="int-input" name="days_out_of_stock_naltrexone150mg"></td><td><?php include '../countsFormP7/quantity_for_resupply_naltrexone150mg.php'; ?></td>
                 </tr>
-                <tr class="row17">
-                    <td class="column0">&nbsp;</td>
-                    <td class="column1 style1 null style3" colspan="2"></td>
-                    <td class="column3 style5 s style6" colspan="2">MAT Pharmacist in charge</td>
-                    <td class="column5 style1 s style3" colspan="2">Signature</td>
-                    <td class="column7 style1 s style3" colspan="2">Mobile Phone</td>
-                    <td class="column9 style1 s style3" colspan="2">Date</td>
-                </tr>
-                <tr class="row18">
-                    <td class="column0">&nbsp;</td>
-                    <td class="column1 style1 s style3" colspan="2">Reviewed By:</td>
-                    <td class="column3 style21 s style22 column-fit" colspan="2"><input type="text" name="reviewed_by_name" id="reviewed_by_name" value="<?php echo $facilityIncharge; ?>" readonly></td>
-                    <td class="column5 style21 s style22 column-fit" colspan="2"><input type="text" name="reviewed_by_signature" id="reviewed_by_signature" value="" ></td>
-                    <td class="column7 style21 s style22 column-fit" colspan="2"><input type="text" name="reviewed_by_mobile" id="reviewed_by_mobile" value="<?php echo $facilityPhone; ?>" readonly></td>
-                    <td class="column9 style21 s style22 column-fit" colspan="2"><input type="date" name="reviewed_date" id="reviewed_date" value="<?php echo date('Y-m-d'); ?>" readonly></td>
-                </tr>
-                <tr class="row19">
-                    <td class="column0">&nbsp;</td>
-                    <td class="column1 style1 null style3" colspan="2"></td>
-                    <td class="column3 style5 s style6" colspan="2">Pharmacist in charge</td>
-                    <td class="column5 style1 s style3" colspan="2">Signature</td>
-                    <td class="column7 style1 s style3" colspan="2">Mobile Phone</td>
-                    <td class="column9 style1 s style3" colspan="2">Date</td>
+                <tr>
+                    <td>Naltrexone Implant</td><td>Pieces</td><td><?php include '../countsFormp7/NaltrexoneimplantBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/NaltrexoneimplantRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/NaltrexoneImplantdisp.php' ?></td><td><input type="int" class="int-input" name="losses_naltrexoneimplant"></td><td><input type="int" class="int-input" name = "adjustments_naltrexoneimplant"></td><td><input type="int" class="int-input" name="physical_count_naltrexoneimplant"></td><td><input type="int" class="int-input" name="days_out_of_stock_naltrexoneimplant"></td><td><?php include '../countsFormP7/quantity_for_resupply_naltrexoneimplant.php'; ?></td>
                 </tr>
             </tbody>
         </table>
-    </body>
+
+        <div class="div">
+            <label>Comments (Including explanation of losses and adjustments):</label>
+            <textarea rows="4" name="comments"></textarea>
+        </div>
+
+        <div class="signatures">
+            <div class="signature-block">
+                <h4>Submitted by</h4>
+                <label>Pharmacist in charge:</label><input type="text" name="pharmacist_name">
+                <label>Signature:</label><input type="text" name="signature">
+                <label>Mobile phone int:</label><input type="text" name="phone">
+                <label>Date:</label><input type="date" name="date_submitted">
+            </div>
+
+            <div class="signature-block">
+                <h4>Confirmed by</h4>
+                <label>MAT Pharmacist:</label><input type="text" name="mat_pharmacist">
+                <label>Signature:</label><input type="text" name="mat_signature">
+                <label>Mobile phone int:</label><input type="text" name="mat_phone">
+                <label>Date:</label><input type="date" name="mat_date">
+            </div>
+        </div>
+
+    </div>
+   <script src="../assets/js/bootstrap.min.js"></script>
+   <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the physical count input for methadone
+            const physicalCountInput = document.querySelector('input[name="physical_count_methadone"]');
+
+            if (physicalCountInput) {
+                physicalCountInput.addEventListener('change', function() {
+                    // Reload the page with the new physical count value
+                    const urlParams = new URLSearchParams(window.location.search);
+                    urlParams.set('physical_count_methadone', this.value);
+                    window.location.search = urlParams.toString();
+                });
+            }
+        });
+    </script>
+</body>
 </html>

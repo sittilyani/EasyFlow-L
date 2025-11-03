@@ -45,14 +45,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         nickName, nat_id, dob, age, sex, marital_status, residence_scounty, p_address,
         client_phone, mat_status, transfer_id, referral_type, referring_facility,
         reffering_fac_client_number, accompanment_type, peer_edu_name, peer_edu_phone,
-        rx_supporter_name, drugname, dosage, reasons, current_status, next_appointment, hcw_name
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        rx_supporter_name, drugname, reasons, current_status, hcw_name
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sql);
     if ($stmt) {
 
         // 33 parameters in total (32 string fields + 1 integer field for 'age')
-        $type_string = "ssssssssssssissssssssssssssssssss";
+        $type_string = "ssssssssssssissssssssssssssssss";
 
         $stmt->bind_param(
             $type_string,
@@ -84,10 +84,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $formData['peer_edu_phone'],
             $formData['rx_supporter_name'],
             $formData['drugname'],
-            $formData['dosage'],
             $formData['reasons'],
             $formData['current_status'],
-            $formData['next_appointment'],
             $formData['hcw_name']
         );
 
@@ -198,7 +196,7 @@ if (isset($_SESSION['user_id']) && isset($conn)) {
                 // Fetch facilities and required details for data attributes
                 // Rely on the single connection opened at the top
                 if (isset($conn)) {
-                    $sql = "SELECT facilityname, mflcode, countyname, subcountyname FROM facilities ORDER BY facilityname ASC";
+                    $sql = "SELECT facilityname, mflcode, countyname, subcountyname FROM facilities WHERE facilityname LIKE '%%MAT clinic%%' ORDER BY facilityname ASC";
                     $result = $conn->query($sql);
                     if ($result && $result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
@@ -232,7 +230,7 @@ if (isset($_SESSION['user_id']) && isset($conn)) {
         </div>
 
         <div class="form-group">
-            <label for="reg_date">Registration Date</label>
+            <label for="reg_date">Registration Date<span style='color: red; font-weight: bold;'>&#10033;</span></label>
             <input type="date" id="reg_date" name="reg_date" required>
         </div>
 
@@ -245,8 +243,8 @@ if (isset($_SESSION['user_id']) && isset($conn)) {
             <input type="text" id="mat_number" name="mat_number">
         </div>
         <div class="form-group">
-            <label for="clientName">Client Name <span style='color: red; font-weight: bold;'>&#10033;</span></label>
-            <input type="text" id="clientName" name="clientName" required>
+            <label for="clientName">Client Name<span style='color: red; font-weight: bold;'>&#10033;</span></label>
+            <input type="text" id="clientName" name="clientName" placeholder="(e.g John Doe)" required>
         </div>
         <div class="form-group">
             <label for="sname">SurName</label>
@@ -305,7 +303,7 @@ if (isset($_SESSION['user_id']) && isset($conn)) {
         </div>
         <div class="form-group">
             <label for="p_address">Physical Address (residence)</label>
-            <input type="text" id="p_address" name="p_address" >
+            <input type="text" id="p_address" name="p_address" placeholder="Inmate: if in PRISON">
         </div>
         <div class="form-group">
             <label for="client_phone">Phone Number</label>
@@ -313,7 +311,7 @@ if (isset($_SESSION['user_id']) && isset($conn)) {
         </div>
 
         <div class="form-group">
-            <label for="mat_status">Client MAT status at enrolment? <span style='color: red; font-weight: bold;'>&#10033;</span></label>
+            <label for="mat_status">Status at enrolment? <span style='color: red; font-weight: bold;'>&#10033;</span></label>
             <select id="mat_status" name="mat_status" required>
                 <option value="">Select enrolment status</option>
                 <?php
@@ -411,7 +409,7 @@ if (isset($_SESSION['user_id']) && isset($conn)) {
             <input type="text" id="peer_edu_name" name="peer_edu_name">
         </div>
         <div class="form-group">
-            <label for="peer_edu_phone">Peer Educator's/ORW phone number</label>
+            <label for="peer_edu_phone">Peer Educator's/ORW phone</label>
             <input type="number" id="peer_edu_phone" name="peer_edu_phone" pattern="0\d{9}" title="Phone number must start with 0 and have 10 digits.">
         </div>
         <div class="form-group">
@@ -419,33 +417,20 @@ if (isset($_SESSION['user_id']) && isset($conn)) {
             <input type="text" id="rx_supporter_name" name="rx_supporter_name" >
         </div>
 
-        <div class="form-group">
-            <label for="drugname">Drug <span style='color: red; font-weight: bold;'>&#10033;</span></label>
-            <select id="drugname" name="drugname" required>
-                <?php
-                if (isset($conn)) {
-                    $sql = "SELECT drugName FROM drug where drugname IN ('methadone', 'Buprenorphine 2mg', 'Buprenorphine 4mg', 'Buprenorphine 8mg')"
-                    $result = $conn->query($sql);
-
-                    if ($result && $result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                            echo "<option value='" . htmlspecialchars($row['drugName'], ENT_QUOTES, 'UTF-8') . "'>" . htmlspecialchars($row['drugName'], ENT_QUOTES, 'UTF-8') . "</option>";
-                        }
-                    } else {
-                        echo "<option value=''>No drugs available</option>";
-                    }
-                }
-                ?>
-            </select>
+        <!--drugnane, dosage and reasons to be done by clinician -->
+        <div class="form-group"  style="display: none;">
+            <label for="drugname">Drug</label>
+            <input type="text" name="drugname">
         </div>
-        <div class="form-group">
-            <label for="dosage">Dosage <span style='color: red; font-weight: bold;'>&#10033;</span></label>
-            <input type="text" id="dosage" name="dosage" required>
+        <div class="form-group" style="display: none;">
+            <label for="dosage">Dosage</label>
+            <input type="number" id="dosage" name="dosage" step="0.01" min="0" max="999.99">
         </div>
-        <div class="form-group">
+        <div class="form-group" style="display: none;">
             <label for="reasons">Reasons</label>
             <input type="text" id="reasons" name="reasons">
         </div>
+
         <div class="form-group">
             <label for="current_status">Current Status</label>
             <select id="current_status" name="current_status" required>
@@ -462,9 +447,9 @@ if (isset($_SESSION['user_id']) && isset($conn)) {
                 ?>
             </select>
         </div>
-        <div class="form-group">
-            <label for="next_appointment">Next appointment <span style='color: red; font-weight: bold;'>&#10033;</span></label>
-            <input type="date" name="next_appointment" required>
+        <div class="form-group" style="display: none;">
+            <label for="next_appointment">Next appointment</label>
+            <input type="text" name="next_appointment">
         </div>
         <div class="form-group">
             <label for="hcw_name">Name of service provider <span style='color: red; font-weight: bold;'>&#10033;</span></label>
@@ -482,9 +467,8 @@ if (isset($conn)) {
     $conn->close();
 }
 ?>
-
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+<script src="../assets/js/bootstrap.bundle.js"></script>
+<script src="../assets/js/bootstrap.min.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

@@ -99,7 +99,7 @@ $stmt->close();
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css" type="text/css">
     <style>
         body { font-family: Arial, sans-serif;  background-color: #f8f9fa; color: #333; padding: 30px; }
-            .container { width: 100%;   margin: 0 auto;    background: #fff;  padding: 30px;  border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);   }
+            .container { width: 100%;   margin: 0 auto;    background: #fff;  padding: 20px;  border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);   }
             .form-header {  display: grid; grid-template-columns: repeat(1fr, 2fr, 1fr); text-align: center; margin-bottom: 10px; }
             h2, h3 { text-align: center;  margin-bottom: 10px; }
             .section { margin-bottom: 20px;}
@@ -124,16 +124,30 @@ $stmt->close();
             .form-group {display: flex; flex-direction: column;}
             .form-group label {margin-bottom: 8px; font-weight: bold; color: #2c3e50;}
             .received-input{text-align: center; color: #333399; font-weight: bold;}
-
-    </style>
+            .int-input{width: 100%; height: 100%; background: yellow;}
+            .form-header {display: grid; grid-template-columns: 20% 60% 20%; align-items: center; margin-bottom: 10px; border: none;  padding: 10px; }
+            .form-header .logo-left { text-align: center; }
+            .form-header .title-center {text-align: center; }
+            .form-header .form-version {text-align: center;}
+            .int-input {  width: 100%;  height: 100%; background: #E3E3E3;  border: none; text-align: center; padding: 8px; box-sizing: border-box; }
+            table td { padding: 0;  }
+            table td input.int-input {  height: 100%;  min-height: 40px;  }
+            .resupply-input {width: 100%;  height: 100%; background: #CCFFFF; "border: none; text-align: center; padding: 8px; box-sizing: border-box; }
+        </style>
 </head>
 <body>
     <div class="container">
         <div class="form-header">
-            <tr style="border: solid;">
-                <td><img src="../assets/images/Government of Kenya.png" width="80" height="60" alt=""></td><td><h2>MEDICALLY ASSISTED THERAPY
-            <p>CONSUMPTION REQUEST AND REPORT</p></h2></td><td><p>FORM P7 VER. SEP. 2025</p></td>
-            </tr>
+            <div class="logo-left">
+                <img src="../assets/images/Government of Kenya.png" width="80" height="60" alt="">
+            </div>
+            <div class="title-center">
+                <h2>MEDICALLY ASSISTED THERAPY</h2>
+                <p>CONSUMPTION REQUEST AND REPORT</p>
+            </div>
+            <div class="form-version">
+                <p>FORM P7 VER. SEP. 2025</p>
+            </div>
         </div>
         <hr style="height: 2px; background-color: black; border: none;">
         <form method="GET" action="">
@@ -183,6 +197,7 @@ $stmt->close();
         </div>
         <hr style="height: 2px; background-color: black; border: none;">
         <table>
+
             <thead>
                 <tr>
                     <th>DRUG PRODUCT</th>
@@ -194,30 +209,30 @@ $stmt->close();
                     <th>Adjustments</th>
                     <th>Physical Count at Store</th>
                     <th>Days out of stock</th>
-                    <th>Quantity required for RESUPPLY (Continuing patients)</th>
+                    <th style="max-width: 200px;">Quantity required for RESUPPLY (Continuing patients)</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>Methadone</td><td>1000 ml</td><td><?php include '../countsFormp7/MethadoneBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/MethadoneRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/Methadonedisp.php' ?></td><td></td><td></td><td></td><td></td><td></td>
+                    <td>Methadone</td><td>1000 ml</td><td><?php include '../countsFormp7/MethadoneBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/MethadoneRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/Methadonedisp.php' ?></td><td><input type="int"  class="int-input" name="losses_methadone"></td><td><input type="int"  class="int-input" name="adjustments_methadone"></td><td><input type="int"  class="int-input" name="physical_count_methadone" value="<?php echo isset($_GET['physical_count_methadone']) ? $_GET['physical_count_methadone'] : ''; ?>" onchange="this.form.submit()"></td><td><input type="int" class="int-input" name="days_out_of_stock_methadone"></td><td  style='background: #ccffff;'><?php include '../countsFormP7/quantity_for_resupply_methadone.php'; ?></td>
                 </tr>
                 <tr>
-                    <td>Buprenorphine 2mg</td><td>28 tabs</td><td><?php include '../countsFormp7/Buprenorphine2mgBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/Buprenorphine2mgRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/Buprenorphine2mgdisp.php' ?></td><td></td><td></td><td></td><td></td><td></td>
+                    <td>Buprenorphine 2mg</td><td>28 tabs</td><td><?php include '../countsFormp7/Buprenorphine2mgBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/Buprenorphine2mgRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/Buprenorphine2mgdisp.php' ?></td><td><input type="int" class="int-input" name="losses_buprenorphine2mg"></td><td><input type="int" class="int-input" name = "adjustments_buprenorphine2mg"></td><td><input type="int" class="int-input" name="physical_count_buprenorphine2mg" value="<?php echo isset($_GET['physical_count_buprenorphine2mg']) ? $_GET['physical_count_buprenorphine2mg'] : ''; ?>" onchange="this.form.submit()"></td><td><input type="int" class="int-input" name="days_out_of_stock_buprenorphine2mg"></td><td style='background: #ccffff;'><?php include '../countsFormP7/quantity_for_resupply_buprenorphine2mg.php'; ?></td>
                 </tr>
                 <tr>
-                    <td>Buprenorphine 8mg</td><td>28 tabs</td><td><?php include '../countsFormp7/Buprenorphine8mgBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/Buprenorphine8mgRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/Buprenorphine8mgdisp.php' ?></td><td></td><td></td><td></td><td></td><td></td>
+                    <td>Buprenorphine 8mg</td><td>28 tabs</td><td><?php include '../countsFormp7/Buprenorphine8mgBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/Buprenorphine8mgRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/Buprenorphine8mgdisp.php' ?></td><td><input type="int" class="int-input" name="losses_buprenorphine8mg"></td><td><input type="int" class="int-input" name = "adjustments_buprenorphine8mg"></td><td><input type="int" class="int-input" name="physical_count_buprenorphine8mg" value="<?php echo isset($_GET['physical_count_buprenorphine8mg']) ? $_GET['physical_count_buprenorphine8mg'] : ''; ?>" onchange="this.form.submit()"></td><td><input type="int" class="int-input" name="days_out_of_stock_buprenorphine8mg"></td><td style='background: #ccffff;'><?php include '../countsFormP7/quantity_for_resupply_buprenorphine8mg.php'; ?></td>
                 </tr>
                 <tr>
-                    <td>Naltrexone tabs 50mg</td><td>28 tabs</td><td><?php include '../countsFormp7/Naltrexone50mgBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/Naltrexone50mgRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/Naltrexone50mgdisp.php' ?></td><td></td></td><td></td><td></td><td></td><td></td>
+                    <td>Naltrexone tabs 50mg</td><td>28 tabs</td><td><?php include '../countsFormp7/Naltrexone50mgBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/Naltrexone50mgRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/Naltrexone50mgdisp.php' ?></td><td><input type="int" class="int-input" name="losses_naltrexone50mg"></td><td><input type="int" class="int-input" name = "adjustments_naltrexone50mg"></td><td><input type="int" class="int-input" name="physical_count_naltrexone50mg" value="<?php echo isset($_GET['physical_count_naltrexone50mg']) ? $_GET['physical_count_naltrexone50mg'] : ''; ?>" onchange="this.form.submit()"></td><td><input type="int" class="int-input" name="days_out_of_stock_naltrexone50mg"></td><td style='background: #ccffff;'><?php include '../countsFormP7/quantity_for_resupply_naltrexone50mg.php'; ?></td>
                 </tr>
                 <tr>
-                    <td>Naltrexone tabs 100mg</td><td>28 tabs</td><td><?php include '../countsFormp7/Naltrexone100mgBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/Naltrexone100mgRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/Naltrexone100mgdisp.php' ?></td><td></td><td></td><td></td><td></td><td></td>
+                    <td>Naltrexone tabs 100mg</td><td>28 tabs</td><td><?php include '../countsFormp7/Naltrexone100mgBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/Naltrexone100mgRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/Naltrexone100mgdisp.php' ?></td><td><input type="int" class="int-input" name="losses_naltrexone100mg"></td><td><input type="int" class="int-input" name = "adjustments_naltrexone100mg"></td><td><input type="int" class="int-input" name="physical_count_naltrexone100mg" value="<?php echo isset($_GET['physical_count_naltrexone100mg']) ? $_GET['physical_count_naltrexone100mg'] : ''; ?>" onchange="this.form.submit()"></td><td><input type="int" class="int-input" name="days_out_of_stock_naltrexone100mg"></td><td style='background: #ccffff;'><?php include '../countsFormP7/quantity_for_resupply_naltrexone100mg.php'; ?></td>
                 </tr>
                 <tr>
-                    <td>Naltrexone tabs 150mg</td><td>28 tabs</td><td><?php include '../countsFormp7/Naltrexone150mgBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/Naltrexone150mgRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/Naltrexone150mgdisp.php' ?></td><td></td><td></td><td></td><td></td><td></td>
+                    <td>Naltrexone tabs 150mg</td><td>28 tabs</td><td><?php include '../countsFormp7/Naltrexone150mgBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/Naltrexone150mgRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/Naltrexone150mgdisp.php' ?></td><td><input type="int" class="int-input" name="losses_naltrexone150mg"></td><td><input type="int" class="int-input" name = "adjustments_naltrexone150mg"></td><td><input type="int" class="int-input" name="physical_count_naltrexone150mg" value="<?php echo isset($_GET['physical_count_naltrexone150mg']) ? $_GET['physical_count_naltrexone150mg'] : ''; ?>" onchange="this.form.submit()"></td><td><input type="int" class="int-input" name="days_out_of_stock_naltrexone150mg"></td><td style='background: #ccffff;'><?php include '../countsFormP7/quantity_for_resupply_naltrexone150mg.php'; ?></td>
                 </tr>
                 <tr>
-                    <td>Naltrexone Implant</td><td>Pieces</td><td><?php include '../countsFormp7/NaltrexoneimplantBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/NaltrexoneimplantRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/NaltrexoneImplantdisp.php' ?></td><td></td><td></td><td></td><td></td><td></td>
+                    <td>Naltrexone Implant</td><td>Pieces</td><td><?php include '../countsFormp7/NaltrexoneimplantBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/NaltrexoneimplantRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/NaltrexoneImplantdisp.php' ?></td><td><input type="int" class="int-input" name="losses_naltrexoneimplant"></td><td><input type="int" class="int-input" name = "adjustments_naltrexoneimplant"></td><td><input type="int" class="int-input" name="physical_count_naltrexoneimplant" value="<?php echo isset($_GET['physical_count_naltrexoneimplant']) ? $_GET['physical_count_naltrexoneimplant'] : ''; ?>" onchange="this.form.submit()"></td><td><input type="int" class="int-input" name="days_out_of_stock_naltrexoneimplant"></td><td style='background: #ccffff;'><?php include '../countsFormP7/quantity_for_resupply_naltrexoneimplant.php'; ?></td>
                 </tr>
             </tbody>
         </table>
@@ -230,21 +245,54 @@ $stmt->close();
         <div class="signatures">
             <div class="signature-block">
                 <h4>Submitted by</h4>
-                <label>Pharmacist in charge:</label><input type="text" name="pharmacist_name">
-                <label>Signature:</label><input type="text" name="signature">
-                <label>Mobile phone number:</label><input type="text" name="phone">
+                <label>Pharmacist in charge:</label><input type="text" name="pharmacist_name" value="<?php echo htmlspecialchars($clinician_name); ?>">
+                <label>Signature:</label><input type="text" name="signature" value="<?php echo htmlspecialchars($clinician_name); ?>">
+                <label>Mobile phone int:</label><input type="text" name="phone">
                 <label>Date:</label><input type="date" name="date_submitted">
             </div>
 
             <div class="signature-block">
                 <h4>Confirmed by</h4>
-                <label>MAT Pharmacist:</label><input type="text" name="mat_pharmacist">
-                <label>Signature:</label><input type="text" name="mat_signature">
-                <label>Mobile phone number:</label><input type="text" name="mat_phone">
+                <label>MAT Pharmacist:</label><input type="text" name="mat_pharmacist" value="<?php echo $facilityIncharge; ?>">
+                <label>Signature:</label><input type="text" name="mat_signature" value="<?php echo $facilityIncharge; ?>">
+                <label>Mobile phone int:</label><input type="text" name="mat_phone" value="<?php echo $facilityPhone; ?>">
                 <label>Date:</label><input type="date" name="mat_date">
             </div>
         </div>
-
+        <button id="print-pdf" onclick="window.print()">Print PDF</button>
     </div>
+   <script src="../assets/js/bootstrap.min.js"></script>
+       <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Array of all physical count input names
+                const physicalCountInputs = [
+                    'physical_count_methadone',
+                    'physical_count_buprenorphine2mg',
+                    'physical_count_buprenorphine8mg',
+                    'physical_count_naltrexone50mg',
+                    'physical_count_naltrexone100mg',
+                    'physical_count_naltrexone150mg',
+                    'physical_count_naltrexoneimplant'
+                ];
+
+                // Loop through each input name and add event listener
+                physicalCountInputs.forEach(function(inputName) {
+                    const input = document.querySelector('input[name="' + inputName + '"]');
+
+                    if (input) {
+                        input.addEventListener('change', function() {
+                            // Get current URL parameters
+                            const urlParams = new URLSearchParams(window.location.search);
+
+                            // Set the new physical count value
+                            urlParams.set(inputName, this.value);
+
+                            // Reload the page with updated parameters
+                            window.location.search = urlParams.toString();
+                        });
+                    }
+                });
+            });
+        </script>
 </body>
 </html>

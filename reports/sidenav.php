@@ -50,6 +50,8 @@ $user_id = $_SESSION['user_id'] ?? '';
 
     <?php if (in_array($userrole, ['Super Admin','Admin', 'HRIO', 'Pharmacist'])) : ?>
 
+                <a href="../reports/daily_summaries.php" target="contentFrame" style="background: yellow; color: black;" class="nav-link">
+                    <i class="fa fa-calendar"></i>Daily Summaries</a>
                 <a href="../reports/formp-5.php" target="contentFrame" class="nav-link">
                     <i class="fa fa-circle"></i>Form P 5</a>
                 <a href="../reports/formp-7.php" target="contentFrame" class="nav-link">

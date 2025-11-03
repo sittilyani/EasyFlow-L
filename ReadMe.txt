@@ -719,6 +719,21 @@ BEGIN
     FROM inserted;
 END;
 
+Form p7 documentations with AI
+https://claude.ai/chat/f94671ac-25d9-4f31-9a17-5887a7f101a0
+
+
+# 2025-11-03
+
+create table stores_inventory(
+    inventory_id int AUTO_INCREMENT primary key,
+    drugID int,
+    drugname varchar (100) not null,
+    from_supplier int,
+    to_dispensing int,
+    stores_balance int,
+    transaction_date datetime default CURRENT_TIMESTAMP);
+
 
 
 

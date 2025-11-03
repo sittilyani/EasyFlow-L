@@ -3,11 +3,33 @@ session_start(); // Add this at the very beginning
 
 include '../includes/config.php';
 
+// --- START: Cache/Session Logic ---
+
+// 1. Check if the form was submitted. If so, update session variables.
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['year'])) {
+    $_SESSION['selected_year'] = intval($_POST['year']);
+    $_SESSION['selected_month'] = intval($_POST['month']);
+}
+
+// 2. Retrieve the year and month. This will be used for both the form's default
+//    selection AND for running the report logic at the bottom of the page.
+//    Priority: POST > SESSION > Current Date
+$year = isset($_POST['year']) ? intval($_POST['year'])
+        : (isset($_SESSION['selected_year']) ? $_SESSION['selected_year']
+        : date("Y"));
+
+$month = isset($_POST['month']) ? intval($_POST['month'])
+         : (isset($_SESSION['selected_month']) ? $_SESSION['selected_month']
+         : date("n"));
+
+// --- END: Cache/Session Logic ---
 ?>
+
 
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css" type="text/css">
     <title>Form P5</title>
 
     <style>
@@ -124,11 +146,14 @@ include '../includes/config.php';
     <label for="month">Month:</label>
     <select name="month" id="month">
         <?php
-        $current_month = date("n");
-        for ($i = 1; $i <= 12; $i++) {
-            $selected = ($i == $current_month) ? "selected" : ""; // Default selection for current month
-            echo "<option value='$i' $selected>$i</option>";
-        }
+            // Use the $month variable set in Step 1 for the default selection
+            $current_month = date("n");
+            // Note: We use the $month variable set below the form for the selected state
+            for ($i = 1; $i <= 12; $i++) {
+                // Check against the $month variable which holds the cached or submitted value
+                $selected = ($i == $month) ? "selected" : "";
+                echo "<option value='$i' $selected>" . date('F', mktime(0, 0, 0, $i, 1)) . "</option>"; // Added month name for clarity
+            }
         ?>
     </select>
 
@@ -261,7 +286,7 @@ if ($result->num_rows > 0) {
 
 $conn->close();
 ?>
-
+<script src="../assets/js/bootstrap.min.js"></script>
 <script>
     // Function to export table data to Excel
     function exportToExcel() {
@@ -285,3 +310,12 @@ $conn->close();
 
 </body>
 </html>
+
+<?php
+// $year and $month are already defined and hold the cached/submitted values
+// No need to redefine them based on POST/SESSION again.
+
+// Generate dates for the selected month and year
+$num_days = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+
+?>

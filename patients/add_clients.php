@@ -28,88 +28,110 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $formData[$field] = trim($_POST[$field] ?? '');
     }
 
-    // Calculate age based on date of birth
-    $dob_timestamp = strtotime($formData['dob']);
-    $current_timestamp = time();
-    $formData['age'] = date('Y', $current_timestamp) - date('Y', $dob_timestamp);
-    if (date('md', $current_timestamp) < date('md', $dob_timestamp)) {
-        $formData['age']--;
+    // --- START: SERVER-SIDE VALIDATION ---
+    $dob_date = new DateTime($formData['dob']);
+    $reg_date = new DateTime($formData['reg_date']);
+    $cutoff_date = new DateTime('-15 years'); // Calculates the date 15 years ago
+
+    $validation_error = '';
+
+    // Check 1: DOB must be before the 15-year cutoff date (client must be >= 15 years old)
+    if ($dob_date >= $cutoff_date) {
+        $validation_error = "Client's Date of Birth must be before " . $cutoff_date->format('Y-m-d') . " (Client must be at least 15 years old).";
     }
 
-    // Set drugname
-    $formData['drugname'] = trim($_POST['drugname'] ?? 'Methadone');
+    // Check 2: Registration date cannot be before Date of Birth
+    if (empty($validation_error) && $reg_date < $dob_date) {
+        $validation_error = "Registration Date cannot be before the Date of Birth.";
+    }
 
-    // Prepare and execute SQL query to insert data into the database
-    $sql = "INSERT INTO patients (
-        reg_facility, mflcode, county, scounty, reg_date, mat_id, mat_number, clientName, sname,
-        nickName, nat_id, dob, age, sex, marital_status, residence_scounty, p_address,
-        client_phone, mat_status, transfer_id, referral_type, referring_facility,
-        reffering_fac_client_number, accompanment_type, peer_edu_name, peer_edu_phone,
-        rx_supporter_name, drugname, dosage, reasons, current_status, next_appointment, hcw_name
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    if (!empty($validation_error)) {
+        echo "<div id='errormessage' style='background: #ffcccc; color: red; height: 30px; font-style: italic; padding: 5px;'>Validation Error: $validation_error</div>";
+        // Do NOT proceed with insertion
+    } else {
+        // --- PROCEED WITH INSERTION ONLY IF VALIDATION PASSES ---
 
-    $stmt = $conn->prepare($sql);
-    if ($stmt) {
-
-        // 33 parameters in total (32 string fields + 1 integer field for 'age')
-        $type_string = "ssssssssssssisssssssssssssssissss";
-
-        $stmt->bind_param(
-            $type_string,
-            $formData['reg_facility'],
-            $formData['mflcode'],
-            $formData['county'],
-            $formData['scounty'],
-            $formData['reg_date'], // Correctly captured
-            $formData['mat_id'],
-            $formData['mat_number'],
-            $formData['clientName'],
-            $formData['sname'],
-            $formData['nickName'],
-            $formData['nat_id'],
-            $formData['dob'],
-            $formData['age'], // Bound as integer 'i'
-            $formData['sex'],
-            $formData['marital_status'],
-            $formData['residence_scounty'],
-            $formData['p_address'],
-            $formData['client_phone'],
-            $formData['mat_status'],
-            $formData['transfer_id'],
-            $formData['referral_type'],
-            $formData['referring_facility'],
-            $formData['reffering_fac_client_number'],
-            $formData['accompanment_type'],
-            $formData['peer_edu_name'],
-            $formData['peer_edu_phone'],
-            $formData['rx_supporter_name'],
-            $formData['drugname'],
-            $formData['dosage'],
-            $formData['reasons'],
-            $formData['current_status'],
-            $formData['next_appointment'],
-            $formData['hcw_name']
-        );
-
-        if ($stmt->execute()) {
-            echo "<div id='successmessage' style='background: #b8fcdf; height: 30px; font-style: italic;'>New client added successfully</div>";
-            echo "<script>
-                setTimeout(function() {
-                    var element = document.getElementById('successmessage');
-                    if (element) element.parentNode.removeChild(element);
-                }, 3000);
-            </script>";
-        } else {
-            echo "Error executing statement: " . $stmt->error;
+        // Calculate age based on date of birth
+        $dob_timestamp = $dob_date->getTimestamp();
+        $current_timestamp = time();
+        $formData['age'] = date('Y', $current_timestamp) - date('Y', $dob_timestamp);
+        if (date('md', $current_timestamp) < date('md', $dob_timestamp)) {
+            $formData['age']--;
         }
 
-        $stmt->close();
-    } else {
-        echo "Error preparing statement: " . $conn->error;
+        // Set drugname
+        $formData['drugname'] = trim($_POST['drugname'] ?? 'Methadone');
+
+        // Prepare and execute SQL query to insert data into the database
+        $sql = "INSERT INTO patients (
+            reg_facility, mflcode, county, scounty, reg_date, mat_id, mat_number, clientName, sname,
+            nickName, nat_id, dob, age, sex, marital_status, residence_scounty, p_address,
+            client_phone, mat_status, transfer_id, referral_type, referring_facility,
+            reffering_fac_client_number, accompanment_type, peer_edu_name, peer_edu_phone,
+            rx_supporter_name, drugname, reasons, current_status, hcw_name
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        $stmt = $conn->prepare($sql);
+        if ($stmt) {
+
+            // 33 parameters in total (32 string fields + 1 integer field for 'age')
+            $type_string = "ssssssssssssissssssssssssssssss";
+
+            $stmt->bind_param(
+                $type_string,
+                $formData['reg_facility'],
+                $formData['mflcode'],
+                $formData['county'],
+                $formData['scounty'],
+                $formData['reg_date'], // Correctly captured
+                $formData['mat_id'],
+                $formData['mat_number'],
+                $formData['clientName'],
+                $formData['sname'],
+                $formData['nickName'],
+                $formData['nat_id'],
+                $formData['dob'],
+                $formData['age'], // Bound as integer 'i'
+                $formData['sex'],
+                $formData['marital_status'],
+                $formData['residence_scounty'],
+                $formData['p_address'],
+                $formData['client_phone'],
+                $formData['mat_status'],
+                $formData['transfer_id'],
+                $formData['referral_type'],
+                $formData['referring_facility'],
+                $formData['reffering_fac_client_number'],
+                $formData['accompanment_type'],
+                $formData['peer_edu_name'],
+                $formData['peer_edu_phone'],
+                $formData['rx_supporter_name'],
+                $formData['drugname'],
+                $formData['reasons'],
+                $formData['current_status'],
+                $formData['hcw_name']
+            );
+
+            if ($stmt->execute()) {
+                echo "<div id='successmessage' style='background: #b8fcdf; height: 30px; font-style: italic; padding: 5px;'>New client added successfully</div>";
+                echo "<script>
+                    setTimeout(function() {
+                        var element = document.getElementById('successmessage');
+                        if (element) element.parentNode.removeChild(element);
+                    }, 3000);
+                </script>";
+            } else {
+                echo "Error executing statement: " . $stmt->error;
+            }
+
+            $stmt->close();
+        } else {
+            echo "Error preparing statement: " . $conn->error;
+        }
     }
 }
 
-// --- PHP Block for Fetching User/Settings Data ---
+// --- PHP Block for Fetching User/Settings Data (Unchanged) ---
 
 // Get the user_id from the query parameter (if applicable)
 $userId = isset($_GET['p_id']) ? $_GET['p_id'] : null;
@@ -188,7 +210,7 @@ if (isset($_SESSION['user_id']) && isset($conn)) {
     <div class="main-content">
         <div class="form-group"><h2>Initial client registration form</h2></div>
 
-    <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" enctype="multipart/form-data">
+    <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" enctype="multipart/form-data" onsubmit="return validateDates()">
 
         <div class="form-group">
             <label for="reg_facility">Facility <span style='color: red; font-weight: bold;'>&#10033;</span></label>
@@ -198,17 +220,17 @@ if (isset($_SESSION['user_id']) && isset($conn)) {
                 // Fetch facilities and required details for data attributes
                 // Rely on the single connection opened at the top
                 if (isset($conn)) {
-                    $sql = "SELECT facilityname, mflcode, countyname, subcountyname FROM facilities WHERE facilityname LIKE '%%MAT clinic%%' ORDER BY facilityname ASC";
+                    $sql = "SELECT facilityname, mflcode, countyname, subcountyname FROM facilities WHERE facilityname LIKE '%MAT clinic%' ORDER BY facilityname ASC";
                     $result = $conn->query($sql);
                     if ($result && $result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
                             // Store MFL, County, and SubCounty data in the option's data attributes
                             echo "<option
-                                    value='" . htmlspecialchars($row['facilityname']) . "'
-                                    data-mfl='" . htmlspecialchars($row['mflcode']) . "'
-                                    data-county='" . htmlspecialchars($row['countyname']) . "'
-                                    data-scounty='" . htmlspecialchars($row['subcountyname']) . "'
-                                >" . htmlspecialchars($row['facilityname']) . "</option>";
+                                        value='" . htmlspecialchars($row['facilityname']) . "'
+                                        data-mfl='" . htmlspecialchars($row['mflcode']) . "'
+                                        data-county='" . htmlspecialchars($row['countyname']) . "'
+                                        data-scounty='" . htmlspecialchars($row['subcountyname']) . "'
+                                    >" . htmlspecialchars($row['facilityname']) . "</option>";
                         }
                     }
                 }
@@ -218,17 +240,17 @@ if (isset($_SESSION['user_id']) && isset($conn)) {
 
         <div class="form-group">
             <label for="mflcode">MFL code <span style='color: red; font-weight: bold;'>&#10033;</span></label>
-            <input type="text" id="mflcode" name="mflcode">
+            <input type="text" id="mflcode" name="mflcode" required class="readonly-input" readonly>
         </div>
 
         <div class="form-group">
             <label for="county">County <span style='color: red; font-weight: bold;'>&#10033;</span></label>
-            <input type="text" id="county" name="county">
+            <input type="text" id="county" name="county" required class="readonly-input" readonly>
         </div>
 
         <div class="form-group">
             <label for="scounty">Sub County <span style='color: red; font-weight: bold;'>&#10033;</span></label>
-            <input type="text" id="scounty" name="scounty">
+            <input type="text" id="scounty" name="scounty" required class="readonly-input" readonly>
         </div>
 
         <div class="form-group">
@@ -419,7 +441,6 @@ if (isset($_SESSION['user_id']) && isset($conn)) {
             <input type="text" id="rx_supporter_name" name="rx_supporter_name" >
         </div>
 
-        <!--drugnane, dosage and reasons to be done by clinician -->
         <div class="form-group"  style="display: none;">
             <label for="drugname">Drug</label>
             <input type="text" name="drugname">
@@ -466,6 +487,9 @@ if (isset($_SESSION['user_id']) && isset($conn)) {
 <?php
 // Only close the connection once, at the very end of the file.
 if (isset($conn)) {
+    // If the connection was used and not closed inside the POST block, close it here.
+    // If you plan to use $conn in the footer/scripts, keep it open, but generally, close it.
+    // Since the main logic is done, we close it now.
     $conn->close();
 }
 ?>
@@ -473,12 +497,58 @@ if (isset($conn)) {
 <script src="../assets/js/bootstrap.min.js"></script>
 
 <script>
+    // --- CLIENT-SIDE DATE VALIDATION FUNCTION ---
+    function validateDates() {
+        const dobInput = document.getElementById('dob');
+        const regDateInput = document.getElementById('reg_date');
+
+        if (!dobInput.value || !regDateInput.value) {
+            // Let the 'required' attribute handle empty fields
+            return true;
+        }
+
+        const dob = new Date(dobInput.value);
+        const regDate = new Date(regDateInput.value);
+        const today = new Date();
+
+        // Calculate the cutoff date: 15 years ago from today
+        const cutoffDate = new Date(today.getFullYear() - 15, today.getMonth(), today.getDate());
+
+        // 1. Check if DOB is before 15 years from today (Client must be >= 15 years old)
+        if (dob >= cutoffDate) {
+            const cutoffStr = cutoffDate.toISOString().split('T')[0];
+            alert(`Validation Error: Client must be at least 15 years old. Date of Birth must be before ${cutoffStr}.`);
+            dobInput.focus();
+            return false;
+        }
+
+        // 2. Check if Registration date is before Date of Birth
+        if (regDate < dob) {
+            alert('Validation Error: Registration Date cannot be before the Date of Birth.');
+            regDateInput.focus();
+            return false;
+        }
+
+        return true; // All client-side checks passed
+    }
+    // --- END CLIENT-SIDE DATE VALIDATION FUNCTION ---
+
+
     document.addEventListener('DOMContentLoaded', function() {
         // Get the facility select element
         const facilitySelect = document.getElementById('reg_facility');
         const mflcodeInput = document.getElementById('mflcode');
         const countyInput = document.getElementById('county');
         const scountyInput = document.getElementById('scounty');
+
+        // Set the max date for DOB to the cutoff date (15 years ago)
+        const today = new Date();
+        const maxDobDate = new Date(today.getFullYear() - 15, today.getMonth(), today.getDate());
+        document.getElementById('dob').max = maxDobDate.toISOString().split('T')[0];
+
+        // Set the max date for Registration Date to today
+        document.getElementById('reg_date').max = today.toISOString().split('T')[0];
+
 
         // Listener for facility change
         facilitySelect.addEventListener('change', function() {

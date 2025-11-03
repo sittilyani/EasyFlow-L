@@ -315,6 +315,6 @@ body { margin-left: 0.7in; margin-right: 0.7in; margin-top: 0.3in; margin-bottom
 
         <!--Totals for rows across-->
 
-
+       <button id="print-pdf" onclick="window.print()">Print PDF</button>
     </body>
 </html>

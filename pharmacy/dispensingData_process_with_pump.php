@@ -39,7 +39,7 @@ function displayMessagesAndRedirect($conn, $successes, $errors, $mat_id) {
     echo "<script>
         setTimeout(function(){
             window.location.href = 'dispensing.php';
-        }, 6000);
+        }, 2000);
     </script>";
     echo "</body></html>";
     exit();
