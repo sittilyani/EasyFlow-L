@@ -116,7 +116,6 @@ $stmt->close();
             .signature-block input { width: 100%; padding: 5px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;  }
             .dates label {width: 250px; font-weight: bold; }
             .dates input {width: calc(50% - 270px); margin-left: 10px; }
-
             .form-group-1 {padding: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 30px;}
             .form-group-1 > div:last-child {grid-column: 1 / -1; display: flex; align-items: center; gap: 15px;}
             .form-group-1 > div:last-child label {font-weight: bold; color: #2c3e50; margin: 0;}

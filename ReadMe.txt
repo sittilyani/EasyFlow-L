@@ -734,6 +734,33 @@ create table stores_inventory(
     stores_balance int,
     transaction_date datetime default CURRENT_TIMESTAMP);
 
+ALTER TABLE stores_inventory
+DROP COLUMN received_by_user_id,
+DROP COLUMN issued_to_user_id;
+
+ALTER TABLE stores_inventory
+ADD COLUMN received_by_full_name VARCHAR(150) NULL,
+ADD COLUMN issued_to_full_name VARCHAR(150) NULL;
+
+CREATE TABLE dispensing_comments (
+    comment_id INT AUTO_INCREMENT PRIMARY KEY,
+    log_date DATE NOT NULL,
+    drugID INT NOT NULL,
+    comments TEXT,
+
+    UNIQUE KEY unique_comment_date (log_date, drugID),
+    FOREIGN KEY (drugID) REFERENCES drug(drugID)
+);
+
+CREATE TABLE daily_report_comments (
+    comment_id INT AUTO_INCREMENT PRIMARY KEY,
+    log_date DATE NOT NULL,
+    drugID INT NOT NULL,
+    comments TEXT,
+
+    -- Ensures only one comment entry per drug per day
+    UNIQUE KEY unique_comment_date (log_date, drugID)
+);
 
 
 

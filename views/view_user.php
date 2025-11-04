@@ -1,7 +1,6 @@
 <?php
 ob_start();
 include '../includes/config.php';
-include '../includes/footer.php';
 include '../includes/header.php';
 
 // Initialize $user to an empty array to avoid warnings if no user is found.

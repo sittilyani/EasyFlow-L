@@ -262,6 +262,7 @@ $users = $result->fetch_all(MYSQLI_ASSOC);
                     <th>User ID</th>
                     <th>First Name</th>
                     <th>Last Name</th>
+                    <th>Full Name</th>
                     <th>Email</th>
                     <th>Gender</th>
                     <th>Mobile</th>
@@ -276,6 +277,7 @@ $users = $result->fetch_all(MYSQLI_ASSOC);
                         <td><?php echo htmlspecialchars($user['user_id']); ?></td>
                         <td><?php echo htmlspecialchars($user['first_name']); ?></td>
                         <td><?php echo htmlspecialchars($user['last_name']); ?></td>
+                        <td><?php echo htmlspecialchars($user['full_name']); ?></td>
                         <td><?php echo htmlspecialchars($user['email']); ?></td>
                         <td><?php echo htmlspecialchars($user['gender']); ?></td>
                         <td><?php echo htmlspecialchars($user['mobile']); ?></td>

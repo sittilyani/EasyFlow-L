@@ -1,93 +1,149 @@
 <?php
-// Require dompdf library
+// ---------------------------------------------------------------
+// 1. CONFIG & SESSION
+// ---------------------------------------------------------------
 require_once '../dompdf/autoload.inc.php';
 use Dompdf\Dompdf;
+
 include '../includes/config.php';
-
-// Calculate default dates for the previous month
-$defaultEndDate = date('Y-m-t', strtotime('last month')); // Last day of previous month
-$defaultStartDate = date('Y-m-01', strtotime('last month')); // First day of previous month
-
-// Get selected dates from form submission or use defaults
-$startDate = isset($_GET['start_date']) ? $_GET['start_date'] : $defaultStartDate;
-$endDate = isset($_GET['end_date']) ? $_GET['end_date'] : $defaultEndDate;
-
-// Validate dates
-$startDate = date('Y-m-d', strtotime($startDate));
-$endDate = date('Y-m-d', strtotime($endDate));
-
-// Sample data pulling - replace with actual queries
-// For now, using placeholders with 0
-$ever_inducted_male = 0;
-$ever_inducted_female = 0;
-$ever_inducted_total = $ever_inducted_male + $ever_inducted_female;
-$weaned_off_male = 0;
-$weaned_off_female = 0;
-$weaned_off_total = $weaned_off_male + $weaned_off_female;
-
-// Handle exports
-$export = isset($_GET['export']) ? $_GET['export'] : '';
 session_start();
 
-// Get the user_id from the query parameter (if applicable)
-$userId = isset($_GET['p_id']) ? $_GET['p_id'] : null;
-
-// Fetch the current settings for the user (if applicable)
-$currentSettings = [];
-if ($userId) {
-    $query = "SELECT * FROM patients WHERE p_id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param('i', $userId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $currentSettings = $result->fetch_assoc();
-}
-
-// Fetch clinicians and counselors from tblusers
-$clinician_query = "SELECT full_name FROM tblusers WHERE userrole IN ('clinician', 'counselor', 'admin', 'super admin')";
-$clinician_result = mysqli_query($conn, $clinician_query);
-$clinicians = [];
-while ($row = mysqli_fetch_assoc($clinician_result)) {
-    $clinicians[] = $row['full_name'];
-}
-
-// Fetch facility settings
-$facilityName = "N/A";
-$countyName = "N/A";
-$subcountyName = "N/A";
-$mflCode = "N/A";
-$facilityIncharge = "N/A";
-$facilityPhone = "N/A";
-$queryFacilitySettings = "SELECT facilityname, mflcode, countyname, subcountyname, facilityincharge, facilityphone FROM facility_settings LIMIT 1";
-$resultFacilitySettings = $conn->query($queryFacilitySettings);
-if ($resultFacilitySettings && $resultFacilitySettings->num_rows > 0) {
-    $rowFacilitySettings = $resultFacilitySettings->fetch_assoc();
-    $facilityName = htmlspecialchars($rowFacilitySettings['facilityname']);
-    $countyName = htmlspecialchars($rowFacilitySettings['countyname']);
-    $subcountyName = htmlspecialchars($rowFacilitySettings['subcountyname']);
-    $mflCode = $rowFacilitySettings['mflcode'];
-    $facilityIncharge = htmlspecialchars($rowFacilitySettings['facilityincharge']);
-    $facilityPhone = htmlspecialchars($rowFacilitySettings['facilityphone']);
-}
-
-// Check if the user is logged in and fetch their user_id
 if (!isset($_SESSION['user_id'])) {
-    die("You must be logged in to access this page.");
+        die("You must be logged in to access this page.");
 }
 $loggedInUserId = $_SESSION['user_id'];
 
-// Fetch the logged-in user's name from tblusers
-$clinician_name = 'Unknown';
-$userQuery = "SELECT first_name, last_name FROM tblusers WHERE user_id = ?";
-$stmt = $conn->prepare($userQuery);
-$stmt->bind_param('i', $loggedInUserId);
+// ---------------------------------------------------------------
+// 2. FACILITY SETTINGS
+// ---------------------------------------------------------------
+$facilityName = $mflCode = $countyName = $subcountyName = "N/A";
+$stmt = $conn->prepare("SELECT facilityname, mflcode, countyname, subcountyname FROM facility_settings LIMIT 1");
 $stmt->execute();
-$result = $stmt->get_result();
-if ($result->num_rows > 0) {
-    $user = $result->fetch_assoc();
-    $clinician_name = $user['first_name'] . ' ' . $user['last_name'];
+$res = $stmt->get_result();
+if ($row = $res->fetch_assoc()) {
+        $facilityName   = $row['facilityname']   ?? "N/A";
+        $mflCode        = $row['mflcode']       ?? "N/A";
+        $countyName     = $row['countyname']    ?? "N/A";
+        $subcountyName  = $row['subcountyname'] ?? "N/A";
 }
 $stmt->close();
+
+// ---------------------------------------------------------------
+// 3. MONTH SELECTION – DEFAULT = CURRENT MONTH
+// ---------------------------------------------------------------
+$now = new DateTime();
+$defaultYear  = $now->format('Y');
+$defaultMonth = $now->format('m');
+
+$selectedYear  = $_GET['year']  ?? $defaultYear;
+$selectedMonth = $_GET['month'] ?? $defaultMonth;
+
+$selectedYear  = (int)$selectedYear;
+$selectedMonth = str_pad((int)$selectedMonth, 2, '0', STR_PAD_LEFT);
+
+if ($selectedMonth < 1 || $selectedMonth > 12) $selectedMonth = $defaultMonth;
+if ($selectedYear < 2000 || $selectedYear > 2100) $selectedYear = $defaultYear;
+
+$startDate = "$selectedYear-$selectedMonth-01";
+$endDate   = date('Y-m-t', strtotime($startDate));
+
+// ---------------------------------------------------------------
+// 4. DRUG SELECTION – HARD-CODED
+// ---------------------------------------------------------------
+$drugID   = 2;
+$drugName = 'Methadone';
+
+// ---------------------------------------------------------------
+// 5. SEPARATE QUERIES FOR BETTER ACCURACY
+// ---------------------------------------------------------------
+
+// Query for stores inventory (receipts)
+$sqlStores = "SELECT
+        DATE(transaction_date) AS trans_date,
+        SUM(to_dispensing) AS receipt,
+        MAX(issued_to_full_name) AS issuer,
+        MIN(received_by_full_name) AS receiver
+FROM stores_inventory
+WHERE DATE(transaction_date) BETWEEN ? AND ?
+    AND drugID = ?
+GROUP BY DATE(transaction_date)
+ORDER BY trans_date";
+
+$stmtStores = $conn->prepare($sqlStores);
+$stmtStores->bind_param('ssi', $startDate, $endDate, $drugID);
+$stmtStores->execute();
+$resultStores = $stmtStores->get_result();
+
+$storesData = [];
+while ($row = $resultStores->fetch_assoc()) {
+        $storesData[$row['trans_date']] = [
+                'receipt' => (float)$row['receipt'],
+                'issuer' => $row['issuer'] ?? '',
+                'receiver' => $row['receiver'] ?? ''
+        ];
+}
+$stmtStores->close();
+
+// Query for pharmacy (dispensed amounts and client counts)
+$sqlPharmacy = "SELECT
+        DATE(dispDate) AS disp_date,
+        SUM(dosage) AS dispensed,
+        COUNT(DISTINCT mat_id) AS client_count
+FROM pharmacy
+WHERE DATE(dispDate) BETWEEN ? AND ?
+    AND drugname = 'Methadone'
+    AND dosage IS NOT NULL
+GROUP BY DATE(dispDate)
+ORDER BY disp_date";
+
+$stmtPharmacy = $conn->prepare($sqlPharmacy);
+$stmtPharmacy->bind_param('ss', $startDate, $endDate);
+$stmtPharmacy->execute();
+$resultPharmacy = $stmtPharmacy->get_result();
+
+$pharmacyData = [];
+while ($row = $resultPharmacy->fetch_assoc()) {
+        $pharmacyData[$row['disp_date']] = [
+                'dispensed' => (float)$row['dispensed'],
+                'clients' => (int)$row['client_count']
+        ];
+}
+$stmtPharmacy->close();
+
+// ---------------------------------------------------------------
+// 6. BUILD FULL MONTH (1st to last day)
+// ---------------------------------------------------------------
+$periodEntries = [];
+$cur = new DateTime($startDate);
+$end = new DateTime($endDate);
+
+while ($cur <= $end) {
+        $dateKey = $cur->format('Y-m-d');
+
+        $stores = $storesData[$dateKey] ?? null;
+        $pharmacy = $pharmacyData[$dateKey] ?? null;
+
+        $receipt = $stores['receipt'] ?? 0.0;
+        $dispensed = $pharmacy['dispensed'] ?? 0.0;
+        $closingBal = $receipt - $dispensed;
+
+        $periodEntries[] = [
+                'date'          => $dateKey,
+                'to_dispensing' => $receipt,
+                'dispensed'     => $dispensed,
+                'closing_bal'   => $closingBal,
+                'issuer'        => $stores['issuer'] ?? '',
+                'receiver'      => $stores['receiver'] ?? '',
+                'clients'       => $pharmacy['clients'] ?? 0
+        ];
+
+        $cur->modify('+1 day');
+}
+
+// ---------------------------------------------------------------
+// 7. USER NAME
+// ---------------------------------------------------------------
+$clinician_name = $_SESSION['full_name'] ?? "User #{$loggedInUserId}";
 ?>
 
 <!DOCTYPE html>
@@ -95,110 +151,365 @@ $stmt->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form P7 - Controlled Drugs Consumption Report</title>
-    <link rel="stylesheet" href="../assets/css/bootstrap.min.css" type="text/css">
+    <title>Form P7 – Daily Summaries (<?= htmlspecialchars($drugName, ENT_QUOTES, 'UTF-8') ?>)</title>
     <style>
-        body { font-family: Arial, sans-serif;  background-color: #f8f9fa; color: #333; padding: 30px; }
-            .container { width: 100%;   margin: 0 auto;    background: #fff;  padding: 20px;  border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);   }
-            .form-header {  display: grid; grid-template-columns: repeat(1fr, 2fr, 1fr); text-align: center; margin-bottom: 10px; }
-            h2, h3 { text-align: center;  margin-bottom: 10px; }
-            .section { margin-bottom: 20px;}
-            .section label {  display: inline-block; width: 250px; font-weight: bold; }
-            .section input, textarea {  width: calc(100% - 260px);  padding: 6px;  margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; }
-            .two-columns label {  width: 400px; }
-            table {width: 100%; border-collapse: collapse; margin-bottom: 20px;}
-            table, th, td { border: 1px solid #666; }
-            th, td {  padding: 8px; text-align: center;  font-size: 14px;}
-            textarea { width: 100%;  border-radius: 4px; }
-            .signatures {display: flex; justify-content: space-between; gap: 30px;  margin-top: 20px;}
-            .signature-block {flex: 1; border: 1px solid #ccc; padding: 15px; border-radius: 8px; background: #fdfdfd; }
-            .signature-block label {display: block; margin-top: 5px; font-weight: bold; }
-            .signature-block input { width: 100%; padding: 5px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;  }
-            .dates label {width: 250px; font-weight: bold; }
-            .dates input {width: calc(50% - 270px); margin-left: 10px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-            .form-group-1 {padding: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 30px;}
-            .form-group-1 > div:last-child {grid-column: 1 / -1; display: flex; align-items: center; gap: 15px;}
-            .form-group-1 > div:last-child label {font-weight: bold; color: #2c3e50; margin: 0;}
-            .form-group-1 > div:last-child input[type="date"] {padding: 10px; border: 1px solid #dcdcdc; width: 45%; border-radius: 5px; font-size: 14px;}
-            .form-group {display: flex; flex-direction: column;}
-            .form-group label {margin-bottom: 8px; font-weight: bold; color: #2c3e50;}
-            .received-input{text-align: center; color: #333399; font-weight: bold;}
-            .int-input{width: 100%; height: 100%; background: yellow;}
-            .form-header {display: grid; grid-template-columns: 20% 60% 20%; align-items: center; margin-bottom: 10px; border: none;  padding: 10px; }
-            .form-header .logo-left { text-align: center; }
-            .form-header .title-center {text-align: center; }
-            .form-header .form-version {text-align: center;}
-            .int-input {  width: 100%;  height: 100%; background: #E3E3E3;  border: none; text-align: center; padding: 8px; box-sizing: border-box; }
-            table td { padding: 0;  }
-            table td input.int-input {  height: 100%;  min-height: 40px;  }
-            .resupply-input {width: 100%;  height: 100%; background: #CCFFFF; "border: none; text-align: center; padding: 8px; box-sizing: border-box; }
-        </style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 30px 20px;
+            min-height: 100vh;
+        }
 
+        .container {
+            max-width: 90%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
 
-    </head>
-        <body>
-            <div class="container">
-                <div class="form-header">
-                    <tr style="border: solid;">
-                        <td><img src="../assets/images/Government of Kenya.png" width="80" height="60" alt=""></td><td><h2>MEDICALLY ASSISTED THERAPY
-                    <p>CUSTOM DAILY SUMMARIES REPORT</p></h2></td><td><p>FORM P7 VER. SEP. 2025</p></td>
-                    </tr>
-                </div>
-                <hr style="height: 2px; background-color: black; border: none;">
-                <form method="GET" action="">
-                    <div class="form-group">
-                        <div class="form-group-1">
-                            <div class="form-group">
-                                <label for="facilityname" class="required-field">Facility Name:</label>
-                                <input type="text" name="facilityname" class="readonly-input" readonly value="<?php echo $facilityName; ?>">
-                            </div>
-                            <div class="form-group">
-                                <label for="mflcode" class="required-field">MFL Code:</label>
-                                <input type="text" name="mflcode" value="<?php echo $mflCode; ?>" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="county">County:</label>
-                                <input type="text" name="county" class="readonly-input" readonly value="<?php echo $countyName; ?>">
-                            </div>
-                            <div class="form-group">
-                                <label for="sub_county">Sub County:</label>
-                                <input type="text" name="sub_county" class="read-only" readonly value="<?php echo $subcountyName; ?>">
-                            </div>
-                            <div>
-                                <label for="start_date">Start date:</label>
-                                <input type="date" name="start_date" value="<?php echo $startDate; ?>">
-                                <label for="end_date">End date:</label>
-                                <input type="date" name="end_date" value="<?php echo $endDate; ?>">
-                                <button type="submit" style="background: blue; color: white; width: 100px; height: 40px; border: none; border-radius: 5px;">Update Dates</button>
-                            </div>
-                        </div>
+        .form-header {
+            background: linear-gradient(135deg, #000099 0%, #0000cc 100%);
+            color: white;
+            padding: 30px 40px;
+            display: grid;
+            grid-template-columns: 100px 1fr 150px;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-left img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            background: white;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .title-center {
+            text-align: center;
+        }
+
+        .title-center h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .title-center p {
+            font-size: 16px;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+
+        .form-version {
+            text-align: right;
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .content-wrapper {
+            padding: 40px;
+        }
+
+        .form-group-1 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-group-1 > div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group-1 label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group-1 input,
+        .form-group-1 select {
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+        }
+
+        .form-group-1 input:focus,
+        .form-group-1 select:focus {
+            outline: none;
+            border-color: #000099;
+            background: white;
+        }
+
+        .date-selectors {
+            display: flex;
+            gap: 20px;
+            align-items: flex-end;
+            margin-top: 20px;
+        }
+
+        .date-field {
+            flex: 1;
+        }
+
+        #print-pdf, button {
+            width: 180px;
+            background: linear-gradient(135deg, #000099 0%, #0000cc 100%);
+            height: 48px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 153, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 153, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #e0e0e0, transparent);
+            margin: 30px 0;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 30px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #000099 0%, #0000cc 100%);
+            color: white;
+        }
+
+        th {
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8f9ff;
+        }
+
+        tbody tr.blank-row {
+            background: #f9f9f9;
+            opacity: 0.7;
+        }
+
+        td {
+            padding: 14px 12px;
+            font-size: 14px;
+            color: #444;
+        }
+
+        td.received {
+            font-weight: 600;
+            color: #28a745;
+        }
+
+        td.closing {
+            font-weight: 600;
+            color: #000099;
+        }
+
+        .no-data {
+            color: #dc3545 !important;
+            text-align: center;
+            font-weight: 600;
+            padding: 30px !important;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px 40px;
+            border-top: 3px solid #000099;
+            margin-top: 30px;
+        }
+
+        .footer p {
+            color: #666;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .form-header {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .logo-left {
+                margin: 0 auto;
+            }
+
+            .form-version {
+                text-align: center;
+            }
+
+            .form-group-1 {
+                grid-template-columns: 1fr;
+            }
+
+            .content-wrapper {
+                padding: 20px;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+            }
+
+            button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-header">
+            <div class="logo-left">
+                <img src="../assets/images/Government of Kenya.png" alt="Government of Kenya Logo">
+            </div>
+            <div class="title-center">
+                <h2>MEDICALLY ASSISTED THERAPY</h2>
+                <p>CUSTOM DAILY SUMMARIES REPORT – <?= htmlspecialchars($drugName, ENT_QUOTES, 'UTF-8') ?></p>
+            </div>
+            <div class="form-version">
+                <p>VER. SEP. 2025</p>
+            </div>
+        </div>
+
+        <div class="content-wrapper">
+            <form method="GET">
+                <div class="form-group-1">
+                    <div>
+                        <label>Facility Name:</label>
+                        <input type="text" readonly value="<?= htmlspecialchars($facilityName, ENT_QUOTES, 'UTF-8') ?>">
                     </div>
-                </form>
-                <hr style="height: 2px; background-color: black; border: none;">
-        <table>
-            <thead>
-                <tr>
-                    <th>DATE</th>
-                    <th>Receipt (from stores - mL)</th>
-                    <th>Amount dispensed in mL</th>
-                    <th>Closing Bal in dispensing area (mL)</th>
-                    <th>Name of Issuer</th>
-                    <th>Designation</th>
-                    <th>PPB Reg/Enrol No.</th>
-                    <th>No. of clients dispensed</th>
-                    <th>Comments</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>2025-11-01</td><td>10000</td><td><?php include '../countsFormp7/MethadoneBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/MethadoneRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/Methadonedisp.php' ?></td><td></td><td></td><td></td><td></td><td></td>
-                </tr>
-                <tr>
-                    <td>Buprenorphine 2mg</td><td>28 tabs</td><td><?php include '../countsFormp7/Buprenorphine2mgBB.php' ?></td><td style='color: red;'><?php include '../countsFormp7/Buprenorphine2mgRcvd.php' ?></td><td style='color: blue;'><?php include '../countsFormp7/Buprenorphine2mgdisp.php' ?></td><td></td><td></td><td></td><td></td><td></td>
-                </tr>
+                    <div>
+                        <label>MFL Code:</label>
+                        <input type="text" readonly value="<?= htmlspecialchars($mflCode, ENT_QUOTES, 'UTF-8') ?>">
+                    </div>
+                    <div>
+                        <label>County:</label>
+                        <input type="text" readonly value="<?= htmlspecialchars($countyName, ENT_QUOTES, 'UTF-8') ?>">
+                    </div>
+                    <div>
+                        <label>Sub-County:</label>
+                        <input type="text" readonly value="<?= htmlspecialchars($subcountyName, ENT_QUOTES, 'UTF-8') ?>">
+                    </div>
+                </div>
 
-            </tbody>
-        </table>
-        </body>
+                <div class="date-selectors">
+                    <div class="date-field">
+                        <label>Month:</label>
+                        <select name="month">
+                            <?php for ($m = 1; $m <= 12; $m++):
+                                $monthNum = str_pad($m, 2, '0', STR_PAD_LEFT);
+                                $monthName = date('F', mktime(0, 0, 0, $m, 1));
+                                $sel = ($monthNum == $selectedMonth) ? 'selected' : '';
+                            ?>
+                                <option value="<?= $monthNum ?>" <?= $sel ?>><?= $monthName ?></option>
+                            <?php endfor; ?>
+                        </select>
+                    </div>
+                    <div class="date-field">
+                        <label>Year:</label>
+                        <input type="number" name="year" value="<?= $selectedYear ?>" min="2000" max="2100">
+                    </div>
+                    <button type="submit">Update Report</button>
+                </div>
+            </form>
+
+            <hr>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>DATE</th>
+                            <th>Receipt (from stores – mL)</th>
+                            <th>Amount dispensed – mL</th>
+                            <th>Closing Bal (mL)</th>
+                            <th>Name of Issuer</th>
+                            <th>Received By</th>
+                            <th>No. of clients</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($periodEntries)): ?>
+                            <tr><td colspan="7" class="no-data">No data found for <?= date('F Y', strtotime($startDate)) ?>.</td></tr>
+                        <?php else: ?>
+                            <?php foreach ($periodEntries as $e): ?>
+                                <tr <?= ($e['to_dispensing'] == 0 && $e['dispensed'] == 0) ? 'class="blank-row"' : '' ?>>
+                                    <td><?= $e['date'] ?></td>
+                                    <td class="received"><?= number_format($e['to_dispensing'], 2) ?></td>
+                                    <td><?= number_format($e['dispensed'], 2) ?></td>
+                                    <td class="closing"><?= number_format($e['closing_bal'], 2) ?></td>
+                                    <td style="color:#000099;"><?= htmlspecialchars($e['issuer'], ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td><?= htmlspecialchars($e['receiver'], ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td><?= $e['clients'] ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Report Generated By: <?= htmlspecialchars($clinician_name, ENT_QUOTES, 'UTF-8') ?> on <?= date('Y-m-d H:i:s') ?></p> <button id="print-pdf" onclick="window.print()">Print PDF</button>
+        </div>
+    </div>
+</body>
 </html>

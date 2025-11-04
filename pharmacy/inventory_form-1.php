@@ -196,7 +196,7 @@ if (isset($conn) && !$conn->connect_error) $conn->close();
 <body>
 
 <div class="container">
-    <h2>Daily Drug Inventory Transaction Log</h2>
+    <h2>?? Drug Inventory Transaction Log</h2>
     <?php echo $message; ?>
 
     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">

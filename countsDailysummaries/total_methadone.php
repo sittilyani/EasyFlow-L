@@ -1,21 +1,21 @@
 <?php
 /**
- * clients_total_today.php
- * Returns number of UNIQUE clients who received Methadone on a SPECIFIC date
- * Usage: clients_total_today.php?date=2025-11-03
+ * total_methadone.php
+ * Returns total dosage dispensed on a SPECIFIC date (e.g. 220.50)
+ * Usage: total_methadone.php?date=2025-11-03
  */
 ob_start();
 include '../includes/config.php';
 
-// Get requested date
+// Get requested date (fallback to today if invalid)
 $requestedDate = $_GET['date'] ?? date('Y-m-d');
 if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $requestedDate)) {
     $requestedDate = date('Y-m-d');
 }
 
-// Query: count DISTINCT mat_id for Methadone on that day
+// Query: sum of dosage for Methadone on that exact day
 $sql = "
-    SELECT COUNT(DISTINCT mat_id) AS total_clients
+    SELECT COALESCE(SUM(dosage), 0) AS total_dosage
     FROM pharmacy
     WHERE DATE(dispDate) = ?
       AND dosage IS NOT NULL
@@ -24,7 +24,7 @@ $sql = "
 
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
-    echo '0';
+    echo '0.00';
     ob_end_flush();
     exit;
 }
@@ -33,9 +33,9 @@ $stmt->bind_param('s', $requestedDate);
 $stmt->execute();
 $result = $stmt->get_result();
 $row = $result->fetch_assoc();
-$clients = $row['total_clients'] ?? 0;
+$total = $row['total_dosage'] ?? 0;
 
 $stmt->close();
-echo (int)$clients;
+echo number_format((float)$total, 2, '.', '');
 ob_end_flush();
 ?>
