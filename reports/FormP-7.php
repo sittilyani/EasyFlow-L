@@ -132,6 +132,8 @@ $stmt->close();
             table td { padding: 0;  }
             table td input.int-input {  height: 100%;  min-height: 40px;  }
             .resupply-input {width: 100%;  height: 100%; background: #CCFFFF; "border: none; text-align: center; padding: 8px; box-sizing: border-box; }
+            .print-pdf{width: 120px; background: #333399; height: 40px; margin-top: 20px; color: #ffffff;             }
+
         </style>
 </head>
 <body>
@@ -258,7 +260,7 @@ $stmt->close();
                 <label>Date:</label><input type="date" name="mat_date">
             </div>
         </div>
-        <button id="print-pdf" onclick="window.print()">Print PDF</button>
+        <button id="print-pdf" onclick="window.print()" class="print-pdf">Print PDF</button>
     </div>
    <script src="../assets/js/bootstrap.min.js"></script>
        <script>

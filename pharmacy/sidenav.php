@@ -52,11 +52,13 @@ $user_id = $_SESSION['user_id'] ?? '';
                 <a href="../pharmacy/dispensing_pump.php" target="contentFrame" class="nav-link" style="background: yellow; color: #000000; margin-top: 10px;">
                     <i class="fa fa-ban"></i>Dispense with Pump</a>
                 <a href="../clinician/other_prescriptions.php" target="contentFrame" class="nav-link">
-                    <i class="fa fa-adjust"></i>General Prescriptions</a>
+                    <i class="fa fa-adjust"></i>Prescribe other drugs</a>
                 <a href="../pharmacy/prisons_module.php" target="contentFrame" class="nav-link">
                     <i class="fa fa-anchor"></i>Prisons Dispensing</a>
                 <a href="../pharmacy/retro_dispensing_module.php" target="contentFrame" class="nav-link">
                     <i class="fa fa-anchor"></i>Retro Dispensing</a>
+                <a href="../pharmacy/edit_dispensed_dose.php" target="contentFrame" class="nav-link" style="background: #ccccff; color: #000000; margin-top: 10px;">
+                    <i class="fa fa-anchor"></i>Delete dispensed doses</a>
                 <a href="../pharmacy/inventory_form.php" target="contentFrame" class="nav-link" style="background: #ccccff; color: #000000; margin-top: 10px;">
                     <i class="fa fa-anchor"></i>Daily Stores Inventory</a>
                 <a href="../pharmacy/add_stocks.php" target="contentFrame" class="nav-link">

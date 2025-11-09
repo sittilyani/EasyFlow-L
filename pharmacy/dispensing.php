@@ -110,6 +110,7 @@ if ($result->num_rows > 0) {
                     <a href='../pharmacy/view-missed.php?mat_id=" . $row['mat_id'] . "'>View</a> &#124;
                     <a href='dispensingData.php?mat_id=" . $row['mat_id'] . "'>DISPENSE</a> &#124;
                     <a href='multi_dispensing.php?mat_id=" . $row['mat_id'] . "'>MDD</a> &#124;
+                    <a href='../referrals/referral.php?mat_id=" . $row['mat_id'] . "'Refer</a> Refer
                 </td>
             </tr>";
     }

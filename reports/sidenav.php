@@ -50,22 +50,35 @@ $user_id = $_SESSION['user_id'] ?? '';
 
     <?php if (in_array($userrole, ['Super Admin','Admin', 'HRIO', 'Pharmacist'])) : ?>
 
-                <a href="../reports/daily_summaries.php" target="contentFrame" style="background: yellow; color: black;" class="nav-link">
-                    <i class="fa fa-calendar"></i>Daily Summaries</a>
-                <a href="../reports/formp-5.php" target="contentFrame" class="nav-link">
-                    <i class="fa fa-circle"></i>Form P 5</a>
-                <a href="../reports/formp-7.php" target="contentFrame" class="nav-link">
-                    <i class="fa fa-plus-square"></i>Form P 7</a>
-                <a href="../reports/formp-8.php" target="contentFrame" class="nav-link">
-                    <i class="fa fa-angle-double-down"></i>Form P 8</a>
-                <a href="../pharmacy/drugs_dispensed_range.php" target="contentFrame"  class="nav-link">
-                    <i class="fa fa-comment"></i>Drugs Dispensed</a>
-                <a href="../reports/moh_731-plus-6.php" target="contentFrame"  class="nav-link">
-                    <i class="fa fa-comment"></i>MOH 731 Plus-6</a>
-                <a href="../laboratory/toxicology_results.php" target="contentFrame" class="nav-link">
-                    <i class="fa fa-binoculars"></i>Toxicology Results</a>
-                <a href="psycho_socio_report.php" target="contentFrame" class="nav-link">
-                    <i class="fa fa-file"></i>Pyschosocial Report</a>
+        <a href="../reports/daily_summaries_methadone.php" target="contentFrame" style="background: #f5dd42; margin-top: 20px; color: black;" class="nav-link">
+            <i class="fa fa-calendar"></i>Daily Summaries - Methadone</a>
+        <a href="../reports/daily_summaries_buprenorphine2mg.php" target="contentFrame" style="background: #7ad2f0; margin-top: 20px; color: black;" class="nav-link">
+            <i class="fa fa-calendar"></i>Daily Summaries - Buprenorphine 2mg</a>
+        <a href="../reports/daily_summaries_buprenorphine8mg.php" target="contentFrame" style="background:#a3c9aa; margin-top: 20px; color: black;" class="nav-link">
+            <i class="fa fa-calendar"></i>Daily Summaries - Buprenorphine 8mg</a>
+        <a href="../reports/formp-5.php" target="contentFrame" class="nav-link">
+            <i class="fa fa-circle"></i>Form P 5</a>
+        <a href="../reports/formp-7.php" target="contentFrame" class="nav-link">
+            <i class="fa fa-plus-square"></i>Form P 7</a>
+        <a href="../reports/formp-8.php" target="contentFrame" class="nav-link">
+            <i class="fa fa-angle-double-down"></i>Form P 8</a>
+        <a href="../pharmacy/drugs_dispensed_range.php" target="contentFrame"  class="nav-link">
+            <i class="fa fa-comment"></i>Drugs Dispensed</a>
+        <a href="../reports/moh_731-plus-6.php" target="contentFrame"  class="nav-link">
+            <i class="fa fa-comment"></i>MOH 731 Plus-6</a>
+        <a href="../laboratory/toxicology_results.php" target="contentFrame" class="nav-link">
+            <i class="fa fa-binoculars"></i>Toxicology Results</a>
+        <a href="psycho_socio_report.php" target="contentFrame" class="nav-link">
+            <i class="fa fa-file"></i>Pyschosocial Report</a>
+
+<?php elseif (in_array($userrole, ['clinician', 'Laboratory Scientist', 'Psychiatrist', 'psychologist'])) : ?>
+        <a href="../laboratory/toxicology_results.php" target="contentFrame" class="nav-link">
+            <i class="fa fa-binoculars"></i>Toxicology Results</a>
+        <a href="../reports/moh_731-plus-6.php" target="contentFrame"  class="nav-link">
+            <i class="fa fa-comment"></i>MOH 731 Plus-6</a>
+        <a href="psycho_socio_report.php" target="contentFrame" class="nav-link">
+            <i class="fa fa-file"></i>Pyschosocial Report</a>
+
 <?php endif; ?>
 </div>
 

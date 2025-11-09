@@ -164,11 +164,11 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
         <div class="form-group"><h2>Update Patient Information</h2></div>
         
         <?php if (!empty($successMessage)): ?>
-            <div class="message success"><?php echo $successMessage; ?></div>
+            <div class="message success" style="background: #CCFFCC; height: 50px;"><?php echo $successMessage; ?></div>
         <?php endif; ?>
 
         <?php if (!empty($errorMessage)): ?>
-            <div class="message error"><?php echo $errorMessage; ?></div>
+            <div class="message error"  style="background: #FFC7D2; height: 50px;"><?php echo $errorMessage; ?></div>
         <?php endif; ?>
 
         <form method="post">

@@ -49,10 +49,10 @@ $user_id = $_SESSION['user_id'] ?? '';
     <a href="../dashboard/dashboard.php" class="nav-link home-link">
         <i class="fa fa-home"></i>Home
     </a>
-    <a href="../clinician/treatment-old.php" target="contentFrame" class="nav-link"  style="background: yellow; color: #000000;">
+    <a href="../clinician/treatment-old.php" target="contentFrame" class="nav-link"  style="background: yellow; margin-top: 10px; color: #000000;">
         <i class="fa fa-stethoscope"></i>CCC Follow Up - OLD</a>
-    <a href="../clinician/clinician_follow_up_form.php" target="contentFrame" class="nav-link">
-        <i class="fa fa-stethoscope"></i>CCC Clinical Follow Up Form</a>
+    <a href="../clinician/clinician_follow_up_form.php" target="contentFrame" class="nav-link" style="background: #cff0ce; margin-top: 10px; color: #000000;">
+        <i class="fa fa-stethoscope"></i>CCC Clinical Follow Up - NEW</a>
     <a href="../clinician/clinical_encounter_search.php" target="contentFrame" class="nav-link">
         <i class="fa fa-stethoscope"></i>Clinical Initial Encounter Form</a>
 

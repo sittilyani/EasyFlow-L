@@ -45,18 +45,21 @@ $user_id = $_SESSION['user_id'] ?? '';
         User Profile
     </h2>
 
-    <!-- Home link - will navigate away from this page -->
-    <a href="../dashboard/dashboard.php" class="home-link">
-        <i class="fa fa-home"></i>Home
-    </a>
+        <!-- Home link - will navigate away from this page -->
+        <a href="../dashboard/dashboard.php" class="home-link">
+            <i class="fa fa-home"></i>Home
+        </a>
 
-    <a href="../public/reset_password.php" target="contentFrame" class="nav-link">
-        <i class="fa fa-key"></i>Change Password</a>
-        
-    <a href="../profile/profile.php" target="contentFrame" class="nav-link">
-        <i class="fa fa-user"></i>View Profile</a>
-    <a href="../public/reset_user_password.php" target="contentFrame" class="nav-link">
-        <i class="fa fa-user"></i>Reset Other Password</a>
+        <a href="../public/reset_password.php" target="contentFrame" class="nav-link">
+            <i class="fa fa-key"></i>Change Password</a>
+
+        <a href="../profile/profile.php" target="contentFrame" class="nav-link">
+            <i class="fa fa-user"></i>View Profile</a>
+
+    <?php if (in_array($userrole, ['Super Admin','Admin', 'Pharmacist'])) : ?>
+        <a href="../public/reset_user_password.php" target="contentFrame" class="nav-link">
+            <i class="fa fa-user"></i>Reset Other Password</a>
+    <?php endif; ?> 
 </div>
 
 <div class="main">

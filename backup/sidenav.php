@@ -51,8 +51,10 @@ $user_id = $_SESSION['user_id'] ?? '';
     <a href="../backup/updatecurrent_status.php" class="nav-link">
         <i class="fas fa-user-plus"></i>Update patients current status </a>
 
-    <a href="../backup/view_backups.php" target="contentFrame" class="nav-link">
-        <i class="fas fa-user-plus"></i>View Backups</a>
+    <a href="../backup/view_backups-manual.php" target="contentFrame" class="nav-link">
+        <i class="fas fa-user-plus"></i>View Manual Backups</a>
+    <a href="../backup/view_backups-auto.php" target="contentFrame" class="nav-link">
+        <i class="fas fa-user-plus"></i>View Auto Backups</a>
 
 </div>
 

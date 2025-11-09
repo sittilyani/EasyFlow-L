@@ -122,6 +122,7 @@ $rolePermissions = [
         'cards' => [
             'BackUp and Refresh' => '../backup/sidenav.php',
             'Patient Management' => '../patients/sidenav.php',
+            'View Referrals' => '../referrals/sidenav.php',
             'Reports Management' => '../reports/sidenav.php',
             'Biometrics' => '../biometrics/sidenav.php',
             'Profile' => '../profile/sidenav.php',
@@ -160,6 +161,19 @@ $rolePermissions = [
         'cards' => [
             'BackUp and Refresh' => '../backup/sidenav.php',
             'Patient Management' => '../patients/sidenav.php',
+            'View Referrals' => '../referrals/sidenav.php',
+            'Reports Management' => '../reports/sidenav.php',
+            'Biometrics' => '../biometrics/sidenav.php',
+            'Profile' => '../profile/sidenav.php',
+            'Appointments' => '../appointments/sidenav.php',
+        ],
+        'sidebars' => [],
+    ],
+    'nursing' => [
+        'cards' => [
+            'BackUp and Refresh' => '../backup/sidenav.php',
+            'Patient Management' => '../patients/sidenav.php',
+            'View Referrals' => '../referrals/sidenav.php',
             'Reports Management' => '../reports/sidenav.php',
             'Biometrics' => '../biometrics/sidenav.php',
             'Profile' => '../profile/sidenav.php',

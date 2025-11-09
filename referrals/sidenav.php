@@ -177,27 +177,17 @@ $user_id = $_SESSION['user_id'] ?? '';
         Patient referrals
     </h2>
 
-    <?php if ($userrole == 'Clinician') : ?>
+    <?php if (in_array($userrole, ['clinician', 'Pharmacist', 'Psychologist', 'Laboratory Scientist', 'Peer Educator', 'HRIO', 'Psychiatrist', 'Data manager', 'Guest', 'Nursing'])) : ?>
     <!-- Home link - will navigate away from this page -->
         <a href="../dashboard/dashboard.php" class="nav-link home-link">
             <i class="fa fa-home"></i>Home
         </a>
-
-        <a href="../backup/backup.php" class="nav-link">
-            <i class="fa fa-database"></i>Backup System</a>
-
-        <a href="../backup/updatecurrent_status.php" class="nav-link">
-            <i class="fa fa-user-plus"></i>Update patients current status </a>
 
         <a href="../referrals/dashboard_completed.php" target="contentFrame" class="nav-link">
             <i class="fa fa-check"></i>Show Completed Referrals</a>
 
         <a href="../referrals/referral_dashboard.php" target="contentFrame" class="nav-link">
             <i class="fa fa-bug"></i>Show pending referrals</a>
-        <a href="../referrals/view_referral_pending.php" target="contentFrame" class="nav-link">
-            <i class="fa fa-bug"></i>View pending referrals</a>
-        <a href="../referrals/edit_referral_pending.php" target="contentFrame" class="nav-link">
-            <i class="fa fa-bug"></i>Edit pending referrals</a>
 
     <?php elseif (in_array($userrole, ['Admin', 'Super Admin'])) : ?>
         <!-- Home link - will navigate away from this page -->
@@ -205,11 +195,6 @@ $user_id = $_SESSION['user_id'] ?? '';
             <i class="fa fa-home"></i>Home
         </a>
 
-        <a href="../backup/backup.php" class="nav-link">
-            <i class="fa fa-database"></i>Backup System</a>
-
-        <a href="../backup/updatecurrent_status.php" class="nav-link">
-            <i class="fa fa-user-plus"></i>Update patients current status </a>
 
         <a href="../referrals/dashboard_completed.php" target="contentFrame" class="nav-link">
             <i class="fa fa-check"></i>Show Completed Referrals</a>

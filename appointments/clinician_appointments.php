@@ -13,7 +13,7 @@ try {
     $sql = "SELECT id, visitDate, mat_id, clientName, nickName, sname, dob, reg_date, sex, hiv_status, marital_status,
             art_regimen, regimen_type, tb_status, hepc_status, other_status, clinical_notes, current_status,
             last_vlDate, results, clinician_name, next_appointment, rx_date, appointment_status
-            FROM medical_history
+            FROM patients
             WHERE next_appointment BETWEEN ? AND ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('ss', $startDate, $endDate);

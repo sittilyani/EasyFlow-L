@@ -77,11 +77,8 @@ if (isset($_GET['message'])) {
                     <th>MAT ID</th>
                     <th>MAT Number</th>
                     <th>Client Name</th>
-                    <th>Date of Birth</th>
                     <th>Age</th>
                     <th>Sex</th>
-                    <th>Physical Address</th>
-                    <th>CSO</th>
                     <th>Drug</th>
                     <th>Dosage</th>
                     <th>Current Status</th>
@@ -95,11 +92,8 @@ if (isset($_GET['message'])) {
                     <td>" . $row['mat_id'] . "</td>
                     <td>" . $row['mat_number'] . "</td>
                     <td>" . $row['clientName'] . "</td>
-                    <td>" . $row['dob'] . "</td>
                     <td>" . $row['age'] . "</td>
                     <td>" . $row['sex'] . "</td>
-                    <td>" . $row['p_address'] . "</td>
-                    <td>" . $row['cso'] . "</td>
                     <td>" . $row['drugname'] . "</td>
                     <td>" . $row['dosage'] . "</td>
                     <td>" . $row['current_status'] . "</td>

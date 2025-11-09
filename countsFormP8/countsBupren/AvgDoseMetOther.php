@@ -8,10 +8,10 @@ $currentYear = date('Y');
 
 // SQL query to calculate the average dosage
 $sql = "SELECT AVG(d.dosage) AS average_dosage
-        FROM pharmacy d
-        JOIN patients p ON d.mat_id = p.mat_id
-        WHERE d.drugname LIKE 'buprenorphine%'
-        AND p.sex NOT IN ('male', 'female')
+        FROM pharmacy
+
+        WHERE drugname LIKE 'buprenorphine%'
+        AND sex NOT IN ('male', 'female')
         AND MONTH(d.visitDate) = ?
         AND YEAR(d.visitDate) = ?";
 

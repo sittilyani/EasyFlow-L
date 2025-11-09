@@ -71,6 +71,9 @@ $defaultData = [
     'dob' => '',
     'age' => '',
     'reg_date' => '',
+    'art_regimen' => '',
+    'regimen_type' => '',
+    'tb_status' => '',
     'sex' => '',
     'marital_status' => '',
     'current_status' => '',
@@ -104,78 +107,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Clinician Form</title>
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css" type="text/css">
     <style>
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            grid-gap: 20px;
-            background-color: #99FFBB;
-            margin: 0 50px;
-            padding: 20px;
-        }
-        .form-control, input, select {
-            width: 80%;
-            height: 30px;
-            margin-bottom: 15px;
-            margin-top: 10px;
-        }
-        label {
-            font-weight: bold;
-        }
-        h2 {
-            color: #2C3162;
-            margin-top: 20px;
-            margin-left: 50px;
-        }
-        #btn-submit {
-            width: 250px;
-            color: white;
-            background-color: #2C3162;
-            height: 35px;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-        }
-        .readonly-input {
-            background-color: #E8E8E8;
-            cursor: not-allowed;
-        }
-        textarea {
-            width: 80%;
-            height: 80px;
-        }
-        .alert {
-            padding: 15px;
-            margin: 20px 50px;
-            border: 1px solid transparent;
-            border-radius: 4px;
-        }
-        .alert-success {
-            color: #3c763d;
-            background-color: #dff0d8;
-            border-color: #d6e9c6;
-        }
-        .alert-danger {
-            color: #a94442;
-            background-color: #f2dede;
-            border-color: #ebccd1;
-        }
-    </style>
+        .grid-container{display:grid;grid-template-columns:repeat(5,1fr);grid-gap:20px;background-color:#9FB;margin:0 50px;padding:20px}
+        .form-control,input,select{width:80%;height:30px;margin-bottom:15px;margin-top:10px}
+        label{font-weight:bold}
+        h2{color:#2C3162;margin-top:20px;margin-left:50px}
+        #btn-submit{width:250px;color:#fff;background-color:#2C3162;height:35px;border-radius:5px;border:none;cursor:pointer}
+        .readonly-input{background-color:#E8E8E8;cursor:not-allowed}
+        textarea{width:80%;height:80px}
+        .alert{padding:15px;margin:20px 50px;border:1px solid transparent;border-radius:4px}
+        .alert-success{color:#3c763d;background-color:#dff0d8;border-color:#d6e9c6}
+        .alert-danger{color:#a94442;background-color:#f2dede;border-color:#ebccd1}
+</style>
     <script>
+
         function toggleARTFields() {
             const hivStatus = document.getElementById('hiv_status').value;
             const artRegimen = document.getElementById('art_regimen');
             const regimenType = document.getElementById('regimen_type');
+
             if (hivStatus === 'Negative') {
                 artRegimen.disabled = true;
                 regimenType.disabled = true;
+                artRegimen.value = 'None';
+                regimenType.value = 'None';
             } else {
                 artRegimen.disabled = false;
                 regimenType.disabled = false;
             }
         }
 
-        // Initialize ART fields on page load
-        document.addEventListener('DOMContentLoaded', toggleARTFields);
+        // Re-enable fields before form submission so they get submitted
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleARTFields();
+
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                // Temporarily enable disabled fields before submission
+                const artRegimen = document.getElementById('art_regimen');
+                const regimenType = document.getElementById('regimen_type');
+
+                if (artRegimen.disabled) {
+                    artRegimen.disabled = false;
+                    artRegimen.value = 'None';
+                }
+                if (regimenType.disabled) {
+                    regimenType.disabled = false;
+                    regimenType.value = 'None';
+                }
+            });
+        });
     </script>
 </head>
 <body>
@@ -204,8 +184,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <?php if (!empty($combinedData['p_id'])): ?>
-        <form action="clinicianForm_process.php" method="post" class="post">
+        <form action="clinicianForm_process-old.php" method="post" class="post">
             <input type="hidden" name="p_id" value="<?php echo htmlspecialchars($combinedData['p_id']); ?>">
+            <input type="hidden" name="current_status" value="<?php echo htmlspecialchars($combinedData['current_status']); ?>">
+            <input type="hidden" name="clinician_name" value="<?php echo htmlspecialchars($clinician_name); ?>">
             <div class="grid-container">
                 <div class="grid-item">
                     <label for="visitDate">Visit Date</label><br>

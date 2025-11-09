@@ -7,13 +7,12 @@ $currentMonth = date('m');
 $currentYear = date('Y');
 
 // SQL query to calculate the average dosage
-$sql = "SELECT AVG(d.dosage) AS average_dosage
-        FROM pharmacy d
-        JOIN patients p ON d.mat_id = p.mat_id
-        WHERE d.drugname = 'Methadone'
-        AND p.sex = 'male'
-        AND MONTH(d.visitDate) = ?
-        AND YEAR(d.visitDate) = ?";
+$sql = "SELECT AVG(dosage) AS average_dosage
+        FROM pharmacy
+        WHERE drugname = 'Methadone'
+        AND sex = 'male'
+        AND MONTH(visitDate) = ?
+        AND YEAR(visitDate) = ?";
 
 // Prepare the statement
 $stmt = $conn->prepare($sql);

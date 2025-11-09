@@ -1,19 +1,7 @@
 <?php
 session_start();
 include "../includes/config.php";
-include "../includes/footer.php";
-include "../includes/header.php";
 
-$host = 'localhost';
-$db = 'methadone';
-$user = 'root';
-$pass = '';
-$charset = 'utf8mb4';
-
-$mysqli = new mysqli($host, $user, $pass, $db);
-if ($mysqli->connect_error) {
-    die("Connection failed: " . $mysqli->connect_error);
-}
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -24,7 +12,7 @@ $loggedInUserId = $_SESSION['user_id'];
 // Fetch the logged-in user's name
 $hcw_name = 'Unknown';
 $userQuery = "SELECT first_name, last_name FROM tblusers WHERE user_id = ?";
-$stmt = $mysqli->prepare($userQuery);
+$stmt = $conn->prepare($userQuery);
 $stmt->bind_param('i', $loggedInUserId);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -41,7 +29,7 @@ $userId = isset($_GET['p_id']) ? (int)$_GET['p_id'] : null;
 $currentSettings = null;
 if ($userId) {
     $query = "SELECT * FROM patients WHERE p_id = ?";
-    $stmt = $mysqli->prepare($query);
+    $stmt = $conn->prepare($query);
     $stmt->bind_param('i', $userId);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -52,7 +40,7 @@ if ($userId) {
 // Fetch status options from "status" table
 $statusOptions = [];
 $statusQuery = "SELECT status_name FROM status";
-$statusResult = $mysqli->query($statusQuery);
+$statusResult = $conn->query($statusQuery);
 while ($statusRow = $statusResult->fetch_assoc()) {
     $statusOptions[] = $statusRow['status_name'];
 }
@@ -60,7 +48,7 @@ while ($statusRow = $statusResult->fetch_assoc()) {
 // Fetch route options from "administrationroutes" table
 $routesOptions = [];
 $routesQuery = "SELECT routetype FROM administrationroutes";
-$routesResult = $mysqli->query($routesQuery);
+$routesResult = $conn->query($routesQuery);
 while ($routesRow = $routesResult->fetch_assoc()) {
     $routesOptions[] = $routesRow['routetype'];
 }
@@ -68,7 +56,7 @@ while ($routesRow = $routesResult->fetch_assoc()) {
 // Fetch drugs options from "drug" table
 $drugsOptions = [];
 $drugsQuery = "SELECT drugname FROM drug";
-$drugsResult = $mysqli->query($drugsQuery);
+$drugsResult = $conn->query($drugsQuery);
 while ($drugsRow = $drugsResult->fetch_assoc()) {
     $drugsOptions[] = $drugsRow['drugname'];
 }
@@ -76,7 +64,7 @@ while ($drugsRow = $drugsResult->fetch_assoc()) {
 // Fetch dosage options from "dosing" table
 $dosagesOptions = [];
 $dosagesQuery = "SELECT dosage FROM dosing";
-$dosagesResult = $mysqli->query($dosagesQuery);
+$dosagesResult = $conn->query($dosagesQuery);
 while ($dosagesRow = $dosagesResult->fetch_assoc()) {
     $dosagesOptions[] = $dosagesRow['dosage'];
 }
@@ -84,7 +72,7 @@ while ($dosagesRow = $dosagesResult->fetch_assoc()) {
 // Fetch duration options from "durationunits" table
 $durationsOptions = [];
 $durationsQuery = "SELECT duration FROM durationunits";
-$durationsResult = $mysqli->query($durationsQuery);
+$durationsResult = $conn->query($durationsQuery);
 while ($durationsRow = $durationsResult->fetch_assoc()) {
     $durationsOptions[] = $durationsRow['duration'];
 }
@@ -92,7 +80,7 @@ while ($durationsRow = $durationsResult->fetch_assoc()) {
 // Fetch available drugs from stock_movements (for stock checking)
 $drugs = [];
 $drugQuery = "SELECT MAX(drugID) AS drugID, drugname FROM stock_movements WHERE total_qty > 0 GROUP BY drugname ORDER BY drugname";
-$drugResult = $mysqli->query($drugQuery);
+$drugResult = $conn->query($drugQuery);
 while ($row = $drugResult->fetch_assoc()) {
     $drugs[] = $row;
 }
@@ -101,7 +89,7 @@ while ($row = $drugResult->fetch_assoc()) {
 $prescriptions = [];
 if ($currentSettings) {
     $prescriptionQuery = "SELECT * FROM other_prescriptions WHERE mat_id = ? ORDER BY date_created DESC";
-    $prescriptionStmt = $mysqli->prepare($prescriptionQuery);
+    $prescriptionStmt = $conn->prepare($prescriptionQuery);
     $prescriptionStmt->bind_param('s', $currentSettings['mat_id']);
     $prescriptionStmt->execute();
     $prescriptionResult = $prescriptionStmt->get_result();
@@ -116,7 +104,7 @@ $successMessages = [];
 $errorMessages = [];
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["update"])) {
     try {
-        $mysqli->begin_transaction();
+        $conn->begin_transaction();
         $current_status = $_POST['current_status'];
 
         if ($current_status !== "Active") {
@@ -135,7 +123,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["update"])) {
         $reasons = $_POST['reasons'];
 
         $query = "UPDATE patients SET mat_id = ?, mat_number = ?, clientName = ?, sname = ?, dob = ?, sex = ?, p_address = ?, dosage = ?, reasons = ?, current_status = ? WHERE p_id = ?";
-        $stmt = $mysqli->prepare($query);
+        $stmt = $conn->prepare($query);
         $stmt->bind_param('ssssssssssi', $mat_id, $mat_number, $clientName, $sname, $dob, $sex, $p_address, $dosage, $reasons, $current_status, $userId);
         if ($stmt->execute()) {
             $successMessages[] = "Patient dosage updated successfully";
@@ -156,7 +144,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["update"])) {
                 if ($dosage > 0 && $duration > 0 && !empty($drugName) && !empty($routetype)) {
                     // Check stock
                     $stockQuery = "SELECT total_qty FROM stock_movements WHERE drugname = ? ORDER BY trans_date DESC LIMIT 1";
-                    $stockStmt = $mysqli->prepare($stockQuery);
+                    $stockStmt = $conn->prepare($stockQuery);
                     $stockStmt->bind_param('s', $drugName);
                     $stockStmt->execute();
                     $stockStmt->bind_result($currentStock);
@@ -170,12 +158,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["update"])) {
 
                     // Insert into other_prescriptions
                     $insertPrescriptionQuery = "INSERT INTO other_prescriptions (mat_id, clientName, sex, age, drugName, routetype, dosage, duration, totalDose) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                    $prescriptionStmt = $mysqli->prepare($insertPrescriptionQuery);
+                    $prescriptionStmt = $conn->prepare($insertPrescriptionQuery);
                     $prescriptionStmt->bind_param('sssssssdi', $mat_id, $clientName, $sex, $currentSettings['age'], $drugName, $routetype, $dosage, $duration, $totalDose);
                     if ($prescriptionStmt->execute()) {
                         // Update stock
                         $updateStockQuery = "UPDATE stock_movements SET total_qty = total_qty - ? WHERE drugname = ? ORDER BY trans_date DESC LIMIT 1";
-                        $updateStockStmt = $mysqli->prepare($updateStockQuery);
+                        $updateStockStmt = $conn->prepare($updateStockQuery);
                         $updateStockStmt->bind_param('ds', $totalDose, $drugName);
                         $updateStockStmt->execute();
                         $updateStockStmt->close();
@@ -190,9 +178,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["update"])) {
             }
         }
 
-        $mysqli->commit();
+        $conn->commit();
     } catch (Exception $e) {
-        $mysqli->rollback();
+        $conn->rollback();
         $errorMessages[] = 'Error: ' . $e->getMessage();
     }
 }
