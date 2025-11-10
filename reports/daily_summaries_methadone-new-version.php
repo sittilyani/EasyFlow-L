@@ -50,8 +50,8 @@ $endDate   = date('Y-m-t', strtotime($startDate));
 // ---------------------------------------------------------------
 // 4. DRUG SELECTION - HARD-CODED
 // ---------------------------------------------------------------
-$drugID   = 8;
-$drugName = 'Buprenorphine 8mg';
+$drugID   = 2;
+$drugName = 'Methadone';
 
 // ---------------------------------------------------------------
 // 5. OPENING BALANCE & PERIOD DATA QUERIES
@@ -109,7 +109,7 @@ $sqlPharmacy = "SELECT
     COUNT(DISTINCT mat_id) AS client_count
 FROM pharmacy
 WHERE DATE(dispDate) BETWEEN ? AND ?
-    AND drugname = 'Buprenorphine 8mg'
+    AND drugname = 'Methadone'
     AND dosage IS NOT NULL
 GROUP BY DATE(dispDate)
 ORDER BY disp_date";
@@ -150,18 +150,14 @@ while ($cur <= $end) {
     // The running balance from the end of the previous day is the opening balance for today.
     $dailyOpeningBal = $runningBalance;
 
-    // Calculate pharmacy balance (receipt - dispensed)
-    $pharmBal = $receipt - $dispensed;
-
     // Calculate the closing balance for today
     $newClosingBal = $dailyOpeningBal + $receipt - $dispensed;
 
     $periodEntries[] = [
         'date'          => $dateKey,
-        'opening_bal'   => $dailyOpeningBal,
+        'opening_bal'   => $dailyOpeningBal, // New Field
         'to_dispensing' => $receipt,
         'dispensed'     => $dispensed,
-        'pharm_bal'     => $pharmBal, // NEW: Pharmacy Balance
         'closing_bal'   => $newClosingBal,
         'issuer'        => $stores['issuer'] ?? '',
         'receiver'      => $stores['receiver'] ?? '',
@@ -190,7 +186,7 @@ $clinician_name = $_SESSION['full_name'] ?? "User #{$loggedInUserId}";
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);padding:30px 20px;min-height:100vh}
         .container{max-width:95%;margin:0 auto;background:#fff;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.1);overflow:hidden}
-        .form-header{background: #a3c9aa; color:#000000;padding:30px 40px;display:grid;grid-template-columns:100px 1fr 150px;align-items:center;gap:20px}
+        .form-header{background:#f5dd42;color:#000;padding:30px 40px;display:grid;grid-template-columns:100px 1fr 150px;align-items:center;gap:20px}
         .logo-left img{width:120px;height:120px;object-fit:contain;padding:8px;border-radius:8px}
         .title-center{text-align:center}
         .title-center h2{font-size:28px;font-weight:700;margin-bottom:8px;letter-spacing:1px}
@@ -205,8 +201,8 @@ $clinician_name = $_SESSION['full_name'] ?? "User #{$loggedInUserId}";
         button:active{transform:translateY(0)}
         hr{border:none;height:1px;background:linear-gradient(to right,transparent,#e0e0e0,transparent);margin:30px 0}
         .table-wrapper{overflow-x:auto;margin:30px 0;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
-        table{width:100%;border-collapse:collapse;background:#fff;min-width:1100px;}
-        thead{background:#a3c9aa;color:#000000;}
+        table{width:100%;border-collapse:collapse;background:#fff;min-width:1000px;}
+        thead{background:#f5dd42;color:#000}
         th{padding:16px 12px;text-align:left;font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.5px}
         tbody tr{border-bottom:1px solid #f0f0f0;transition:all .2s ease}
         tbody tr:hover{background:#f8f9ff}
@@ -214,7 +210,6 @@ $clinician_name = $_SESSION['full_name'] ?? "User #{$loggedInUserId}";
         td{padding:14px 12px;font-size:14px;color:#444}
         td.bal{font-weight:600;color:#009;}
         td.received{font-weight:600;color:#28a745}
-        td.pharm-bal{font-weight:600;color:#ff6b00} /* NEW: Pharmacy balance style */
         td.closing{font-weight:600;color:#009}
         .no-data{color:#dc3545!important;text-align:center;font-weight:600;padding:30px!important}.footer{background:#f8f9fa;padding:20px 40px;border-top:3px solid #009;margin-top:30px}
         .footer p{color:#666;font-size:13px;text-align:center}
@@ -224,7 +219,7 @@ $clinician_name = $_SESSION['full_name'] ?? "User #{$loggedInUserId}";
         .logo-left{margin:0 auto}.form-version{text-align:center}
         .form-group-1{grid-template-columns:1fr}
         .content-wrapper{padding:20px}
-        table{min-width: 900px;}
+        table{min-width: 800px;}
         .table-wrapper{overflow-x: scroll;}
         }
 
@@ -297,10 +292,9 @@ $clinician_name = $_SESSION['full_name'] ?? "User #{$loggedInUserId}";
                     <thead>
                         <tr>
                             <th>DATE</th>
-                            <th>Opening Bal (mL)</th>
+                            <th>Opening Bal (mL)</th> <!-- NEW COLUMN FOR OPENING BALANCE -->
                             <th>Receipt (from stores - mL)</th>
                             <th>Amount dispensed - mL</th>
-                            <th>Pharmacy Balance (mL)</th> <!-- NEW COLUMN -->
                             <th>Closing Bal (mL)</th>
                             <th>Name of Issuer</th>
                             <th>Received By</th>
@@ -309,15 +303,14 @@ $clinician_name = $_SESSION['full_name'] ?? "User #{$loggedInUserId}";
                     </thead>
                     <tbody>
                         <?php if (empty($periodEntries)): ?>
-                            <tr><td colspan="9" class="no-data">No data found for <?= date('F Y', strtotime($startDate)) ?>.</td></tr>
+                            <tr><td colspan="8" class="no-data">No data found for <?= date('F Y', strtotime($startDate)) ?>.</td></tr>
                         <?php else: ?>
                             <?php foreach ($periodEntries as $e): ?>
                                 <tr <?= ($e['to_dispensing'] == 0 && $e['dispensed'] == 0) ? 'class="blank-row"' : '' ?>>
                                     <td><?= $e['date'] ?></td>
-                                    <td class="bal"><?= number_format($e['opening_bal'], 2) ?></td>
+                                    <td class="bal"><?= number_format($e['opening_bal'], 2) ?></td> <!-- Display Opening Balance -->
                                     <td class="received"><?= number_format($e['to_dispensing'], 2) ?></td>
                                     <td><?= number_format($e['dispensed'], 2) ?></td>
-                                    <td class="pharm-bal"><?= number_format($e['pharm_bal'], 2) ?></td> <!-- NEW: Pharmacy Balance -->
                                     <td class="closing"><?= number_format($e['closing_bal'], 2) ?></td>
                                     <td style="color:#000099;"><?= htmlspecialchars($e['issuer'], ENT_QUOTES, 'UTF-8') ?></td>
                                     <td><?= htmlspecialchars($e['receiver'], ENT_QUOTES, 'UTF-8') ?></td>

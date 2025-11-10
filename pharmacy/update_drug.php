@@ -64,7 +64,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Drug</title>
+    <title>Update Drug/Item</title>
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css">
     <link rel="stylesheet" href="../assets/css/forms.css" type="text/css">
     <style>
@@ -92,15 +92,15 @@ $conn->close();
 <body>
 
     <div class="content-main">
-        <h2>Update Drug Details</h2>
+        <h2>Update Drug/Item Details</h2>
         <form action="update_drug.php?drugID=<?php echo $drugID; ?>" method="post">
             <!-- Display existing drug details in the form -->
             <div class="form-group">
-                <label for="drugName">Drug Name:</label>
+                <label for="drugName">Drug/Item Name:</label>
                 <input type="text" id="drugName" name="drugName" value="<?php echo $drug['drugName']; ?>" required>
             </div>
             <div class="form-group">
-                <label for="drugCategory">Drug Category:</label>  
+                <label for="drugCategory">Drug/Item Category:</label>
                 <input type="text" id="drugCategory" name="drugCategory" value="<?php echo $drug['drugCategory']; ?>">
             </div>
             <div class="form-group">
@@ -113,7 +113,7 @@ $conn->close();
             </div>
 
             <!-- Add or modify fields as needed -->
-            <button type="submit" class="custom-submit-btn">Update Drug</button>
+            <button type="submit" class="custom-submit-btn">Update Drug or Item</button>
         </form>
     </div>
 </body>

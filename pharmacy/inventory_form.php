@@ -190,7 +190,13 @@ if (isset($conn) && !$conn->connect_error) $conn->close();
 <head>
     <title>Drug Inventory Transaction</title>
     <style>
-        body{font-family:Arial,sans-serif;background-color:#f4f4f4;padding:20px}.container{max-width:600px;margin:0 auto;background:#fff;padding:30px;border-radius:8px;box-shadow:0 0 10px rgba(0,0,0,.1)}h2{text-align:center;color:#000099;margin-bottom:20px}.form-group{margin-bottom:15px}label{display:block;margin-bottom:5px;font-weight:700}input[type=text],input[type=number],input[type=datetime-local],select{width:100%;padding:10px;border:1px solid #ccc;border-radius:4px;box-sizing:border-box}.transaction-fields{padding:15px;border:1px dashed #ccc;margin-top:10px;border-radius:5px;background-color:#fafafa}.hidden{display:none}.submit-btn{background-color:#4CAF50;color:#fff;padding:10px 15px;border:none;border-radius:4px;cursor:pointer;width:100%;font-size:16px}.submit-btn:hover{background-color:#45a049}.success-message{background-color:#d4edda;color:#155724;border:1px solid #c3e6cb;padding:10px;margin-bottom:15px;border-radius:4px}.error-message{background-color:#f8d7da;color:#721c24;border:1px solid #f5c6cb;padding:10px;margin-bottom:15px;border-radius:4px}
+        body{font-family:Arial,sans-serif;background-color:#f4f4f4;padding:20px}
+        .container{max-width:600px;margin:0 auto;background:#fff;padding:30px;border-radius:8px;box-shadow:0 0 10px rgba(0,0,0,.1)}h2{text-align:center;color:#000099;margin-bottom:20px}
+        .form-group{margin-bottom:15px}
+        label{display:block;margin-bottom:5px;font-weight:700}
+        input[type=text],input[type=number],input[type=datetime-local],select{width:100%;padding:10px;border:1px solid #ccc;border-radius:4px;box-sizing:border-box}
+        .transaction-fields{padding:15px;border:1px dashed #ccc;margin-top:10px;border-radius:5px;background-color:#fafafa}
+        .hidden{display:none}.submit-btn{background-color:#b1f0c2;color:#000000;padding:10px 15px;border:none;border-radius:4px;cursor:pointer;width:100%;font-size:16px}.submit-btn:hover{background-color:#45a049}.success-message{background-color:#d4edda;color:#155724;border:1px solid #c3e6cb;padding:10px;margin-bottom:15px;border-radius:4px}.error-message{background-color:#f8d7da;color:#721c24;border:1px solid #f5c6cb;padding:10px;margin-bottom:15px;border-radius:4px}
     </style>
 </head>
 <body>
@@ -205,8 +211,8 @@ if (isset($conn) && !$conn->connect_error) $conn->close();
             <label for="transaction_type">Transaction Type:</label>
             <select id="transaction_type" name="transaction_type" required onchange="toggleFields()">
                 <option value="">Select Type</option>
+                <option value="issue" style='color: red;'>Issue to Dispensing Area - &#10003</option>
                 <option value="receipt">Receipt from Supplier (Stock IN)</option>
-                <option value="issue">Issue to Dispensing Area (Stock OUT)</option>
             </select>
         </div>
 

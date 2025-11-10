@@ -193,13 +193,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
 <!-- Your HTML form for adding drugs -->
 <div class="main-content">
-    <div><h2>Add Other New Prescription Drugs</h2></div>
+    <div><h2>Add missing items</h2></div>
     <form action="add_other_drugs.php" method="post">
 
-        <label for="drugname">Drug Name:</label>
+        <label for="drugname">Item Name:</label>
         <input type="text" name="drugname" required>
 
-        <label for="drugCategory">Drug Category:</label>
+        <label for="drugCategory">Item Category:</label>
         <select name="drugCategory" required>
             <?php
             // Fetch only the catName column from drugCategory
@@ -220,7 +220,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <label for="price">Price</label>
         <input type="number" name="price">
 
-        <input type="submit" class="custom-submit-btn" value="Add Drug">
+        <input type="submit" class="custom-submit-btn" value="Add Drug/Item">
     </form>
 </div>
 

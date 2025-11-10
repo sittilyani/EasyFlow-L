@@ -29,7 +29,7 @@ if ($row = $res->fetch_assoc()) {
 $stmt->close();
 
 // ---------------------------------------------------------------
-// 3. MONTH SELECTION – DEFAULT = CURRENT MONTH
+// 3. MONTH SELECTION - DEFAULT = CURRENT MONTH
 // ---------------------------------------------------------------
 $now = new DateTime();
 $defaultYear  = $now->format('Y');
@@ -48,21 +48,39 @@ $startDate = "$selectedYear-$selectedMonth-01";
 $endDate   = date('Y-m-t', strtotime($startDate));
 
 // ---------------------------------------------------------------
-// 4. DRUG SELECTION – HARD-CODED
+// 4. DRUG SELECTION - HARD-CODED
 // ---------------------------------------------------------------
 $drugID   = 2;
 $drugName = 'Methadone';
 
 // ---------------------------------------------------------------
-// 5. SEPARATE QUERIES FOR BETTER ACCURACY
+// 5. OPENING BALANCE & PERIOD DATA QUERIES
 // ---------------------------------------------------------------
 
-// Query for stores inventory (receipts)
+// 5a. Fetch Opening Balance from last recorded stock movement before the start date
+$openingBal = 0.0;
+$sqlOpeningBal = "SELECT total_qty
+FROM stock_movements
+WHERE drugID = ?
+AND trans_date < ?
+ORDER BY trans_date DESC, trans_id DESC
+LIMIT 1";
+
+$stmtOpeningBal = $conn->prepare($sqlOpeningBal);
+$stmtOpeningBal->bind_param('is', $drugID, $startDate);
+$stmtOpeningBal->execute();
+$resultOpeningBal = $stmtOpeningBal->get_result();
+if ($row = $resultOpeningBal->fetch_assoc()) {
+    $openingBal = (float)$row['total_qty'];
+}
+$stmtOpeningBal->close();
+
+// 5b. Query for stores inventory (receipts)
 $sqlStores = "SELECT
-        DATE(transaction_date) AS trans_date,
-        SUM(to_dispensing) AS receipt,
-        MAX(issued_to_full_name) AS issuer,
-        MIN(received_by_full_name) AS receiver
+    DATE(transaction_date) AS trans_date,
+    SUM(to_dispensing) AS receipt,
+    MAX(issued_to_full_name) AS issuer,
+    MIN(received_by_full_name) AS receiver
 FROM stores_inventory
 WHERE DATE(transaction_date) BETWEEN ? AND ?
     AND drugID = ?
@@ -76,19 +94,19 @@ $resultStores = $stmtStores->get_result();
 
 $storesData = [];
 while ($row = $resultStores->fetch_assoc()) {
-        $storesData[$row['trans_date']] = [
-                'receipt' => (float)$row['receipt'],
-                'issuer' => $row['issuer'] ?? '',
-                'receiver' => $row['receiver'] ?? ''
-        ];
+    $storesData[$row['trans_date']] = [
+        'receipt' => (float)$row['receipt'],
+        'issuer' => $row['issuer'] ?? '',
+        'receiver' => $row['receiver'] ?? ''
+    ];
 }
 $stmtStores->close();
 
-// Query for pharmacy (dispensed amounts and client counts)
+// 5c. Query for pharmacy (dispensed amounts and client counts)
 $sqlPharmacy = "SELECT
-        DATE(dispDate) AS disp_date,
-        SUM(dosage) AS dispensed,
-        COUNT(DISTINCT mat_id) AS client_count
+    DATE(dispDate) AS disp_date,
+    SUM(dosage) AS dispensed,
+    COUNT(DISTINCT mat_id) AS client_count
 FROM pharmacy
 WHERE DATE(dispDate) BETWEEN ? AND ?
     AND drugname = 'Methadone'
@@ -103,41 +121,57 @@ $resultPharmacy = $stmtPharmacy->get_result();
 
 $pharmacyData = [];
 while ($row = $resultPharmacy->fetch_assoc()) {
-        $pharmacyData[$row['disp_date']] = [
-                'dispensed' => (float)$row['dispensed'],
-                'clients' => (int)$row['client_count']
-        ];
+    $pharmacyData[$row['disp_date']] = [
+        'dispensed' => (float)$row['dispensed'],
+        'clients' => (int)$row['client_count']
+    ];
 }
 $stmtPharmacy->close();
 
 // ---------------------------------------------------------------
-// 6. BUILD FULL MONTH (1st to last day)
+// 6. BUILD FULL MONTH AND CALCULATE RUNNING BALANCE
 // ---------------------------------------------------------------
 $periodEntries = [];
 $cur = new DateTime($startDate);
 $end = new DateTime($endDate);
 
+// Initialize running balance with the fetched opening balance
+$runningBalance = $openingBal;
+
 while ($cur <= $end) {
-        $dateKey = $cur->format('Y-m-d');
+    $dateKey = $cur->format('Y-m-d');
 
-        $stores = $storesData[$dateKey] ?? null;
-        $pharmacy = $pharmacyData[$dateKey] ?? null;
+    $stores = $storesData[$dateKey] ?? null;
+    $pharmacy = $pharmacyData[$dateKey] ?? null;
 
-        $receipt = $stores['receipt'] ?? 0.0;
-        $dispensed = $pharmacy['dispensed'] ?? 0.0;
-        $closingBal = $receipt - $dispensed;
+    $receipt = $stores['receipt'] ?? 0.0;
+    $dispensed = $pharmacy['dispensed'] ?? 0.0;
 
-        $periodEntries[] = [
-                'date'          => $dateKey,
-                'to_dispensing' => $receipt,
-                'dispensed'     => $dispensed,
-                'closing_bal'   => $closingBal,
-                'issuer'        => $stores['issuer'] ?? '',
-                'receiver'      => $stores['receiver'] ?? '',
-                'clients'       => $pharmacy['clients'] ?? 0
-        ];
+    // The running balance from the end of the previous day is the opening balance for today.
+    $dailyOpeningBal = $runningBalance;
 
-        $cur->modify('+1 day');
+    // Calculate pharmacy balance (receipt - dispensed)
+    $pharmBal = $receipt - $dispensed;
+
+    // Calculate the closing balance for today
+    $newClosingBal = $dailyOpeningBal + $receipt - $dispensed;
+
+    $periodEntries[] = [
+        'date'          => $dateKey,
+        'opening_bal'   => $dailyOpeningBal,
+        'to_dispensing' => $receipt,
+        'dispensed'     => $dispensed,
+        'pharm_bal'     => $pharmBal, // NEW: Pharmacy Balance
+        'closing_bal'   => $newClosingBal,
+        'issuer'        => $stores['issuer'] ?? '',
+        'receiver'      => $stores['receiver'] ?? '',
+        'clients'       => $pharmacy['clients'] ?? 0
+    ];
+
+    // Set the current closing balance as the opening balance for the next day
+    $runningBalance = $newClosingBal;
+
+    $cur->modify('+1 day');
 }
 
 // ---------------------------------------------------------------
@@ -151,266 +185,52 @@ $clinician_name = $_SESSION['full_name'] ?? "User #{$loggedInUserId}";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form P7 – Daily Summaries (<?= htmlspecialchars($drugName, ENT_QUOTES, 'UTF-8') ?>)</title>
+    <title>Form P7 - Daily Summaries (<?= htmlspecialchars($drugName, ENT_QUOTES, 'UTF-8') ?>)</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);padding:30px 20px;min-height:100vh}
+        .container{max-width:95%;margin:0 auto;background:#fff;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.1);overflow:hidden}
+        .form-header{background:#f5dd42;color:#000;padding:30px 40px;display:grid;grid-template-columns:100px 1fr 150px;align-items:center;gap:20px}
+        .logo-left img{width:120px;height:120px;object-fit:contain;padding:8px;border-radius:8px}
+        .title-center{text-align:center}
+        .title-center h2{font-size:28px;font-weight:700;margin-bottom:8px;letter-spacing:1px}
+        .title-center p{font-size:16px;opacity:.95;font-weight:500}
+        .form-version{text-align:right;font-size:12px;opacity:.9}
+        .content-wrapper{padding:40px}
+        .form-group-1{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-bottom:30px}
+        .form-group-1>div{display:flex;flex-direction:column}
+        .form-group-1 label{font-weight:600;color:#333;margin-bottom:8px;font-size:14px}
+        .form-group-1 input,.form-group-1 select{padding:12px 16px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;transition:all .3s ease;background:#f9f9f9}.form-group-1 input:focus,.form-group-1 select:focus{outline:0;border-color:#009;background:#fff}.date-selectors{display:flex;gap:20px;align-items:flex-end;margin-top:20px}.date-field{flex:1}#print-pdf,button{width:180px;background:linear-gradient(135deg,#009 0%,#00c 100%);height:48px;border:none;border-radius:8px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s ease;box-shadow:0 4px 15px rgba(0,0,153,.3)}
+        button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,153,.4)}
+        button:active{transform:translateY(0)}
+        hr{border:none;height:1px;background:linear-gradient(to right,transparent,#e0e0e0,transparent);margin:30px 0}
+        .table-wrapper{overflow-x:auto;margin:30px 0;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+        table{width:100%;border-collapse:collapse;background:#fff;min-width:1100px;}
+        thead{background:#f5dd42;color:#000}
+        th{padding:16px 12px;text-align:left;font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.5px}
+        tbody tr{border-bottom:1px solid #f0f0f0;transition:all .2s ease}
+        tbody tr:hover{background:#f8f9ff}
+        tbody tr.blank-row{background:#f9f9f9;opacity:.7}
+        td{padding:14px 12px;font-size:14px;color:#444}
+        td.bal{font-weight:600;color:#009;}
+        td.received{font-weight:600;color:#28a745}
+        td.pharm-bal{font-weight:600;color:#ff6b00} /* NEW: Pharmacy balance style */
+        td.closing{font-weight:600;color:#009}
+        .no-data{color:#dc3545!important;text-align:center;font-weight:600;padding:30px!important}.footer{background:#f8f9fa;padding:20px 40px;border-top:3px solid #009;margin-top:30px}
+        .footer p{color:#666;font-size:13px;text-align:center}
+
+        @media (max-width:1200px){.container{max-width:98%}}
+        @media (max-width:768px){.form-header{grid-template-columns:1fr;text-align:center}
+        .logo-left{margin:0 auto}.form-version{text-align:center}
+        .form-group-1{grid-template-columns:1fr}
+        .content-wrapper{padding:20px}
+        table{min-width: 900px;}
+        .table-wrapper{overflow-x: scroll;}
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            padding: 30px 20px;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 90%;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        .form-header {
-            background: #f5dd42;
-            color: #000000;
-            padding: 30px 40px;
-            display: grid;
-            grid-template-columns: 100px 1fr 150px;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .logo-left img {
-            width: 120px;
-            height: 120px;
-            object-fit: contain;
-            padding: 8px;
-            border-radius: 8px;
-        }
-
-        .title-center {
-            text-align: center;
-        }
-
-        .title-center h2 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            letter-spacing: 1px;
-        }
-
-        .title-center p {
-            font-size: 16px;
-            opacity: 0.95;
-            font-weight: 500;
-        }
-
-        .form-version {
-            text-align: right;
-            font-size: 12px;
-            opacity: 0.9;
-        }
-
-        .content-wrapper {
-            padding: 40px;
-        }
-
-        .form-group-1 {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .form-group-1 > div {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group-1 label {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .form-group-1 input,
-        .form-group-1 select {
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            background: #f9f9f9;
-        }
-
-        .form-group-1 input:focus,
-        .form-group-1 select:focus {
-            outline: none;
-            border-color: #000099;
-            background: white;
-        }
-
-        .date-selectors {
-            display: flex;
-            gap: 20px;
-            align-items: flex-end;
-            margin-top: 20px;
-        }
-
-        .date-field {
-            flex: 1;
-        }
-
-        #print-pdf, button {
-            width: 180px;
-            background: linear-gradient(135deg, #000099 0%, #0000cc 100%);
-            height: 48px;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 153, 0.3);
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 153, 0.4);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        hr {
-            border: none;
-            height: 1px;
-            background: linear-gradient(to right, transparent, #e0e0e0, transparent);
-            margin: 30px 0;
-        }
-
-        .table-wrapper {
-            overflow-x: auto;
-            margin: 30px 0;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
-
-        thead {
-            background: #f5dd42;
-            color: #000000;
-        }
-
-        th {
-            padding: 16px 12px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        tbody tr {
-            border-bottom: 1px solid #f0f0f0;
-            transition: all 0.2s ease;
-        }
-
-        tbody tr:hover {
-            background: #f8f9ff;
-        }
-
-        tbody tr.blank-row {
-            background: #f9f9f9;
-            opacity: 0.7;
-        }
-
-        td {
-            padding: 14px 12px;
-            font-size: 14px;
-            color: #444;
-        }
-
-        td.received {
-            font-weight: 600;
-            color: #28a745;
-        }
-
-        td.closing {
-            font-weight: 600;
-            color: #000099;
-        }
-
-        .no-data {
-            color: #dc3545 !important;
-            text-align: center;
-            font-weight: 600;
-            padding: 30px !important;
-        }
-
-        .footer {
-            background: #f8f9fa;
-            padding: 20px 40px;
-            border-top: 3px solid #000099;
-            margin-top: 30px;
-        }
-
-        .footer p {
-            color: #666;
-            font-size: 13px;
-            text-align: center;
-        }
-
-        @media (max-width: 768px) {
-            .form-header {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-
-            .logo-left {
-                margin: 0 auto;
-            }
-
-            .form-version {
-                text-align: center;
-            }
-
-            .form-group-1 {
-                grid-template-columns: 1fr;
-            }
-
-            .content-wrapper {
-                padding: 20px;
-            }
-        }
-
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
-
-            .container {
-                box-shadow: none;
-            }
-
-            button {
-                display: none;
-            }
-        }
+        @media print{body{background:#fff;padding:0}
+        .container{box-shadow:none}
+        button{display:none}}
     </style>
 </head>
 <body>
@@ -421,7 +241,7 @@ $clinician_name = $_SESSION['full_name'] ?? "User #{$loggedInUserId}";
             </div>
             <div class="title-center">
                 <h2>MEDICALLY ASSISTED THERAPY</h2>
-                <p>CUSTOM DAILY SUMMARIES REPORT – <?= htmlspecialchars($drugName, ENT_QUOTES, 'UTF-8') ?></p>
+                <p>CUSTOM DAILY SUMMARIES REPORT - <?= htmlspecialchars($drugName, ENT_QUOTES, 'UTF-8') ?></p>
             </div>
             <div class="form-version">
                 <p>VER. SEP. 2025</p>
@@ -477,8 +297,10 @@ $clinician_name = $_SESSION['full_name'] ?? "User #{$loggedInUserId}";
                     <thead>
                         <tr>
                             <th>DATE</th>
-                            <th>Receipt (from stores – mL)</th>
-                            <th>Amount dispensed – mL</th>
+                            <th>Opening Bal (mL)</th>
+                            <th>Receipt (from stores - mL)</th>
+                            <th>Amount dispensed - mL</th>
+                            <th>Pharmacy Balance (mL)</th> <!-- NEW COLUMN -->
                             <th>Closing Bal (mL)</th>
                             <th>Name of Issuer</th>
                             <th>Received By</th>
@@ -487,13 +309,15 @@ $clinician_name = $_SESSION['full_name'] ?? "User #{$loggedInUserId}";
                     </thead>
                     <tbody>
                         <?php if (empty($periodEntries)): ?>
-                            <tr><td colspan="7" class="no-data">No data found for <?= date('F Y', strtotime($startDate)) ?>.</td></tr>
+                            <tr><td colspan="9" class="no-data">No data found for <?= date('F Y', strtotime($startDate)) ?>.</td></tr>
                         <?php else: ?>
                             <?php foreach ($periodEntries as $e): ?>
                                 <tr <?= ($e['to_dispensing'] == 0 && $e['dispensed'] == 0) ? 'class="blank-row"' : '' ?>>
                                     <td><?= $e['date'] ?></td>
+                                    <td class="bal"><?= number_format($e['opening_bal'], 2) ?></td>
                                     <td class="received"><?= number_format($e['to_dispensing'], 2) ?></td>
                                     <td><?= number_format($e['dispensed'], 2) ?></td>
+                                    <td class="pharm-bal"><?= number_format($e['pharm_bal'], 2) ?></td> <!-- NEW: Pharmacy Balance -->
                                     <td class="closing"><?= number_format($e['closing_bal'], 2) ?></td>
                                     <td style="color:#000099;"><?= htmlspecialchars($e['issuer'], ENT_QUOTES, 'UTF-8') ?></td>
                                     <td><?= htmlspecialchars($e['receiver'], ENT_QUOTES, 'UTF-8') ?></td>

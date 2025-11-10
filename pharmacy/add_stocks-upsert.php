@@ -247,7 +247,7 @@ $conn->close();
                 <input type="text" name="received_by" class="readonly-input" readonly value="<?php echo htmlspecialchars($received_by); ?>">
             </div>
 
-            <input type="submit" class='custom-submit-btn' name="submit" value="Add inventory item">
+            <input type="submit" class='custom-submit-btn' name="submit" value="Add Drug Stocks">
         </form>
     </div>
 
