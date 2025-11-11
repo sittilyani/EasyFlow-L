@@ -79,8 +79,8 @@ $userrole = $_SESSION['userrole'];
                     echo "<td>" . htmlspecialchars($row['status']) . "</td>";
                     echo "<td>";
                     echo "<a href='view_referral.php?mat_id=" . urlencode($row['mat_id']) . "' class='btn btn-primary btn-sm'>View</a> ";
-                    echo "<a href='edit_referral.php?mat_id=" . urlencode($row['mat_id']) . "' class='btn btn-warning btn-sm'>Edit</a> ";
-                    echo "<a href='delete_referral.php?id=" . urlencode($row['mat_id']) . "' class='btn btn-danger btn-sm'>Delete</a>";
+                    /*echo "<a href='edit_referral.php?mat_id=" . urlencode($row['mat_id']) . "' class='btn btn-warning btn-sm'>Edit</a> ";*/
+                    echo "<a href='delete_referral.php?mat_id=" . urlencode($row['mat_id']) . "' class='btn btn-danger btn-sm'>Delete</a>";
                     echo "</td>";
                     echo "</tr>";
                 }

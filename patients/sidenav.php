@@ -85,7 +85,7 @@ $user_id = $_SESSION['user_id'] ?? '';
                     <i class="fa fa-cart-arrow-down"></i>View Patient status change</a>
                <?php if ($userrole == 'Admin') : ?>
                 <a href="../patients/view_hiv_positive.php" target="contentFrame"  class="nav-link">
-                    <i class="fa fa-virus"></i>HIV Viral Load</a>
+                    <i class="fa fa-virus"></i>HIV Viral Load Updating</a>
 
                 <?php endif; ?>
 

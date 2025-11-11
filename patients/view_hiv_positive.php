@@ -129,14 +129,13 @@ if (isset($_GET['message'])) {
                         <td>" . htmlspecialchars($row['hiv_status']) . "</td>
                         <td>" . htmlspecialchars($row['art_regimen']) . "</td>
                         <td>" . htmlspecialchars($row['regimen_type']) . "</td>
-                        <td>" . htmlspecialchars($row['last_vlDate']) . "</td>
-                        <td>" . htmlspecialchars($row['results']) . "</td>
+                        <td>" . (empty($row['last_vlDate']) ? "NA" : htmlspecialchars($row['last_vlDate'])) . "</td>
+                        <td>" . (empty($row['results']) ? "NA" : htmlspecialchars($row['results'])) . "</td>
                         <td>" . htmlspecialchars($row['next_appointment']) . "</td>
                         <td>" . $row['comp_date'] . "</td>
                         <td>
                             <a href='../clinician/view_viral_load_history.php?mat_id=" . htmlspecialchars($row['mat_id']) . "'>View</a> |
-                            <a href='../clinician/update.php?mat_id=" . htmlspecialchars($row['mat_id']) . "'>Update</a> |
-                            <a href='../clinician/delete.php?mat_id=" . htmlspecialchars($row['mat_id']) . "'>Delete</a>
+                            <a href='../clinician/update.php?mat_id=" . htmlspecialchars($row['mat_id']) . "'>Update</a> 
                         </td>
                     </tr>";
         }

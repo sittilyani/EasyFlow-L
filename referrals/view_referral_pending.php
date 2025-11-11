@@ -1,295 +1,98 @@
 <?php
-include('../includes/config.php');
-
-// Check if referral_id is provided
-if (!isset($_GET['referral_id']) || empty($_GET['referral_id'])) {
-    die("Referral ID is required.");
+// Start the session
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-$referral_id = $_GET['referral_id'];
+// Include database connection and header/footer files
+include('../includes/config.php'); // Ensure this file contains the `$conn` variable
 
-// Fetch referral details using referral_id
-$sql = "SELECT * FROM referral WHERE referral_id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $referral_id);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows === 0) {
-    die("No referral found.");
+// Check if the user is logged in
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['userrole'])) {
+    header("Location: ../login.php");
+    exit();
 }
 
-$referral = $result->fetch_assoc();
-$stmt->close();
-
-// Get mat_id from the fetched referral for use in links
-$mat_id = $referral['mat_id'];
+// Fetch the logged-in user's role
+$userrole = $_SESSION['userrole'];
 ?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Referral - <?php echo htmlspecialchars($referral['mat_id']); ?></title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/tables.css" type="text/css">
     <style>
-        .container {
+        .container-table {
+
             width: 80%;
-            margin: 2rem auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            padding: 2.5rem;
+            margin-left: 60px;
+            padding: 20px;
         }
-
-        .page-header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 2px solid #e9ecef;
+        h3, tr {
+            font-family: "Times New Roman", Times, serif;
         }
-
-        .page-title {
-            font-size: 2.2rem;
-            color: #2c3e50;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .page-subtitle {
-            color: #6c757d;
-            font-size: 1.1rem;
-            font-style: italic;
-        }
-
-        .referral-details {
-            display: grid;
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
-        }
-
-        .detail-group {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 8px;
-            border-left: 4px solid #007bff;
-            transition: all 0.3s ease;
-        }
-
-        .detail-group:hover {
-            box-shadow: 0 2px 10px rgba(0, 123, 255, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .detail-row {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 0.75rem;
-        }
-
-        .detail-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .detail-label {
-            font-weight: 700;
-            color: #495057;
-            min-width: 140px;
-            margin-right: 1rem;
-            font-size: 0.95rem;
-        }
-
-        .detail-value {
-            flex: 1;
-            color: #2c3e50;
-            font-size: 1rem;
-        }
-
-        /* Special styling for specific fields */
-        .status-value {
-            background: linear-gradient(135deg, #dc3545, #c82333);
-            color: white;
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-weight: 600;
-            display: inline-block;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .notes-value {
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            color: white;
-            padding: 1rem;
-            border-radius: 8px;
-            font-style: italic;
-            line-height: 1.5;
-            border-left: 4px solid #0056b3;
-        }
-
-        .mat-id-value {
-            font-family: 'Courier New', monospace;
-            background: #e9ecef;
-            padding: 0.3rem 0.6rem;
-            border-radius: 4px;
-            font-weight: 600;
-            color: #495057;
-        }
-
-        .date-value {
-            color: #28a745;
-            font-weight: 600;
-        }
-
-        /* Button section */
-        .action-buttons {
-            text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid #e9ecef;
-        }
-
-        .btn-custom {
-            padding: 0.75rem 2rem;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 25px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            margin: 0 0.5rem;
-            display: inline-block;
-        }
-
-        .btn-primary-custom {
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            color: white;
-            border: none;
-        }
-
-        .btn-primary-custom:hover {
-            background: linear-gradient(135deg, #0056b3, #004085);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
-            color: white;
-            text-decoration: none;
-        }
-
-        .btn-secondary-custom {
-            background: linear-gradient(135deg, #28a745, #1e7e34);
-            color: white;
-            border: none;
-        }
-
-        .btn-secondary-custom:hover {
-            background: linear-gradient(135deg, #1e7e34, #155724);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-            color: white;
-            text-decoration: none;
-        }
-
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .container {
-                margin: 1rem;
-                padding: 1.5rem;
-            }
-
-            .detail-row {
-                flex-direction: column;
-            }
-
-            .detail-label {
-                min-width: auto;
-                margin-bottom: 0.3rem;
-            }
-
-            .btn-custom {
-                display: block;
-                margin: 0.5rem 0;
-            }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        table {
+            width: 90%;
         }
     </style>
 </head>
 <body>
-<div class="container fade-in">
-    <div class="page-header">
-        <h1 class="page-title">Referral Details</h1>
-        <p class="page-subtitle">Complete referral information and status</p>
-    </div>
+<div class="container-table">
+    <h3>Referrals for action</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="width: 120px;">Referral Date</th>
+                <th style="width: 150px;">MAT ID</th>
+                <th style="width: 200px;">Client Name</th>
+                <th style="width: 150px;">Refer To</th>
+                <th style="width: 350px;">Referral Notes</th>
+                <th style="width: 150px;">Status</th>
+                <th style="width: 250px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            if ($userrole === 'Admin') {
+                $sql = "SELECT * FROM referral WHERE status != 'completed'";
+                $stmt = $conn->prepare($sql);
+            } else {
+                $sql = "SELECT * FROM referral WHERE refer_to = ? AND status != 'completed'";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("s", $userrole);
+            }
 
-    <div class="referral-details">
-        <div class="detail-group">
-            <div class="detail-row">
-                <span class="detail-label">Referral ID:</span>
-                <span class="detail-value mat-id-value"><?php echo htmlspecialchars($referral['referral_id']); ?></span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">MAT ID:</span>
-                <span class="detail-value mat-id-value"><?php echo htmlspecialchars($referral['mat_id']); ?></span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Client Name:</span>
-                <span class="detail-value"><?php echo htmlspecialchars($referral['clientName']); ?></span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Age:</span>
-                <span class="detail-value"><?php echo htmlspecialchars($referral['age']); ?> years</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Sex:</span>
-                <span class="detail-value"><?php echo htmlspecialchars($referral['sex']); ?></span>
-            </div>
-        </div>
+            $stmt->execute();
+            $result = $stmt->get_result();
 
-        <div class="detail-group">
-            <div class="detail-row">
-                <span class="detail-label">Refer From:</span>
-                <span class="detail-value"><?php echo htmlspecialchars($referral['refer_from']); ?></span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Refer To:</span>
-                <span class="detail-value"><?php echo htmlspecialchars($referral['refer_to']); ?></span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Referring Officer:</span>
-                <span class="detail-value"><?php echo htmlspecialchars($referral['referral_name']); ?></span>
-            </div>
-        </div>
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo "<tr>";
+                    echo "<td>" . htmlspecialchars($row['referral_date']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['mat_id']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['clientName']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['refer_to']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['referral_notes']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['status']) . "</td>";
+                    echo "<td>";
+                    echo "<a href='view_referral.php?mat_id=" . urlencode($row['mat_id']) . "' class='btn btn-primary btn-sm'>View</a> ";
+                    echo "<a href='edit_referral_pending.php?referral_id=" . urlencode($row['referral_id']) . "' class='btn btn-warning btn-sm'>Re-assign</a>";
+                    echo "<a href='delete_referral.php?mat_id=" . urlencode($row['mat_id']) . "' class='btn btn-danger btn-sm'>Delete</a>";
+                    echo "</td>";
+                    echo "</tr>";
+                }
+            } else {
+                echo "<tr><td colspan='7'>No referrals found.</td></tr>";
+            }
 
-        <div class="detail-group">
-            <div class="detail-row">
-                <span class="detail-label">Status:</span>
-                <span class="detail-value">
-                    <span class="status-value"><?php echo htmlspecialchars($referral['status']); ?></span>
-                </span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Date:</span>
-                <span class="detail-value date-value"><?php echo htmlspecialchars($referral['referral_date']); ?></span>
-            </div>
-        </div>
+            $stmt->close();
+            ?>
+        </tbody>
+    </table>
 
-        <div class="detail-group">
-            <div class="detail-row">
-                <span class="detail-label">Referral Notes:</span>
-                <div class="detail-value">
-                    <div class="notes-value">
-                        <?php echo nl2br(htmlspecialchars($referral['referral_notes'])); ?>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <div class="action-buttons">
         <a href="referral_dashboard.php" class="btn-custom btn-primary-custom">

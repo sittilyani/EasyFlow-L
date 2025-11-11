@@ -11,6 +11,7 @@ $errorMessage = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["update"])) {
         // Retrieve all form data
+        $vl_id_post = $_POST['vl_id'];
         $mat_id_post = $_POST['mat_id'];
         $clientName = $_POST['clientName'];
         $dob = $_POST['dob'];
@@ -38,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["update"])) {
                             clinician_name = ?,
                             next_appointment = ?,
                             comp_date = ?
-                            WHERE mat_id = ?";
+                            WHERE vl_id = ?";
 
         $stmt = $conn->prepare($query);
 
@@ -47,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["update"])) {
         }
 
         // Bind all parameters
-        $stmt->bind_param('sssssssssssss',
+        $stmt->bind_param('ssssssssssssi',
                 $clientName,
                 $dob,
                 $sex,
@@ -60,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["update"])) {
                 $clinician_name,
                 $next_appointment,
                 $comp_date,
-                $mat_id_post
+                $vl_id_post
         );
 
         if ($stmt->execute()) {
@@ -161,14 +162,44 @@ if (isset($_SESSION['user_id'])) {
                                 <input type="text" name="hiv_status" value="<?= htmlspecialchars($currentSettings['hiv_status'] ?? '') ?>" class="readonly-input" readonly>
                         </div>
                         <div class="form-group">
-                                <label for="art_regimen">ART Regimen</label>
-                                <input type="text" name="art_regimen" value="<?= htmlspecialchars($currentSettings['art_regimen'] ?? '') ?>" class="readonly-input" readonly>
-                        </div>
-                        <div class="form-group">
-                                <label for="regimen_type">Regimen Type</label>
-                                <input type="text" name="regimen_type" value="<?= htmlspecialchars($currentSettings['regimen_type'] ?? '') ?>" class="readonly-input" readonly>
+                            <label for="art_regimen">ART Regimen</label><br>
+                            <select name="art_regimen" id="art_regimen" class="form-control">
+                                <?php
+                                // Re-run query for dropdown options
+                                $sql = "SELECT regimen_name FROM regimens";
+                                $result = $conn->query($sql);
+                                if ($result->num_rows > 0) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        // Check if this option matches the current setting
+                                        $selected = ($row['regimen_name'] == ($currentSettings['art_regimen'] ?? '')) ? 'selected' : '';
+                                        echo "<option value='" . htmlspecialchars($row['regimen_name']) . "' $selected>" . htmlspecialchars($row['regimen_name']) . "</option>";
+                                    }
+                                } else {
+                                    echo "<option value=''>No regimen found</option>";
+                                }
+                                ?>
+                            </select>
                         </div>
 
+                        <div class="form-group">
+                            <label for="regimen_type">Regimen Type</label><br>
+                            <select name="regimen_type" id="regimen_type" class="form-control">
+                                <?php
+                                // Re-run query for dropdown options
+                                $sql = "SELECT regimen_type_name FROM regimen_type";
+                                $result = $conn->query($sql);
+                                if ($result->num_rows > 0) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        // Check if this option matches the current setting
+                                        $selected = ($row['regimen_type_name'] == ($currentSettings['regimen_type'] ?? '')) ? 'selected' : '';
+                                        echo "<option value='" . htmlspecialchars($row['regimen_type_name']) . "' $selected>" . htmlspecialchars($row['regimen_type_name']) . "</option>";
+                                    }
+                                } else {
+                                    echo "<option value=''>No type found</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
                         <div class="form-group">
                                 <label for="last_vlDate">Last Viral Load Date</label>
                                 <input type="date" name="last_vlDate" value="<?= htmlspecialchars($currentSettings['last_vlDate'] ?? '') ?>">

@@ -905,3 +905,14 @@ CREATE TABLE clinical_encounter_drafts (
     FOREIGN KEY (clinician_id) REFERENCES tblusers(user_id)
 );
 
+11 Novemebr 2025
+# to return NA for empty or NULL values
+from
+<td>" . htmlspecialchars($row['results']) . "</td>  to
+<td>" . (empty($row['results']) ? "NA" : htmlspecialchars($row['results'])) . "</td>
+
+From
+<td><?php echo htmlspecialchars($record['last_vlDate']); ?></td> to
+<td><?php echo empty($record['last_vlDate']) ? "NA" : htmlspecialchars($record['last_vlDate']); ?></td>
+
+

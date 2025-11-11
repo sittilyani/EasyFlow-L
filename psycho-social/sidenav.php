@@ -69,11 +69,11 @@ $user_id = $_SESSION['user_id'] ?? '';
                 <a href="../psycho-social/pychosocial_rx_plan.php" target="contentFrame" class="nav-link">
                     <i class="fa fa-user-circle"></i>Pyschiatric Treatment Plan</a>
                 <a href="../clinician/other_prescriptions.php" target="contentFrame" class="nav-link">
-                    <i class="fa fa-random"></i>Other Prescriptions</a>
-                <a href="../referrals/referral_dashboard.php" target="contentFrame" class="nav-link">
-                    <i class="fa fa-stethoscope"></i>View referrals</a>
-                <a href="../laboratory/toxicology_results.php" target="contentFrame"  class="nav-link">
-                    <i class="fa fa-binoculars"></i>Toxicology Results</a>
+                    <i class="fa fa-random"></i>Psychiatric Prescriptions</a>
+                <!--<a href="../referrals/referral_dashboard.php" target="contentFrame" class="nav-link">
+                    <i class="fa fa-stethoscope"></i>View referrals</a>-->
+                <!--<a href="../laboratory/toxicology_results.php" target="contentFrame"  class="nav-link">
+                    <i class="fa fa-binoculars"></i>Toxicology Results</a>-->
 
 </div>
 

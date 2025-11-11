@@ -201,10 +201,10 @@ $user_id = $_SESSION['user_id'] ?? '';
 
         <a href="../referrals/referral_dashboard.php" target="contentFrame" class="nav-link">
             <i class="fa fa-bug"></i>Show pending referrals</a>
+        <!--<a href="../referrals/view_referral_pending.php" target="contentFrame" class="nav-link">
+            <i class="fa fa-bug"></i>View pending referrals</a>-->
         <a href="../referrals/view_referral_pending.php" target="contentFrame" class="nav-link">
-            <i class="fa fa-bug"></i>View pending referrals</a>
-        <a href="../referrals/edit_referral_pending.php" target="contentFrame" class="nav-link">
-            <i class="fa fa-bug"></i>Edit pending referrals</a>
+            <i class="fa fa-bug"></i>Redirect pending referrals</a>
 
     <?php else : ?>
         <!-- For other roles (Doctor, Nurse, etc.) - Limited access -->

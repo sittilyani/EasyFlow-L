@@ -119,8 +119,10 @@ $conn->close();
                 <?php foreach ($viralLoadHistory as $record): ?>
                 <tr>
                     <td><?php echo htmlspecialchars($record['vl_id']); ?></td>
-                    <td><?php echo htmlspecialchars($record['last_vlDate']); ?></td>
-                    <td><?php echo htmlspecialchars($record['results']); ?></td>
+                    <!--<td><?php echo htmlspecialchars($record['last_vlDate']); ?></td>-->
+                    <td><?php echo empty($record['last_vlDate']) ? "NA" : htmlspecialchars($record['last_vlDate']); ?></td>
+                    <!--<td><?php echo htmlspecialchars($record['results']); ?></td>-->
+                    <td><?php echo empty($record['results']) ? "NA" : htmlspecialchars($record['results']); ?></td>
                     <td><?php echo htmlspecialchars(getSuppressionStatus($record['results'])); ?></td>
                     <td><?php echo htmlspecialchars($record['art_regimen']); ?></td>
                     <td><?php echo htmlspecialchars($record['regimen_type']); ?></td>
