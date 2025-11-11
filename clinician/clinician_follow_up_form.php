@@ -100,7 +100,7 @@ if (isset($_GET['message'])) {
                     <td>" . $row['next_appointment'] . "</td>
                     <td>
                         <a href='../patients/view_patient.php?p_id=" . $row['p_id'] . "'>View</a> &#124;
-                        <a href='../clinician/clinicianForm.php?p_id=" . $row['p_id'] . "'>Check In</a>  &#124;
+                        <a href='../clinician/clinicianForm-New.php?p_id=" . $row['p_id'] . "'>Check In</a>  &#124;
                         <a href='../referrals/referral.php?mat_id=" . $row['mat_id'] . "'>Refer</a>
                     </td>
                 </tr>";

@@ -2,6 +2,70 @@
 session_start();
 include "../includes/config.php";
 
+// NEW CODE: Load draft data if available
+$draft_data = [];
+$current_section = 'facility';
+
+if (isset($_GET['draft_id'])) {
+    $draft_id = intval($_GET['draft_id']);
+    $draft_sql = "SELECT * FROM clinical_encounter_drafts WHERE id = ? AND clinician_id = ?";
+    $draft_stmt = $conn->prepare($draft_sql);
+    $draft_stmt->bind_param('ii', $draft_id, $loggedInUserId);
+    $draft_stmt->execute();
+    $draft_result = $draft_stmt->get_result();
+
+    if ($draft_result->num_rows > 0) {
+        $draft_row = $draft_result->fetch_assoc();
+        $draft_data = json_decode($draft_row['form_data'], true);
+        $current_section = $draft_row['current_section'];
+
+        // Also set the patient ID from draft data if not already set
+        if (!isset($_GET['p_id']) && isset($draft_data['p_id'])) {
+            $_GET['p_id'] = $draft_data['p_id'];
+        }
+    }
+    $draft_stmt->close();
+}
+
+// Load from encounter drafts
+if (isset($_GET['encounter_id'])) {
+    $encounter_id = intval($_GET['encounter_id']);
+    $encounter_sql = "SELECT * FROM clinical_encounters WHERE id = ? AND status = 'draft'";
+    $encounter_stmt = $conn->prepare($encounter_sql);
+    $encounter_stmt->bind_param('i', $encounter_id);
+    $encounter_stmt->execute();
+    $encounter_result = $encounter_stmt->get_result();
+
+    if ($encounter_result->num_rows > 0) {
+        $encounter_row = $encounter_result->fetch_assoc();
+        // Convert encounter data to form data format
+        $draft_data = convertEncounterToFormData($encounter_row);
+        $current_section = $encounter_row['current_section'];
+
+        // Set patient ID
+        if (!isset($_GET['p_id'])) {
+            $_GET['p_id'] = $encounter_row['patient_id'];
+        }
+    }
+    $encounter_stmt->close();
+}
+
+// Function to convert encounter data to form data format
+function convertEncounterToFormData($encounter_row) {
+    $form_data = [];
+
+    // Map database fields to form field names
+    $form_data['facility_name'] = $encounter_row['facility_name'] ?? '';
+    $form_data['mfl_code'] = $encounter_row['mfl_code'] ?? '';
+    $form_data['county'] = $encounter_row['county'] ?? '';
+    $form_data['sub_county'] = $encounter_row['sub_county'] ?? '';
+    $form_data['enrolment_date'] = $encounter_row['enrolment_date'] ?? '';
+    $form_data['enrolment_time'] = $encounter_row['enrolment_time'] ?? '';
+    // ... add all other field mappings ...
+
+    return $form_data;
+}
+
 // Get the user_id from the query parameter (if applicable)
 $userId = isset($_GET['p_id']) ? $_GET['p_id'] : null;
 
@@ -93,40 +157,11 @@ $stmt->close();
             border: 1px solid #e1e8ed;
         }
 
-        .save-proceed-btn {
-            padding: 10px 20px;
-            background: linear-gradient(135deg, #27ae60, #219a52);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .save-proceed-btn:hover {
-            background: linear-gradient(135deg, #219a52, #1e8449);
-            transform: translateY(-2px);
-        }
-
-        .save-proceed-btn:disabled {
-            background: #95a5a6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .section-status {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #2c3e50;
-            font-weight: 600;
-        }
-
-        .status-saved {
-            color: #27ae60;
-        }
-
+        .save-proceed-btn {  padding: 10px 20px;  background: linear-gradient(135deg, #27ae60, #219a52);  color: white;  border: none;  border-radius: 6px;   cursor: pointer;  font-weight: 600;  transition: all 0.3s ease;  }
+        .save-proceed-btn:hover {  background: linear-gradient(135deg, #219a52, #1e8449);  transform: translateY(-2px);}
+        .save-proceed-btn:disabled {  background: #95a5a6;   cursor: not-allowed;  transform: none; }
+        .section-status { display: flex; align-items: center;  gap: 10px; color: #2c3e50;     font-weight: 600;  }
+        .status-saved {   color: #27ae60; }
         .status-unsaved {
             color: #e74c3c;
         }
@@ -160,7 +195,12 @@ $stmt->close();
             </div>
             <p>VER.APRIL 2023 FORM 3A</p>
         </div>
-
+        <?php if (!empty($draft_data)): ?>
+            <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; border-left: 5px solid #27ae60; margin-bottom: 20px;">
+                <strong>?? Draft Loaded</strong> - Continuing from <strong><?php echo ucfirst(str_replace('-', ' ', $current_section)); ?></strong> section.
+                Your previous progress has been restored.
+            </div>
+        <?php endif; ?>
         <form action="submit_form3a.php" method="POST">
             <!-- Hidden fields for save functionality -->
             <input type="hidden" name="partial_save" id="partial_save" value="false">
@@ -1158,6 +1198,119 @@ $stmt->close();
                 }
             }
         });
-    </script>
+        / NEW CODE: Add this after your existing JavaScript
+// Auto-scroll to current section when loading draft
+document.addEventListener('DOMContentLoaded', function() {
+    const currentSection = '<?php echo $current_section; ?>';
+    if (currentSection && currentSection !== 'facility') {
+        const sectionElement = document.getElementById(`section-${currentSection}`);
+        if (sectionElement) {
+            setTimeout(() => {
+                sectionElement.scrollIntoView({ behavior: 'smooth' });
+                // Highlight the current section
+                sectionElement.style.boxShadow = '0 0 0 3px #3498db';
+                setTimeout(() => {
+                    sectionElement.style.boxShadow = '';
+                }, 3000);
+            }, 500);
+        }
+    }
+
+    // Populate form with draft data
+    const draftData = <?php echo json_encode($draft_data); ?>;
+    if (draftData && Object.keys(draftData).length > 0) {
+        populateFormWithDraftData(draftData);
+
+        // Show draft loaded message
+        showNotification('Draft loaded successfully! Continuing from ' + currentSection, 'success');
+    }
+});
+
+function populateFormWithDraftData(data) {
+    for (const [key, value] of Object.entries(data)) {
+        try {
+            const elements = document.querySelectorAll(`[name="${key}"]`);
+
+            elements.forEach(element => {
+                if (element.type === 'checkbox') {
+                    // Handle checkboxes (arrays)
+                    if (Array.isArray(value)) {
+                        element.checked = value.includes(element.value);
+                    } else if (typeof value === 'string' && value.includes(',')) {
+                        // Handle comma-separated values
+                        const values = value.split(',');
+                        element.checked = values.includes(element.value);
+                    }
+                } else if (element.type === 'radio') {
+                    // Handle radio buttons
+                    if (element.value === value) {
+                        element.checked = true;
+                    }
+                } else {
+                    // Handle text inputs, selects, textareas
+                    if (element.tagName === 'SELECT' && element.multiple) {
+                        // Handle multiple select
+                        const values = Array.isArray(value) ? value : [value];
+                        Array.from(element.options).forEach(option => {
+                            option.selected = values.includes(option.value);
+                        });
+                    } else {
+                        element.value = value;
+                    }
+                }
+            });
+        } catch (error) {
+            console.log('Error setting field:', key, error);
+        }
+    }
+
+    // Trigger any calculated fields (like BMI, COWS totals)
+    calculateBMI();
+    calculateCOWSTotals();
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        background: ${type === 'success' ? '#27ae60' : '#3498db'};
+        color: white;
+        border-radius: 5px;
+        z-index: 10000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        font-weight: bold;
+    `;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.remove();
+    }, 5000);
+}
+
+function calculateCOWSTotals() {
+    // Recalculate COWS totals after loading draft data
+    const cowsTables = document.querySelectorAll('.cows-table');
+    cowsTables.forEach(table => {
+        for (let i = 1; i <= 4; i++) {
+            const timeInputs = table.querySelectorAll(`input[name$="_time${i}"]`);
+            const totalField = table.querySelector(`input[name="cows_total_time${i}"]`);
+
+            if (timeInputs && totalField) {
+                let total = 0;
+                timeInputs.forEach(input => {
+                    if (input.value) {
+                        total += parseInt(input.value);
+                    }
+                });
+                totalField.value = total;
+            }
+        }
+    });
+}
+</script>
 </body>
 </html>

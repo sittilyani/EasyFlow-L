@@ -1,160 +1,154 @@
 <?php
 session_start();
-include('../includes/config.php');
-?>
+include "../includes/config.php";
 
-<?php
-if (isset($_GET['message'])) {
-    $message = urldecode($_GET['message']);
-    echo "<div>" . $message . "</div>";
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../login.php");
+    exit();
+}
+
+$clinician_id = $_SESSION['user_id'];
+
+// Handle search
+$results = [];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
+    $search_term = $_POST['search_term'] ?? '';
+
+    if (!empty($search_term)) {
+        // Search in drafts
+        $draft_sql = "SELECT d.*, p.clientName, p.mat_id
+                      FROM clinical_encounter_drafts d
+                      JOIN patients p ON d.patient_id = p.p_id
+                      WHERE (p.clientName LIKE ? OR p.mat_id LIKE ?) AND d.clinician_id = ?";
+        $draft_stmt = $conn->prepare($draft_sql);
+        $search_like = "%$search_term%";
+        $draft_stmt->bind_param('ssi', $search_like, $search_like, $clinician_id);
+        $draft_stmt->execute();
+        $draft_results = $draft_stmt->get_result();
+
+        while ($row = $draft_results->fetch_assoc()) {
+            $results[] = [
+                'type' => 'draft',
+                'id' => $row['id'],
+                'patient_id' => $row['patient_id'],
+                'client_name' => $row['clientName'],
+                'mat_id' => $row['mat_id'],
+                'current_section' => $row['current_section'],
+                'updated_at' => $row['updated_at']
+            ];
+        }
+        $draft_stmt->close();
+
+        // Search in incomplete encounters
+        $encounter_sql = "SELECT e.*, p.clientName, p.mat_id
+                         FROM clinical_encounters e
+                         JOIN patients p ON e.patient_id = p.p_id
+                         WHERE (p.clientName LIKE ? OR p.mat_id LIKE ?) AND e.status = 'draft'";
+        $encounter_stmt = $conn->prepare($encounter_sql);
+        $encounter_stmt->bind_param('ss', $search_like, $search_like);
+        $encounter_stmt->execute();
+        $encounter_results = $encounter_stmt->get_result();
+
+        while ($row = $encounter_results->fetch_assoc()) {
+            $results[] = [
+                'type' => 'encounter',
+                'id' => $row['id'],
+                'patient_id' => $row['patient_id'],
+                'client_name' => $row['clientName'],
+                'mat_id' => $row['mat_id'],
+                'current_section' => $row['current_section'],
+                'updated_at' => $row['updated_at']
+            ];
+        }
+        $encounter_stmt->close();
+    }
 }
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Clinical Encounter Form</title>
-    <link rel="stylesheet" href="../assets/css/bootstrap.min.css" type="text/css">
-    <script src="../assets/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="../assets/css/tables.css" type="text/css">
-    <!-- Add your CSS styling here -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Clinical Encounter Forms</title>
     <style>
-
-
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; margin-bottom: 30px; }
+        .search-form { margin-bottom: 30px; }
+        .search-input { padding: 12px; width: 300px; border: 2px solid #ddd; border-radius: 5px; font-size: 16px; }
+        .search-button { padding: 12px 24px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        .search-button:hover { background: #2980b9; }
+        .results-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .results-table th, .results-table td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        .results-table th { background: #f8f9fa; font-weight: 600; }
+        .continue-btn { padding: 8px 16px; background: #27ae60; color: white; text-decoration: none; border-radius: 4px; }
+        .continue-btn:hover { background: #219a52; }
+        .new-form-btn { padding: 12px 24px; background: #e74c3c; color: white; text-decoration: none; border-radius: 5px; display: inline-block; margin-bottom: 20px; }
+        .new-form-btn:hover { background: #c0392b; }
+        .type-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .type-draft { background: #fff3cd; color: #856404; }
+        .type-encounter { background: #d1ecf1; color: #0c5460; }
     </style>
 </head>
 <body>
-    <h2 style="color: #2C3162; ">Initial Clinical Encounter Form</h2>
+    <div class="container">
+        <h1>Clinical Encounter Forms</h1>
 
-<!--This is the search Form -->
+        <a href="clinician_initial_encounter_form.php" class="new-form-btn">Start New Form</a>
 
-    <form id="searchForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="GET">
-    <div class="header">
-        <label for="search">Search:</label>
-        <input type="text" id="search" class="search-entry" name="search" value="<?php echo isset($_GET['search']) ? $_GET['search'] : ''; ?>">
-        <input type="submit" value="Search" class="search-input">
-         <button type="button" onclick="cancelSearch()" class="cancel-input">Cancel</button> <!-- Add Cancel Button -->
+        <div class="search-form">
+            <form method="POST">
+                <input type="text" name="search_term" class="search-input" placeholder="Search by Client Name or MAT ID..."
+                       value="<?php echo htmlspecialchars($_POST['search_term'] ?? ''); ?>">
+                <button type="submit" name="search" class="search-button">Search</button>
+            </form>
+        </div>
+
+        <?php if (!empty($results)): ?>
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Client Name</th>
+                        <th>MAT ID</th>
+                        <th>Last Saved Section</th>
+                        <th>Last Updated</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($results as $result): ?>
+                    <tr>
+                        <td>
+                            <span class="type-badge type-<?php echo $result['type']; ?>">
+                                <?php echo strtoupper($result['type']); ?>
+                            </span>
+                        </td>
+                        <td><?php echo htmlspecialchars($result['client_name']); ?></td>
+                        <td><?php echo htmlspecialchars($result['mat_id']); ?></td>
+                        <td><?php echo htmlspecialchars($result['current_section']); ?></td>
+                        <td><?php echo date('M j, Y g:i A', strtotime($result['updated_at'])); ?></td>
+                        <td>
+                            <?php if ($result['type'] === 'draft'): ?>
+                                <a href="clinician_initial_encounter_form.php?p_id=<?php echo $result['patient_id']; ?>&draft_id=<?php echo $result['id']; ?>" class="continue-btn">
+                                    Continue Form
+                                </a>
+                            <?php else: ?>
+                                <a href="clinician_initial_encounter_form.php?p_id=<?php echo $result['patient_id']; ?>&encounter_id=<?php echo $result['id']; ?>" class="continue-btn">
+                                    Continue Form
+                                </a>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php elseif ($_SERVER['REQUEST_METHOD'] === 'POST'): ?>
+            <p>No forms found matching your search criteria.</p>
+        <?php endif; ?>
     </div>
-    </form>
-
-    <!-- Display Data -->
-    <?php
-    // Handle search functionality
-    $search = isset($_GET['search']) ? $_GET['search'] : '';
-    $sql = "SELECT * FROM patients WHERE (mat_id LIKE '%$search%'
-            OR mat_number LIKE '%$search%'
-            OR clientName LIKE '%$search%'
-            OR age LIKE '%$search%'
-            OR sex LIKE '%$search%'
-            OR p_address LIKE '%$search%'
-            OR cso LIKE '%$search%'
-            OR dosage LIKE '%$search%'
-            OR current_status LIKE '%$search%')
-            AND current_status IN ('Active', 'LTFU', 'Defaulted')";
-    // Pagination
-    $results_per_page = 5;
-    $number_of_results = mysqli_num_rows(mysqli_query($conn, $sql));
-    $number_of_pages = ceil($number_of_results / $results_per_page);
-
-    $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
-    $start_limit = ($current_page - 1) * $results_per_page;
-
-    $sql .= " LIMIT $start_limit, $results_per_page";
-
-    // Fetch data from the database
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        // Display the data in a table
-        echo "<table border='1'>
-                <tr>
-                    <th style ='width: 60px;'>Pt ID</th>
-                    <th>MAT ID</th>
-                    <th>Client Name</th>
-                    <th style ='width: 90px;'>Sex</th>
-                    <th>CSO</th>
-                    <th>Drug</th>
-                    <th style ='width: 90px;'>Dosage</th>
-                    <th>Current Status</th>
-                    <th>Action</th>
-                </tr>";
-
-        while ($row = $result->fetch_assoc()) {
-            echo "<tr>
-                    <td>" . $row['p_id'] . "</td>
-                    <td>" . $row['mat_id'] . "</td>
-                    <td>" . $row['clientName'] . "</td>
-                    <td>" . $row['sex'] . "</td>
-                    <td>" . $row['cso'] . "</td>
-                    <td>" . $row['drugname'] . "</td>
-                    <td>" . $row['dosage'] . "</td>
-                    <td>" . $row['current_status'] . "</td>
-                    <td>
-                        <a href='../patients/view_patient.php?p_id=" . $row['p_id'] . "'>View</a> &#124;
-                       <a href='../clinician/clinician_initial_encounter_form.php?p_id=" . $row['p_id'] . "' >Check In</a> &#124;
-                       <a href='../referrals/referral.php?mat_id=" . $row['mat_id'] . "'>Refer</a>
-                    </td>
-                </tr>";
-        }
-        echo "</table>";}
-
-        // Pagination links
-
-        // Calculate pagination details
-        $start_range = max(1, $current_page - 2); // Ensure the start range is at least 1
-        $end_range = min($number_of_pages, $start_range + 4); // Ensure the end range is within the total number of pages
-
-        echo "<div>Showing $start_range to $end_range of $number_of_results results</div>";
-        echo "<div>";
-
-        if ($current_page > 1) {
-            $prev_page = $current_page - 1;
-            echo "<a href='?page=$prev_page'>Previous</a> ";
-        }
-
-        // Page numbers
-        for ($page = $start_range; $page <= $end_range; $page++) {
-            echo "<a href='?page=$page'>$page</a> ";
-        }
-
-        // Next link
-        if ($current_page < $number_of_pages) {
-            $next_page = $current_page + 1;
-            echo "<a href='?page=$next_page'>Next</a> ";
-        }
-
-        echo "</div>";
-        ?>
-
-    <script>
-        function cancelSearch() {
-            document.getElementById("search").value = ''; // Clear search input
-            document.getElementById("searchForm").submit(); // Submit form to reset
-        }
-
-        // Real-Time Filtering
-        document.getElementById("search").addEventListener("input", function() {
-            setTimeout(function() {
-                document.getElementById("searchForm").submit();
-            }, 2000); // Submit form after a brief delay (e.g., 500 milliseconds)
-        });
-    </script>
-    <script>
-    // Function to remove the message container
-    function hideMessageContainer() {
-        var messageContainer = document.getElementById('message-container');
-        if (messageContainer) {
-            messageContainer.style.display = 'none';
-        }
-    }
-
-    // Check if the message container exists and hide it after 5 seconds
-    window.addEventListener('load', function() {
-        var messageContainer = document.getElementById('message-container');
-        if (messageContainer) {
-            setTimeout(hideMessageContainer, 5000); // Hide message after 5 seconds (5000 milliseconds)
-        }
-    });
-</script>
 </body>
 </html>

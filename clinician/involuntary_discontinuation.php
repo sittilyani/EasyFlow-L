@@ -141,7 +141,7 @@ if (isset($_GET['p_id'])) {
                     </td>
                     <td><input type="text" name="clinician_org" required></td>
                     <td><input type="text" name="clinician_signature" required></td>
-                    <td><input type="text" name="clinician_date" placeholder="DD/MM/YYYY" required></td>
+                    <td><input type="date" name="clinician_date" required></td>
                 </tr>
                 <tr>
                     <td>MAT Counselor</td>
@@ -155,7 +155,7 @@ if (isset($_GET['p_id'])) {
                     </td>
                     <td><input type="text" name="counselor_org" required></td>
                     <td><input type="text" name="counselor_signature" required></td>
-                    <td><input type="text" name="counselor_date" placeholder="DD/MM/YYYY" required></td>
+                    <td><input type="date" name="counselor_date" required></td>
                 </tr>
                 <tr>
                     <td>CSO Clinician/Counselor</td>
@@ -169,7 +169,7 @@ if (isset($_GET['p_id'])) {
                     </td>
                     <td><input type="text" name="cso_org" required></td>
                     <td><input type="text" name="cso_signature" required></td>
-                    <td><input type="text" name="cso_date" placeholder="DD/MM/YYYY" required></td>
+                    <td><input type="date" name="cso_date" required></td>
                 </tr>
             </table>
 

@@ -1,5 +1,6 @@
 <?php
 session_start();
+// NOTE: Assuming config.php contains the database connection ($conn)
 include "../includes/config.php";
 
 // Check if the user is logged in
@@ -56,6 +57,8 @@ if ($p_id) {
             $combinedData = $result->fetch_assoc();
         }
     } else {
+        // Output detailed error for debugging if query fails
+        error_log("Patient Query Error: " . $stmt->error);
         die("Query Error: " . $stmt->error);
     }
     $stmt->close();
@@ -79,11 +82,27 @@ $defaultData = [
     'current_status' => '',
     'results' => '',
     'last_vlDate' => '',
-    'next_appointment' => '',
+    'next_appointment' => '', // Default to empty
 ];
 $combinedData = array_merge($defaultData, $combinedData);
 
-// Handle form submission feedback
+// --- LOGIC TO ENFORCE FUTURE APPOINTMENT DATE ---
+$today = date('Y-m-d');
+
+// Check the retrieved next_appointment date
+if (!empty($combinedData['next_appointment'])) {
+    // If the retrieved date is in the past, override it with today's date
+    if (strtotime($combinedData['next_appointment']) < strtotime($today)) {
+        $combinedData['next_appointment'] = $today;
+    }
+} else {
+    // If no appointment date is set, default to today
+    $combinedData['next_appointment'] = $today;
+}
+// --------------------------------------------------
+
+
+// Handle form submission feedback (as per your original script, simulating the process)
 $successMessages = [];
 $errorMessages = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -91,8 +110,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($_POST['mat_id']) || empty($_POST['clientName'])) {
         $errorMessages[] = "MAT ID and Client Name are required.";
     } else {
-        // Assume clinicianForm_process.php handles the insert
-        // Redirect back to clinician_list.php with a success message
+        // This is where you would normally call your processing script/logic
+        // For this example, we simulate the successful redirect
         $successMessages[] = "Form submitted successfully.";
         header("Location: clinician_list.php?message=" . urlencode("Form submitted successfully."));
         exit;
@@ -119,12 +138,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .alert-danger{color:#a94442;background-color:#f2dede;border-color:#ebccd1}
 </style>
     <script>
-
+        // Function to control ART fields based on HIV status
         function toggleARTFields() {
             const hivStatus = document.getElementById('hiv_status').value;
             const artRegimen = document.getElementById('art_regimen');
             const regimenType = document.getElementById('regimen_type');
 
+            // Disable ART fields if HIV status is 'Negative'
             if (hivStatus === 'Negative') {
                 artRegimen.disabled = true;
                 regimenType.disabled = true;
@@ -186,7 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php if (!empty($combinedData['p_id'])): ?>
         <form action="clinicianForm_process-old.php" method="post" class="post">
             <input type="hidden" name="p_id" value="<?php echo htmlspecialchars($combinedData['p_id']); ?>">
-            <input type="hidden" name="current_status" value="<?php echo htmlspecialchars($combinedData['current_status']); ?>">
+            <input type="hidden" name="current_status_hidden" value="<?php echo htmlspecialchars($combinedData['current_status']); ?>">
             <input type="hidden" name="clinician_name" value="<?php echo htmlspecialchars($clinician_name); ?>">
             <div class="grid-container">
                 <div class="grid-item">
@@ -225,12 +245,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="hiv_status">HIV Status</label><br>
                     <select name="hiv_status" id="hiv_status" class="form-control" onchange="toggleARTFields()">
                         <?php
+                        // Re-run query for dropdown options
                         $sql = "SELECT hiv_status_name FROM tbl_hiv_status";
                         $result = $conn->query($sql);
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
+                                // Default selection logic remains as 'Negative' if no actual data is present
                                 $selected = ($row['hiv_status_name'] == 'Negative') ? 'selected' : '';
-                                echo "<option value='" . htmlspecialchars($row['hiv_status_name']) . "' $selected>" . htmlspecialchars($row['hiv_status_name'] ?? '') . "</option>";
+                                echo "<option value='" . htmlspecialchars($row['hiv_status_name']) . "' $selected>" . htmlspecialchars($row['hiv_status_name']) . "</option>";
                             }
                         } else {
                             echo "<option value=''>No status found</option>";
@@ -241,6 +263,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="art_regimen">ART Regimen</label><br>
                     <select name="art_regimen" id="art_regimen" class="form-control">
                         <?php
+                        // Re-run query for dropdown options
                         $sql = "SELECT regimen_name FROM regimens";
                         $result = $conn->query($sql);
                         if ($result->num_rows > 0) {
@@ -257,6 +280,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="regimen_type">Regimen Type</label><br>
                     <select name="regimen_type" id="regimen_type" class="form-control">
                         <?php
+                        // Re-run query for dropdown options
                         $sql = "SELECT regimen_type_name FROM regimen_type";
                         $result = $conn->query($sql);
                         if ($result->num_rows > 0) {
@@ -273,6 +297,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="tb_status">TB Status</label><br>
                     <select name="tb_status" class="form-control">
                         <?php
+                        // Re-run query for dropdown options
                         $sql = "SELECT status_name FROM tb_status";
                         $result = $conn->query($sql);
                         if ($result->num_rows > 0) {
@@ -290,6 +315,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="hepc_status">Hepatitis C Status</label><br>
                     <select name="hepc_status" class="form-control">
                         <?php
+                        // Re-run query for dropdown options
                         $sql = "SELECT status_name FROM hepc_status";
                         $result = $conn->query($sql);
                         if ($result->num_rows > 0) {
@@ -305,6 +331,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="other_status">Other Disease Status</label><br>
                     <select name="other_status" class="form-control">
                         <?php
+                        // Re-run query for dropdown options
                         $sql = "SELECT status_name FROM other_status";
                         $result = $conn->query($sql);
                         if ($result->num_rows > 0) {
@@ -319,7 +346,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </select><br>
 
                     <label for="clinical_notes">Clinical Notes</label><br>
-                    <textarea name="clinical_notes" id="clinical_notes" cols="30" rows="4"></textarea><br>
+                    <textarea name="clinical_notes" id="clinical_notes" cols="30" rows="4" required></textarea><br>
 
                     <label for="current_status">Current Status</label><br>
                     <input type="text" name="current_status" class="readonly-input" readonly value="<?php echo htmlspecialchars($combinedData['current_status']); ?>"><br>
@@ -335,7 +362,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="text" name="clinician_name" value="<?php echo htmlspecialchars($clinician_name); ?>" class="readonly-input" readonly><br>
 
                     <label for="next_appointment">Next Appointment Date</label><br>
-                    <input type="date" name="next_appointment" value="<?php echo htmlspecialchars($combinedData['next_appointment']); ?>"><br>
+                    <!-- IMPORTANT CHANGE: Added 'min' attribute and used the possibly updated value from PHP -->
+                    <input type="date" name="next_appointment"
+                           value="<?php echo htmlspecialchars($combinedData['next_appointment']); ?>"
+                           min="<?php echo date('Y-m-d'); ?>"><br>
 
                     <button type="submit" name="submit" id="btn-submit">Submit</button>
                 </div>

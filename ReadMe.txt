@@ -762,5 +762,146 @@ CREATE TABLE daily_report_comments (
     UNIQUE KEY unique_comment_date (log_date, drugID)
 );
 
+10 November 2025
+linical encounter form (FORM 3A)
+-- Main clinical encounters table (for completed forms)
+CREATE TABLE clinical_encounters (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    patient_id INT NOT NULL,
+    facility_name VARCHAR(255),
+    mfl_code VARCHAR(50),
+    county VARCHAR(100),
+    sub_county VARCHAR(100),
+    enrolment_date DATE,
+    enrolment_time TIME,
+    visit_type VARCHAR(100),
+    client_name VARCHAR(255),
+    nickname VARCHAR(100),
+    mat_id VARCHAR(100),
+    sex VARCHAR(10),
+    presenting_complaints TEXT,
 
+    -- Drug use history
+    injecting_history ENUM('yes','no'),
+    reasons_injecting TEXT,
+    reasons_injecting_other VARCHAR(255),
+    flash_blood ENUM('yes','no'),
+    shared_needles ENUM('yes','no'),
+    injecting_complications ENUM('yes','no'),
+    drug_overdose ENUM('yes','no'),
+
+    -- Vital signs
+    pulse INT,
+    oxygen_saturation INT,
+    blood_pressure VARCHAR(20),
+    temperature DECIMAL(4,2),
+    respiratory_rate INT,
+    height DECIMAL(5,2),
+    weight DECIMAL(5,2),
+    bmi DECIMAL(4,2),
+    bmi_interpretation VARCHAR(50),
+
+    -- COWS assessment
+    cows_provider VARCHAR(255),
+    cows_date DATE,
+    cows_scores JSON,
+    cows_totals JSON,
+    cows_interpretations JSON,
+
+    -- Medical history
+    medical_history JSON,
+    medical_medication JSON,
+    hiv_diagnosis_date DATE,
+    hiv_facility_care VARCHAR(255),
+    other_medical_problems TEXT,
+    allergies TEXT,
+    allergies_other VARCHAR(255),
+
+    -- Reproductive health
+    contraception_use ENUM('yes','no'),
+    contraception_method TEXT,
+    last_menstrual_period DATE,
+    pregnancy_status VARCHAR(50),
+    pregnancy_weeks INT,
+    breastfeeding ENUM('yes','no'),
+
+    -- Mental health
+    mental_health_diagnosis ENUM('yes','no'),
+    mental_health_condition TEXT,
+    mental_health_other VARCHAR(255),
+    mental_health_medication ENUM('yes','no'),
+    mental_health_medication_details TEXT,
+    suicidal_thoughts ENUM('yes','no'),
+    psychiatric_hospitalization ENUM('yes','no'),
+
+    -- Family history
+    family_drug_use ENUM('yes','no'),
+    family_mental_health ENUM('yes','no'),
+    family_medical_conditions TEXT,
+    family_medical_other VARCHAR(255),
+
+    -- Physical examination
+    general_appearance TEXT,
+    skin_examination TEXT,
+    head_examination TEXT,
+    eyes_examination TEXT,
+    ears_examination TEXT,
+    nose_examination TEXT,
+    mouth_throat_examination TEXT,
+    neck_examination TEXT,
+    chest_examination TEXT,
+    heart_examination TEXT,
+    abdomen_examination TEXT,
+    genitalia_examination TEXT,
+    extremities_examination TEXT,
+    neurological_examination TEXT,
+    musculoskeletal_examination TEXT,
+
+    -- Diagnosis and treatment
+    diagnosis_opioid_use VARCHAR(50),
+    other_diagnoses TEXT,
+    treatment_plan TEXT,
+    medication_prescribed TEXT,
+    medication_other VARCHAR(255),
+    initial_dose VARCHAR(100),
+    next_appointment DATE,
+    clinician_name VARCHAR(255),
+    clinician_signature VARCHAR(255),
+    patient_consent ENUM('yes','no'),
+
+    -- Status and timestamps
+    status ENUM('draft','complete') DEFAULT 'draft',
+    current_section VARCHAR(50) DEFAULT 'facility',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (patient_id) REFERENCES patients(p_id)
+);
+
+-- Drug histories table
+CREATE TABLE patient_drug_histories (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    encounter_id INT NOT NULL,
+    drug_type VARCHAR(100),
+    age_first_use INT,
+    duration_years INT,
+    frequency VARCHAR(50),
+    quantity VARCHAR(100),
+    route VARCHAR(50),
+    last_used DATETIME,
+    FOREIGN KEY (encounter_id) REFERENCES clinical_encounters(id) ON DELETE CASCADE
+);
+
+-- Drafts table (for partial saves)
+CREATE TABLE clinical_encounter_drafts (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    patient_id INT NOT NULL,
+    form_data JSON NOT NULL,
+    current_section VARCHAR(50),
+    clinician_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (patient_id) REFERENCES patients(p_id),
+    FOREIGN KEY (clinician_id) REFERENCES tblusers(user_id)
+);
 

@@ -44,7 +44,7 @@ $conn->begin_transaction();
 
 try {
     // Insert into medical_history table with all new fields
-    $query1 = "INSERT INTO medical_history (
+    $query1 = "INSERT INTO medical_history_new (
                 visitDate, mat_id, clientName, nickName, sname, dob, reg_date, sex,
                 marital_status, hiv_status, art_regimen, regimen_type, tb_status,
                 tb_regimen, tb_start_date, tb_end_date, tpt_regimen, tpt_start_date,
@@ -91,7 +91,7 @@ try {
     );
 
     if (!$stmt1->execute()) {
-        throw new Exception("Error inserting into medical_history: " . $stmt1->error);
+        throw new Exception("Error inserting into medical_history_new: " . $stmt1->error);
     }
 
     // Insert into viral_load table only if hiv_status is 'Positive'

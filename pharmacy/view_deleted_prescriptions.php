@@ -80,7 +80,7 @@ $result = $conn->query($query);
             echo "<td>" . htmlspecialchars($row['dosage']) . "</td>";
             echo "<td>" . htmlspecialchars($row['pharm_officer_name']) . "</td>";
             echo "<td>" . htmlspecialchars($row['dispDate']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['deletion_reason']) . "</td>";
+            echo "<td style='color: red';>" . htmlspecialchars($row['deletion_reason']) . "</td>";
             echo "<td>" . htmlspecialchars($row['date_of_deletion']) . "</td>";
             echo "<td>" . htmlspecialchars($row['deleted_by']) . "</td>";
             /*echo "<td>";
