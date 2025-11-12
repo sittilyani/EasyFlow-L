@@ -263,6 +263,10 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
                     <label for="residence_scounty">Residence Sub County</label>
                     <input type="text" name="residence_scounty" value="<?php echo htmlspecialchars($currentSettings['residence_scounty']); ?>">
                 </div>
+                <div class="form-group">
+                    <label for="p_address">Physical Address (residence)</label>
+                    <input type="text" id="p_address" name="p_address" placeholder="Inmate: if in PRISON">
+                </div>
                 <div class="form_group">
                     <label for="client_phone">Client Phone</label>
                     <input type="text" name="client_phone" value="<?php echo htmlspecialchars($currentSettings['client_phone']); ?>">

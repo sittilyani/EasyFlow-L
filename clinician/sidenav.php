@@ -49,21 +49,18 @@ $user_id = $_SESSION['user_id'] ?? '';
     <a href="../dashboard/dashboard.php" class="nav-link home-link">
         <i class="fa fa-home"></i>Home
     </a>
+    <a href="../clinician/client_search_consent.php" target="contentFrame" class="nav-link">
+        <i class="fa fa-lock"></i>Consent Form 3 E ver 2020</a>
     <a href="../clinician/treatment-old.php" target="contentFrame" class="nav-link"  style="background: yellow; margin-top: 10px; color: #000000;">
         <i class="fa fa-stethoscope"></i>Clinical Follow Up - OLD</a>
     <a href="../clinician/clinician_follow_up_form.php" target="contentFrame" class="nav-link" style="background: #cff0ce; margin-top: 10px; color: #000000;">
         <i class="fa fa-stethoscope"></i>Clinical Follow Up - NEW</a>
     <a href="../clinician/clinical_encounter_search.php" target="contentFrame" class="nav-link">
         <i class="fa fa-stethoscope"></i>Clinical Initial Encounter Form</a>
-
-    <a href="../clinician/transfer_form_search.php" target="contentFrame" class="nav-link">
-        <i class="fa fa-stethoscope"></i>Transfer Form</a>
     <a href="../clinician/prescribe.php" target="contentFrame" class="nav-link" style="background: yellow; color: #000000;">
             <i class="fa fa-clone"></i>Update dosage</a>
     <a href="../clinician/other_prescriptions.php" target="contentFrame" class="nav-link">
         <i class="fa fa-file"></i>Prescribe other drugs</a>
-    <a href="../clinician/client_search_consent.php" target="contentFrame" class="nav-link">
-        <i class="fa fa-lock"></i>Consent Form 3 E ver 2020</a>
     <a href="../clinician/search_patients_involuntary.php" target="contentFrame" class="nav-link">
         <i class="fa fa-user-circle"></i>Involuntary Discontinuation</a>
     <a href="../clinician/search_patients_voluntary.php" target="contentFrame" class="nav-link">
@@ -72,10 +69,12 @@ $user_id = $_SESSION['user_id'] ?? '';
             <i class="fa fa-stethoscope"></i>View referrals</a>
     <a href="../patients/view_hiv_positive.php" target="contentFrame"  class="nav-link">
         <i class="fa fa-microchip"></i>HIV Viral Load</a>
-    <a href="../laboratory/toxicology_results.php" target="contentFrame"  class="nav-link">
+    <a href="../clinician/transfer_form_search.php" target="contentFrame" class="nav-link">
+        <i class="fa fa-stethoscope"></i>Transfer Form</a>
+    <!--<a href="../laboratory/toxicology_results.php" target="contentFrame"  class="nav-link">
         <i class="fa fa-binoculars"></i>Toxicology Results</a>
     <a href="../patients/view_all_patients.php" target="contentFrame" class="nav-link">
-        <i class="fa fa-users"></i>View All patients</a>
+        <i class="fa fa-users"></i>View All patients</a>-->
 
 </div>
 
