@@ -10,13 +10,10 @@ if (!isset($_SESSION['user_id'])) {
 
 $clinician_id = $_SESSION['user_id'];
 
-// Handle search OR show all drafts by default
+// Handle search
 $results = [];
-$show_all = true;
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
     $search_term = $_POST['search_term'] ?? '';
-    $show_all = false;
 
     if (!empty($search_term)) {
         // Search in drafts
@@ -66,51 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
         }
         $encounter_stmt->close();
     }
-} else {
-    // Show all drafts by default when page loads (no search)
-    $draft_sql = "SELECT d.*, p.clientName, p.mat_id
-                  FROM clinical_encounter_drafts d
-                  JOIN patients p ON d.patient_id = p.p_id
-                  WHERE d.clinician_id = ?";
-    $draft_stmt = $conn->prepare($draft_sql);
-    $draft_stmt->bind_param('i', $clinician_id);
-    $draft_stmt->execute();
-    $draft_results = $draft_stmt->get_result();
-
-    while ($row = $draft_results->fetch_assoc()) {
-        $results[] = [
-            'type' => 'draft',
-            'id' => $row['id'],
-            'patient_id' => $row['patient_id'],
-            'client_name' => $row['clientName'],
-            'mat_id' => $row['mat_id'],
-            'current_section' => $row['current_section'],
-            'updated_at' => $row['updated_at']
-        ];
-    }
-    $draft_stmt->close();
-
-    // Also show all incomplete encounters
-    $encounter_sql = "SELECT e.*, p.clientName, p.mat_id
-                     FROM clinical_encounters e
-                     JOIN patients p ON e.patient_id = p.p_id
-                     WHERE e.status = 'draft'";
-    $encounter_stmt = $conn->prepare($encounter_sql);
-    $encounter_stmt->execute();
-    $encounter_results = $encounter_stmt->get_result();
-
-    while ($row = $encounter_results->fetch_assoc()) {
-        $results[] = [
-            'type' => 'encounter',
-            'id' => $row['id'],
-            'patient_id' => $row['patient_id'],
-            'client_name' => $row['clientName'],
-            'mat_id' => $row['mat_id'],
-            'current_section' => $row['current_section'],
-            'updated_at' => $row['updated_at']
-        ];
-    }
-    $encounter_stmt->close();
 }
 ?>
 
@@ -139,7 +91,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
         .type-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
         .type-draft { background: #fff3cd; color: #856404; }
         .type-encounter { background: #d1ecf1; color: #0c5460; }
-        .no-results { text-align: center; padding: 40px; color: #666; font-size: 18px; }
     </style>
 </head>
 <body>
@@ -196,13 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
                 </tbody>
             </table>
         <?php elseif ($_SERVER['REQUEST_METHOD'] === 'POST'): ?>
-            <div class="no-results">
-                <p>No forms found matching your search criteria.</p>
-            </div>
-        <?php else: ?>
-            <div class="no-results">
-                <p>No clinical encounter draft forms found.</p>
-            </div>
+            <p>No forms found matching your search criteria.</p>
         <?php endif; ?>
     </div>
 </body>

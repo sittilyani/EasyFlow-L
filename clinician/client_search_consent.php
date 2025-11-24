@@ -120,9 +120,13 @@ if (isset($_GET['message'])) {
         }
 
         .update-link {
-            color: #28a745 !important;
+            color: #0000FF !important;
+            background: #00CCFF;
         }
-
+        .create-link {
+            color: #28a745 !important;
+            background: #66FFC2;
+        }
         /* Consent status styling */
         .consent-status {
             font-size: 12px;
@@ -254,7 +258,11 @@ if (isset($_GET['message'])) {
                     <input type="submit" value="Search" class="search-input">
                     <button type="button" onclick="cancelSearch()" class="cancel-input">Cancel</button>
                 </div>
-                <a href="read.php" style="color: #2C3162;">Display all clients</a>
+
+                <a href="../reports/view_consents.php">View Consented Clients Files</a>
+                <span><a href="../pharmacy/view_prescriptions.php">
+                                    <?php include ('../counts/consents_count.php'); ?>
+                </a></span> <!-- This would be your PHP count -->
             </div>
         </form>
 
@@ -265,14 +273,14 @@ if (isset($_GET['message'])) {
 
         // Modified SQL query to join patients and consents tables
         $sql = "SELECT p.*,
-                       c.consent_id,
-                       c.date_of_consent,
+                       c.id,
+                       c.created_at,
                        c.consent_status,
-                       c.hcw_name,
-                       c.visitDate,
-                       COALESCE(c.date_of_consent, p.reg_date) as display_date
+                       c.clinician_name,
+                       c.visit_date,
+                       COALESCE(c.created_at, p.reg_date) as display_date
                 FROM patients p
-                LEFT JOIN consents c ON p.mat_id = c.mat_id
+                LEFT JOIN client_consents c ON p.mat_id = c.mat_id
                 WHERE p.mat_id LIKE '%$search%'
                    OR p.mat_number LIKE '%$search%'
                    OR p.clientName LIKE '%$search%'
@@ -286,7 +294,7 @@ if (isset($_GET['message'])) {
                    OR p.cso LIKE '%$search%'
                    OR p.dosage LIKE '%$search%'
                    OR p.current_status LIKE '%$search%'
-                ORDER BY c.date_of_consent DESC, p.reg_date DESC";
+                ORDER BY c.created_at DESC, p.reg_date DESC";
 
         // Pagination
         $results_per_page = 5;
@@ -351,10 +359,10 @@ if (isset($_GET['message'])) {
                             <a href='../patients/view_patient.php?p_id=" . $row['p_id'] . "'>View</a>";
 
                 // Show update consent link
-                if (!empty($row['consent_id'])) {
-                    echo "<a href='../clinician/update_consent.php?consent_id=" . $row['consent_id'] . "&mat_id=" . $row['mat_id'] . "' class='update-link'>Update Consent</a>";
+                if (!empty($row['id'])) {
+                    echo "<a href='../clinician/update_consent.php?id=" . $row['id'] . "&mat_id=" . $row['mat_id'] . "' class='update-link'>Update Consent</a>";
                 } else {
-                    echo "<a href='../clinician/create_consent.php?p_id=" . $row['p_id'] . "' class='update-link'>Create Consent</a>";
+                    echo "<a href='../clinician/create_consent.php?p_id=" . $row['p_id'] . "' class='create-link'>Create Consent</a>";
                 }
 
                 echo "</td>
