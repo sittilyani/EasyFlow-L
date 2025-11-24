@@ -70,6 +70,10 @@ $user_id = $_SESSION['user_id'] ?? '';
             <i class="fa fa-binoculars"></i>Toxicology Results</a>
         <a href="psycho_socio_report.php" target="contentFrame" class="nav-link">
             <i class="fa fa-file"></i>Pyschosocial Report</a>
+        <a href="../reports/view_transfer_forms.php" target="contentFrame" class="nav-link">
+            <i class="fa fa-file"></i>Transfers Report</a>
+        <a href="../reports/view_consents.php" target="contentFrame" class="nav-link">
+            <i class="fa fa-file"></i>Consents Report</a>
 
 <?php elseif (in_array($userrole, ['clinician', 'Laboratory Scientist', 'Psychiatrist', 'psychologist'])) : ?>
         <a href="../laboratory/toxicology_results.php" target="contentFrame" class="nav-link">

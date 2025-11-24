@@ -45,7 +45,7 @@ if (isset($_GET['message'])) {
     $offset = ($current_page - 1) * $records_per_page;
 
     // Build the WHERE clause
-    $where_clause = " WHERE (mat_id LIKE '%$search%' OR mat_number LIKE '%$search%' OR clientName LIKE '%$search%' OR nickName LIKE '%$search%' OR dob LIKE '%$search%' OR age LIKE '%$search%' OR sex LIKE '%$search%' OR p_address LIKE '%$search%' OR peer_edu_name LIKE '%$search%' OR peer_edu_phone LIKE '%$search%' OR cso LIKE '%$search%' OR dosage LIKE '%$search%' AND current_status IN ('ltfu', 'defaulted', 'involuntary discontinuation'))";
+    $where_clause = " WHERE (mat_id LIKE '%$search%' OR mat_number LIKE '%$search%' OR clientName LIKE '%$search%' OR reg_date LIKE '%$search%' OR nickName LIKE '%$search%' OR dob LIKE '%$search%' OR age LIKE '%$search%' OR sex LIKE '%$search%' OR p_address LIKE '%$search%' OR peer_edu_name LIKE '%$search%' OR peer_edu_phone LIKE '%$search%' OR cso LIKE '%$search%' OR dosage LIKE '%$search%' AND current_status IN ('ltfu', 'defaulted', 'involuntary discontinuation'))";
 
     // Count total rows for pagination
     $count_sql = "SELECT COUNT(*) AS total_rows FROM patients" . $where_clause;
@@ -68,7 +68,7 @@ if (isset($_GET['message'])) {
                         <th style='width: 100px;'>Nick Name</th>
                         <th style='width: 50px;'>Age</th>
                         <th style='width: 50px;'>Sex</th>
-                        <th style='width: 100px;'>Residence</th>
+                        <th style='width: 100px;'>Enrolment Date</th>
                         <th style='width: 70px;'>CSO</th>
                         <th style='width: 120px;'>Drug</th>
                         <th style='width: 100px;'>Dosage</th>
@@ -87,7 +87,7 @@ if (isset($_GET['message'])) {
                     <td>" . htmlspecialchars($row['nickName']) . "</td>
                     <td>" . htmlspecialchars($row['age']) . "</td>
                     <td>" . htmlspecialchars($row['sex']) . "</td>
-                    <td>" . htmlspecialchars($row['p_address']) . "</td>
+                    <td>" . htmlspecialchars($row['reg_date']) . "</td>
                     <td>" . $row['cso'] . "</td>
                     <td>" . htmlspecialchars($row['drugname']) . "</td>
                     <td>" . htmlspecialchars($row['dosage']) . "</td>

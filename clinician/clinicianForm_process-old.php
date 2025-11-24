@@ -58,35 +58,66 @@ if (empty($clinician_name)) {
     </div>");
 }
 
-// Prepare and execute insert query - add current_status to the query
-$query = "INSERT INTO medical_history (visitDate, mat_id, clientName, nickName, sname, dob, reg_date, sex, marital_status, hiv_status, art_regimen, regimen_type, tb_status, hepc_status, other_status, clinical_notes, clinician_name, next_appointment, current_status, last_vlDate, results) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+// Start transaction
+$conn->begin_transaction();
 
-$stmt = $conn->prepare($query);
+try {
+    // Insert into medical_history table
+    $query = "INSERT INTO medical_history (visitDate, mat_id, clientName, nickName, sname, dob, reg_date, sex, marital_status, hiv_status, art_regimen, regimen_type, tb_status, hepc_status, other_status, clinical_notes, clinician_name, next_appointment, current_status, last_vlDate, results) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-if ($stmt) {
-    if ($stmt->bind_param('sssssssssssssssssssss', $visitDate, $mat_id, $clientName, $nickName, $sname, $dob, $reg_date, $sex, $marital_status, $hiv_status, $art_regimen, $regimen_type, $tb_status, $hepc_status, $other_status, $clinical_notes, $clinician_name, $next_appointment, $current_status, $last_vlDate, $results)) {
-        if ($stmt->execute()) {
-            echo "<div style='background-color: #74f7c7; color: darkgreen; font-style: italic; font-size: 16px; padding: 15px; margin: 20px; border: 1px solid #5cb85c; border-radius: 4px;'>
-                <strong>Success:</strong> Patient Clinical Information Updated Successfully
-            </div>";
-            header("Refresh: 3; url=index.php");
-            exit;
-        } else {
-            die("<div style='background-color: #f2dede; color: #a94442; padding: 15px; margin: 20px; border: 1px solid #ebccd1; border-radius: 4px;'>
-                <strong>Error inserting data:</strong> " . htmlspecialchars($stmt->error) . "
-            </div>");
-        }
-    } else {
-        die("<div style='background-color: #f2dede; color: #a94442; padding: 15px; margin: 20px; border: 1px solid #ebccd1; border-radius: 4px;'>
-            <strong>Error binding parameters:</strong> " . htmlspecialchars($stmt->error) . "
-        </div>");
+    $stmt = $conn->prepare($query);
+
+    if (!$stmt) {
+        throw new Exception("Error preparing medical_history statement: " . $conn->error);
     }
-} else {
+
+    if (!$stmt->bind_param('sssssssssssssssssssss', $visitDate, $mat_id, $clientName, $nickName, $sname, $dob, $reg_date, $sex, $marital_status, $hiv_status, $art_regimen, $regimen_type, $tb_status, $hepc_status, $other_status, $clinical_notes, $clinician_name, $next_appointment, $current_status, $last_vlDate, $results)) {
+        throw new Exception("Error binding parameters: " . $stmt->error);
+    }
+
+    if (!$stmt->execute()) {
+        throw new Exception("Error inserting into medical_history: " . $stmt->error);
+    }
+
+    $stmt->close();
+
+    // Update next_appointment in patients table
+    if (!empty($next_appointment)) {
+        $update_query = "UPDATE patients SET next_appointment = ? WHERE mat_id = ?";
+        $update_stmt = $conn->prepare($update_query);
+
+        if (!$update_stmt) {
+            throw new Exception("Error preparing patients update statement: " . $conn->error);
+        }
+
+        if (!$update_stmt->bind_param('ss', $next_appointment, $mat_id)) {
+            throw new Exception("Error binding update parameters: " . $update_stmt->error);
+        }
+
+        if (!$update_stmt->execute()) {
+            throw new Exception("Error updating patients table: " . $update_stmt->error);
+        }
+
+        $update_stmt->close();
+    }
+
+    // Commit transaction
+    $conn->commit();
+
+    echo "<div style='background-color: #74f7c7; color: darkgreen; font-style: italic; font-size: 16px; padding: 15px; margin: 20px; border: 1px solid #5cb85c; border-radius: 4px;'>
+        <strong>Success:</strong> Patient Clinical Information Updated Successfully
+    </div>";
+    header("Refresh: 3; url=index.php");
+    exit;
+
+} catch (Exception $e) {
+    // Rollback transaction on error
+    $conn->rollback();
+
     die("<div style='background-color: #f2dede; color: #a94442; padding: 15px; margin: 20px; border: 1px solid #ebccd1; border-radius: 4px;'>
-        <strong>Error preparing statement:</strong> " . htmlspecialchars($conn->error) . "
+        <strong>Error:</strong> " . htmlspecialchars($e->getMessage()) . "
     </div>");
 }
 
-$stmt->close();
 $conn->close();
 ?>

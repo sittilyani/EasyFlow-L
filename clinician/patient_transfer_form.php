@@ -2,8 +2,18 @@
 session_start();
 include "../includes/config.php";
 
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ../login.php');
+    exit;
+}
+
 // Get the user_id from the query parameter (if applicable)
 $userId = isset($_GET['p_id']) ? $_GET['p_id'] : null;
+
+// Display success or error messages
+$successMessage = isset($_GET['success']) ? urldecode($_GET['success']) : '';
+$errorMessage = isset($_GET['error']) ? urldecode($_GET['error']) : '';
 
 // Fetch patient details if p_id is provided
 $client = null;
@@ -11,7 +21,7 @@ if (isset($_GET['p_id'])) {
     $p_id = $_GET['p_id'];
     $patient_query = "SELECT clientName, sex, dob, client_phone, reg_facility, rx_supporter_name, mat_id, reg_date FROM patients WHERE p_id = ?";
     $stmt = mysqli_prepare($conn, $patient_query);
-    mysqli_stmt_bind_param($stmt, "s", $p_id);
+    mysqli_stmt_bind_param($stmt, "i", $p_id);
     mysqli_stmt_execute($stmt);
     $patient_result = mysqli_stmt_get_result($stmt);
     $client = mysqli_fetch_assoc($patient_result);
@@ -35,7 +45,7 @@ if (isset($_GET['p_id'])) {
     ";
 
     $stmt_photo = $conn->prepare($sql_photo);
-    $stmt_photo->bind_param('s', $p_id);
+    $stmt_photo->bind_param('i', $p_id);
     $stmt_photo->execute();
     $result_photo = $stmt_photo->get_result();
     $photo = $result_photo->fetch_assoc();
@@ -49,7 +59,6 @@ if (isset($_GET['p_id'])) {
         }
     }
 }
-
 
 // Fetch clinicians and counselors from tblusers
 $clinician_query = "SELECT full_name FROM tblusers WHERE userrole IN ('clinician', 'pyschologist', 'admin', 'super admin')";
@@ -79,25 +88,6 @@ if ($resultFacilitySettings && $resultFacilitySettings->num_rows > 0) {
     $facilityIncharge = $rowFacilitySettings['facilityincharge'];
     $facilityPhone = htmlspecialchars($rowFacilitySettings['facilityphone']);
 }
-
-// Check if the user is logged in and fetch their user_id
-if (!isset($_SESSION['user_id'])) {
-    die("You must be logged in to access this page.");
-}
-$loggedInUserId = $_SESSION['user_id'];
-
-// Fetch the logged-in user's name from tblusers
-$clinician_name = 'Unknown';
-$userQuery = "SELECT first_name, last_name FROM tblusers WHERE user_id = ?";
-$stmt = $conn->prepare($userQuery);
-$stmt->bind_param('i', $loggedInUserId);
-$stmt->execute();
-$result = $stmt->get_result();
-if ($result->num_rows > 0) {
-    $user = $result->fetch_assoc();
-    $clinician_name = $user['first_name'] . ' ' . $user['last_name'];
-}
-$stmt->close();
 ?>
 
 <!DOCTYPE html>
@@ -109,7 +99,10 @@ $stmt->close();
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; font-size: 12px; line-height: 1.4; color: #333; background: #f5f5f5; }
-        .container { width: 95%; margin: 0 auto; background: white; padding: 20px; }
+        .container { width: 75%; margin: 0 auto; background: white; padding: 20px; }
+        .alert { padding: 15px; margin-bottom: 20px; border-radius: 5px; }
+        .alert-success { background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .alert-danger { background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
         .header-wrapper { position: relative; margin-bottom: 20px; }
         .header { text-align: center; padding: 10px 0; }
         .header h2 { font-size: 16px; margin: 5px 0; font-weight: bold; }
@@ -139,7 +132,7 @@ $stmt->close();
         @media print {
             body { background: white; }
             .container { max-width: 100%; padding: 0; }
-            .submit-button, .export-button, .button-group { display: none; }
+            .submit-button, .export-button, .button-group, .alert { display: none; }
             @page { size: A4; margin: 15mm; }
         }
         @media screen and (max-width: 768px) {
@@ -150,6 +143,18 @@ $stmt->close();
 </head>
 <body>
     <div class="container">
+        <?php if ($successMessage): ?>
+            <div class="alert alert-success" id="success-message">
+                <?php echo htmlspecialchars($successMessage); ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($errorMessage): ?>
+            <div class="alert alert-danger" id="error-message">
+                <?php echo htmlspecialchars($errorMessage); ?>
+            </div>
+        <?php endif; ?>
+
         <div class="header-wrapper">
             <div class="header">
                 <h2>Republic of Kenya</h2>
@@ -217,7 +222,7 @@ $stmt->close();
 
                 <div class="form-group">
                     <label for="client_phone">Client Phone</label>
-                    <input type="text" id="client_phone" name="client_phone" value="<?php echo $client ? htmlspecialchars($client['client_phone']) : ''; ?>" required>
+                    <input type="text" id="client_phone" name="client_phone" value="<?php echo $client ? htmlspecialchars($client['client_phone']) : ''; ?>">
                 </div>
 
                 <div class="form-group">
@@ -252,7 +257,7 @@ $stmt->close();
 
                 <div class="form-group">
                     <label for="from_site">From (Referral Site)</label>
-                    <input type="text" name="from_site" required>
+                    <input type="text" name="from_site" class="readonly-input" readonly value="<?php echo $client ? htmlspecialchars($client['reg_facility']) : ''; ?>" required>
                 </div>
 
                 <div class="form-group">
@@ -266,32 +271,32 @@ $stmt->close();
             <div class="form-group-1">
                 <div class="form-group full-width">
                     <label for="reason_transfer">Reason for Transfer/Transit (Transit not exceeding 30 days, Transfer if more than 30 days)</label>
-                    <textarea name="reason_transfer" id="reason_transfer" rows="4" style = "font-size: 18px; color: blue; text-height: 1.5;  font-family: "Times New Roman", Times, serif;" required></textarea>
+                    <textarea name="reason_transfer" id="reason_transfer" rows="4" style="font-size: 18px; color: blue; line-height: 1.5; font-family: 'Times New Roman', Times, serif;" required></textarea>
                 </div>
 
                 <div class="form-group full-width">
                     <label for="clinical_history">Clinical & Drug Use History</label>
-                    <textarea name="clinical_history" id="clinical_history" rows="4" style = "font-size: 18px; color: blue; text-height: 1.5;  font-family: "Times New Roman", Times, serif;" required></textarea>
+                    <textarea name="clinical_history" id="clinical_history" rows="4" style="font-size: 18px; color: blue; line-height: 1.5; font-family: 'Times New Roman', Times, serif;" required></textarea>
                 </div>
 
                 <div class="form-group full-width">
                     <label for="psychosocial">Psychosocial Background & Concerns</label>
-                    <textarea name="psychosocial" id="psychosocial" rows="4" style = "font-size: 18px; color: blue; text-height: 1.5;  font-family: "Times New Roman", Times, serif;" required></textarea>
+                    <textarea name="psychosocial" id="psychosocial" rows="4" style="font-size: 18px; color: blue; line-height: 1.5; font-family: 'Times New Roman', Times, serif;" required></textarea>
                 </div>
 
                 <div class="form-group full-width">
                     <label for="lab_investigations">Laboratory Investigations Done & Date</label>
-                    <textarea name="lab_investigations" id="lab_investigations" rows="4" style = "font-size: 18px; color: blue; text-height: 1.5;  font-family: "Times New Roman", Times, serif;"></textarea>
+                    <textarea name="lab_investigations" id="lab_investigations" rows="4" style="font-size: 18px; color: blue; line-height: 1.5; font-family: 'Times New Roman', Times, serif;"></textarea>
                 </div>
 
                 <div class="form-group full-width">
                     <label for="vaccinations">Vaccinations Done & Date</label>
-                    <textarea name="vaccinations" id="vaccinations" rows="4" style = "font-size: 18px; color: blue; text-height: 1.5;  font-family: "Times New Roman", Times, serif;"></textarea>
+                    <textarea name="vaccinations" id="vaccinations" rows="4" style="font-size: 18px; color: blue; line-height: 1.5; font-family: 'Times New Roman', Times, serif;"></textarea>
                 </div>
 
                 <div class="form-group full-width">
                     <label for="diagnosis">Diagnosis</label>
-                    <textarea name="diagnosis" id="diagnosis" rows="4" style = "font-size: 18px; color: blue; text-height: 1.5; font-family: "Times New Roman", Times, serif;" required></textarea>
+                    <textarea name="diagnosis" id="diagnosis" rows="4" style="font-size: 18px; color: blue; line-height: 1.5; font-family: 'Times New Roman', Times, serif;" required></textarea>
                 </div>
 
                 <div class="form-group">
@@ -356,11 +361,19 @@ $stmt->close();
 
             <div class="button-group">
                 <button type="submit" class="submit-button">Submit Form</button>
-                <label for="print-pdf"></label>
-                <button style ="background: green; color: white; width: 100px; height: 40px; border: none; border-radius: 5px; "id="print-pdf" onclick="window.print()">Print PDF</button>
+                <button type="button" style="background: green; color: white; width: 100px; height: 40px; border: none; border-radius: 5px;" id="print-pdf" onclick="window.print()">Print PDF</button>
             </div>
         </form>
-        </div>
+    </div>
 
+    <script>
+        // Auto-hide success/error messages after 5 seconds
+        setTimeout(function() {
+            var successMsg = document.getElementById('success-message');
+            var errorMsg = document.getElementById('error-message');
+            if (successMsg) successMsg.style.display = 'none';
+            if (errorMsg) errorMsg.style.display = 'none';
+        }, 5000);
+    </script>
 </body>
 </html>

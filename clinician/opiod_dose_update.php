@@ -200,25 +200,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["update"])) {
                     <input type="text" name="p_address" value="<?php echo htmlspecialchars($currentSettings['p_address'] ?? ''); ?>">
                 </div>
                 <div class="form-group">
+                <label for="drugname">Drug <span style='color: red; font-weight: bold;'>&#10033;</span></label>
+                <select id="drugname" name="drugname" required>
+                    <?php
+                    if (isset($conn)) {
+                        $sql = "SELECT drugName FROM drug WHERE drugname IN ('methadone', 'Buprenorphine 2mg', 'Buprenorphine 4mg', 'Buprenorphine 8mg')";
+                        $result = $conn->query($sql);
 
-                    <label for="drugname">Drug <span style='color: red; font-weight: bold;'>&#10033;</span></label>
-                        <select id="drugname" name="drugname" required>
-                            <?php
-                            if (isset($conn)) {
-                                $sql = "SELECT drugName FROM drug where drugname IN ('methadone', 'Buprenorphine 2mg', 'Buprenorphine 4mg', 'Buprenorphine 8mg')";
-                                $result = $conn->query($sql);
+                        // Get the current drug name from patient settings
+                        $currentDrug = $currentSettings['drugname'] ?? '';
 
-                                if ($result && $result->num_rows > 0) {
-                                    while ($row = $result->fetch_assoc()) {
-                                        echo "<option value='" . htmlspecialchars($row['drugName'], ENT_QUOTES, 'UTF-8') . "'>" . htmlspecialchars($row['drugName'], ENT_QUOTES, 'UTF-8') . "</option>";
-                                    }
-                                } else {
-                                    echo "<option value=''>No drugs available</option>";
-                                }
+                        if ($result && $result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                                $drugName = htmlspecialchars($row['drugName'], ENT_QUOTES, 'UTF-8');
+                                // Check if this drug matches the current patient's drug
+                                $selected = ($drugName === $currentDrug) ? 'selected' : '';
+                                echo "<option value='" . $drugName . "' " . $selected . ">" . $drugName . "</option>";
                             }
-                            ?>
-                        </select>
-                </div>
+                        } else {
+                            echo "<option value=''>No drugs available</option>";
+                        }
+                    }
+                    ?>
+                </select>
+            </div>
                 <div class="form-group">
                     <label for="dosage">New Dosage</label>
                     <input type="number" name="dosage" step="0.01" value="<?php echo htmlspecialchars($currentSettings['dosage'] ?? ''); ?>" required>
