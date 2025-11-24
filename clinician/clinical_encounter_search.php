@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $clinician_id = $_SESSION['user_id'];
 
-// Handle search OR show all drafts by default
+// Handle search OR show incomplete forms by default
 $results = [];
 $show_all = true;
 
@@ -19,98 +19,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
     $show_all = false;
 
     if (!empty($search_term)) {
-        // Search in drafts
-        $draft_sql = "SELECT d.*, p.clientName, p.mat_id
-                      FROM clinical_encounter_drafts d
-                      JOIN patients p ON d.patient_id = p.p_id
-                      WHERE (p.clientName LIKE ? OR p.mat_id LIKE ?) AND d.clinician_id = ?";
-        $draft_stmt = $conn->prepare($draft_sql);
+        // Search in incomplete triage forms
+        $triage_sql = "SELECT t.*, p.clientName, p.mat_id, p.sname
+                      FROM triage_services t
+                      JOIN patients p ON t.patient_id = p.p_id
+                      WHERE (p.clientName LIKE ? OR p.mat_id LIKE ? OR p.sname LIKE ?)
+                      AND t.status = 'incomplete' AND t.clinician_id = ?";
+        $triage_stmt = $conn->prepare($triage_sql);
         $search_like = "%$search_term%";
-        $draft_stmt->bind_param('ssi', $search_like, $search_like, $clinician_id);
-        $draft_stmt->execute();
-        $draft_results = $draft_stmt->get_result();
+        $triage_stmt->bind_param('sssi', $search_like, $search_like, $search_like, $clinician_id);
+        $triage_stmt->execute();
+        $triage_results = $triage_stmt->get_result();
 
-        while ($row = $draft_results->fetch_assoc()) {
+        while ($row = $triage_results->fetch_assoc()) {
             $results[] = [
-                'type' => 'draft',
+                'type' => 'triage',
                 'id' => $row['id'],
                 'patient_id' => $row['patient_id'],
-                'client_name' => $row['clientName'],
+                'client_name' => $row['clientName'] . ' ' . $row['sname'],
                 'mat_id' => $row['mat_id'],
-                'current_section' => $row['current_section'],
+                'status' => $row['status'],
                 'updated_at' => $row['updated_at']
             ];
         }
-        $draft_stmt->close();
-
-        // Search in incomplete encounters
-        $encounter_sql = "SELECT e.*, p.clientName, p.mat_id
-                         FROM clinical_encounters e
-                         JOIN patients p ON e.patient_id = p.p_id
-                         WHERE (p.clientName LIKE ? OR p.mat_id LIKE ?) AND e.status = 'draft'";
-        $encounter_stmt = $conn->prepare($encounter_sql);
-        $encounter_stmt->bind_param('ss', $search_like, $search_like);
-        $encounter_stmt->execute();
-        $encounter_results = $encounter_stmt->get_result();
-
-        while ($row = $encounter_results->fetch_assoc()) {
-            $results[] = [
-                'type' => 'encounter',
-                'id' => $row['id'],
-                'patient_id' => $row['patient_id'],
-                'client_name' => $row['clientName'],
-                'mat_id' => $row['mat_id'],
-                'current_section' => $row['current_section'],
-                'updated_at' => $row['updated_at']
-            ];
-        }
-        $encounter_stmt->close();
+        $triage_stmt->close();
     }
 } else {
-    // Show all drafts by default when page loads (no search)
-    $draft_sql = "SELECT d.*, p.clientName, p.mat_id
-                  FROM clinical_encounter_drafts d
-                  JOIN patients p ON d.patient_id = p.p_id
-                  WHERE d.clinician_id = ?";
-    $draft_stmt = $conn->prepare($draft_sql);
-    $draft_stmt->bind_param('i', $clinician_id);
-    $draft_stmt->execute();
-    $draft_results = $draft_stmt->get_result();
+    // Show all incomplete triage forms by default when page loads (no search)
+    $triage_sql = "SELECT t.*, p.clientName, p.mat_id, p.sname
+                  FROM triage_services t
+                  JOIN patients p ON t.patient_id = p.p_id
+                  WHERE t.status = 'incomplete' AND t.clinician_id = ?
+                  ORDER BY t.updated_at DESC";
+    $triage_stmt = $conn->prepare($triage_sql);
+    $triage_stmt->bind_param('i', $clinician_id);
+    $triage_stmt->execute();
+    $triage_results = $triage_stmt->get_result();
 
-    while ($row = $draft_results->fetch_assoc()) {
+    while ($row = $triage_results->fetch_assoc()) {
         $results[] = [
-            'type' => 'draft',
+            'type' => 'triage',
             'id' => $row['id'],
             'patient_id' => $row['patient_id'],
-            'client_name' => $row['clientName'],
+            'client_name' => $row['clientName'] . ' ' . $row['sname'],
             'mat_id' => $row['mat_id'],
-            'current_section' => $row['current_section'],
+            'status' => $row['status'],
             'updated_at' => $row['updated_at']
         ];
     }
-    $draft_stmt->close();
-
-    // Also show all incomplete encounters
-    $encounter_sql = "SELECT e.*, p.clientName, p.mat_id
-                     FROM clinical_encounters e
-                     JOIN patients p ON e.patient_id = p.p_id
-                     WHERE e.status = 'draft'";
-    $encounter_stmt = $conn->prepare($encounter_sql);
-    $encounter_stmt->execute();
-    $encounter_results = $encounter_stmt->get_result();
-
-    while ($row = $encounter_results->fetch_assoc()) {
-        $results[] = [
-            'type' => 'encounter',
-            'id' => $row['id'],
-            'patient_id' => $row['patient_id'],
-            'client_name' => $row['clientName'],
-            'mat_id' => $row['mat_id'],
-            'current_section' => $row['current_section'],
-            'updated_at' => $row['updated_at']
-        ];
-    }
-    $encounter_stmt->close();
+    $triage_stmt->close();
 }
 ?>
 
@@ -132,13 +89,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
         .results-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         .results-table th, .results-table td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
         .results-table th { background: #f8f9fa; font-weight: 600; }
-        .continue-btn { padding: 8px 16px; background: #27ae60; color: white; text-decoration: none; border-radius: 4px; }
-        .continue-btn:hover { background: #219a52; }
-        .new-form-btn { padding: 12px 24px; background: #e74c3c; color: white; text-decoration: none; border-radius: 5px; display: inline-block; margin-bottom: 20px; }
-        .new-form-btn:hover { background: #c0392b; }
+        .continue-btn { padding: 8px 16px; background: #e67e22; color: white; text-decoration: none; border-radius: 4px; }
+        .continue-btn:hover { background: #d35400; }
+        .new-form-btn { padding: 12px 24px; background: #27ae60; color: white; text-decoration: none; border-radius: 5px; display: inline-block; margin-bottom: 20px; }
+        .new-form-btn:hover { background: #219a52; }
         .type-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
-        .type-draft { background: #fff3cd; color: #856404; }
-        .type-encounter { background: #d1ecf1; color: #0c5460; }
+        .type-triage { background: #fff3cd; color: #856404; }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .status-incomplete { background: #f8d7da; color: #721c24; }
         .no-results { text-align: center; padding: 40px; color: #666; font-size: 18px; }
     </style>
 </head>
@@ -146,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
     <div class="container">
         <h1>Clinical Encounter Forms</h1>
 
-        <a href="clinician_initial_encounter_form.php" class="new-form-btn">Start New Form</a>
+        <a href="search_patient.php" class="new-form-btn">Start New Form</a>
 
         <div class="search-form">
             <form method="POST">
@@ -163,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
                         <th>Type</th>
                         <th>Client Name</th>
                         <th>MAT ID</th>
-                        <th>Last Saved Section</th>
+                        <th>Status</th>
                         <th>Last Updated</th>
                         <th>Action</th>
                     </tr>
@@ -178,18 +136,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
                         </td>
                         <td><?php echo htmlspecialchars($result['client_name']); ?></td>
                         <td><?php echo htmlspecialchars($result['mat_id']); ?></td>
-                        <td><?php echo htmlspecialchars($result['current_section']); ?></td>
+                        <td>
+                            <span class="status-badge status-<?php echo $result['status']; ?>">
+                                <?php echo ucfirst($result['status']); ?>
+                            </span>
+                        </td>
                         <td><?php echo date('M j, Y g:i A', strtotime($result['updated_at'])); ?></td>
                         <td>
-                            <?php if ($result['type'] === 'draft'): ?>
-                                <a href="clinician_initial_encounter_form.php?p_id=<?php echo $result['patient_id']; ?>&draft_id=<?php echo $result['id']; ?>" class="continue-btn">
-                                    Continue Form
-                                </a>
-                            <?php else: ?>
-                                <a href="clinician_initial_encounter_form.php?p_id=<?php echo $result['patient_id']; ?>&encounter_id=<?php echo $result['id']; ?>" class="continue-btn">
-                                    Continue Form
-                                </a>
-                            <?php endif; ?>
+                            <a href="clinician_initial_encounter_form.php?p_id=<?php echo $result['patient_id']; ?>&triage_id=<?php echo $result['id']; ?>&action=continue" class="continue-btn">
+                                Continue Form
+                            </a>
                         </td>
                     </tr>
                     <?php endforeach; ?>
@@ -197,11 +153,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
             </table>
         <?php elseif ($_SERVER['REQUEST_METHOD'] === 'POST'): ?>
             <div class="no-results">
-                <p>No forms found matching your search criteria.</p>
+                <p>No incomplete forms found matching your search criteria.</p>
             </div>
         <?php else: ?>
             <div class="no-results">
-                <p>No clinical encounter draft forms found.</p>
+                <p>No incomplete clinical encounter forms found.</p>
+                <p><a href="search_patient.php" style="color: #3498db;">Start a new form</a> to begin a clinical encounter.</p>
             </div>
         <?php endif; ?>
     </div>

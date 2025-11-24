@@ -7,14 +7,17 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+$clinician_id = $_SESSION['user_id'];
 $results = [];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
     $search_term = $_POST['search_term'] ?? '';
 
     if (!empty($search_term)) {
-        $sql = "SELECT p_id, clientName, sname, mat_id, age, sex, reg_date
-                FROM patients
-                WHERE clientName LIKE ? OR mat_id LIKE ? OR sname LIKE ?";
+        $sql = "SELECT p.*,
+                       (SELECT status FROM triage_services WHERE patient_id = p.p_id ORDER BY created_at DESC LIMIT 1) as triage_status
+                FROM patients p
+                WHERE p.clientName LIKE ? OR p.mat_id LIKE ? OR p.sname LIKE ?";
         $stmt = $conn->prepare($sql);
         $search_like = "%$search_term%";
         $stmt->bind_param('sss', $search_like, $search_like, $search_like);
@@ -34,10 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Patient</title>
+    <title>Search Patient - Start Clinical Encounter</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
-        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         h1 { color: #2c3e50; margin-bottom: 30px; }
         .search-form { margin-bottom: 30px; }
         .search-input { padding: 12px; width: 400px; border: 2px solid #ddd; border-radius: 5px; font-size: 16px; }
@@ -46,13 +49,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
         .results-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         .results-table th, .results-table td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
         .results-table th { background: #f8f9fa; font-weight: 600; }
-        .select-btn { padding: 8px 16px; background: #27ae60; color: white; text-decoration: none; border-radius: 4px; }
-        .select-btn:hover { background: #219a52; }
+        .start-btn { padding: 8px 16px; background: #27ae60; color: white; text-decoration: none; border-radius: 4px; }
+        .start-btn:hover { background: #219a52; }
+        .continue-btn { padding: 8px 16px; background: #e67e22; color: white; text-decoration: none; border-radius: 4px; }
+        .continue-btn:hover { background: #d35400; }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .status-incomplete { background: #fff3cd; color: #856404; }
+        .status-complete { background: #d1ecf1; color: #0c5460; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Search Patient for Clinical Encounter</h1>
+        <h1>Search Patient - Start Clinical Encounter</h1>
 
         <div class="search-form">
             <form method="POST">
@@ -70,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
                         <th>MAT ID</th>
                         <th>Age</th>
                         <th>Sex</th>
-                        <th>Registration Date</th>
+                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -81,11 +89,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
                         <td><?php echo htmlspecialchars($result['mat_id']); ?></td>
                         <td><?php echo htmlspecialchars($result['age']); ?></td>
                         <td><?php echo htmlspecialchars($result['sex']); ?></td>
-                        <td><?php echo htmlspecialchars($result['reg_date']); ?></td>
                         <td>
-                            <a href="clinician_initial_encounter_form.php?p_id=<?php echo $result['p_id']; ?>" class="select-btn">
-                                Select Patient
-                            </a>
+                            <?php if ($result['triage_status'] == 'incomplete'): ?>
+                                <span class="status-badge status-incomplete">Incomplete</span>
+                            <?php elseif ($result['triage_status'] == 'complete'): ?>
+                                <span class="status-badge status-complete">Complete</span>
+                            <?php else: ?>
+                                <span>New</span>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <?php if ($result['triage_status'] == 'incomplete'): ?>
+                                <a href="clinician_initial_encounter_form.php?p_id=<?php echo $result['p_id']; ?>&action=continue" class="continue-btn">
+                                    Continue Form
+                                </a>
+                            <?php else: ?>
+                                <a href="clinician_initial_encounter_form.php?p_id=<?php echo $result['p_id']; ?>&action=start" class="start-btn">
+                                    Start New Form
+                                </a>
+                            <?php endif; ?>
                         </td>
                     </tr>
                     <?php endforeach; ?>
