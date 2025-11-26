@@ -77,13 +77,14 @@ if ($result->num_rows > 0) {
             <thead>
                 <tr>
                 <th style='width: 60px;'>ID</th>
-                <th>MAT ID</th>
+                <th style='width: 160px;'>MAT ID</th>
                 <th>Client Name</th>
                 <th style='width: 80px;'>Age</th>
                 <th style='width: 80px;'>Sex</th>
-                <th>Drug</th>
-                <th style='width: 80px;'>Dosage</th>
-                <th style='width: 120px;'>Current Status</th>
+                <th style='width: 120px;'>Drug</th>
+                <th style='width: 100px;'>Dosage(mg)</th>
+                <th style='width: 100px;'>Dosage(mL)</th>
+                <th style='width: 60px;'>Current Status</th>
                 <th style='width: 80px;'>History</th>
                 <th>Action</th>
             </tr>
@@ -91,6 +92,10 @@ if ($result->num_rows > 0) {
     <tbody>";
 
     while ($row = $result->fetch_assoc()) {
+        // Calculate dosage_ml for each row
+        $dosage = !empty($row['dosage']) ? $row['dosage'] : 0;
+        $dosage_ml = $dosage / 5;
+
         echo "<tr>
                 <td>" . $row['p_id'] . "</td>
                 <td>" . $row['mat_id'] . "</td>
@@ -98,7 +103,8 @@ if ($result->num_rows > 0) {
                 <td>" . $row['age'] . "</td>
                 <td>" . $row['sex'] . "</td>
                 <td style ='color: blue;'>" . $row['drugname'] . "</td>
-                <td>" . $row['dosage'] . "</td>
+                <td>" . $dosage . "</td>
+                <td style='color: red; font-weight: bold; align-items: center;'>" . $dosage_ml . "</td>
                 <td>" . $row['current_status'] . "</td>
                 <td>
                     <center>
@@ -110,7 +116,7 @@ if ($result->num_rows > 0) {
                     <a href='../pharmacy/view-missed.php?mat_id=" . $row['mat_id'] . "'>View</a> &#124;
                     <a href='dispensingData.php?mat_id=" . $row['mat_id'] . "'>DISPENSE</a> &#124;
                     <a href='multi_dispensing.php?mat_id=" . $row['mat_id'] . "'>MDD</a> &#124;
-                    <a href='../referrals/referral.php?mat_id=" . $row['mat_id'] . "'Refer</a> Refer
+                    <a href='../referrals/referral.php?mat_id=" . $row['mat_id'] . "'>Refer</a>
                 </td>
             </tr>";
     }
