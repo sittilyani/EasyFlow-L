@@ -915,4 +915,41 @@ From
 <td><?php echo htmlspecialchars($record['last_vlDate']); ?></td> to
 <td><?php echo empty($record['last_vlDate']) ? "NA" : htmlspecialchars($record['last_vlDate']); ?></td>
 
+20 November 2025
+-- Update patients table with the most recent next_appointment from medical_history
+UPDATE patients p
+INNER JOIN (
+    SELECT mat_id, next_appointment
+    FROM medical_history
+    WHERE next_appointment IS NOT NULL 
+    AND next_appointment != ''
+    ORDER BY visitDate DESC, id DESC
+) AS latest
+ON p.mat_id = latest.mat_id
+SET p.next_appointment = latest.next_appointment;
+
+
+
+NEXT APPOINTMENT TRIGGER
+
+-- Drop trigger if it already exists
+DROP TRIGGER IF EXISTS update_patient_next_appointment;
+
+-- Create trigger
+DELIMITER $$
+
+CREATE TRIGGER update_patient_next_appointment
+AFTER INSERT ON medical_history
+FOR EACH ROW
+BEGIN
+    -- Update next_appointment in patients table only if new value is not empty
+    IF NEW.next_appointment IS NOT NULL AND NEW.next_appointment != '' THEN
+        UPDATE patients 
+        SET next_appointment = NEW.next_appointment 
+        WHERE mat_id = NEW.mat_id;
+    END IF;
+END$$
+
+DELIMITER ;
+
 
