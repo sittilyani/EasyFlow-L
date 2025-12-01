@@ -1,148 +1,301 @@
+<?php
+session_start();
+// Include database configuration (assuming this file connects to $conn)
+include('../includes/config.php');
+
+// --- 1. Initialize variables ---
+$patient_data = [
+    'mat_id' => '',
+    'name' => '',
+    'age' => '',
+    'sex' => '',
+    'dob' => '',
+    'enroll_date' => '',
+    'current_dose' => '',
+    'supporter_name' => '',
+    'supporter_tel' => '',
+    'drugname' => '' // New field for drug name
+];
+
+// --- 2. Fetch data from URL parameters and Database ---
+if (isset($_GET['mat_id'])) {
+    // $conn is assumed to be available from config.php
+    $mat_id = $conn->real_escape_string($_GET['mat_id']);
+
+    // Best practice: Use a prepared statement to fetch all details from the DB
+    $sql = "SELECT clientName, age, sex, dob, reg_date, dosage, drugname, peer_edu_name, peer_edu_phone
+            FROM patients
+            WHERE mat_id = ?";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $mat_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+
+        $patient_data['mat_id'] = $mat_id;
+        $patient_data['name'] = htmlspecialchars($row['clientName']);
+        $patient_data['age'] = htmlspecialchars($row['age']);
+        $patient_data['sex'] = htmlspecialchars($row['sex']);
+        $patient_data['dob'] = htmlspecialchars($row['dob']);
+        $patient_data['enroll_date'] = htmlspecialchars($row['reg_date']);
+        $patient_data['current_dose'] = htmlspecialchars($row['dosage']);
+        $patient_data['drugname'] = htmlspecialchars($row['drugname']);
+        // Use null coalescing operator (??) for optional fields, though the DB query should handle it if columns exist
+        $patient_data['supporter_name'] = htmlspecialchars($row['peer_edu_name'] ?? '');
+        $patient_data['supporter_tel'] = htmlspecialchars($row['peer_edu_phone'] ?? '');
+
+    } else {
+        // Handle case where MAT ID is passed but no patient is found
+        $patient_data['mat_id'] = $mat_id . " (Not Found)";
+    }
+    $stmt->close();
+}
+
+// Helper function to handle pre-selected sex
+function is_selected($value, $current_sex) {
+    // Standardize 'Male'/'Female' to match stored values
+    $normalized_sex = strtolower(trim($current_sex));
+    // Check for both 'Male'/'Female' strings and potential 1/2 numeric values
+    $target = strtolower(trim($value));
+
+    // Check for numeric values if the DB uses them (as per original function logic)
+    if (is_numeric($value)) {
+        $target = ($value == 1) ? 'male' : 'female';
+    } else {
+        $target = strtolower(trim($value));
+    }
+
+    return ($normalized_sex == $target) ? 'selected' : '';
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MAT Cessation Assessment Checklist (Form 2E)</title>
-    <link rel="stylesheet" href="style.css">
     <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f4f4f9;
-                color: #333;
-                padding: 20px;
-            }
-
-            .container {
-                max-width:70%;
-                margin: 0 auto;
-                background: #fff;
-                padding: 30px;
-                border-radius: 8px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            }
-            .form-header {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                text-align: center;
-                margin-bottom: 30px;
-            }
-
-            h1, h2 {
-                text-align: center;
-                color: #0056b3;
-            }
-
-            .info-group {
-                margin-bottom: 15px;
-            }
-
-            .info-group label {
-                display: block;
-                font-weight: bold;
-                margin-bottom: 5px;
-            }
-
-            .info-group input[type="text"],
-            .info-group input[type="number"] {
-                width: 100%;
-                padding: 8px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                box-sizing: border-box; /* Ensures padding doesn't affect total width */
-            }
-
-            hr {
-                border: 0;
-                height: 1px;
-                background: #ccc;
-                margin: 20px 0;
-            }
-
-            .instruction {
-                font-style: italic;
-                margin-bottom: 15px;
-            }
-
-            .gad7-table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-bottom: 20px;
-            }
-
-            .gad7-table th, .gad7-table td {
-                border: 1px solid #ddd;
-                padding: 10px;
-                text-align: center;
-            }
-
-            .gad7-table th:first-child, .gad7-table td:first-child {
-                text-align: left;
-                width: 40%;
-            }
-
-            .gad7-table thead th {
-                background-color: #e9e9e9;
-                font-weight: bold;
-            }
-
-            .gad7-table td input[type="radio"] {
-                transform: scale(1.5); /* Make radio buttons easier to click */
-            }
-
-            button[type="submit"] {
-                display: block;
-                width: 100%;
-                padding: 10px;
-                background-color: #007bff;
-                color: white;
-                border: none;
-                border-radius: 4px;
-                font-size: 1.1em;
-                cursor: pointer;
-                transition: background-color 0.3s ease;
-            }
-
-            button[type="submit"]:hover {
-                background-color: #0056b3;
-            }
-        /* Add specific styling for Form 2E if needed, e.g., wider question column */
-        .cessation-table th:nth-child(2), .cessation-table td:nth-child(2) {
-            width: 70%;
-            text-align: left;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            padding: 20px;
         }
-        .cessation-table th:nth-child(3), .cessation-table th:nth-child(4) {
-            width: 15%;
+
+        .container {
+            min-width: 80%; /* Increased max-width for better form layout */
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #0056b3;
+            padding-bottom: 10px;
+        }
+        .form-header img {
+            max-width: 80px;
+            height: auto;
+        }
+        .form-header div {
+            flex-grow: 1;
+            text-align: center;
+        }
+        .form-header p {
+            font-size: 0.8em;
+            text-align: right;
+            margin: 0;
+            width: 150px;
+        }
+
+        h1, h2, h4 {
+            text-align: center;
+            color: #0056b3;
+            margin-top: 5px;
+            margin-bottom: 15px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 columns for general info */
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-group {
+            margin-bottom: 0; /* Adjusted for grid layout */
+        }
+
+        .info-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        .info-group input[type="text"],
+        .info-group input[type="number"],
+        .info-group input[type="date"],
+        .info-group input[type="tel"],
+        .info-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+        .info-group input:read-only,
+        .info-group select[disabled] {
+            background-color: #e9e9e9;
+            font-weight: 600; /* Bold the value for clear distinction */
+            border-color: #bbb;
+            color: #333;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: #ccc;
+            margin: 30px 0;
+        }
+
+        .instruction {
+            font-style: italic;
+            margin-bottom: 15px;
+            background-color: #f0f8ff;
+            padding: 10px;
+            border-left: 4px solid #007bff;
+        }
+
+        .cessation-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .cessation-table th, .cessation-table td {
+            border: 1px solid #ddd;
+            padding: 12px 10px;
+            text-align: center;
+            vertical-align: top;
+        }
+
+        .cessation-table th:first-child, .cessation-table td:first-child {
+            width: 3%; /* # column */
+            font-weight: bold;
+        }
+        .cessation-table th:nth-child(2), .cessation-table td:nth-child(2) {
+            text-align: left;
+            width: 70%; /* Question column */
+        }
+        .cessation-table th:nth-child(3), .cessation-table th:nth-child(4),
+        .cessation-table td:nth-child(3), .cessation-table td:nth-child(4) {
+            width: 13.5%; /* Yes/No columns */
+        }
+
+        .cessation-table thead th {
+            background-color: #dbe4f0;
+            font-weight: bold;
+            color: #0056b3;
+        }
+
+        .cessation-table td input[type="radio"] {
+            transform: scale(1.5);
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .cessation-table tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+
+        button[type="submit"] {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745; /* Green for submit */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-weight: bold;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #1e7e34;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="form-header">
-            <img src="../assets/images/Government of Kenya.png" width="80" height="60" alt="">
+            <img src="../assets/images/Government of Kenya.png" alt="Government Logo">
             <div><h4>MEDICALLY ASSISTED THERAPY ASSESSMENT CHECKLIST FOR CESSATION (FORM 2E)</h4></div>
-                <p>FORM 2E VER. APR. 2022</p>
-
+            <p>FORM 2E VER. APR. 2022</p>
         </div>
 
-        <h2>General Information</h2>
-        <form action="process_form2e.php" method="POST">
+        <form id="form2E" action="process_form2e.php" method="POST">
+
+            <h2>General Information</h2>
             <div class="info-grid">
-                <div class="info-group"><label for="name">Name:</label><input type="text" id="name" name="name" required></div>
-                <div class="info-group"><label for="age">Age:</label><input type="number" id="age" name="age" min="0" required></div>
-                <div class="info-group"><label for="mat_id">MAT ID NO.:</label><input type="text" id="mat_id" name="mat_id"></div>
-                <div class="info-group"><label for="sex">Sex:</label>
-                    <select id="sex" name="sex">
-                        <option value="">Select</option>
-                        <option value="1">Male</option>
-                        <option value="2">Female</option>
-                    </select>
+                <div class="info-group">
+                    <label for="mat_id">MAT ID NO.:</label>
+                    <input type="text" id="mat_id" name="mat_id" value="<?php echo $patient_data['mat_id']; ?>" readonly required>
                 </div>
-                <div class="info-group"><label for="dob">Date of Birth:</label><input type="date" id="dob" name="dob"></div>
-                <div class="info-group"><label for="enroll_date">MAT Enrollment Date:</label><input type="date" id="enroll_date" name="enroll_date"></div>
-                <div class="info-group"><label for="supporter_name">Treatment Supporter's Name:</label><input type="text" id="supporter_name" name="supporter_name"></div>
-                <div class="info-group"><label for="supporter_tel">Telephone No.:</label><input type="tel" id="supporter_tel" name="supporter_tel"></div>
-                <div class="info-group"><label for="current_dose">Current MAT Dose (mg):</label><input type="number" id="current_dose" name="current_dose" step="any"></div>
+                <div class="info-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" value="<?php echo $patient_data['name']; ?>" readonly required>
+                </div>
+                <div class="info-group">
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" name="age" min="0" value="<?php echo $patient_data['age']; ?>" readonly required>
+                </div>
+                <div class="info-group">
+                    <label for="dob">Date of Birth:</label>
+                    <input type="date" id="dob" name="dob" value="<?php echo $patient_data['dob']; ?>" readonly>
+                </div>
+                <div class="info-group">
+                    <label for="sex_display">Sex:</label>
+                    <select id="sex_display" disabled>
+                        <option value="">Select</option>
+                        <option value="Male" <?php echo is_selected('Male', $patient_data['sex']); ?>>Male</option>
+                        <option value="Female" <?php echo is_selected('Female', $patient_data['sex']); ?>>Female</option>
+                    </select>
+                    <input type="hidden" name="sex" value="<?php echo $patient_data['sex']; ?>">
+                </div>
+                <div class="info-group">
+                    <label for="enroll_date">MAT Enrollment Date:</label>
+                    <input type="date" id="enroll_date" name="enroll_date" value="<?php echo $patient_data['enroll_date']; ?>" readonly>
+                </div>
+                <div class="info-group">
+                    <label for="drugname">Drug Name (MAT):</label>
+                    <input type="text" id="drugname" name="drugname" value="<?php echo $patient_data['drugname']; ?>" readonly>
+                </div>
+                <div class="info-group">
+                    <label for="current_dose">Current MAT Dose (mg):</label>
+                    <input type="number" id="current_dose" name="current_dose" step="any" value="<?php echo $patient_data['current_dose']; ?>" readonly>
+                </div>
+                <div class="info-group">
+                    <label for="supporter_name">Treatment Supporter's Name:</label>
+                    <input type="text" id="supporter_name" name="supporter_name" value="<?php echo $patient_data['supporter_name']; ?>">
+                </div>
+                <div class="info-group">
+                    <label for="supporter_tel">Telephone No.:</label>
+                    <input type="tel" id="supporter_tel" name="supporter_tel" value="<?php echo $patient_data['supporter_tel']; ?>">
+                </div>
+                <div class="info-group"></div>
             </div>
 
             <hr>
@@ -150,7 +303,7 @@
             <h2>Cessation Readiness Questions</h2>
             <p class="instruction">Select the response for each question. **Yes = 1, No = 0**</p>
 
-            <table class="phq9-table cessation-table">
+            <table class="cessation-table">
                 <thead>
                     <tr>
                         <th>#</th>
@@ -286,6 +439,61 @@
             <button type="submit">Calculate Overall Score</button>
         </form>
     </div>
+    <script>
+        // Function to validate form before submission
+        function validateForm2E() {
+            // Check if all 19 cessation questions are answered
+            const questions = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10', 'q11', 'q12', 'q13', 'q14', 'q15', 'q16', 'q17', 'q18', 'q19'];
+            let allAnswered = true;
+
+            for (let i = 0; i < questions.length; i++) {
+                const radios = document.getElementsByName(questions[i]);
+                let checked = false;
+
+                for (let j = 0; j < radios.length; j++) {
+                    if (radios[j].checked) {
+                        checked = true;
+                        break;
+                    }
+                }
+
+                if (!checked) {
+                    allAnswered = false;
+                    const row = radios[0].closest('tr');
+                    if (row) {
+                        row.style.backgroundColor = '#ffe6e6';
+                        setTimeout(() => {
+                            row.style.backgroundColor = '';
+                        }, 3000);
+                    }
+                }
+            }
+
+            if (!allAnswered) {
+                alert('Please answer all 19 Cessation Readiness Questions before submitting.');
+                return false;
+            }
+
+            return true;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('form2E');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    if (!validateForm2E()) {
+                        e.preventDefault();
+                        return false;
+                    }
+                    // Show loading state
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    if(submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = 'Processing...';
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
-

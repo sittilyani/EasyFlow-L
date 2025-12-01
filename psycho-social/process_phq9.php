@@ -1,22 +1,39 @@
 <?php
+session_start();
+// NOTE: Ensure your config.php path is correct relative to this file
+include "../includes/config.php";
+
 // Check if the form was submitted using the POST method
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // 1. Initialize score
     $total_score = 0;
 
-    // 2. Define the list of question keys from the form (q1 to q9)
+    // 2. Define the list of question keys and collect all form data
     $question_keys = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9'];
+    $q_scores = []; // Array to hold individual scores for saving
 
-    // 3. Calculate the total score
+    // Collect patient and user info from hidden and standard fields
+    $p_id = $_POST['p_id'] ?? null;
+    $mat_id = $_POST['mat_id'] ?? null;
+    $clientName = $_POST['clientName'] ?? 'N/A';
+    $age = $_POST['age'] ?? 'N/A';
+    $visitDate = $_POST['visitDate'] ?? date('Y-m-d');
+    $therapist_id = $_POST['therapist_id'] ?? ($_SESSION['user_id'] ?? 0);
+    $therapists_name = $_POST['therapist_name_submit'] ?? 'Unknown Therapist';
+
+
+    // 3. Calculate the total score and check for missing answers
     foreach ($question_keys as $key) {
-        // Check if the question was answered (value will be 0, 1, 2, or 3)
         if (isset($_POST[$key])) {
-            // Add the value of the answer to the total score.
-            $total_score += (int)$_POST[$key];
+            $score = (int)$_POST[$key];
+            $total_score += $score;
+            $q_scores[$key] = $score;
         } else {
-            // Handle case where not all questions were answered (optional)
-            die("Error: Please answer all PHQ-9 questions.");
+            // Error handling for incomplete form
+            $message = "Error: Please answer all PHQ-9 questions.";
+            header("Location: search_phq9.php?message=" . urlencode($message));
+            exit();
         }
     }
 
@@ -28,8 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $diagnosis = "Severe depression*";
         $management[] = "Provide supportive counselling (refer to a psychologist if available).";
         $management[] = "Refer to a medical officer, psychiatrist, or mental health team if available.";
-        $management[] = "Severe depression may require patients to start on anti-depressants immediately[cite: 33].";
-        // Check for EFV substitution if applicable, based on your source
+        $management[] = "Severe depression may require patients to start on anti-depressants immediately.";
         $management[] = "If patient is on EFV, substitute with a different ARV after ruling out treatment failure IF APPLICABLE (See 'Managing Single Drug Substitutions for ART').";
 
     } elseif ($total_score >= 15) {
@@ -54,65 +70,72 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $management[] = "Repeat screening in future if new concerns that depression has developed.";
     }
 
-    // Note for asterisked diagnoses [cite: 32]
+    // Note for asterisked diagnoses
     if (strpos($diagnosis, '*') !== false) {
-        $management[] = "*Symptoms should ideally be present for at least 2 weeks for a diagnosis of depression and before considering treatment with antidepressant medication[cite: 32].";
+        $management[] = "*Symptoms should ideally be present for at least 2 weeks for a diagnosis of depression and before considering treatment with antidepressant medication.";
     }
 
-    // 5. Display the Results (HTML Output)
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHQ-9 Results</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        .result-box {
-            padding: 15px;
-            border-radius: 4px;
-            margin-top: 20px;
+    // Combine management points into a single string for storage
+    $management_plan_text = implode("\n", $management);
+
+    // --- 5. Database Insertion ---
+
+    // Check for essential IDs before inserting
+    if ($p_id && $mat_id) {
+        // 1. Construct the column names (7 fixed + 9 questions = 16 columns)
+        $columns = "`p_id`, `mat_id`, `visitDate`, `therapist_id`, `total_score`, `diagnosis`, `management_plan`, " . implode(", ", array_map(function($q) { return "`$q`"; }, $question_keys));
+
+        // 2. The total number of placeholders is 16
+        $placeholders = str_repeat("?, ", 15) . "?";
+
+        // Prepare the SQL INSERT statement
+        $sql = "INSERT INTO phq9_assessments ($columns) VALUES ($placeholders)";
+        $stmt = $conn->prepare($sql);
+
+        // 3. Define the corrected parameter types (16 characters: isssiss for fixed fields + 9 i's for questions)
+        // p_id(i), mat_id(s), visitDate(s), therapist_id(i), total_score(i), diagnosis(s), management_plan(s)
+        $types = "isssiss" . str_repeat("i", count($question_keys));
+
+        // 4. Create the array of 16 values to bind
+        $bind_values = [
+            $p_id,
+            $mat_id,
+            $visitDate,
+            $therapist_id,
+            $total_score,
+            $diagnosis,
+            $management_plan_text
+        ];
+        // Append the question scores (9 values)
+        foreach ($q_scores as $score) {
+            $bind_values[] = $score;
         }
-        .severe { background-color: #fceae5; border: 1px solid #e74c3c; color: #e74c3c; }
-        .moderate { background-color: #fcf8e5; border: 1px solid #f39c12; color: #f39c12; }
-        .mild { background-color: #e5f5fc; border: 1px solid #3498db; color: #3498db; }
-        .unlikely { background-color: #e5fce5; border: 1px solid #2ecc71; color: #2ecc71; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>PHQ-9 Screening Results</h1>
-        <h2>Assessment Summary</h2>
-        <p><strong>Client Name:</strong> <?php echo htmlspecialchars($_POST['client_name']); ?></p>
-        <p><strong>Age:</strong> <?php echo htmlspecialchars($_POST['age']); ?> Years</p>
 
-        <hr>
+        // Use call_user_func_array to bind the parameters dynamically
+        $stmt->bind_param($types, ...$bind_values);
 
-        <h3>Calculated PHQ-9 Score: <span style="font-size: 1.5em;"><?php echo $total_score; ?> / 27</span></h3>
+        if ($stmt->execute()) {
+            $stmt->close();
+            // Success: Redirect back to the search page with a success message
+            $success_message = urlencode("PHQ-9 assessment for " . htmlspecialchars($clientName) . " saved successfully. Diagnosis: " . $diagnosis . ". Total Score: " . $total_score . ".");
+            // NOTE: Changing redirection to 'search_phq9.php' as requested
+            header("Location: search_phq9.php?message=" . $success_message . "&status=success");
+            exit();
+        } else {
+            // Error during database insertion
+            $error_message = urlencode("Error saving assessment: " . $stmt->error);
+            $stmt->close();
+            header("Location: search_phq9.php?message=" . $error_message . "&status=error");
+            exit();
+        }
+    } else {
+        // Error: Missing required patient identifiers
+        $message = urlencode("Error: Missing patient ID or MAT ID. Assessment not saved.");
+        header("Location: search_phq9.php?message=" . $message . "&status=error");
+        exit();
+    }
 
-        <div class="result-box
-            <?php
-                if ($total_score >= 20) echo 'severe';
-                elseif ($total_score >= 10) echo 'moderate';
-                elseif ($total_score >= 5) echo 'mild';
-                else echo 'unlikely';
-            ?>">
-            <h3>Provisional Diagnosis: <span style="font-weight: bold;"><?php echo $diagnosis; ?></span></h3>
 
-            <p style="font-weight: bold; margin-top: 10px;">Recommended Management:</p>
-            <ul>
-                <?php foreach ($management as $item): ?>
-                    <li><?php echo $item; ?></li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-
-        <p style="margin-top: 30px;"><a href="phq9_form.php">Take another assessment</a></p>
-    </div>
-</body>
-</html>
-<?php
 } else {
     // If someone tries to access process_phq9.php directly
     header("Location: phq9_form.php");

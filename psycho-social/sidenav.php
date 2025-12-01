@@ -54,13 +54,13 @@ $user_id = $_SESSION['user_id'] ?? '';
 
                 <a href="../psycho-social/all_patients_psychosocial.php" target="contentFrame" class="nav-link">
                     <i class="fa fa-user-circle"></i>Psychosocial Intake Form 1A</a>
-                <a href="../psycho-social/phq9_form.php" target="contentFrame" class="nav-link">
+                <a href="../psycho-social/search_phq9_form.php" target="contentFrame" class="nav-link">
                     <i class="fa fa-user-circle"></i>Patient Health Questionnaire PHQ-9</a>
-                <a href="../psycho-social/gad7_form.php" target="contentFrame" class="nav-link">
+                <a href="../psycho-social/search_gad7_form.php" target="contentFrame" class="nav-link">
                     <i class="fa fa-user-circle"></i>Generalized Anxiety Disorder Screening (GAD)</a>
                 <a href="../psycho-social/qst_form.php" target="contentFrame" class="nav-link">
                     <i class="fa fa-user-circle"></i>Community Screening Tool</a>
-                <a href="../psycho-social/mat_cessation_form.php" target="contentFrame" class="nav-link">
+                <a href="../psycho-social/search_mat_cessation_form.php" target="contentFrame" class="nav-link">
                     <i class="fa fa-user-circle"></i>MAT Cessation  Form 2E</a>
                 <a href="../psycho-social/" target="contentFrame" class="nav-link">
                     <i class="fa fa-user-circle"></i>Psychosocial RX Plan Form 2B</a>

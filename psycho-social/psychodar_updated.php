@@ -2,339 +2,342 @@
 session_start();
 include "../includes/config.php";
 
-// Get the user_id from the query parameter (if applicable)
-$userId = isset($_GET['p_id']) ? $_GET['p_id'] : null;
-
-// Fetch the current settings for the user (if applicable)
-$currentSettings = [];
-if ($userId) {
-    $query = "SELECT * FROM patients WHERE p_id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param('i', $userId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $currentSettings = $result->fetch_assoc();
-}
-
-
-// Check if the user is logged in and fetch their user_id
+// Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
     die("You must be logged in to access this page.");
 }
-$loggedInUserId = $_SESSION['user_id'];
 
-// Fetch the logged-in user's name from tblusers
-$therapists_initials = 'Unknown';
-$userQuery = "SELECT first_name, last_name FROM tblusers WHERE user_id = ?";
-$stmt = $conn->prepare($userQuery);
-$stmt->bind_param('i', $loggedInUserId);
-$stmt->execute();
-$result = $stmt->get_result();
-if ($result->num_rows > 0) {
-    $user = $result->fetch_assoc();
-    $therapists_initials = $user['first_name'] . ' ' . $user['last_name'];
+// Get logged-in user details
+$loggedInUserId = $_SESSION['user_id'];
+$therapists_name = $_SESSION['full_name'] ?? 'Unknown';
+
+// Get patient ID
+$p_id = isset($_GET['p_id']) ? (int)$_GET['p_id'] : null;
+
+// Fetch patient data
+$currentSettings = [];
+if ($p_id) {
+    $query = "SELECT * FROM patients WHERE p_id = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param('i', $p_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $currentSettings = $result->fetch_assoc();
+    $stmt->close();
 }
-$stmt->close();
+
+// Fetch clinic visits
+$clinicVisits = [];
+$query = "SELECT clinic_id, visit_name FROM clinic_visits ORDER BY clinic_id";
+$result = $conn->query($query);
+while ($row = $result->fetch_assoc()) {
+    $clinicVisits[] = $row;
+}
+
+// Fetch marital status
+$maritalStatuses = [];
+$query = "SELECT mar_id, marital_status_name FROM marital_status ORDER BY mar_id";
+$result = $conn->query($query);
+while ($row = $result->fetch_assoc()) {
+    $maritalStatuses[] = $row;
+}
+
+// Fetch living conditions
+$livingConditions = [];
+$query = "SELECT cond_id, condition_name FROM living_conditions ORDER BY cond_id";
+$result = $conn->query($query);
+while ($row = $result->fetch_assoc()) {
+    $livingConditions[] = $row;
+}
+
+// Fetch employment status
+$employmentStatuses = [];
+$query = "SELECT emp_id, emp_status_name FROM employment_status ORDER BY emp_id";
+$result = $conn->query($query);
+while ($row = $result->fetch_assoc()) {
+    $employmentStatuses[] = $row;
+}
+
+// Fetch treatment stages
+$treatmentStages = [];
+$query = "SELECT stage_id, stage_of_rx_name FROM treatment_stage ORDER BY stage_id";
+$result = $conn->query($query);
+while ($row = $result->fetch_assoc()) {
+    $treatmentStages[] = $row;
+}
+
+// Fetch psychosocial interventions
+$interventions = [];
+$query = "SELECT intervention_id, intervention_name FROM psychosocial_interventions ORDER BY intervention_id";
+$result = $conn->query($query);
+while ($row = $result->fetch_assoc()) {
+    $interventions[] = $row;
+}
+
+// Fetch reintegration status
+$reintegrationStatuses = [];
+$query = "SELECT reint_id, reint_name FROM reintegration_status ORDER BY reint_id";
+$result = $conn->query($query);
+while ($row = $result->fetch_assoc()) {
+    $reintegrationStatuses[] = $row;
+}
+
+// Fetch referral linkage services
+$referralServices = [];
+$query = "SELECT ref_id, ref_name FROM referral_linkage_services ORDER BY ref_id";
+$result = $conn->query($query);
+while ($row = $result->fetch_assoc()) {
+    $referralServices[] = $row;
+}
+
+// Calculate age from DOB
+$age = '';
+if (isset($currentSettings['dob']) && !empty($currentSettings['dob'])) {
+    $dob = new DateTime($currentSettings['dob']);
+    $today = new DateTime();
+    $age = $today->diff($dob)->y;
+}
 ?>
 
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PsychoDAR</title>
-    <link rel="stylesheet" href="../assets/css/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="../assets/fontawesome/css/font-awesome.min.css" type="text/css">
-    <link rel="stylesheet" href="../assets/css/forms.css" type="text/css">
-    <script src="../assets/js/bootstrap.min.js"></script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PsychoDAR - Psycho-social Daily Activity Register</title>
+    <link rel="stylesheet" href="../assests/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-         .form{
-             display: grid;
-             grid-template-columns: repeat(5, 1fr);
-             background-color: #99FFBB;
-             margin: 0 50px;
-             padding: 20px;
-
-         }
-          input, .form-control, textarea{
-              width: 80%;
-              height: 30px;
-              margin-bottom: 15px;
-              margin-top: 10px;
-          }
-
-           textarea{
-              width: 80%;
-              margin-bottom: 15px;
-              margin-top: 10px;
-              height: 60px;
-          }
-          label{
-              font-weight: bold;
-              width: 80%;
-          }
-          h2{
-              color: #2C3162;
-              margin-top: 10px;
-              margin-left: 50px;
-          }
-          #btn-submit{
-              width: 80%;
-              color: white;
-              background-color: #2C3162;
-              height: 35px;
-              border-radius: 5px;
-              border: none;
-              cursor: pointer;
-          }
-           .readonly-input{
-              background-color: #E8E8E8;
-              cursor: not-allowed;
-           }
-
-
-            .checkbox-label {
-                font-size: 14px;
-                font-weight: bold;
-                display: block;
-                margin-bottom: 0;
-            }
-
-            .check-box-input {
-                margin-right: 0; /* Spacing between checkbox and label text */
-                height: 14px;
-            }
-            .checkbox-container {
-                display: grid;
-                grid-template-columns: repeat(5, 1fr); /* Two equal columns */
-                gap: 8px; /* Space between items */
-                margin-top: 10px;
-                background-color: yellow;
-                width: 300px;
-            }
-
-            .checkbox-container label {
-                font-size: 14px;
-                display: block;
-                font-weight: normal;
-                align-items: center;
-            }
-             input[check-box]{
-              width: 10px;
-              height: 10px;
-              margin-bottom: 5;
-          }
-
+        :root{--primary:#2C3162;--secondary:#99FFBB;--accent:#4CAF50;--text:#333;--border:#ddd;--bg:#f8f9fa}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:var(--bg);padding:20px}
+        .container{max-width:1400px;margin:0 auto;background:#fff;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.1);overflow:hidden}
+        .form-header{background:linear-gradient(135deg,var(--primary),#1a1f3f);color:#fff;padding:30px;text-align:center}
+        .form-header h2{margin:0;font-size:28px;font-weight:600}
+        .form-header p{margin:10px 0 0;opacity:.9;font-size:14px}
+        .form-body{padding:40px}
+        .section-title{background:var(--secondary);color:var(--primary);padding:12px 20px;margin:30px 0 20px;border-left:5px solid var(--primary);font-weight:700;font-size:16px;border-radius:4px}
+        .section-title:first-of-type{margin-top:0}
+        .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:25px;margin-bottom:30px}
+        .form-group{display:flex;flex-direction:column}
+        .form-group label{font-weight:600;color:var(--text);margin-bottom:8px;font-size:14px}
+        .form-group label i{margin-right:5px;color:var(--primary)}
+        .form-control,input[type="text"],input[type="date"],input[type="number"],select,textarea{width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:6px;font-size:14px;transition:all .3s;background:#fff}
+        .form-control:focus,input:focus,select:focus,textarea:focus{border-color:var(--primary);outline:0;box-shadow:0 0 0 3px rgba(44,49,98,.1)}
+        .readonly-input{background:#f0f0f0!important;cursor:not-allowed;color:#666}
+        textarea{resize:vertical;min-height:80px;font-family:inherit}
+        .full-width{grid-column:1/-1}
+        .btn-submit{background:var(--accent);color:#fff;padding:14px 40px;border:none;border-radius:6px;font-size:16px;font-weight:600;cursor:pointer;transition:all .3s;width:100%;margin-top:20px}
+        .btn-submit:hover{background:#45a049;transform:translateY(-2px);box-shadow:0 4px 12px rgba(76,175,80,.3)}
+        .required::after{content:' *';color:red}
+        select[multiple]{min-height:120px;padding:8px}
+        .badge{display:inline-block;padding:4px 10px;background:var(--primary);color:#fff;border-radius:4px;font-size:12px;margin-left:8px}
+        @media (max-width:768px){.form-grid{grid-template-columns:1fr}.form-body{padding:20px}}
     </style>
 </head>
 <body>
-    <div class="content-main">
-      <h2>Psycho-social Daily Activity Register</h2>
-            <form action="psychodar_process.php" method="post" class="post">
+    <div class="container">
+        <div class="form-header">
+            <h2><i class="fas fa-clipboard-list"></i> Psycho-social Daily Activity Register</h2>
+            <p>Comprehensive Patient Assessment and Treatment Documentation</p>
+        </div>
 
-                  <div class="form-group">
-                      CLIENT BIODATA 
-                      <label for="visitDate">Visit Date</label>
-                      <input type="text" name="visitDate" class="readonly-input" readonly value="<?php echo date('Y-m-d'); ?>">
-                  </div>
-                  <div class="form-group">
+        <div class="form-body">
+            <form action="psychodar_process.php" method="POST">
+                <input type="hidden" name="p_id" value="<?= $p_id ?>">
+                <input type="hidden" name="therapist_id" value="<?= $loggedInUserId ?>">
 
-                       <!-- Tp pick gender from table tblgender -->
-                      <label for="follow_up">Follow Up</label> 
-                      <select name="follow_up" class="form-control">
-                        <option value="initial" >Initial</option>
-                        <option value="follow_up_1">Follow Up 1</option>
-                        <option value="follow_up_2">Follow Up 2</option>
-                        <option value="follow_up_3">Follow Up 3</option>
-                        <option value="follow_up_4">Follow Up 4</option>
-                        <option value="follow_up_5">Follow Up 5</option>
-                        <option value="follow_up_6">Follow Up 6</option>
-                        <option value="follow_up_7">Follow Up 7</option>
-                        <option value="follow_up_8">Follow Up 8</option>
-                        <option value="follow_up_other">Follow Up Other</option>
-                      </select> 
-                  </div>
-                  <div class="form-group">
+                <!-- CLIENT BIODATA -->
+                <div class="section-title"><i class="fas fa-user-circle"></i> CLIENT BIODATA</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><i class="far fa-calendar-alt"></i> Visit Date</label>
+                        <input type="date" name="visit_date" class="readonly-input" value="<?= date('Y-m-d') ?>">
+                    </div>
+                    <div class="form-group">
+                        <label class="required"><i class="fas fa-stethoscope"></i> Visit Type</label>
+                        <select name="visit_name" class="form-control" required>
+                            <option value="">-- Select Visit Type --</option>
+                            <?php foreach ($clinicVisits as $visit): ?>
+                                <option value="<?= $visit['clinic_id'] ?>"><?= htmlspecialchars($visit['visit_name']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-id-card"></i> MAT ID</label>
+                        <input type="text" name="mat_id" class="readonly-input" readonly value="<?= htmlspecialchars($currentSettings['mat_id'] ?? '') ?>">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Client Name</label>
+                        <input type="text" name="clientName" class="readonly-input" readonly value="<?= htmlspecialchars($currentSettings['clientName'] ?? '') ?>">
+                        <input type="hidden" name="dob" value="<?= $currentSettings['dob'] ?? '' ?>">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-venus-mars"></i> Gender</label>
+                        <input type="text" name="sex" class="readonly-input" readonly value="<?= htmlspecialchars($currentSettings['sex'] ?? '') ?>">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-birthday-cake"></i> Age</label>
+                        <input type="number" name="age" class="readonly-input" readonly value="<?= $age ?>">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-pills"></i> Drug Name</label>
+                        <input type="text" name="drugname" class="readonly-input" readonly value="<?= htmlspecialchars($currentSettings['drugname'] ?? 'Methadone') ?>">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-prescription-bottle"></i> Dosage</label>
+                        <input type="text" name="dosage" class="readonly-input" readonly value="<?= htmlspecialchars($currentSettings['dosage'] ?? '') ?>">
+                    </div>
+                </div>
 
-                        <label for="mat_id">MAT ID</label>
-                        <input type="text" name="mat_id" class="readonly-input" readonly value="<?php echo isset($currentSettings['mat_id']) ? $currentSettings['mat_id'] : ''; ?>">
+                <!-- SOCIAL HISTORY -->
+                <div class="section-title"><i class="fas fa-users"></i> SOCIAL HISTORY</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><i class="far fa-calendar-check"></i> Date of Intake Interview</label>
+                        <input type="date" name="date_of_intake" value="<?= date('Y-m-d') ?>">
                     </div>
-                  <div class="form-group">
-                        <label for="clientName">Client Name</label>
-                        <input type="text" name="clientName" class="readonly-input" readonly value="<?php echo isset($currentSettings['clientName']) ? $currentSettings['clientName'] : ''; ?>">
-                         <input type="hidden" name="dob" value="<?php echo isset($currentSettings['dob']) ? $currentSettings['dob'] : ''; ?>">
+                    <div class="form-group">
+                        <label class="required"><i class="fas fa-heart"></i> Marital Status</label>
+                        <select name="marital_status" class="form-control" required>
+                            <option value="">-- Select Status --</option>
+                            <?php foreach ($maritalStatuses as $status): ?>
+                                <option value="<?= $status['mar_id'] ?>"><?= htmlspecialchars($status['marital_status_name']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
-                  <div class="form-group">
-                         <label for="sex">Gender</label>
-                        <input type="text" name="sex" class="readonly-input" readonly value="<?php echo isset($currentSettings['sex']) ? $currentSettings['sex'] : ''; ?>">
-                  </div>
-                  <div class="form-group">
-                      <label for="age">Age</label>
-                        <input type="number" name="age" class="readonly-input" readonly value="<?php echo $currentSettings['age']; ?>">
+                    <div class="form-group">
+                        <label><i class="fas fa-edit"></i> Other Marital Status (Specify)</label>
+                        <input type="text" name="other_marital_status" placeholder="If other, please specify">
                     </div>
+                    <div class="form-group">
+                        <label class="required"><i class="fas fa-home"></i> Living Arrangements (Past 3 Months)</label>
+                        <select name="living_arrangements" class="form-control" required>
+                            <option value="">-- Select Arrangement --</option>
+                            <option value="stable">Stable Arrangement</option>
+                            <option value="non-stable">Non-stable Arrangement</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label><i class="fas fa-check-square"></i> Usual Living Conditions (Select all that apply)</label>
+                        <select name="living_conditions[]" class="form-control" multiple>
+                            <?php foreach ($livingConditions as $condition): ?>
+                                <option value="<?= $condition['cond_id'] ?>"><?= htmlspecialchars($condition['condition_name']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <small style="color:#666;margin-top:5px">Hold Ctrl (Windows) or Cmd (Mac) to select multiple</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="required"><i class="fas fa-building"></i> Accommodation/Residence</label>
+                        <select name="accommodation" class="form-control" required>
+                            <option value="">-- Select --</option>
+                            <option value="stable">Stable</option>
+                            <option value="unstable">Unstable</option>
+                            <option value="not_applicable">Not Applicable</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="required"><i class="fas fa-briefcase"></i> Employment Status</label>
+                        <select name="employment_status" class="form-control" required>
+                            <option value="">-- Select Status --</option>
+                            <?php foreach ($employmentStatuses as $emp): ?>
+                                <option value="<?= $emp['emp_id'] ?>"><?= htmlspecialchars($emp['emp_status_name']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="required"><i class="fas fa-procedures"></i> Treatment Stage</label>
+                        <select name="treatment_stage" class="form-control" required>
+                            <option value="">-- Select Stage --</option>
+                            <?php foreach ($treatmentStages as $stage): ?>
+                                <option value="<?= $stage['stage_id'] ?>"><?= htmlspecialchars($stage['stage_of_rx_name']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
 
-                  SOCIAL HISTORY
-                  <div class="form-group">
-                    <label for="date_of_intake">a. Date of Intake Interview</label>
-                        <input type="text" name="date_of_intake" class="readonly-input" readonly value="<?php echo date('Y-m-d'); ?>">
+                <!-- PSYCHOSOCIAL ASSESSMENT -->
+                <div class="section-title"><i class="fas fa-brain"></i> PSYCHOSOCIAL ASSESSMENT & INTERVENTION</div>
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label class="required"><i class="fas fa-comment-medical"></i> Psycho-social Issues</label>
+                        <textarea name="psycho_issues" rows="4" required placeholder="Describe psycho-social issues identified..."></textarea>
                     </div>
-                  <div class="form-group">
-                        <label for="marital_status">b. Marital Status</label>
-                        <select name="marital_status" class="form-control">
-                            <option value="single" >Single</option>
-                            <option value="married_monogamous">Married</option>
-                            <option value="remarried">Remarried</option>
-                            <option value="divorced">Divorced</option>
-                            <option value="separated">Separated</option>
-                            <option value="never_married">Never Married</option>
-                            <option value="widowed">Widowed</option>
-                            <option value="Other">Other Specify</option>
-                        </select> 
+                    <div class="form-group">
+                        <label class="required"><i class="fas fa-hands-helping"></i> Psycho-social Interventions</label>
+                        <select name="psycho_interventions" class="form-control" required>
+                            <option value="">-- Select Intervention --</option>
+                            <?php foreach ($interventions as $intervention): ?>
+                                <option value="<?= $intervention['intervention_id'] ?>"><?= htmlspecialchars($intervention['intervention_name']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
-                  <div class="form-group">
-                      <label for="other_marital_status">Other (Specify)</label> 
-                      <input type="text" name="other_marital_status"> 
-                   </div>
-                  <div class="form-group">
-                      <label for="living_arrangements">c. How would you describe your usual living arrangements in the past three months?</label> 
-                      <select name="iving_arrangements" class="form-control">
-                            <option value="stable arrangement" >Stable Arrangement</option>
-                            <option value="non_stable arrangement" >Non-stable Arrangement</option>
-                            <option value="married_monogamous">Married</option>
-                      </select> 
-                   </div>
-                  <div class="form-group">
-                      <!--Checkbox options-->
-                      <label for="usual_arrangements" class="checkbox-label">d. Usual living arrangements in the past three months? (Select all that apply)</label>
-                        <div class="dropdown-container">
-                            <select name="living_arrangements[]" id="living_arrangements" multiple>
-                                <option value="family">Family House</option>
-                                <option value="friends">Friend's House</option>
-                                <option value="usstreets">Streets</option>
-                                <option value="abandoned">Abandoned buildings</option>
-                                <option value="upublic">Public areas</option>
-                                <option value="parks">Parks</option>
-                                <option value="bus">Bus stations</option>
-                                <option value="utunnels">Tunnels</option>
-                                <option value="sites">Injection Sites</option>
-                                <option value="others">Other Specify</option>
-                            </select>
-                        </div>
-                  </div>
-                  <div class="form-group">
-                      <label for="accomodation">Accomodation/Residence</label>
-                      <select name="accomodation" class="form-control" required>
-                        <option value="stable" >Stable</option>
-                        <option value="unstable">Unstable</option>
-                        <option value="not_applicable">Not Applicable</option>
-                      </select> 
+                    <div class="form-group">
+                        <label class="required"><i class="fas fa-chart-line"></i> Reintegration Status</label>
+                        <select name="reintegration_status" class="form-control" required>
+                            <option value="">-- Select Status --</option>
+                            <?php foreach ($reintegrationStatuses as $reint): ?>
+                                <option value="<?= $reint['reint_id'] ?>"><?= htmlspecialchars($reint['reint_name']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
-                  <div class="form-group">
-                      <label for="dosage">Dosage</label>
-                        <input type="text" name="dosage" class="readonly-input" readonly value="<?php echo $currentSettings['dosage']; ?>">
-                   </div>
-                  <div class="form-group">
-                      <label for="employment_status">Employment Status</label>
-                      <select name="employment_status" class="form-control">
-                        <option value="skilled" >Skilled Employment</option>
-                        <option value="unskilled">Unskilled Employment</option>
-                        <option value="self">Self Employed</option>
-                        <option value="unemployed">Unemployed</option>
-                      </select> 
+                    <div class="form-group full-width">
+                        <label><i class="fas fa-gavel"></i> Legal/Criminal/Court Issues</label>
+                        <textarea name="legal_issues" rows="3" placeholder="Describe any legal issues..."></textarea>
                     </div>
-                  <div class="form-group">
-                      <label for="rx_stage">Treatment Stage</label> 
-                      <select name="rx_stage" class="form-control">
-                        <option value="new_induction" >New Inducted</option>
-                        <option value="re_induction">Re-introduced</option>
-                        <option value="stabilization">Stabilization</option>
-                        <option value="maintainance">Maintainance</option>
-                        <option value="cessation">Cessation</option>
-                        <option value="weaned">Weaned Off</option>
-                      </select> 
-                      <label for="psycho_issues">Psycho-social Issues</label>
-                      <textarea name="psycho_issues" id="" cols="30" rows="5"></textarea>
+                    <div class="form-group">
+                        <label class="required"><i class="fas fa-shield-alt"></i> Screened for GBV?</label>
+                        <select name="gbv_screen" class="form-control" required>
+                            <option value="">-- Select --</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                            <option value="not_applicable">Not Applicable</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="required"><i class="fas fa-life-ring"></i> Given GBV Support?</label>
+                        <select name="gbv_support" class="form-control" required>
+                            <option value="">-- Select --</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                            <option value="not_applicable">Not Applicable</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-link"></i> Referral & Linkage Services</label>
+                        <select name="linkage" class="form-control">
+                            <option value="">-- Select Service --</option>
+                            <?php foreach ($referralServices as $service): ?>
+                                <option value="<?= $service['ref_id'] ?>"><?= htmlspecialchars($service['ref_name']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
 
-                  </div>
-                  <div class="form-group">
-                      <label for="psycho_interventions">Psycho-social Interventions</label> 
-                      <select name="psycho_interventions" class="form-control">
-                        <option value="individual_therapy" >Individual Therapy</option>
-                        <option value="couple_therapy">Couple Therapy</option>
-                        <option value="group_therapy">Group Therapy</option>
-                        <option value="family_therapy">Family Therapy</option>
-                        <option value="psycho_education">Psycho Education</option>
-                        <option value="crisis_management">Crisis/Conflict Management</option>
-                        <option value="none">None</option>
-                      </select>
-                  </div>
-                  <div class="form-group">
-                      <label for="reintegration_status">Reintegration Status</label> 
-                      <select name="reintegration_status" class="form-control">
-                        <option value="family_reintegration" >Family Reintegration</option>
-                        <option value="employment_reintegration">Employment Reintegration</option>
-                        <option value="housing_reintegration">Housing Reintegration</option>
-                        <option value="stable_reintegration">Stable Reintegration</option>
-                        <option value="education_reintegration">Education Reintegration</option>
-                        <option value="commmunity_reintegration">Community Reintegration</option>
-                        <option value="legal_reintegration">Legal Reintegration</option>
-                        <option value="health_reintegration">Health Reintegration</option>
-                        <option value="peer_reintegration">Peer Support Reintegration</option>
-                        <option value="cultural_reintegration">Cultural Reintegration</option>
-                        <option value="none">None</option>
-                      </select> 
+                <!-- THERAPIST NOTES -->
+                <div class="section-title"><i class="fas fa-user-md"></i> THERAPIST INFORMATION</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-user-nurse"></i> Therapist's Name</label>
+                        <input type="text" name="therapists_name" value="<?= htmlspecialchars($therapists_name) ?>" class="readonly-input" readonly>
                     </div>
-                  <div class="form-group">
-                      <label for="legal_issues">Legal/Criminal/Court Issues </label> 
-                      <textarea name="legal_issues" id="legal_issues" cols="30" rows="5"></textarea>  
-                      <label for="gbv_screen">Screened for GBV?</label> 
-                      <select name="gbv_screen" class="form-control">
-                        <option value="yes" >Yes</option>
-                        <option value="no">No</option>
-                        <option value="not_applicable">Not Applicable</option>
-                      </select> 
+                    <div class="form-group">
+                        <label class="required"><i class="far fa-calendar-plus"></i> Next Appointment Date</label>
+                        <input type="date" name="next_appointment" required min="<?= date('Y-m-d') ?>">
                     </div>
-                  <div class="form-group">
-                      <label for="gbv_support">Given GBV support?</label> 
-                      <select name="gbv_support" class="form-control">
-                        <option value="yes" >Yes</option>
-                        <option value="no">No</option>
-                        <option value="not_applicable">Not Applicable</option>
+                    <div class="form-group full-width">
+                        <label class="required"><i class="fas fa-notes-medical"></i> Therapist's Notes</label>
+                        <textarea name="therapists_notes" rows="5" required placeholder="Enter detailed session notes..."></textarea>
+                    </div>
+                </div>
 
-                      </select> 
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-save"></i> Submit PsychoDAR Form
+                </button>
+            </form>
+        </div>
+    </div>
 
-                  </div>
-                  <div class="form-group">
-                       <label for="linkage">Referral & Linkage Services</label> 
-                      <select name="linkage" class="form-control">
-                        <option value="education_support" >Education Programs</option>
-                        <option value="legal_support">Legal Support</option>
-                        <option value="community_support">Community Networks Support</option>
-                        <option value="peer_support">Peer Support Networks</option>
-                        <option value="family_support">Family Support Services</option>
-                        <option value="rehabilitation">Rehabilitation</option>
-                        <option value="mental_health_support">Mental Health</option>
-                        <option value="medical_services">Medical services</option>
-                        <option value="hiv_services">HIV services</option>
-                        <option value="gbv_services">GBV Services</option> 
-                        <option value="none">None</option>
-                      </select>
-                    </div>
-                  <div class="form-group">
-                      <label for="therapists_initials">Therapist's Name</label>
-                      <input type="text" name="therapists_initials" value="<?php echo htmlspecialchars($therapists_initials); ?>" class="readonly-input readonly">
-                    </div>
-                  <div class="form-group">
-                        <label for="therapists_notes" required>Therapist's Notes</label>
-                        <textarea name="" id="" cols="30" rows="10"></textarea>
-                   </div>
-                  <div class="form-group">
-                      <label for="next_appointment">Next Appointment Date</label> 
-                      <input type="date" name="next_appointment" required>  
-                      <button class="submit" id="btn-submit">Submit</button>
-                  </div>
-
-        </form>
-      </div>
+    <script src="../assests/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

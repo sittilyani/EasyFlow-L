@@ -73,6 +73,9 @@ $stmt->close();
             color: #2c3e50;
             font-size: 1.4em;
         }
+        input[type=radio]{
+            font-size: 18px;
+        }
 
         .form-section {
             margin-bottom: 25px;
@@ -240,12 +243,12 @@ $stmt->close();
             <img src="../assets/images/Government of Kenya.png" width="80" height="60" alt="Government Logo">
             <div class="header-center">
                 <h2>MEDICALLY ASSISTED THERAPY</h2>
-                <h4>PSYCHO-SOCIAL INTAKE FORM</h4>
+                <h4>PSYCHO-SOCIAL INTAKE FORM 1A</h4>
             </div>
-            <p>FORM 2A VER. APR. 2023</p>
+            <p>FORM 1A VER. APR. 2023</p>
         </div>
 
-        <form id="intakeForm" method="POST" action="psychosocial_intake_form_process.php">
+        <form id="intakeForm" method="POST" action="psychosocial_intake_form_1a_process.php">
             <!-- Visit Type and Date Section -->
             <div class="form-section">
                 <div class="form-row">
@@ -294,7 +297,7 @@ $stmt->close();
                     <div class="form-col">
                         <div class="form-group">
                             <label class="required">Sex</label>
-                            <input type="text" name="clientName" class="readonly-input" readonly value="<?php echo isset($currentSettings['sex']) ? $currentSettings['sex'] : ''; ?>">
+                            <input type="text" name="sex" class="readonly-input" readonly value="<?php echo isset($currentSettings['sex']) ? $currentSettings['sex'] : ''; ?>">
                             
                         </div>
                     </div>
