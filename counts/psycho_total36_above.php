@@ -8,7 +8,7 @@ $currentYear = date('Y');
 // Define the SQL query to count females aged 15 to 20 years
 $query = "SELECT COUNT(*) AS others
                         FROM psychodar
-                        WHERE sex = 'female'
+                        WHERE sex IN ('male', 'female')
                         AND age >=36
                         AND YEAR(visitDate) = $currentYear
                         AND MONTH(visitDate) = $currentMonth";

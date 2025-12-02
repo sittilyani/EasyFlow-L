@@ -162,28 +162,28 @@ $stmt->close();
     <table>
         <tr class="section-header"><td colspan="4">ATTENDANCE</td></tr>
         <tr style='font-weight: bold;'><td>Data Element</td><td>Male</td><td>Female</td><td>Total</td></tr>
-        <tr><td>Clients 15 - 19 Years</td><td><?php include ''; ?></td><td><?php include ''; ?></td><td style="color: blue; font-weight: bold;"><?php include ''; ?></td></tr>
-        <tr><td>Clients 20 - 24 Years</td><td><?php include ''; ?></td><td><?php include ''; ?></td><td style="color: blue; font-weight: bold;"><?php include ''; ?></td></tr>
-        <tr><td>Clients 25 - 35 Years</td><td><?php include ''; ?></td><td><?php include ''; ?></td><td style="color: blue; font-weight: bold;"><?php include ''; ?></td></tr>
-        <tr><td>Clients 36+ Years</td><td><?php include ''; ?></td><td><?php include ''; ?></td><td style="color: blue; font-weight: bold;"><?php include ''; ?></td></tr>
+        <tr><td>Clients 15 - 19 Years</td><td><?php include '../counts/psycho_male15_20.php'; ?></td><td><?php include '../counts/psycho_female15_20.php'; ?></td><td style="color: blue; font-weight: bold;"><?php include '../counts/psycho_total15_20.php'; ?></td></tr>
+        <tr><td>Clients 20 - 24 Years</td><td><?php include '../counts/psycho_male21_24.php'; ?></td><td><?php include '../counts/psycho_female21_24.php'; ?></td><td style="color: blue; font-weight: bold;"><?php include '../counts/psycho_total21_24.php'; ?></td></tr>
+        <tr><td>Clients 25 - 35 Years</td><td><?php include '../counts/psycho_male25_35.php'; ?></td><td><?php include '../counts/psycho_female25_35.php'; ?></td><td style="color: blue; font-weight: bold;"><?php include '../counts/psycho_total25_35.php'; ?></td></tr>
+        <tr><td>Clients 36+ Years</td><td><?php include '../counts/psycho_male36_above.php'; ?></td><td><?php include '../counts/psycho_female36_above.php'; ?></td><td style="color: blue; font-weight: bold;"><?php include '../counts/psycho_total36_above.php'; ?></td></tr>
     </table>
 
     <table>
         <tr class="section-header"><td colspan="4">PSYCHO-SOCIO OUTCOMES</td></tr>
         <tr style='font-weight: bold;'><td>Data Element</td><td>Male</td><td>Female</td><td>Total</td></tr>
-        <tr><td>Re-integration</td><td><?php include ''; ?></td><td><?php include ''; ?></td><td style="color: blue; font-weight: bold;"><?php include ''; ?></td></tr>
-        <tr><td>Employement</td><td><?php include ''; ?></td><td><?php include ''; ?></td><td style="color: blue; font-weight: bold;"><?php include ''; ?></td></tr>
-        <tr><td>Stable accomodation</td><td><?php include ''; ?></td><td><?php include ''; ?></td><td style="color: blue; font-weight: bold;"><?php include ''; ?></td></tr>
-        <tr><td>GBV support</td><td><?php include ''; ?></td><td><?php include ''; ?></td><td style="color: blue; font-weight: bold;"><?php include ''; ?></td></tr>
+        <tr><td>Re-integration</td><td><?php include '../counts/reintegration_maleCount.php'; ?></td><td><?php include '../counts/reintegration_femaleCount.php'; ?></td><td style="color: blue; font-weight: bold;"><?php include '../counts/reintegration_totalCount.php'; ?></td></tr>
+        <tr><td>Employment</td><td><?php include '../counts/employment_maleCount.php'; ?></td><td><?php include '../counts/employment_femaleCount.php'; ?></td><td style="color: blue; font-weight: bold;"><?php include '../counts/employment_totalCount.php'; ?></td></tr>
+        <tr><td>Stable accomodation</td><td><?php include '../counts/accomodation_maleCount.php'; ?></td><td><?php include '../counts/accomodation_femaleCount.php'; ?></td><td style="color: blue; font-weight: bold;"><?php include '../counts/accomodation_totalCount.php'; ?></td></tr>
+        <tr><td>GBV support</td><td><?php include '../counts/gbvsupport_maleCount.php'; ?></td><td><?php include '../counts/gbvsupport_femaleCount.php'; ?></td><td style="color: blue; font-weight: bold;"><?php include '../counts/gbvsupport_totalCount.php'; ?></td></tr>
     </table>
 
     <table>
-        <tr class="section-header"><td colspan="4">ATTENDANCE</td></tr>
+        <tr class="section-header"><td colspan="4">PSYCHOSOCIAL INTERVENETIONS</td></tr>
         <tr style='font-weight: bold;'><td>Data Element</td><td>Male</td><td>Female</td><td>Total</td></tr>
-        <tr><td>Clients 15 - 19 Years</td><td><?php include ''; ?></td><td><?php include ''; ?></td><td style="color: blue; font-weight: bold;"><?php include ''; ?></td></tr>
-        <tr><td>Clients 20 - 24 Years</td><td><?php include ''; ?></td><td><?php include ''; ?></td><td style="color: blue; font-weight: bold;"><?php include ''; ?></td></tr>
-        <tr><td>Clients 25 - 35 Years</td><td><?php include ''; ?></td><td><?php include ''; ?></td><td style="color: blue; font-weight: bold;"><?php include ''; ?></td></tr>
-        <tr><td>Clients 36+ Years</td><td><?php include ''; ?></td><td><?php include ''; ?></td><td style="color: blue; font-weight: bold;"><?php include ''; ?></td></tr>
+        <tr><td>Clients 15 - 19 Years</td><td><?php include '../counts/linkage_maleCount15_20.php'; ?></td><td><?php include '../counts/linkage_femaleCount15_20.php'; ?></td><td style="color: blue; font-weight: bold;"><?php include '../counts/linkage_totalCount15_20.php'; ?></td></tr>
+        <tr><td>Clients 20 - 24 Years</td><td><?php include '../counts/linkage_maleCount21_24.php'; ?></td><td><?php include '../counts/linkage_femaleCount21_24.php'; ?></td><td style="color: blue; font-weight: bold;"><?php include '../counts/linkage_totalCount21_24.php'; ?></td></tr>
+        <tr><td>Clients 25 - 35 Years</td><td><?php include '../counts/linkage_maleCount25_35.php'; ?></td><td><?php include '../counts/linkage_femaleCount25_35.php'; ?></td><td style="color: blue; font-weight: bold;"><?php include '../counts/linkage_totalCount25_35.php'; ?></td></tr>
+        <tr><td>Clients 36+ Years</td><td><?php include '../counts/linkage_maleCount36_above.php'; ?></td><td><?php include '../counts/linkage_femaleCount36_above.php'; ?></td><td style="color: blue; font-weight: bold;"><?php include '../counts/linkage_totalCount36_above.php'; ?></td></tr>
     </table>
     <div class="section-title" style="font-weight: bold; margin-top: 20px; margin-bottom: 20px;">REPORTING TEAM</div>
     <table class="signature-table">

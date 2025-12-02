@@ -68,128 +68,31 @@ if ($userId) {
     $endDateObj = new DateTime($endDate);
     $new_num_rows = $endDateObj->format('j') - $num_rows;
 
-    }
-    
-    // Fetch and calculate the earliest missed appointment from multiple TCA dates
-    $appointmentInfo = [
-        'date' => null,
-        'days' => 0,
-        'isMissed' => false,
-        'message' => 'NO APPOINTMENT DATE. Refer to Clinician',
-        'referTo' => 'Clinician',
-        'appointmentType' => 'Clinician'
-    ];
+    // Fetch the next appointment date from the patients table
+    $appointmentQuery = "SELECT next_appointment FROM patients WHERE mat_id = ?";
+    $appointmentStmt = $conn->prepare($appointmentQuery);
+    $appointmentStmt->bind_param('s', $userId);
+    $appointmentStmt->execute();
+    $appointmentResult = $appointmentStmt->get_result();
 
-    if ($userId) {
-        // Fetch all appointment dates
-        $appointmentQuery = "SELECT
-                next_appointment,
-                psycho_social_tca,
-                psychiatric_tca,
-                nursing_tca,
-                nutrition_tca,
-                laboratory_tca,
-                records_tca
-            FROM patients
-            WHERE mat_id = ?";
-        $appointmentStmt = $conn->prepare($appointmentQuery);
-        $appointmentStmt->bind_param('s', $userId);
-        $appointmentStmt->execute();
-        $appointmentResult = $appointmentStmt->get_result();
+    if ($appointmentResult->num_rows > 0) {
+        $appointmentRow = $appointmentResult->fetch_assoc();
+        $appointmentDate = $appointmentRow['next_appointment'];
 
-        if ($appointmentResult->num_rows > 0) {
-            $appointmentRow = $appointmentResult->fetch_assoc();
-
-            // Define appointment types with their fields and referral roles
-            $appointmentTypes = [
-                'Clinician' => [
-                    'field' => 'next_appointment',
-                    'referTo' => 'Clinician'
-                ],
-                'Psychosocial' => [
-                    'field' => 'psycho_social_tca',
-                    'referTo' => 'Psychologist'
-                ],
-                'Psychiatric' => [
-                    'field' => 'psychiatric_tca',
-                    'referTo' => 'Psychiatrist'
-                ],
-                'Nursing' => [
-                    'field' => 'nursing_tca',
-                    'referTo' => 'Nurse'
-                ],
-                'Nutritional' => [
-                    'field' => 'nutrition_tca',
-                    'referTo' => 'Nutritionist'
-                ],
-                'Laboratory' => [
-                    'field' => 'laboratory_tca',
-                    'referTo' => 'Laboratory'
-                ],
-                'Records' => [
-                    'field' => 'records_tca',
-                    'referTo' => 'Records'
-                ]
-            ];
-
+        if ($appointmentDate) {
             $currentDate = new DateTime();
-            $earliestDate = null;
-            $earliestType = null;
-            $earliestReferTo = null;
-
-            // Check each appointment type for the earliest date
-            foreach ($appointmentTypes as $type => $info) {
-                $dateField = $appointmentRow[$info['field']];
-
-                if ($dateField) {
-                    try {
-                        $appointmentDate = new DateTime($dateField);
-
-                        // Only consider appointments for active, LTFU, and defaulted statuses
-                        if (isset($currentSettings['current_status']) &&
-                            in_array($currentSettings['current_status'], ['Active', 'LTFU', 'Defaulted'])) {
-
-                            if ($earliestDate === null || $appointmentDate < $earliestDate) {
-                                $earliestDate = $appointmentDate;
-                                $earliestType = $type;
-                                $earliestReferTo = $info['referTo'];
-                            }
-                        }
-                    } catch (Exception $e) {
-                        // Invalid date format, skip
-                        continue;
-                    }
-                }
-            }
-
-            if ($earliestDate) {
-                $interval = $currentDate->diff($earliestDate);
-                $daysToAppointment = $interval->days;
-                $isMissed = ($currentDate > $earliestDate);
-
-                $appointmentInfo['date'] = $earliestDate->format('Y-m-d');
-                $appointmentInfo['days'] = $daysToAppointment;
-                $appointmentInfo['isMissed'] = $isMissed;
-                $appointmentInfo['appointmentType'] = $earliestType;
-                $appointmentInfo['referTo'] = $earliestReferTo;
-
-                if ($isMissed) {
-                    $appointmentInfo['message'] = "Missed {$earliestType} appointment on " . $earliestDate->format('Y-m-d') . " (Refer to {$earliestReferTo})";
-                } else {
-                    $appointmentInfo['message'] = "{$daysToAppointment} days to {$earliestType} appointment ({$earliestReferTo})";
-                }
-            } else {
-                $appointmentInfo['message'] = 'NO APPOINTMENT DATE. Refer to Clinician';
-            }
+            $appointmentDateObj = new DateTime($appointmentDate);
+            $interval = $currentDate->diff($appointmentDateObj);
+            $daysToAppointment = $interval->days;
+            $isMissed = ($currentDate > $appointmentDateObj);
+        } else {
+            $appointmentDate = 'NO APPOINTMENT DATE. Refer to Clinician';
         }
-        $appointmentStmt->close();
-
-        // Set variables for use in the rest of the script
-        $appointmentDate = $appointmentInfo['date'] ?? 'NO APPOINTMENT DATE. Refer to Clinician';
-        $daysToAppointment = $appointmentInfo['days'];
-        $isMissed = $appointmentInfo['isMissed'];
-        $daysToAppointmentDisplay = $appointmentInfo['message'];
     }
+    $appointmentStmt->close();
+
+    $daysToAppointmentDisplay = $isMissed ? "<span style='color: red; font-size: 16px;'>MISSED APPOINTMENT. Refer to clinician</span>" : $daysToAppointment;
+}
 
 // Fetch photo from the mat_id and photos table based on mat_id
 if (isset($_GET['mat_id'])) {
@@ -471,21 +374,9 @@ if ($statusResult->num_rows > 0) {
                 <span class="stat-label">Days Missed</span>
             </div>
 
-            <div class="stat-item stat-appointment">
-                <span class="stat-value">
-                    <?php
-                    if ($isMissed && !empty($appointmentInfo['date'])) {
-                        echo "<span style='color: red; font-size: 14px;'>" .
-                             htmlspecialchars($appointmentInfo['appointmentType']) . "<br>" .
-                             htmlspecialchars($appointmentInfo['date']) . "</span>";
-                    } elseif (!empty($appointmentInfo['date'])) {
-                        echo htmlspecialchars($appointmentInfo['date']);
-                    } else {
-                        echo "No Appointment";
-                    }
-                    ?>
-                </span>
-                <span class="stat-label"><?php echo htmlspecialchars($appointmentInfo['message']); ?></span>
+            <div class="stat-item stat-appointment" hidden>
+                <span class="stat-value"><?php echo htmlspecialchars($appointmentDate); ?></span>
+                <span class="stat-label">Clinical Appointment</span>
             </div>
 
             <!--*******************************************
@@ -517,25 +408,8 @@ if ($statusResult->num_rows > 0) {
                 <span class="stat-label">Last disp Date</span>
             </div>
             <div class="stat-item stat-days-next">
-                <span class="stat-value">
-                    <?php
-                    if ($isMissed) {
-                        echo "<span style='color: red; font-size: 16px;'>MISSED<br>Refer to " .
-                             htmlspecialchars($appointmentInfo['referTo']) . "</span>";
-                    } else {
-                        echo $daysToAppointment;
-                    }
-                    ?>
-                </span>
-                <span class="stat-label">
-                    <?php
-                    if ($isMissed) {
-                        echo htmlspecialchars($appointmentInfo['appointmentType']) . " Appointment";
-                    } else {
-                        echo "Days To Next Appointment";
-                    }
-                    ?>
-                </span>
+                <span class="stat-value"><?php echo $daysToAppointmentDisplay; ?></span>
+                <span class="stat-label">Days To Next Appointment</span>
             </div>
             <div class="stat-item stat-photo">
                 <span class="stat-value"><i class="fas fa-camera"></i></span>
@@ -620,8 +494,8 @@ if ($statusResult->num_rows > 0) {
                 </div>
                 <input type="hidden" name="daysToNextAppointment" value="<?php echo $daysToAppointment; ?>">
                 <input type="hidden" name="isMissed" value="<?php echo $isMissed ? 'true' : 'false'; ?>">
-                <input type="hidden" name="appointmentType" value="<?php echo htmlspecialchars($appointmentInfo['appointmentType']); ?>">
-                <input type="hidden" name="referTo" value="<?php echo htmlspecialchars($appointmentInfo['referTo']); ?>">
+                <div class="form-group" style="visibility: hidden;"><label></label><input type="text"></div>
+                <div class="form-group" style="visibility: hidden;"><label></label><input type="text"></div>
             </div>
 
             <div class="photo-container">

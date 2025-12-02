@@ -81,12 +81,10 @@ if ($mat_id && isset($_POST['drugname']) && !empty($_POST['drugname'])) {
         }
         $checkStmt->close();
 
-        // 3. Missed Appointment Check - Updated with appointment type
+        // 3. Missed Appointment Check (Now a warning, but still blocks dispensing if logic is strict)
         if ($isMissed || $DaysToNextAppointment == 0) {
-            $appointmentType = $_POST['appointmentType'] ?? 'Appointment';
-            $referTo = $_POST['referTo'] ?? 'Clinician';
-
-            $routineErrors[] = "Routine Dispensing Failed: Client has a **Missed {$appointmentType} Appointment**. Kindly refer to the {$referTo}.";
+            // Note: The original code used this as a hard block. Keeping it as a block.
+            $routineErrors[] = "Routine Dispensing Failed: Client has a **Missed Appointment** or **No appointment date**. Kindly refer to the clinician.";
         }
 
         // 4. Dosage Validation
