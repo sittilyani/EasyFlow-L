@@ -21,7 +21,7 @@
                             $row = $result->fetch_assoc();
 
                             // Output the result
-                            echo '<p>Methadone Balance: <span style="font-weight: bold; color: #0033CC;">' . $row['methadone_total_qty'] . '&nbsp;mg</strong></p>';
+                            echo '<p>Methadone Balance: <span style="font-weight: bold; color: #0033CC;">' . $row['methadone_total_qty'] . '&nbsp;mg</span> <span style="font-weight: bold; color: red;">(' . ($row['methadone_total_qty'] / 5) . ' mL)</span></p>';
                         } else {
                             echo '<p>No Methadone stock records found.</p>';
                         }

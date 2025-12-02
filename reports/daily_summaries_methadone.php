@@ -2,32 +2,47 @@
 // ---------------------------------------------------------------
 // 1. CONFIG & SESSION
 // ---------------------------------------------------------------
+// Load Dompdf classes for potential future PDF generation (currently using window.print)
 require_once '../dompdf/autoload.inc.php';
 use Dompdf\Dompdf;
 
-include '../includes/config.php';
+// Load configuration and start session
+require_once '../includes/config.php'; // Changed to require_once for essential files
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-        die("You must be logged in to access this page.");
+    // Better handling of unauthenticated access
+    http_response_code(401);
+    die("Error 401: You must be logged in to access this page.");
 }
 $loggedInUserId = $_SESSION['user_id'];
+
+// Global database connection variable is assumed to be $conn from config.php
 
 // ---------------------------------------------------------------
 // 2. FACILITY SETTINGS
 // ---------------------------------------------------------------
 $facilityName = $mflCode = $countyName = $subcountyName = "N/A";
 $stmt = $conn->prepare("SELECT facilityname, mflcode, countyname, subcountyname FROM facility_settings LIMIT 1");
+
+if (!$stmt) {
+    die("Database error preparing facility settings query: " . $conn->error);
+}
+
 $stmt->execute();
 $res = $stmt->get_result();
 if ($row = $res->fetch_assoc()) {
-        $facilityName   = $row['facilityname']   ?? "N/A";
-        $mflCode        = $row['mflcode']       ?? "N/A";
-        $countyName     = $row['countyname']    ?? "N/A";
-        $subcountyName  = $row['subcountyname'] ?? "N/A";
+    // Use null coalescing operator (??) for robustness
+    $facilityName = $row['facilityname'] ?? "N/A";
+    $mflCode = $row['mflcode'] ?? "N/A";
+    $countyName = $row['countyname'] ?? "N/A";
+    $subcountyName = $row['subcountyname'] ?? "N/A";
 }
 $stmt->close();
 
+// ---------------------------------------------------------------
+// 3. MONTH SELECTION - DEFAULT = CURRENT MONTH
+// ---------------------------------------------------------------
 // ---------------------------------------------------------------
 // 3. MONTH SELECTION - DEFAULT = CURRENT MONTH
 // ---------------------------------------------------------------
@@ -48,16 +63,18 @@ $startDate = "$selectedYear-$selectedMonth-01";
 $endDate   = date('Y-m-t', strtotime($startDate));
 
 // ---------------------------------------------------------------
-// 4. DRUG SELECTION - HARD-CODED
+// 4. DRUG SELECTION - HARD-CODED (as per existing logic)
 // ---------------------------------------------------------------
-$drugID   = 2;
+$drugID = 2;
 $drugName = 'Methadone';
 
 // ---------------------------------------------------------------
 // 5. OPENING BALANCE & PERIOD DATA QUERIES
 // ---------------------------------------------------------------
 
-// 5a. Fetch Opening Balance from last recorded stock movement before the start date
+// 5a. Fetch Opening Balance: This is the closing balance from the last recorded transaction
+// before the start date ($startDate is YYYY-MM-01). The query looks for all transactions
+// occurring *before* the 1st of the month, sorts by date/ID descending, and takes the last one.
 $openingBal = 0.0;
 $sqlOpeningBal = "SELECT total_qty
 FROM stock_movements
@@ -67,6 +84,11 @@ ORDER BY trans_date DESC, trans_id DESC
 LIMIT 1";
 
 $stmtOpeningBal = $conn->prepare($sqlOpeningBal);
+
+if (!$stmtOpeningBal) {
+    die("Database error preparing opening balance query: " . $conn->error);
+}
+
 $stmtOpeningBal->bind_param('is', $drugID, $startDate);
 $stmtOpeningBal->execute();
 $resultOpeningBal = $stmtOpeningBal->get_result();
@@ -88,6 +110,9 @@ GROUP BY DATE(transaction_date)
 ORDER BY trans_date";
 
 $stmtStores = $conn->prepare($sqlStores);
+if (!$stmtStores) {
+    die("Database error preparing stores query: " . $conn->error);
+}
 $stmtStores->bind_param('ssi', $startDate, $endDate, $drugID);
 $stmtStores->execute();
 $resultStores = $stmtStores->get_result();
@@ -115,6 +140,9 @@ GROUP BY DATE(dispDate)
 ORDER BY disp_date";
 
 $stmtPharmacy = $conn->prepare($sqlPharmacy);
+if (!$stmtPharmacy) {
+    die("Database error preparing pharmacy query: " . $conn->error);
+}
 $stmtPharmacy->bind_param('ss', $startDate, $endDate);
 $stmtPharmacy->execute();
 $resultPharmacy = $stmtPharmacy->get_result();
@@ -135,7 +163,7 @@ $periodEntries = [];
 $cur = new DateTime($startDate);
 $end = new DateTime($endDate);
 
-// Initialize running balance with the fetched opening balance
+// Initialize running balance with the fetched opening balance (closing balance of previous period)
 $runningBalance = $openingBal;
 
 while ($cur <= $end) {
@@ -150,22 +178,22 @@ while ($cur <= $end) {
     // The running balance from the end of the previous day is the opening balance for today.
     $dailyOpeningBal = $runningBalance;
 
-    // Calculate pharmacy balance (receipt - dispensed)
+    // Calculate the 'Pharmacy Balance' (Net change for the day: Receipt - Dispensed)
     $pharmBal = $receipt - $dispensed;
 
     // Calculate the closing balance for today
     $newClosingBal = $dailyOpeningBal + $receipt - $dispensed;
 
     $periodEntries[] = [
-        'date'          => $dateKey,
-        'opening_bal'   => $dailyOpeningBal,
+        'date'  => $dateKey,
+        'opening_bal' => $dailyOpeningBal,
         'to_dispensing' => $receipt,
-        'dispensed'     => $dispensed,
-        'pharm_bal'     => $pharmBal, // NEW: Pharmacy Balance
-        'closing_bal'   => $newClosingBal,
-        'issuer'        => $stores['issuer'] ?? '',
-        'receiver'      => $stores['receiver'] ?? '',
-        'clients'       => $pharmacy['clients'] ?? 0
+        'dispensed' => $dispensed,
+        'pharm_bal' => $pharmBal, // Net change for the day
+        'closing_bal' => $newClosingBal,
+        'issuer' => $stores['issuer'] ?? '',
+        'receiver' => $stores['receiver'] ?? '',
+        'clients' => $pharmacy['clients'] ?? 0
     ];
 
     // Set the current closing balance as the opening balance for the next day
@@ -178,6 +206,9 @@ while ($cur <= $end) {
 // 7. USER NAME
 // ---------------------------------------------------------------
 $clinician_name = $_SESSION['full_name'] ?? "User #{$loggedInUserId}";
+
+// Close DB connection
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -187,25 +218,33 @@ $clinician_name = $_SESSION['full_name'] ?? "User #{$loggedInUserId}";
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form P7 - Daily Summaries (<?= htmlspecialchars($drugName, ENT_QUOTES, 'UTF-8') ?>)</title>
     <style>
+        /* General Reset and Base Styles */
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);padding:30px 20px;min-height:100vh}
         .container{max-width:95%;margin:0 auto;background:#fff;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.1);overflow:hidden}
+        /* Header Styling */
         .form-header{background:#f5dd42;color:#000;padding:30px 40px;display:grid;grid-template-columns:100px 1fr 150px;align-items:center;gap:20px}
         .logo-left img{width:120px;height:120px;object-fit:contain;padding:8px;border-radius:8px}
         .title-center{text-align:center}
         .title-center h2{font-size:28px;font-weight:700;margin-bottom:8px;letter-spacing:1px}
         .title-center p{font-size:16px;opacity:.95;font-weight:500}
         .form-version{text-align:right;font-size:12px;opacity:.9}
+        /* Content and Form Styling */
         .content-wrapper{padding:40px}
         .form-group-1{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-bottom:30px}
         .form-group-1>div{display:flex;flex-direction:column}
         .form-group-1 label{font-weight:600;color:#333;margin-bottom:8px;font-size:14px}
-        .form-group-1 input,.form-group-1 select{padding:12px 16px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;transition:all .3s ease;background:#f9f9f9}.form-group-1 input:focus,.form-group-1 select:focus{outline:0;border-color:#009;background:#fff}.date-selectors{display:flex;gap:20px;align-items:flex-end;margin-top:20px}.date-field{flex:1}#print-pdf,button{width:180px;background:linear-gradient(135deg,#009 0%,#00c 100%);height:48px;border:none;border-radius:8px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s ease;box-shadow:0 4px 15px rgba(0,0,153,.3)}
-        button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,153,.4)}
-        button:active{transform:translateY(0)}
+        .form-group-1 input,.form-group-1 select{padding:12px 16px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;transition:all .3s ease;background:#f9f9f9}
+        .form-group-1 input:focus,.form-group-1 select:focus{outline:0;border-color:#009;background:#fff}
+        .date-selectors{display:flex;gap:20px;align-items:flex-end;margin-top:20px}
+        .date-field{flex:1}
+        #print-pdf,button[type="submit"]{width:180px;background:linear-gradient(135deg,#009 0%,#00c 100%);height:48px;border:none;border-radius:8px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s ease;box-shadow:0 4px 15px rgba(0,0,153,.3)}
+        button[type="submit"]:hover, #print-pdf:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,153,.4)}
+        button[type="submit"]:active, #print-pdf:active{transform:translateY(0)}
         hr{border:none;height:1px;background:linear-gradient(to right,transparent,#e0e0e0,transparent);margin:30px 0}
+        /* Table Styling */
         .table-wrapper{overflow-x:auto;margin:30px 0;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
-        table{width:100%;border-collapse:collapse;background:#fff;min-width:1100px;}
+        table{width:100%;border-collapse:collapse;background:#fff;min-width:1200px;}
         thead{background:#f5dd42;color:#000}
         th{padding:16px 12px;text-align:left;font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.5px}
         tbody tr{border-bottom:1px solid #f0f0f0;transition:all .2s ease}
@@ -214,23 +253,31 @@ $clinician_name = $_SESSION['full_name'] ?? "User #{$loggedInUserId}";
         td{padding:14px 12px;font-size:14px;color:#444}
         td.bal{font-weight:600;color:#009;}
         td.received{font-weight:600;color:#28a745}
-        td.pharm-bal{font-weight:600;color:#ff6b00} /* NEW: Pharmacy balance style */
+        td.pharm-bal{font-weight:600;color:#ff6b00} /* Pharmacy balance style */
         td.closing{font-weight:600;color:#009}
-        .no-data{color:#dc3545!important;text-align:center;font-weight:600;padding:30px!important}.footer{background:#f8f9fa;padding:20px 40px;border-top:3px solid #009;margin-top:30px}
-        .footer p{color:#666;font-size:13px;text-align:center}
+        .no-data{color:#dc3545!important;text-align:center;font-weight:600;padding:30px!important}
+        /* Footer and Print Styling */
+        .footer{background:#f8f9fa;padding:20px 40px;border-top:3px solid #009;margin-top:30px;display:flex;justify-content:space-between;align-items:center;}
+        .footer p{color:#666;font-size:13px;}
 
         @media (max-width:1200px){.container{max-width:98%}}
-        @media (max-width:768px){.form-header{grid-template-columns:1fr;text-align:center}
-        .logo-left{margin:0 auto}.form-version{text-align:center}
-        .form-group-1{grid-template-columns:1fr}
-        .content-wrapper{padding:20px}
-        table{min-width: 900px;}
-        .table-wrapper{overflow-x: scroll;}
+        @media (max-width:768px){
+            .form-header{grid-template-columns:1fr;text-align:center}
+            .logo-left{margin:0 auto}
+            .form-version{text-align:center}
+            .form-group-1{grid-template-columns:1fr}
+            .content-wrapper{padding:20px}
+            .footer{flex-direction:column;gap:10px}
         }
 
-        @media print{body{background:#fff;padding:0}
-        .container{box-shadow:none}
-        button{display:none}}
+        @media print{
+            body{background:#fff;padding:0}
+            .container{box-shadow:none}
+            #print-pdf, button[type="submit"], .date-selectors {display:none!important}
+            .footer{margin-top:0;border-top:1px solid #ccc;padding:10px 0}
+            .form-header{grid-template-columns:1fr;padding:15px 20px;}
+            .logo-left img {width: 60px; height: 60px;}
+        }
     </style>
 </head>
 <body>
@@ -286,6 +333,7 @@ $clinician_name = $_SESSION['full_name'] ?? "User #{$loggedInUserId}";
                         <label>Year:</label>
                         <input type="number" name="year" value="<?= $selectedYear ?>" min="2000" max="2100">
                     </div>
+                    <input type="hidden" name="drugID" value="<?= $drugID ?>">
                     <button type="submit">Update Report</button>
                 </div>
             </form>
@@ -300,7 +348,7 @@ $clinician_name = $_SESSION['full_name'] ?? "User #{$loggedInUserId}";
                             <th>Opening Bal (mL)</th>
                             <th>Receipt (from stores - mL)</th>
                             <th>Amount dispensed - mL</th>
-                            <th>Pharmacy Balance (mL)</th> <!-- NEW COLUMN -->
+                            <th>Pharmacy Balance (mL)</th>
                             <th>Closing Bal (mL)</th>
                             <th>Name of Issuer</th>
                             <th>Received By</th>
@@ -313,11 +361,11 @@ $clinician_name = $_SESSION['full_name'] ?? "User #{$loggedInUserId}";
                         <?php else: ?>
                             <?php foreach ($periodEntries as $e): ?>
                                 <tr <?= ($e['to_dispensing'] == 0 && $e['dispensed'] == 0) ? 'class="blank-row"' : '' ?>>
-                                    <td><?= $e['date'] ?></td>
+                                    <td><?= date('j-M-Y', strtotime($e['date'])) ?></td>
                                     <td class="bal"><?= number_format($e['opening_bal'], 2) ?></td>
                                     <td class="received"><?= number_format($e['to_dispensing'], 2) ?></td>
                                     <td><?= number_format($e['dispensed'], 2) ?></td>
-                                    <td class="pharm-bal"><?= number_format($e['pharm_bal'], 2) ?></td> <!-- NEW: Pharmacy Balance -->
+                                    <td class="pharm-bal"><?= number_format($e['pharm_bal'], 2) ?></td>
                                     <td class="closing"><?= number_format($e['closing_bal'], 2) ?></td>
                                     <td style="color:#000099;"><?= htmlspecialchars($e['issuer'], ENT_QUOTES, 'UTF-8') ?></td>
                                     <td><?= htmlspecialchars($e['receiver'], ENT_QUOTES, 'UTF-8') ?></td>
@@ -331,7 +379,8 @@ $clinician_name = $_SESSION['full_name'] ?? "User #{$loggedInUserId}";
         </div>
 
         <div class="footer">
-            <p>Report Generated By: <?= htmlspecialchars($clinician_name, ENT_QUOTES, 'UTF-8') ?> on <?= date('Y-m-d H:i:s') ?></p> <button id="print-pdf" onclick="window.print()">Print PDF</button>
+            <p>Report Generated By: <?= htmlspecialchars($clinician_name, ENT_QUOTES, 'UTF-8') ?> on <?= date('Y-m-d H:i:s') ?></p>
+            <button id="print-pdf" onclick="window.print()">Print Report (PDF)</button>
         </div>
     </div>
 </body>

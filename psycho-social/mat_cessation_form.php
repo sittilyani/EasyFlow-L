@@ -341,25 +341,25 @@ function is_selected($value, $current_sex) {
                     </tr>
                     <tr>
                         <td>5</td>
-                        <td>Has the client been on methadone at least for the past 12 months without interruption?</td>
+                        <td>Has the client been on buprenorphine at least for the past 12 months without interruption?</td>
                         <td><input type="radio" name="q5" value="1" required></td>
                         <td><input type="radio" name="q5" value="0"></td>
                     </tr>
                     <tr>
                         <td>6</td>
-                        <td>Do you really want to get off methadone, buprenorphine or naltrexone?</td>
+                        <td>Do you really want to get off buprenorphine, buprenorphine or naltrexone?</td>
                         <td><input type="radio" name="q6" value="1" required></td>
                         <td><input type="radio" name="q6" value="0"></td>
                     </tr>
                     <tr>
                         <td>7</td>
-                        <td>Do you have a compelling reason to get off methadone, buprenorphine or naltrexone? (logistical constraints/Travel/Job/Ramadhan/Dissatisfaction/other)</td>
+                        <td>Do you have a compelling reason to get off buprenorphine, buprenorphine or naltrexone? (logistical constraints/Travel/Job/Ramadhan/Dissatisfaction/other)</td>
                         <td><input type="radio" name="q7" value="1" required></td>
                         <td><input type="radio" name="q7" value="0"></td>
                     </tr>
                     <tr>
                         <td>8</td>
-                        <td>Do you have a main motivation or reason for wanting to get off methadone, buprenorphine or naltrexone?<br>
+                        <td>Do you have a main motivation or reason for wanting to get off buprenorphine, buprenorphine or naltrexone?<br>
                             If yes, what is it? <input type="text" name="q8_motivation" style="width: 70%;"> (Feels recovered/logistical constraints/Travel/Job/ Ramadhan/Dissatisfaction/other)
                         </td>
                         <td><input type="radio" name="q8" value="1" required></td>
@@ -397,7 +397,7 @@ function is_selected($value, $current_sex) {
                     </tr>
                     <tr>
                         <td>14</td>
-                        <td>Have you been on the same methadone, buprenorphine or naltrexone dose for the past 3 months?</td>
+                        <td>Have you been on the same buprenorphine, buprenorphine or naltrexone dose for the past 3 months?</td>
                         <td><input type="radio" name="q14" value="1" required></td>
                         <td><input type="radio" name="q14" value="0"></td>
                     </tr>
@@ -409,7 +409,7 @@ function is_selected($value, $current_sex) {
                     </tr>
                     <tr>
                         <td>16</td>
-                        <td>Does your counselor think you are ready to taper off methadone, buprenorphine or naltrexone?</td>
+                        <td>Does your counselor think you are ready to taper off buprenorphine, buprenorphine or naltrexone?</td>
                         <td><input type="radio" name="q16" value="1" required></td>
                         <td><input type="radio" name="q16" value="0"></td>
                     </tr>

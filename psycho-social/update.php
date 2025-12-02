@@ -1,7 +1,7 @@
 <?php
 include '../includes/header.php'; 
 $host = 'localhost';
-$db = 'methadone';
+$db = 'buprenorphine';
 $user = 'root';
 $pass = '';
 $charset = 'utf8mb4';
@@ -97,7 +97,7 @@ $comp_date = date('Y-m-d h-m-s');
 include "../includes/config.php";
 
 $host = 'localhost';
-$db = 'methadone';
+$db = 'buprenorphine';
 $user = 'root';
 $pass = '';
 $charset = 'utf8mb4';

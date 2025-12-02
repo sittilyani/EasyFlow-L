@@ -182,7 +182,7 @@ if (isset($currentSettings['dob']) && !empty($currentSettings['dob'])) {
                     </div>
                     <div class="form-group">
                         <label><i class="fas fa-pills"></i> Drug Name</label>
-                        <input type="text" name="drugname" class="readonly-input" readonly value="<?= htmlspecialchars($currentSettings['drugname'] ?? 'Methadone') ?>">
+                        <input type="text" name="drugname" class="readonly-input" readonly value="<?= htmlspecialchars($currentSettings['drugname'] ?? 'buprenorphine') ?>">
                     </div>
                     <div class="form-group">
                         <label><i class="fas fa-prescription-bottle"></i> Dosage</label>

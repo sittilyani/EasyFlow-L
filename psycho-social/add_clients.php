@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt = $conn->prepare($sql);
     if ($stmt) {
 
-    $formData['drugname'] = trim($_POST['drugname'] ?? 'Methadone');
+    $formData['drugname'] = trim($_POST['drugname'] ?? 'buprenorphine');
 
     $stmt->bind_param(
             "sssssssssssssssssssssssssssssss",
@@ -103,7 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 include "../includes/config.php";
 
 $host = 'localhost';
-$db = 'methadone';
+$db = 'buprenorphine';
 $user = 'root';
 $pass = '';
 $charset = 'utf8mb4';
@@ -136,7 +136,7 @@ include "../includes/config.php";
 
 ob_start(); // Ensure sessions are started if not started already
 $host = 'localhost';
-$db = 'methadone';
+$db = 'buprenorphine';
 $user = 'root';
 $pass = '';
 $charset = 'utf8mb4';
