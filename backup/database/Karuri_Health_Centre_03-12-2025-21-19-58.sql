@@ -1,7 +1,7 @@
 -- Database Backup
--- Database: `thetjbib_methadone`
+-- Database: `methadone`
 -- Facility: Karuri Health Centre
--- Backup Date: 30-11-2025-11-01-59
+-- Backup Date: 03-12-2025-21-19-57
 
 
 
@@ -53,33 +53,54 @@ INSERT INTO `categories` VALUES('4', 'Nutrition', NULL, NULL);
 CREATE TABLE IF NOT EXISTS `client_consents` (
   `id` int NOT NULL AUTO_INCREMENT,
   `p_id` int NOT NULL COMMENT 'ID from the patients table',
-  `mat_id` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  `client_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `sex` varchar(10) COLLATE utf8mb4_general_ci NOT NULL,
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `client_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `sex` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `visit_date` date NOT NULL,
-  `cso` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `declaration_phone` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `national_id` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `client_age` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `guardian_accompany` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'If accompanied by guardian/parent',
-  `guardian_name` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `guardian_id` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `mat_facility` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `clinician_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `clinician_org` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `clinician_signature` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `cso` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `declaration_phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `national_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `client_age` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `guardian_accompany` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'If accompanied by guardian/parent',
+  `guardian_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `guardian_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `mat_facility` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_signature` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `clinician_date` date NOT NULL,
-  `counselor_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `counselor_org` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `counselor_signature` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_signature` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `counselor_date` date NOT NULL,
-  `pdf_filename` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'Stored name of the generated PDF file',
+  `pdf_filename` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'Stored name of the generated PDF file',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `consent_status` varchar(50) COLLATE utf8mb4_general_ci DEFAULT 'yes',
+  `consent_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'yes',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO `client_consents` VALUES('1', '9428', '23368MAT01256', 'OMAR SALIM DENMARK', 'Male', '2025-11-24', 'Reachout Center Trust', '0222336655', '1111111', '41', 'Nugu', 'Nugus', '33344422', 'Kombani Mat Clinic', 'Clinician Clinician', 'Kombani Mat Clinic', 'MM', '2025-11-24', 'Pyschiatrist User', 'Kombani Mat Clinic', 'NN', '2025-11-24', '23368MAT01256_20251124_092722.pdf', '2025-11-24 12:27:22', 'yes');
+
+
+
+CREATE TABLE IF NOT EXISTS `clinic_visits` (
+  `clinic_id` int NOT NULL,
+  `visit_name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  PRIMARY KEY (`clinic_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `clinic_visits` VALUES('1', 'Initial visit');
+INSERT INTO `clinic_visits` VALUES('2', 'Follow up 1');
+INSERT INTO `clinic_visits` VALUES('3', 'Follow up 2');
+INSERT INTO `clinic_visits` VALUES('4', 'Follow up 3');
+INSERT INTO `clinic_visits` VALUES('5', 'Follow up 4');
+INSERT INTO `clinic_visits` VALUES('6', 'Follow up 5');
+INSERT INTO `clinic_visits` VALUES('7', 'Follow up 6');
+INSERT INTO `clinic_visits` VALUES('8', 'Follow up 7');
+INSERT INTO `clinic_visits` VALUES('9', 'Follow up 8');
+INSERT INTO `clinic_visits` VALUES('10', 'Follow up 9');
+INSERT INTO `clinic_visits` VALUES('11', 'Follow up 10');
+INSERT INTO `clinic_visits` VALUES('12', 'Other follow up');
 
 
 
@@ -91,53 +112,53 @@ CREATE TABLE IF NOT EXISTS `clinical_encounters` (
   `medical_history` json DEFAULT NULL,
   `medical_medication` json DEFAULT NULL,
   `hiv_diagnosis_date` date DEFAULT NULL,
-  `hiv_facility_care` varchar(255) DEFAULT NULL,
-  `other_medical_problems` text,
-  `allergies` text,
-  `allergies_other` varchar(255) DEFAULT NULL,
-  `contraception_use` enum('yes','no') DEFAULT NULL,
-  `contraception_method` text,
+  `hiv_facility_care` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `other_medical_problems` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `allergies` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `allergies_other` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `contraception_use` enum('yes','no') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `contraception_method` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `last_menstrual_period` date DEFAULT NULL,
-  `pregnancy_status` varchar(50) DEFAULT NULL,
+  `pregnancy_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `pregnancy_weeks` int DEFAULT NULL,
-  `breastfeeding` enum('yes','no') DEFAULT NULL,
-  `mental_health_diagnosis` enum('yes','no') DEFAULT NULL,
-  `mental_health_condition` text,
-  `mental_health_other` varchar(255) DEFAULT NULL,
-  `mental_health_medication` enum('yes','no') DEFAULT NULL,
-  `mental_health_medication_details` text,
-  `suicidal_thoughts` enum('yes','no') DEFAULT NULL,
-  `psychiatric_hospitalization` enum('yes','no') DEFAULT NULL,
-  `family_drug_use` enum('yes','no') DEFAULT NULL,
-  `family_mental_health` enum('yes','no') DEFAULT NULL,
-  `family_medical_conditions` text,
-  `family_medical_other` varchar(255) DEFAULT NULL,
-  `general_appearance` text,
-  `skin_examination` text,
-  `head_examination` text,
-  `eyes_examination` text,
-  `ears_examination` text,
-  `nose_examination` text,
-  `mouth_throat_examination` text,
-  `neck_examination` text,
-  `chest_examination` text,
-  `heart_examination` text,
-  `abdomen_examination` text,
-  `genitalia_examination` text,
-  `extremities_examination` text,
-  `neurological_examination` text,
-  `musculoskeletal_examination` text,
-  `diagnosis_opioid_use` varchar(50) DEFAULT NULL,
-  `other_diagnoses` text,
-  `treatment_plan` text,
-  `medication_prescribed` text,
-  `medication_other` varchar(255) DEFAULT NULL,
-  `initial_dose` varchar(100) DEFAULT NULL,
+  `breastfeeding` enum('yes','no') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `mental_health_diagnosis` enum('yes','no') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `mental_health_condition` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `mental_health_other` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `mental_health_medication` enum('yes','no') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `mental_health_medication_details` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `suicidal_thoughts` enum('yes','no') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `psychiatric_hospitalization` enum('yes','no') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `family_drug_use` enum('yes','no') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `family_mental_health` enum('yes','no') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `family_medical_conditions` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `family_medical_other` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `general_appearance` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `skin_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `head_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `eyes_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `ears_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `nose_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `mouth_throat_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `neck_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `chest_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `heart_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `abdomen_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `genitalia_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `extremities_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `neurological_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `musculoskeletal_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `diagnosis_opioid_use` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `other_diagnoses` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `treatment_plan` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `medication_prescribed` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `medication_other` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `initial_dose` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `next_appointment` date DEFAULT NULL,
-  `clinician_name` varchar(255) DEFAULT NULL,
-  `clinician_signature` varchar(255) DEFAULT NULL,
-  `patient_consent` enum('yes','no') DEFAULT NULL,
-  `status` enum('draft','completed') DEFAULT 'draft',
+  `clinician_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `clinician_signature` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `patient_consent` enum('yes','no') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `status` enum('draft','completed') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT 'draft',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -147,7 +168,7 @@ CREATE TABLE IF NOT EXISTS `clinical_encounters` (
   CONSTRAINT `clinical_encounters_ibfk_1` FOREIGN KEY (`triage_id`) REFERENCES `triage_services` (`id`),
   CONSTRAINT `clinical_encounters_ibfk_2` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`p_id`),
   CONSTRAINT `clinical_encounters_ibfk_3` FOREIGN KEY (`clinician_id`) REFERENCES `tblusers` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 
 
@@ -320,8 +341,9 @@ CREATE TABLE IF NOT EXISTS `deleted_prescriptions` (
   `deleted_by` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `date_of_deletion` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`del_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `deleted_prescriptions` VALUES('1', '15', 'JOSEPH MUCHUMI MICHUKI', '10973MAT0003', 'Male', 'Methadone', '30', 'Afande II', '2025-12-03', 'Accidental entry', 'Lyani Sitti', '2025-12-03 11:42:56');
 
 
 
@@ -363,7 +385,7 @@ CREATE TABLE IF NOT EXISTS `drug` (
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`drugID`),
   UNIQUE KEY `drugName` (`drugName`)
-) ENGINE=InnoDB AUTO_INCREMENT=1034 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1035 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO `drug` VALUES('2', 'Methadone', NULL, '', '150', '2025-09-18 12:31:41');
 INSERT INTO `drug` VALUES('6', 'Buprenorphine 2mg', 'narcotic', 'Suppress the brain neural system and calms the patient', '10', '2025-09-18 12:31:41');
@@ -661,6 +683,7 @@ INSERT INTO `drug` VALUES('1030', 'HPV vaccines', 'medicines', '', '200', '2025-
 INSERT INTO `drug` VALUES('1031', 'New drug', 'antihistamine', 'bhcr', '15', '2025-09-23 08:13:22');
 INSERT INTO `drug` VALUES('1032', 'Tenofovir/lamivudine/dolutegravir', 'antiviral', 'Tablets', '1', '2025-11-05 10:38:57');
 INSERT INTO `drug` VALUES('1033', 'Ibuprofen 200mg', 'analgesic', 'Tablets', '10', '2025-11-07 10:29:16');
+INSERT INTO `drug` VALUES('1034', 'Methadone 50 mg Tablet', 'antihistamine', 'Test', '120', '2025-12-03 11:33:26');
 
 
 
@@ -723,12 +746,16 @@ CREATE TABLE IF NOT EXISTS `education_level` (
 
 
 CREATE TABLE IF NOT EXISTS `employment_status` (
-  `emp_id` int NOT NULL AUTO_INCREMENT,
+  `emp_id` int NOT NULL,
   `emp_status_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`emp_id`),
   UNIQUE KEY `emp_status_name` (`emp_status_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `employment_status` VALUES('3', 'Self Employed');
+INSERT INTO `employment_status` VALUES('1', 'Skilled Employment');
+INSERT INTO `employment_status` VALUES('4', 'Unemployed');
+INSERT INTO `employment_status` VALUES('2', 'Unskilled Employment');
 
 
 
@@ -4503,9 +4530,9 @@ CREATE TABLE IF NOT EXISTS `facility_settings` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `facility_id` (`facility_id`),
   CONSTRAINT `facility_settings_ibfk_1` FOREIGN KEY (`facility_id`) REFERENCES `facilities` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO `facility_settings` VALUES('2', '938', 'Karuri Health Centre', NULL, 'Kiambu', 'Kiambaa', 'Dr. Taher', '0111222555', 'taher@gmail.com', '2025-11-30 09:42:36');
+INSERT INTO `facility_settings` VALUES('6', '938', 'Karuri Health Centre', NULL, 'Kiambu', 'Kiambaa', 'Dr Elizabeth', '0111222555', 'p@gmail.com', '2025-12-03 20:25:07');
 
 
 
@@ -4555,6 +4582,31 @@ INSERT INTO `formulation` VALUES('2', 'Tablets', 'To be Swallowed with water');
 INSERT INTO `formulation` VALUES('3', 'powder', 'Mix with clean water');
 INSERT INTO `formulation` VALUES('4', 'injections', 'Inject as per the mfg instructions');
 INSERT INTO `formulation` VALUES('5', 'Eye/Eye drops', 'To be used in eyes and ears');
+
+
+
+CREATE TABLE IF NOT EXISTS `gad7_assessments` (
+  `assessment_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `p_id` int unsigned NOT NULL,
+  `mat_id` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `visitDate` date NOT NULL,
+  `therapist_id` int unsigned NOT NULL,
+  `q1` tinyint(1) NOT NULL,
+  `q2` tinyint(1) NOT NULL,
+  `q3` tinyint(1) NOT NULL,
+  `q4` tinyint(1) NOT NULL,
+  `q5` tinyint(1) NOT NULL,
+  `q6` tinyint(1) NOT NULL,
+  `q7` tinyint(1) NOT NULL,
+  `total_score` tinyint NOT NULL,
+  `diagnosis` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `management_plan` text COLLATE utf8mb4_general_ci,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`assessment_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `gad7_assessments` VALUES('1', '1764', '10973MAT0003', '2025-12-02', '6', '2', '2', '2', '2', '2', '3', '3', '16', 'Severe anxiety', 'Provide supportive counselling (refer to a psychologist if available).\nRefer to a medical officer, psychiatrist, or mental health team immediately.\nConsider pharmacological treatment (e.g., SSRIs) in consultation with a specialist.', '2025-12-02 20:19:52');
+INSERT INTO `gad7_assessments` VALUES('2', '1772', '10973MAT0011', '2025-12-03', '6', '1', '2', '2', '3', '3', '3', '3', '17', 'Severe anxiety', 'Provide supportive counselling (refer to a psychologist if available).\nRefer to a medical officer, psychiatrist, or mental health team immediately.\nConsider pharmacological treatment (e.g., SSRIs) in consultation with a specialist.', '2025-12-03 20:12:50');
 
 
 
@@ -4631,24 +4683,24 @@ CREATE TABLE IF NOT EXISTS `integration_status` (
 CREATE TABLE IF NOT EXISTS `involuntary_discontinuation` (
   `id` int NOT NULL AUTO_INCREMENT,
   `visit_date` date NOT NULL,
-  `client_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `mat_id` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `client_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `enroll_date` date NOT NULL,
   `discontinue_date` date NOT NULL,
-  `reasons` text COLLATE utf8mb4_general_ci NOT NULL,
-  `discontinuation_plan` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `follow_up_plan` text COLLATE utf8mb4_general_ci NOT NULL,
-  `clinician_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `clinician_org` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `clinician_signature` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `reasons` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `discontinuation_plan` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `follow_up_plan` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_signature` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `clinician_date` date NOT NULL,
-  `counselor_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `counselor_org` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `counselor_signature` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_signature` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `counselor_date` date NOT NULL,
-  `cso_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `cso_org` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `cso_signature` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `cso_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `cso_org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `cso_signature` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `cso_date` date NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -4683,8 +4735,12 @@ CREATE TABLE IF NOT EXISTS `laboratory` (
   PRIMARY KEY (`lab_id`),
   KEY `fk_mat_id` (`mat_id`),
   CONSTRAINT `fk_mat_id` FOREIGN KEY (`mat_id`) REFERENCES `patients` (`mat_id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `laboratory` VALUES('1', '2025-12-01', '10973MAT0003', 'JOSEPH MUCHUMI MICHUKI', 'followup', 'PWID', 'not_done', 'not_done', 'not_done', 'not_done', 'not_done', 'not_done', 'not_done', 'Tetsing', 'Lyani Sitti', '2025-12-02', '2025-12-02 21:01:02', 'scheduled');
+INSERT INTO `laboratory` VALUES('2', '2025-12-03', 'RUIRU0001', 'Test Client', 'new', 'PWID', 'not_done', 'not_done', 'not_done', 'not_done', 'not_done', 'not_done', 'not_done', 'testing', 'Lyani Sitti', '2025-12-18', '2025-12-03 10:55:31', 'scheduled');
+INSERT INTO `laboratory` VALUES('3', '2025-11-05', 'RUIRU0001', 'Test Client', 'new', 'PWID', 'not_done', 'not_done', 'not_done', 'not_done', 'not_done', 'not_done', 'not_done', 'test2', 'Lyani Sitti', '2025-12-03', '2025-12-03 11:58:37', 'scheduled');
+INSERT INTO `laboratory` VALUES('4', '2025-12-03', '10973MAT0002', 'DANIEL WAITHAKA NJERI', 'followup', 'PWID', 'not_done', 'not_done', 'not_done', 'not_done', 'not_done', 'not_done', 'not_done', 'test', 'Lyani Sitti', '2025-12-03', '2025-12-03 15:23:34', 'scheduled');
 
 
 
@@ -4693,8 +4749,18 @@ CREATE TABLE IF NOT EXISTS `living_conditions` (
   `condition_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`cond_id`),
   UNIQUE KEY `condition_name` (`condition_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `living_conditions` VALUES('4', 'Abandoned buildings');
+INSERT INTO `living_conditions` VALUES('7', 'Bus stations');
+INSERT INTO `living_conditions` VALUES('1', 'Family House');
+INSERT INTO `living_conditions` VALUES('2', 'Friend\'s House');
+INSERT INTO `living_conditions` VALUES('9', 'Injection Sites');
+INSERT INTO `living_conditions` VALUES('10', 'Other Specify');
+INSERT INTO `living_conditions` VALUES('6', 'Parks');
+INSERT INTO `living_conditions` VALUES('5', 'Public areas');
+INSERT INTO `living_conditions` VALUES('3', 'Streets');
+INSERT INTO `living_conditions` VALUES('8', 'Tunnels');
 
 
 
@@ -4741,8 +4807,12 @@ CREATE TABLE IF NOT EXISTS `medical_history` (
   `next_appointment` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `age` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `medical_history` VALUES('2', '2025-12-02 00:00:00', '10973MAT0003', 'JOSEPH MUCHUMI MICHUKI', '', '', '1999-05-04', '2022-05-31', 'Male', 'Negative', '', 'None', 'None', 'Unknown', 'Unknown', 'None', 'test', 'Active', '', '', 'Lyani Sitti', '2026-01-08', '0');
+INSERT INTO `medical_history` VALUES('3', '2025-12-03 00:00:00', '10973MAT0003', 'JOSEPH MUCHUMI MICHUKI', '', '', '1999-05-04', '2022-05-31', 'Male', 'Negative', '', 'None', 'None', 'Unknown', 'Unknown', 'None', 'testing', 'Active', '', '', 'Lyani Sitti', '2026-01-08', '0');
+INSERT INTO `medical_history` VALUES('4', '2025-12-03 00:00:00', '10973MAT0003', 'JOSEPH MUCHUMI MICHUKI', '', '', '1999-05-04', '2022-05-31', 'Male', 'Unknown', '', 'None', 'None', 'Unknown', 'Unknown', 'None', 'NAD', 'Active', '', '', 'Lyani Sitti', '2025-12-05', '0');
+INSERT INTO `medical_history` VALUES('5', '2025-12-03 00:00:00', '10973MAT0011', 'CHARLES NGANGA GITONGA', '', '', '2000-07-08', '2022-05-31', 'Male', 'Negative', '', 'None', 'None', 'Unknown', 'Unknown', 'None', 'test', 'Active', '', '', 'Lyani Sitti', '2025-12-06', '0');
 
 
 
@@ -4846,38 +4916,8 @@ CREATE TABLE IF NOT EXISTS `other_prescriptions` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `prescription_id` (`prescription_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO `other_prescriptions` VALUES('24', 'PRESCR-00000001', 'BAKARI OMAR MWAMWENDO', '23368MAT01195', 'Male', '39', 'User Admin', '2025-10-03', 'partially dispensed', '2025-10-03 10:41:16');
-INSERT INTO `other_prescriptions` VALUES('27', 'PRESCR-00000002', 'ALEXANDER GATERU', '23368MAT00007', 'Male', '25', 'Bati   Bati ', '2025-10-22', 'partially dispensed', '2025-10-22 10:15:57');
-INSERT INTO `other_prescriptions` VALUES('28', 'PRESCR-00000003', 'ENNY ABDHALLA CHUNGWA', '23368MAT00236', 'Female', '43', 'Bati   Bati ', '2025-10-22', 'partially dispensed', '2025-10-22 10:56:52');
-INSERT INTO `other_prescriptions` VALUES('29', 'PRESCR-00000004', 'MOHAMMED BAKARI NGARE', '23368MAT00301', 'Male', '52', 'Bati   Bati ', '2025-10-22', 'partially dispensed', '2025-10-22 11:11:57');
-INSERT INTO `other_prescriptions` VALUES('30', 'PRESCR-00000005', 'NASRA ADEN ISMAEL', '23368MAT00022', 'Female', '33', 'Bati   Bati ', '2025-10-22', 'partially dispensed', '2025-10-22 11:40:43');
-INSERT INTO `other_prescriptions` VALUES('31', 'PRESCR-00000006', 'GLADYS WANJALA KAZUNGU', '23368MATTI-K0143', 'Female ', '31', 'Bati   Bati ', '2025-10-22', 'partially dispensed', '2025-10-22 11:52:01');
-INSERT INTO `other_prescriptions` VALUES('32', 'PRESCR-00000007', 'ALI BAKARI MWASUKARI', '23368MAT00417', 'Male', '42', 'Bati   Bati ', '2025-10-24', 'partially dispensed', '2025-10-24 08:32:07');
-INSERT INTO `other_prescriptions` VALUES('33', 'PRESCR-00000008', 'FARID ALI SALIM', '23368MAT00924', 'Male', '47', 'Bati   Bati ', '2025-10-28', 'partially dispensed', '2025-10-28 09:40:26');
-INSERT INTO `other_prescriptions` VALUES('34', 'PRESCR-00000009', 'BILALI BAKARI NGARE', '23368MAT01121', 'Male', '22', 'User Admin', '2025-10-28', 'partially dispensed', '2025-10-28 10:51:27');
-INSERT INTO `other_prescriptions` VALUES('35', 'PRESCR-00000010', 'MOHAMED ABUSHEE', '23368MAT1532', 'Male', '31', 'Bati   Bati ', '2025-11-04', 'partially dispensed', '2025-11-04 08:24:26');
-INSERT INTO `other_prescriptions` VALUES('36', 'PRESCR-00000011', 'MOHAMED ABDALLAH MWAMBUI', '23368MAT01196', 'Male', '54', 'Bati   Bati ', '2025-11-04', 'partially dispensed', '2025-11-04 08:52:48');
-INSERT INTO `other_prescriptions` VALUES('37', 'PRESCR-00000012', 'ALI ATHUMAN NGOLI', '23368MAT01124', 'Male', '48', 'Bati   Bati ', '2025-11-07', 'partially dispensed', '2025-11-07 10:25:25');
-INSERT INTO `other_prescriptions` VALUES('38', 'PRESCR-00000013', 'PATRICK CHRISTOPHER  MANDA', '23368MAT00675', 'Male', '34', 'Bati   Bati ', '2025-11-07', 'partially dispensed', '2025-11-07 10:29:49');
-INSERT INTO `other_prescriptions` VALUES('39', 'PRESCR-00000014', 'KASSIM HUSSEIN HAMADI', '23368MAT00469', 'Male', '40', 'Bati   Bati ', '2025-11-11', 'partially dispensed', '2025-11-11 08:52:45');
-INSERT INTO `other_prescriptions` VALUES('40', 'PRESCR-00000015', 'ANTHONY NJOROGE MGHENDI', '23368MAT00204', 'Male', '40', 'Bati   Bati ', '2025-11-12', 'partially dispensed', '2025-11-12 07:43:39');
-INSERT INTO `other_prescriptions` VALUES('41', 'PRESCR-00000016', 'ALI BADI HAMISI', '23368MAT00358', 'Male', '43', 'Bati   Bati ', '2025-11-12', 'partially dispensed', '2025-11-12 07:47:10');
-INSERT INTO `other_prescriptions` VALUES('44', 'PRESCR-00000019', 'MOHAMED RASHID', '23368MAT01161', 'Male', '37', 'Bati   Bati ', '2025-11-13', 'partially dispensed', '2025-11-13 08:48:27');
-INSERT INTO `other_prescriptions` VALUES('47', 'PRESCR-00000022', 'MOHAMMED BAKARI NGARE', '23368MAT00301', 'Male', '52', 'Bati   Bati ', '2025-11-13', 'partially dispensed', '2025-11-13 10:59:15');
-INSERT INTO `other_prescriptions` VALUES('48', 'PRESCR-00000023', 'MAHMOOD HUSSEIN', '23368MAT00582', 'Male', '49', 'Bati   Bati ', '2025-11-13', 'partially dispensed', '2025-11-13 11:27:47');
-INSERT INTO `other_prescriptions` VALUES('49', 'PRESCR-00000024', 'MOHAMED ALI MWANGAO', '23368MAT00893', 'Male', '34', 'Bati   Bati ', '2025-11-13', 'partially dispensed', '2025-11-13 12:30:17');
-INSERT INTO `other_prescriptions` VALUES('50', 'PRESCR-00000025', 'ABDALLAH HUSSEIN SULEIMAN', '23368MAT00555', 'Male', '40', 'Bati   Bati ', '2025-11-18', 'submitted', '2025-11-18 08:23:59');
-INSERT INTO `other_prescriptions` VALUES('51', 'PRESCR-00000026', 'BAKARI JUMA MWACHIDOGO', '23368MAT00958', 'Male', '31', 'Bati   Bati ', '2025-11-18', 'submitted', '2025-11-18 08:41:18');
-INSERT INTO `other_prescriptions` VALUES('52', 'PRESCR-00000027', 'VUCHE NASSORO KOMBO', '23368MAT01030', 'Male', '38', 'Bati   Bati ', '2025-11-19', 'submitted', '2025-11-19 09:13:48');
-INSERT INTO `other_prescriptions` VALUES('53', 'PRESCR-00000028', 'HAMISI THABITI MWAPOROJO', '23368MAT01241', 'Male', '50', 'Bati   Bati ', '2025-11-19', 'submitted', '2025-11-19 10:48:36');
-INSERT INTO `other_prescriptions` VALUES('54', 'PRESCR-00000029', 'JUMA KASSIM MOHAMED', '23368MAT01031', 'Male', '45', 'Bati   Bati ', '2025-11-19', 'submitted', '2025-11-19 11:04:41');
-INSERT INTO `other_prescriptions` VALUES('55', 'PRESCR-00000030', 'SAID MADILO OMAR', '23368MAT01144', 'Male', '37', 'Bati   Bati ', '2025-11-19', 'submitted', '2025-11-19 12:14:13');
-INSERT INTO `other_prescriptions` VALUES('56', 'PRESCR-00000031', 'SAID RAMA MWARAZIKI', '23368MAT01198', 'Male', '41', 'Bati   Bati ', '2025-11-20', 'submitted', '2025-11-20 08:45:51');
-INSERT INTO `other_prescriptions` VALUES('57', 'PRESCR-00000032', 'ATHMAN ALI MWAGORE', '23368MAT01237', 'Male', '40', 'Bati   Bati ', '2025-11-20', 'partially dispensed', '2025-11-20 09:12:22');
-INSERT INTO `other_prescriptions` VALUES('58', 'PRESCR-00000033', 'MANZU ATHUMAN MANZU', '23368MAT00972', 'Male', '30', 'Bati   Bati ', '2025-11-20', 'submitted', '2025-11-20 11:21:02');
-INSERT INTO `other_prescriptions` VALUES('59', 'PRESCR-00000034', 'SCHOLASTICAH ANYANGO', '23368MAT00002', 'Female', '30', 'User Admin', '2025-11-24', 'submitted', '2025-11-24 08:34:00');
 
 
 
@@ -4901,17 +4941,17 @@ INSERT INTO `other_status` VALUES('7', 'None', '2024-04-21 00:00:00');
 CREATE TABLE IF NOT EXISTS `patient_drug_histories` (
   `id` int NOT NULL AUTO_INCREMENT,
   `encounter_id` int NOT NULL,
-  `drug_type` varchar(100) DEFAULT NULL,
+  `drug_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `age_first_use` int DEFAULT NULL,
   `duration_years` int DEFAULT NULL,
-  `frequency` varchar(50) DEFAULT NULL,
-  `quantity` varchar(100) DEFAULT NULL,
-  `route` varchar(50) DEFAULT NULL,
+  `frequency` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `quantity` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `route` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `last_used` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `encounter_id` (`encounter_id`),
   CONSTRAINT `patient_drug_histories_ibfk_1` FOREIGN KEY (`encounter_id`) REFERENCES `clinical_encounters` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 
 
@@ -5933,8 +5973,27 @@ CREATE TABLE IF NOT EXISTS `pharmacy` (
   `pharm_officer_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `dispDate` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`disp_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `pharmacy` VALUES('3', '2025-12-02 00:00:00', '10973MAT0003', '3', 'JOSEPH MUCHUMI MICHUKI', '', '', 'Male', 'KIMBO', 'TI: Karuri', 'Methadone', '30.00', 'Last Known dose', 'Active', 'Lyani Sitti', '2025-12-02 19:05:08');
+INSERT INTO `pharmacy` VALUES('4', '2025-12-03 00:00:00', '10973MAT0011', '11', 'CHARLES NGANGA GITONGA', '', '25', 'Male', 'SOWETO', 'TI: Karuri', 'Methadone', '30.00', 'Last Known dose', 'Active', 'Lyani Sitti', '2025-12-03 11:16:53');
+INSERT INTO `pharmacy` VALUES('5', '2025-12-05 00:00:00', '10973MAT0011', '11', 'CHARLES NGANGA GITONGA', '', '25', 'Male', 'SOWETO', 'TI: Karuri', 'Methadone', '30.00', 'Multi-date dispensing', 'Active', 'Lyani Sitti', '2025-12-03 11:20:07');
+INSERT INTO `pharmacy` VALUES('6', '2025-12-07 00:00:00', '10973MAT0011', '11', 'CHARLES NGANGA GITONGA', '', '25', 'Male', 'SOWETO', 'TI: Karuri', 'Methadone', '30.00', 'Multi-date dispensing', 'Active', 'Lyani Sitti', '2025-12-03 11:20:07');
+INSERT INTO `pharmacy` VALUES('7', '2025-12-09 00:00:00', '10973MAT0011', '11', 'CHARLES NGANGA GITONGA', '', '25', 'Male', 'SOWETO', 'TI: Karuri', 'Methadone', '30.00', 'Multi-date dispensing', 'Active', 'Lyani Sitti', '2025-12-03 11:20:07');
+INSERT INTO `pharmacy` VALUES('8', '2025-12-03 00:00:00', 'RUIRU0001', '', 'Test Client', '', '15', 'Female', 'Inmate', NULL, 'Methadone', '20.00', 'Prison bulk dispensing', 'Active', 'Afande', '2025-12-03 11:23:42');
+INSERT INTO `pharmacy` VALUES('9', '2025-12-04 00:00:00', 'RUIRU0001', '', 'Test Client', '', '15', 'Female', 'Inmate', NULL, 'Methadone', '20.00', 'Prison bulk dispensing', 'Active', 'Afande', '2025-12-03 11:23:42');
+INSERT INTO `pharmacy` VALUES('10', '2025-12-05 00:00:00', 'RUIRU0001', '', 'Test Client', '', '15', 'Female', 'Inmate', NULL, 'Methadone', '20.00', 'Prison bulk dispensing', 'Active', 'Afande', '2025-12-03 11:23:42');
+INSERT INTO `pharmacy` VALUES('11', '2025-12-06 00:00:00', 'RUIRU0001', '', 'Test Client', '', '15', 'Female', 'Inmate', NULL, 'Methadone', '20.00', 'Prison bulk dispensing', 'Active', 'Afande', '2025-12-03 11:23:42');
+INSERT INTO `pharmacy` VALUES('12', '2025-12-07 00:00:00', 'RUIRU0001', '', 'Test Client', '', '15', 'Female', 'Inmate', NULL, 'Methadone', '20.00', 'Prison bulk dispensing', 'Active', 'Afande', '2025-12-03 11:23:42');
+INSERT INTO `pharmacy` VALUES('13', '2025-12-08 00:00:00', 'RUIRU0001', '', 'Test Client', '', '15', 'Female', 'Inmate', NULL, 'Methadone', '20.00', 'Prison bulk dispensing', 'Active', 'Afande', '2025-12-03 11:23:42');
+INSERT INTO `pharmacy` VALUES('14', '2025-12-09 00:00:00', 'RUIRU0001', '', 'Test Client', '', '15', 'Female', 'Inmate', NULL, 'Methadone', '20.00', 'Prison bulk dispensing', 'Active', 'Afande', '2025-12-03 11:23:42');
+INSERT INTO `pharmacy` VALUES('16', '2025-12-04 00:00:00', '10973MAT0003', '3', 'JOSEPH MUCHUMI MICHUKI', '', '26', 'Male', 'Inmate', 'TI: Karuri', 'Methadone', '30.00', 'Prison bulk dispensing', 'Active', 'Afande II', '2025-12-03 11:25:41');
+INSERT INTO `pharmacy` VALUES('17', '2025-12-05 00:00:00', '10973MAT0003', '3', 'JOSEPH MUCHUMI MICHUKI', '', '26', 'Male', 'Inmate', 'TI: Karuri', 'Methadone', '30.00', 'Prison bulk dispensing', 'Active', 'Afande II', '2025-12-03 11:25:41');
+INSERT INTO `pharmacy` VALUES('18', '2025-12-06 00:00:00', '10973MAT0003', '3', 'JOSEPH MUCHUMI MICHUKI', '', '26', 'Male', 'Inmate', 'TI: Karuri', 'Methadone', '30.00', 'Prison bulk dispensing', 'Active', 'Afande II', '2025-12-03 11:25:41');
+INSERT INTO `pharmacy` VALUES('19', '2025-12-03 00:00:00', '10973MAT0025', '25', 'CHARLES MAINA WANJIKU', '', '27', 'Male', 'Inmate', 'TI: Karuri', 'Methadone', '30.00', 'Prison bulk dispensing', 'Active', 'Afande II', '2025-12-03 11:25:41');
+INSERT INTO `pharmacy` VALUES('20', '2025-12-04 00:00:00', '10973MAT0025', '25', 'CHARLES MAINA WANJIKU', '', '27', 'Male', 'Inmate', 'TI: Karuri', 'Methadone', '30.00', 'Prison bulk dispensing', 'Active', 'Afande II', '2025-12-03 11:25:41');
+INSERT INTO `pharmacy` VALUES('21', '2025-12-05 00:00:00', '10973MAT0025', '25', 'CHARLES MAINA WANJIKU', '', '27', 'Male', 'Inmate', 'TI: Karuri', 'Methadone', '30.00', 'Prison bulk dispensing', 'Active', 'Afande II', '2025-12-03 11:25:41');
+INSERT INTO `pharmacy` VALUES('22', '2025-12-06 00:00:00', '10973MAT0025', '25', 'CHARLES MAINA WANJIKU', '', '27', 'Male', 'Inmate', 'TI: Karuri', 'Methadone', '30.00', 'Prison bulk dispensing', 'Active', 'Afande II', '2025-12-03 11:25:41');
 
 
 
@@ -5953,6 +6012,36 @@ CREATE TABLE IF NOT EXISTS `photos` (
 
 
 
+CREATE TABLE IF NOT EXISTS `phq9_assessments` (
+  `assessment_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `p_id` int unsigned NOT NULL,
+  `mat_id` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `visitDate` date NOT NULL,
+  `therapist_id` int unsigned NOT NULL,
+  `q1` tinyint(1) NOT NULL,
+  `q2` tinyint(1) NOT NULL,
+  `q3` tinyint(1) NOT NULL,
+  `q4` tinyint(1) NOT NULL,
+  `q5` tinyint(1) NOT NULL,
+  `q6` tinyint(1) NOT NULL,
+  `q7` tinyint(1) NOT NULL,
+  `q8` tinyint(1) NOT NULL,
+  `q9` tinyint(1) NOT NULL,
+  `total_score` tinyint NOT NULL,
+  `diagnosis` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `management_plan` text COLLATE utf8mb4_general_ci,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`assessment_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `phq9_assessments` VALUES('1', '1764', '10973MAT0003', '2025-12-02', '6', '1', '1', '1', '1', '1', '1', '1', '1', '1', '9', 'Mild depression', 'Provide counselling support and continue to monitor; refer to mental health team if available.\nIf patient is on EFV, substitute with a different ARV after ruling out treatment failure IF APPLICABLE (See \'Managing Single Drug Substitutions for ART\').', '2025-12-02 20:14:43');
+INSERT INTO `phq9_assessments` VALUES('2', '1772', '10973MAT0011', '2025-12-02', '6', '1', '1', '1', '1', '1', '1', '2', '2', '3', '13', 'Moderate depression*', 'Provide supportive counselling (refer to a psychologist if available).\nRefer to a medical officer, psychiatrist, or mental health team if available.\nIf patient is on EFV, substitute with a different ARV after ruling out treatment failure IF APPLICABLE (See \'Managing Single Drug Substitutions for ART\').\n*Symptoms should ideally be present for at least 2 weeks for a diagnosis of depression and before considering treatment with antidepressant medication.', '2025-12-02 20:23:08');
+INSERT INTO `phq9_assessments` VALUES('3', '1772', '10973MAT0011', '2025-12-02', '6', '3', '3', '3', '2', '2', '2', '2', '2', '1', '20', 'Severe depression*', 'Provide supportive counselling (refer to a psychologist if available).\nRefer to a medical officer, psychiatrist, or mental health team if available.\nSevere depression may require patients to start on anti-depressants immediately.\nIf patient is on EFV, substitute with a different ARV after ruling out treatment failure IF APPLICABLE (See \'Managing Single Drug Substitutions for ART\').\n*Symptoms should ideally be present for at least 2 weeks for a diagnosis of depression and before considering treatment with antidepressant medication.', '2025-12-02 20:30:23');
+INSERT INTO `phq9_assessments` VALUES('4', '2349', 'RUIRU0001', '2025-12-03', '6', '2', '3', '2', '2', '2', '2', '2', '3', '3', '21', 'Severe depression*', 'Provide supportive counselling (refer to a psychologist if available).\nRefer to a medical officer, psychiatrist, or mental health team if available.\nSevere depression may require patients to start on anti-depressants immediately.\nIf patient is on EFV, substitute with a different ARV after ruling out treatment failure IF APPLICABLE (See \'Managing Single Drug Substitutions for ART\').\n*Symptoms should ideally be present for at least 2 weeks for a diagnosis of depression and before considering treatment with antidepressant medication.', '2025-12-03 10:52:17');
+INSERT INTO `phq9_assessments` VALUES('5', '1764', '10973MAT0003', '2025-12-03', '6', '1', '1', '1', '1', '1', '1', '1', '1', '1', '9', 'Mild depression', 'Provide counselling support and continue to monitor; refer to mental health team if available.\nIf patient is on EFV, substitute with a different ARV after ruling out treatment failure IF APPLICABLE (See \'Managing Single Drug Substitutions for ART\').', '2025-12-03 20:12:29');
+
+
+
 CREATE TABLE IF NOT EXISTS `prescription_drugs` (
   `id` int NOT NULL AUTO_INCREMENT,
   `prescription_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -5967,7 +6056,7 @@ CREATE TABLE IF NOT EXISTS `prescription_drugs` (
   PRIMARY KEY (`id`),
   KEY `prescription_id` (`prescription_id`),
   CONSTRAINT `prescription_drugs_ibfk_1` FOREIGN KEY (`prescription_id`) REFERENCES `other_prescriptions` (`prescription_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=94 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=96 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO `prescription_drugs` VALUES('29', 'PRESCR-00000001', 'Buprenorphine 8mg', '01', '1', '1', '1', '0', '1', '0');
 INSERT INTO `prescription_drugs` VALUES('33', 'PRESCR-00000002', 'Buprenorphine 4mg', '4', '1', '2', '8', '0', '8', '0');
@@ -6021,6 +6110,8 @@ INSERT INTO `prescription_drugs` VALUES('90', 'PRESCR-00000033', 'Amoxicillin 50
 INSERT INTO `prescription_drugs` VALUES('91', 'PRESCR-00000033', 'Paracetamol Tablet BP 500mg', '2', '3', '3', '18', '0', '0', 'pending');
 INSERT INTO `prescription_drugs` VALUES('92', 'PRESCR-00000033', 'Cetirizine Hydrochloride Tablet 10mg', '1', '1', '5', '5', '0', '0', 'pending');
 INSERT INTO `prescription_drugs` VALUES('93', 'PRESCR-00000034', 'Aluminium oxide 200mg/Magnesium hydroxyde 400mg/simethicone 30mg', '2', '3', '5', '30', '0', '0', 'pending');
+INSERT INTO `prescription_drugs` VALUES('94', 'PRESCR-00000035', 'Carbamazepine 200mg BP', '2', '2', '30', '120', '0', '0', 'pending');
+INSERT INTO `prescription_drugs` VALUES('95', 'PRESCR-00000035', 'Albendazole 400mg', '1', '1', '1', '1', '0', '0', 'pending');
 
 
 
@@ -6411,32 +6502,109 @@ CREATE TABLE IF NOT EXISTS `psycho_followup_visits` (
 CREATE TABLE IF NOT EXISTS `psychodar` (
   `dar_id` int NOT NULL AUTO_INCREMENT,
   `visitDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `visit_name` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `clientName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `dob` date NOT NULL,
   `age` int DEFAULT NULL,
   `sex` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `marital_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `living_arrangements` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `hotspot` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `accomodation` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `drugname` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `dosage` int NOT NULL,
+  `living_conditions` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `accommodation` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `employment_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `rx_stage` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `treatment_stage` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `rx_stage` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `psycho_issues` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `psycho_interventions` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `reintegration_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `legal_issues` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `gbv_screen` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `gbv_support` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `linkage` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `therapist_initials` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `linkage` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `therapists_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `therapists_notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `next_appointment` date NOT NULL,
   `appointment_status` enum('scheduled','done') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'scheduled',
+  `referral_linkage` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`dar_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO `psychodar` VALUES('1', '2025-11-24 00:00:00', '23368MAT00001', 'ALI BAKARI JOBWE', '1980-06-15', '45', 'Male', 'single', '', 'stable', '4', 'skilled', 'maintainance', 'NON', 'individual_therapy', 'family_reintegration', 'None', 'yes', 'yes', 'education_support', 'Unknown', NULL, '2026-06-24', 'scheduled');
+INSERT INTO `psychodar` VALUES('1', '2025-11-24 00:00:00', NULL, '23368MAT00001', 'ALI BAKARI JOBWE', '1980-06-15', '45', 'Male', 'single', NULL, '', 'stable', NULL, '4', NULL, NULL, 'skilled', NULL, 'maintainance', 'NON', 'individual_therapy', 'family_reintegration', 'None', 'yes', 'yes', 'education_support', 'Unknown', NULL, '2026-06-24', 'scheduled', NULL);
+INSERT INTO `psychodar` VALUES('2', '2025-12-03 00:00:00', 'Initial visit', 'RUIRU0001', 'Test Client', '2010-08-02', '15', 'Female', 'Single', 'non-stable', NULL, NULL, 'Methadone', '20', 'Friend\'s House, Streets, Abandoned buildings, Public areas', 'unstable', 'Unskilled Employment', 'Induction New', NULL, 'None', 'Individual Therapy', 'Peer Support Reintegration', 'None', 'yes', 'yes', NULL, '6', 'None', '2025-12-05', 'scheduled', 'GBV Services');
+
+
+
+CREATE TABLE IF NOT EXISTS `psychosocial_intake_form_1a` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `visitDate` date DEFAULT NULL,
+  `visit_type` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `clientName` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `mat_id` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sex` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `other_sex_specify` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `pre_complaints` text COLLATE utf8mb4_general_ci,
+  `corr_complaints` text COLLATE utf8mb4_general_ci,
+  `hx_illness` text COLLATE utf8mb4_general_ci,
+  `past_psych_hx` text COLLATE utf8mb4_general_ci,
+  `past_med_hx` text COLLATE utf8mb4_general_ci,
+  `sub_use_hx` text COLLATE utf8mb4_general_ci,
+  `fam_hx` text COLLATE utf8mb4_general_ci,
+  `intake_date` date DEFAULT NULL,
+  `marital_status` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `marital_other_specify` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `living_arrangements` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `living_arrangements_detail` text COLLATE utf8mb4_general_ci,
+  `living_other_specify` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `previous_treatment` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `treatment_specify` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sexually_active` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sexual_partners` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `unprotected_sex` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `education_level` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `education_other_specify` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `has_income` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `income_specify` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `employment_status` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `missed_work` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `fired_work` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `therapist_initials` varchar(150) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `family_relationship` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `has_dependents` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `dependents` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `dependent_other_specify` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `has_support` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `support_data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `ante_hx` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `dev_hx` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `child_hx` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `gbv_experience` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `gbv_description` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `gbv_reported` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `gbv_medical` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `has_case` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `case_type` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `case_data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `premord_hx` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `forens_hx` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `phys_exam` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `mental_exam` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `diagnosis` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `mgt_plan` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `therapist_name` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `service_date` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `rx_supporter` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `referral` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `psychosocial_intake_form_1a` VALUES('1', '2025-12-01', 'initial', 'DAVID KIONI WANGECI', 'MAT_11094MAT0003_INIT_1764621352', 'Male', NULL, '', '', '', '', '', '', '', '2025-12-26', 'Married', '', 'stable', NULL, '', 'yes', 'Testing', 'yes', 'single', 'yes', 'Secondary', '', 'yes', 'Matatu', 'Employment Part time (&lt;40hrs)', 'no', 'yes', NULL, '2025-12-01 23:35:52', 'fair', 'no', NULL, '', 'no', NULL, '', '', '', 'yes', '', NULL, NULL, 'yes', 'committed, arrested', '{\"Shoplifting\\/vandalism\":{\"committed\":1,\"arrested\":1},\"Drunk and disorderly\":{\"committed\":0,\"arrested\":0},\"Drug possession\":{\"committed\":0,\"arrested\":0},\"Drug peddling\":{\"committed\":0,\"arrested\":0},\"Weapons offense\":{\"committed\":0,\"arrested\":1},\"Burglary\":{\"committed\":1,\"arrested\":0},\"Robbery\":{\"committed\":0,\"arrested\":0},\"Assault\":{\"committed\":0,\"arrested\":0},\"Rape\":{\"committed\":1,\"arrested\":0},\"Murder\":{\"committed\":0,\"arrested\":0},\"Sex work\":{\"committed\":0,\"arrested\":0},\"Fraud\\/forgery\":{\"committed\":0,\"arrested\":0}}', '', '', '', '', '', '', 'Lyani Sitti', '2025-12-03', '', '');
+INSERT INTO `psychosocial_intake_form_1a` VALUES('2', '2025-12-03', 'followup1', 'JOSEPH MUCHUMI MICHUKI', 'MAT_10973MAT0003_FUP_1764781894', 'Male', NULL, 'NAD', 'NAD', 'NAD', 'NAD', 'NAD', 'NAD', 'NAD', '2025-12-03', 'Remarried', '', 'no_stable', 'Family house, Friend&#039;s house, Streets', '', 'yes', 'None', 'yes', 'multiple', 'yes', 'Post-secondary', '', 'yes', 'Matatu', 'Unemployed (Currently not looking for work)', 'yes', 'yes', NULL, '2025-12-03 20:11:34', 'fair', 'yes', 'Children, Parent, Sibling', '', 'yes', '{\"Spouse\\/Partner\":{\"cash\":0,\"food\":0,\"shelter\":0,\"psychological\":1},\"Mother\":{\"cash\":0,\"food\":0,\"shelter\":1,\"psychological\":0},\"Father\":{\"cash\":1,\"food\":0,\"shelter\":0,\"psychological\":0},\"Brother\":{\"cash\":0,\"food\":1,\"shelter\":0,\"psychological\":0},\"Sister\":{\"cash\":0,\"food\":0,\"shelter\":1,\"psychological\":0},\"Child\":{\"cash\":0,\"food\":0,\"shelter\":0,\"psychological\":1},\"Peer educator\\/Outreach worker\":{\"cash\":0,\"food\":0,\"shelter\":0,\"psychological\":1},\"Other\":{\"cash\":0,\"food\":0,\"shelter\":1,\"psychological\":0}}', 'NAD', 'NAD', 'NAD', 'yes', 'Sexual GBV', 'yes', 'yes', 'yes', 'committed, arrested', '{\"Shoplifting\\/vandalism\":{\"committed\":1,\"arrested\":0},\"Drunk and disorderly\":{\"committed\":1,\"arrested\":1},\"Drug possession\":{\"committed\":0,\"arrested\":0},\"Drug peddling\":{\"committed\":0,\"arrested\":0},\"Weapons offense\":{\"committed\":1,\"arrested\":0},\"Burglary\":{\"committed\":0,\"arrested\":0},\"Robbery\":{\"committed\":1,\"arrested\":0},\"Assault\":{\"committed\":1,\"arrested\":1},\"Rape\":{\"committed\":0,\"arrested\":0},\"Murder\":{\"committed\":0,\"arrested\":0},\"Sex work\":{\"committed\":1,\"arrested\":0},\"Fraud\\/forgery\":{\"committed\":0,\"arrested\":0}}', 'NAD', 'NAD', 'NAD', 'NAD', 'NAD', 'Start on MAT', 'Lyani', '2025-12-03', 'None', 'NOne');
 
 
 
@@ -6444,8 +6612,15 @@ CREATE TABLE IF NOT EXISTS `psychosocial_interventions` (
   `intervention_id` int NOT NULL AUTO_INCREMENT,
   `intervention_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`intervention_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `psychosocial_interventions` VALUES('1', 'Individual Therapy');
+INSERT INTO `psychosocial_interventions` VALUES('2', 'Couple Therapy');
+INSERT INTO `psychosocial_interventions` VALUES('3', 'Group Therapy');
+INSERT INTO `psychosocial_interventions` VALUES('4', 'Family Therapy');
+INSERT INTO `psychosocial_interventions` VALUES('5', 'Psycho Education');
+INSERT INTO `psychosocial_interventions` VALUES('6', 'Crisis/Conflict Management');
+INSERT INTO `psychosocial_interventions` VALUES('7', 'None');
 
 
 
@@ -6471,9 +6646,11 @@ CREATE TABLE IF NOT EXISTS `referral` (
   `referral_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `status` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Submitted',
   PRIMARY KEY (`referral_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO `referral` VALUES('50', '23368MAT00001', 'ALI BAKARI JOBWE', '45', 'Male', 'Super Admin', 'Clinician', 'Change to Buprenorphine', 'Super Admin', '2025-10-02 09:15:55', 'Submitted');
+INSERT INTO `referral` VALUES('51', '10973MAT0003', 'JOSEPH MUCHUMI MICHUKI', '26', 'Male', 'Admin', 'Laboratory Scientist', 'For Toxicology', 'Lyani Sitti', '2025-12-03 10:57:06', 'completed');
+INSERT INTO `referral` VALUES('52', 'RUIRU0001', 'Test Client', '15', 'Female', 'Admin', 'Psychologist', 'Update the TCA', 'Lyani Sitti', '2025-12-03 11:11:25', 'Submitted');
 
 
 
@@ -6481,8 +6658,19 @@ CREATE TABLE IF NOT EXISTS `referral_linkage_services` (
   `ref_id` int NOT NULL AUTO_INCREMENT,
   `ref_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`ref_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `referral_linkage_services` VALUES('1', 'Education Programs');
+INSERT INTO `referral_linkage_services` VALUES('2', 'Legal Support');
+INSERT INTO `referral_linkage_services` VALUES('3', 'Community Support');
+INSERT INTO `referral_linkage_services` VALUES('4', 'Peer Support');
+INSERT INTO `referral_linkage_services` VALUES('5', 'Family Support');
+INSERT INTO `referral_linkage_services` VALUES('6', 'Rehabilitation');
+INSERT INTO `referral_linkage_services` VALUES('7', 'Mental Health Support');
+INSERT INTO `referral_linkage_services` VALUES('8', 'Medical Services');
+INSERT INTO `referral_linkage_services` VALUES('9', 'HIV Services');
+INSERT INTO `referral_linkage_services` VALUES('10', 'GBV Services');
+INSERT INTO `referral_linkage_services` VALUES('11', 'None');
 
 
 
@@ -6513,6 +6701,26 @@ INSERT INTO `regimens` VALUES('4', 'AF2D - TDF + 3TC + ATV/r', '2024-04-14 19:30
 INSERT INTO `regimens` VALUES('5', 'AF1D - AZT + 3TC + DTG', '2024-04-14 19:31:52');
 INSERT INTO `regimens` VALUES('6', 'AF2B - TDF + 3TC + EFV', '2024-04-14 19:32:25');
 INSERT INTO `regimens` VALUES('7', 'None', '2024-04-14 19:40:14');
+
+
+
+CREATE TABLE IF NOT EXISTS `reintegration_status` (
+  `reint_id` int NOT NULL AUTO_INCREMENT,
+  `reint_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  PRIMARY KEY (`reint_id`),
+  UNIQUE KEY `reint_name` (`reint_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb3;
+
+INSERT INTO `reintegration_status` VALUES('5', 'Community Reintegration');
+INSERT INTO `reintegration_status` VALUES('9', 'Cultural Reintegration');
+INSERT INTO `reintegration_status` VALUES('4', 'Education Reintegration');
+INSERT INTO `reintegration_status` VALUES('1', 'Family Reintegration');
+INSERT INTO `reintegration_status` VALUES('7', 'Health Reintegration');
+INSERT INTO `reintegration_status` VALUES('2', 'Housing Reintegration');
+INSERT INTO `reintegration_status` VALUES('6', 'Legal Reintegration');
+INSERT INTO `reintegration_status` VALUES('10', 'None');
+INSERT INTO `reintegration_status` VALUES('8', 'Peer Support Reintegration');
+INSERT INTO `reintegration_status` VALUES('3', 'Stable Reintegration');
 
 
 
@@ -6617,8 +6825,15 @@ CREATE TABLE IF NOT EXISTS `stock_movements` (
   `total_qty` double DEFAULT NULL,
   `trans_date` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`trans_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `stock_movements` VALUES('2', 'Receiving', '2', 'Methadone', '0', '120000', 'KEMSA-TEST', '0', 'KEMSA-TEST-II', '2026-02-20', 'Lyani Sitti', '120000', '2025-12-01 18:35:57');
+INSERT INTO `stock_movements` VALUES('3', 'Receiving', '2', 'Methadone', '120000', '140000', 'trial', '0', 'TRIAL-TEST', '2026-02-11', 'Lyani Sitti', '260000', '2025-12-02 19:00:13');
+INSERT INTO `stock_movements` VALUES('4', 'Expired', '2', 'Methadone', '260000', '0', 'Adjustments', '25000', 'TRIAL-TEST', '2026-02-11', 'User Admin', '234470', '2025-12-02 19:02:09');
+INSERT INTO `stock_movements` VALUES('5', 'Receiving', '6', 'Buprenorphine 2mg', '0', '200', 'KEMSa', '0', 'TESt', '2026-01-08', 'Lyani Sitti', '200', '2025-12-03 11:31:04');
+INSERT INTO `stock_movements` VALUES('6', 'Positive Adjustment', '2', 'Methadone', '234470', '3800', 'Adjustments', '0', 'TRIAL-TEST', '2026-02-11', 'Lyani Sitti', '238270', '2025-12-03 11:35:05');
+INSERT INTO `stock_movements` VALUES('7', 'Expired', '6', 'Buprenorphine 2mg', '200', '0', 'Adjustments', '15', 'TESt', '2026-01-08', 'Lyani Sitti', '185', '2025-12-03 11:35:05');
+INSERT INTO `stock_movements` VALUES('8', NULL, '2', 'Methadone', '238270', '30', 'Dose deleted (Reversed)', NULL, 'TRIAL-TEST', '2026-02-11', 'Lyani Sitti', '238300', '2025-12-03 11:42:56');
 
 
 
@@ -6658,10 +6873,14 @@ CREATE TABLE IF NOT EXISTS `stores_inventory` (
   `received_by_full_name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `issued_to_full_name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'Issuer',
   PRIMARY KEY (`inventory_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO `stores_inventory` VALUES('1', '2', 'Methadone', '265000', 'KEMSA', '0', '265000', '2025-11-26 08:52:10', 'User Admin', NULL);
-INSERT INTO `stores_inventory` VALUES('2', '2', 'Methadone', '265000', 'KEMSA', '0', '265000', '2025-11-26 08:52:10', '0', NULL);
+INSERT INTO `stores_inventory` VALUES('3', '2', 'Methadone', '120000', 'Dose deleted (Reversed)', '0', '238300', '2025-12-02 18:35:57', 'Lyani Sitti', NULL);
+INSERT INTO `stores_inventory` VALUES('4', '2', 'Methadone', '140000', 'Dose deleted (Reversed)', '0', '238300', '2025-12-02 19:00:13', 'Lyani Sitti', NULL);
+INSERT INTO `stores_inventory` VALUES('5', '2', 'Methadone', '0', 'Dose deleted (Reversed)', '100000', '238300', '2025-12-03 04:00:00', 'Lyani Sitti', 'Lyani Sitti');
+INSERT INTO `stores_inventory` VALUES('6', '6', 'Buprenorphine 2mg', '200', 'Adjustments', '0', '185', '2025-12-03 11:31:04', 'Lyani Sitti', NULL);
+INSERT INTO `stores_inventory` VALUES('7', '6', 'Buprenorphine 2mg', '200', 'Adjustments', '0', '185', '2025-12-03 11:31:04', 'Lyani Sitti', NULL);
+INSERT INTO `stores_inventory` VALUES('8', '2', 'Methadone', '0', 'From Stores', '4600', '233700', '2025-12-03 08:44:00', 'Lyani Sitti', 'Lyani Sitti');
 
 
 
@@ -7010,8 +7229,15 @@ CREATE TABLE IF NOT EXISTS `tb_regimens` (
   `regimen_id` int NOT NULL AUTO_INCREMENT,
   `regimen_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`regimen_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `tb_regimens` VALUES('1', '2 RHZE');
+INSERT INTO `tb_regimens` VALUES('2', '4 RH');
+INSERT INTO `tb_regimens` VALUES('3', '10 RH');
+INSERT INTO `tb_regimens` VALUES('4', '4 Km/Mfx/Pto/Cfz/H-Inh/Z/E');
+INSERT INTO `tb_regimens` VALUES('5', '5 Mfx/Cfz//Z/E');
+INSERT INTO `tb_regimens` VALUES('6', '15 R/Z/Lfx');
+INSERT INTO `tb_regimens` VALUES('7', '4 RHZE');
 
 
 
@@ -7024,6 +7250,8 @@ CREATE TABLE IF NOT EXISTS `tb_status` (
 INSERT INTO `tb_status` VALUES('1', 'Positive', '2024-04-14 19:44:15');
 INSERT INTO `tb_status` VALUES('2', 'Negative', '2024-04-14 19:44:21');
 INSERT INTO `tb_status` VALUES('3', 'Unknown', '2024-04-14 19:44:30');
+
+
 
 CREATE TABLE IF NOT EXISTS `tbl_hiv_status` (
   `status_id` int NOT NULL,
@@ -7114,27 +7342,10 @@ CREATE TABLE IF NOT EXISTS `tblusers` (
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO `tblusers` VALUES('1', 'clinician', 'Clinician', 'Clinician', 'clinician@gmail.com', '$2y$10$4GLvIbrVXwoIvdlAmRO7K.BiP6pYsYqnpxNS0ZC3TLJN6N1TLfWri', 'female', '0722427722', NULL, 'Clinician', '2024-01-24 21:04:07', 'Clinician Clinician');
-INSERT INTO `tblusers` VALUES('6', 'admin', 'User', 'Admin', 'sittilyani@gmail.com', '$2y$10$dt.f.K8hdRs1y4Ymq5DrVegJIRMTIL1/REYJDfYcv8.8efhiEY7tS', 'Male', '0722427721', 'Super_Admin_6_20250924.jpeg', 'Admin', '2024-12-03 16:13:46', 'User Admin');
-INSERT INTO `tblusers` VALUES('21', 'hrio', 'HRIO', 'HRIO', 'hrio@gmail.com', '$2a$12$1pPO4X498FZlmq9Upgkdvutmm15WeH.61RIdxkdkQ8TSPsAsr4tq.', 'male', '0400000000', NULL, 'HRIO', '2024-12-12 00:00:00', 'HRIO HRIO');
-INSERT INTO `tblusers` VALUES('34', 'Laboratory', 'Laboratory', 'Scientist', 'lab@gmail.com', '$2y$10$dMp1FaA5Zlw7A8d//0P7I.XaScY.lxKwWCEH7DxN/z54aJRXLuaLi', 'female', '0722427721', NULL, 'Laboratory Scientist', '2025-09-21 20:08:34', 'Laboratory Scientist');
-INSERT INTO `tblusers` VALUES('36', 'Guest', 'Guest', 'User', 'guest@gmail.com', '$2y$10$0/QM1eBZGjtoijcGmMhloOuqO7xUeXR0mlRK7DmN./OzAdDAQqROi', 'Female', '0444125125', 'Guest_User_36_20250924.jpeg', 'Guest', '2025-09-25 00:17:51', 'Guest User');
-INSERT INTO `tblusers` VALUES('37', 'superadmin', 'Super', 'Admin', 'superadmin@gmail.com', '$2y$10$SrytbHSMKPEEHQRvuVqHB.ZLt9F34W8TzN1zHrREyCrpxqg1iLrRO', 'Female', '0722427721', 'Super_Admin_37_20250929.jpg', 'Super Admin', '2025-09-28 00:56:19', 'Super Admin');
-INSERT INTO `tblusers` VALUES('38', 'peer', 'Peer', 'Educator', 'peer@gmail.com', '$2a$12$uIXQbeEexXv/XjfZSRqDneRpqt13PqItzDki.IrRnsx8mQFtDqFHe', 'Male', '0123456789', '', 'Peer Educator', '2025-09-29 12:14:30', 'Peer Educator');
-INSERT INTO `tblusers` VALUES('39', 'psychologist', 'Psychologist', 'User', 'psychologist@gmail.com', '$2a$12$uIXQbeEexXv/XjfZSRqDneRpqt13PqItzDki.IrRnsx8mQFtDqFHe', 'Male', '0123456788', '', 'Psychologist', '2025-09-29 12:14:30', 'Psychologist User');
-INSERT INTO `tblusers` VALUES('40', 'psychiatrist', 'Pyschiatrist', 'User', 'psychiatrist@gmail.com', '$2a$12$uIXQbeEexXv/XjfZSRqDneRpqt13PqItzDki.IrRnsx8mQFtDqFHe', 'Male', '0123456787', '', 'Psychiatrist', '2025-09-29 12:14:30', 'Pyschiatrist User');
-INSERT INTO `tblusers` VALUES('41', 'data', 'Data', 'Manager', 'data@gmail.com', '$2y$10$wN/p.4AvLt1G6h1l.VCka.EddYi5Aif2ppF88CQaQQ0FWIAmib6yG', 'Male', '0123456786', '', 'Data Manager', '2025-09-29 12:14:30', 'Data Manager');
-INSERT INTO `tblusers` VALUES('42', 'receptionist', 'Receptionist', 'User', 'receptionist@gmail.com', '$2a$12$uIXQbeEexXv/XjfZSRqDneRpqt13PqItzDki.IrRnsx8mQFtDqFHe', 'Male', '0123456785', '', 'Receptionist', '2025-09-29 12:14:30', 'Receptionist User');
-INSERT INTO `tblusers` VALUES('43', 'pharmacist', 'Pharmacist', 'User', 'pharmacist@gmail.com', '$2a$12$uIXQbeEexXv/XjfZSRqDneRpqt13PqItzDki.IrRnsx8mQFtDqFHe', 'Male', '0123456784', '', 'Pharmacist', '2025-09-29 12:14:30', 'Pharmacist User');
-INSERT INTO `tblusers` VALUES('44', 'ODUOR', 'BONIFACE', 'OTIENO', 'binfaceoduori@gmail.com', '$2y$10$wzz5VRGnigVqJMW0ubfyneyhQ0lZ7V24FS0VxzqVUwHHZtvziIPT2', 'Male', '0725912758', 'BONIFACE_OTIENO_44_20251003.jpg', 'Pharmacist', '2025-10-03 10:11:21', 'BONIFACE OTIENO');
-INSERT INTO `tblusers` VALUES('45', 'MBITHE', 'JOSEPHINE', 'NGILE', 'JOSEPHINEMBITHE9@gmail.com', '$2y$10$hEszXg4mYNovLjSVJDAeg.hXUg6ZY.T8cu9ff57lS8mcxCVG741wy', 'Female', '0723971033', 'JOSEPHINE_NGILE_45_20251003.jpg', 'Admin', '2025-10-03 11:50:36', 'JOSEPHINE NGILE');
-INSERT INTO `tblusers` VALUES('46', 'Esther', 'Esther', 'Mumo', 'essymumo24@gmail.com', '$2y$10$QDejnH4xUnEjfaFo8fJsceGfXRnPNTE5Z7h6H7dNmoR/ENLe5JRrK', 'Female', '0727018796', 'Esther_Mumo_46_20251006.jpg', 'Pharmacist', '2025-10-06 10:37:10', 'Esther Mumo');
-INSERT INTO `tblusers` VALUES('47', 'Bati', 'Bati ', ' Bati ', 'ibrahimgenzo@gmail.com', '$2y$10$EZm/SJuHkkLrDE2ZI1BAG.gPSfGss1BAOCmClcwoXVn6.2FA1tZo2', 'Male', '0728310691', '', 'Clinician', '2025-10-07 09:29:16', 'Bati   Bati ');
-INSERT INTO `tblusers` VALUES('48', 'ummi', 'ummi', 'kweli', 'bintswale11@gmail.com', '$2y$10$v3bGltSZ5NGxDB6dAgMbYOdKQC43nf4/yWhKBjfJQu58F3RVHD7wi', 'Female', '0729350347', '', 'HRIO', '2025-10-07 12:43:13', 'ummi kweli');
-INSERT INTO `tblusers` VALUES('49', 'MAKENZI', 'BENARD', 'MAKENZI', 'bmakenzi01@gmail.com', '$2y$10$jdRrbutusUoRQraxmxof/.ZcxQAlQXKXzdRPeoiZ4r5fTGwgv.RGm', 'Male', '07228739', 'BENARD_MAKENZI_49_20251022.jpg', 'Pharmacist', '2025-10-22 08:47:03', 'BENARD MAKENZI');
-INSERT INTO `tblusers` VALUES('50', 'Wambua', 'Janet', 'Wambua', 'janwambua16@gmail.com', '$2y$10$m/nVaEziH1HT7mjLnGTELOMOYACHNJnQZ/86ZiMzwEvdvB/WdtQsW', 'Female', '0721506243', '', 'Laboratory Scientist', '2025-11-10 12:52:59', 'Janet Wambua');
+INSERT INTO `tblusers` VALUES('6', 'admin', 'Lyani', 'Sitti', 'sittilyani@gmail.com', '$2y$10$dt.f.K8hdRs1y4Ymq5DrVegJIRMTIL1/REYJDfYcv8.8efhiEY7tS', 'Male', '0722427721', 'Super_Admin_6_20250924.jpeg', 'Admin', '2024-12-03 16:13:46', 'Lyani Sitti');
+INSERT INTO `tblusers` VALUES('51', 'peter', 'Peter', 'Kiburi', 'p@gmail.com', '$2y$10$0.BDCpx9C34WQy0Y/SDPh.Akeu0z6GR9Mtl6XHE17.jbVfNBKqtmq', 'Male', '01119999999', '', 'Clinician', '2025-12-03 10:09:20', 'Peter Kiburi');
 
 
 
@@ -7181,8 +7392,12 @@ CREATE TABLE IF NOT EXISTS `toxicology_results` (
   `lab_officer_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`tox_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `toxicology_results` VALUES('1', '2025-12-01 00:00:00', '10973MAT0003', 'JOSEPH MUCHUMI MICHUKI', 'PWID', 'no', 'no', 'yes', 'no', 'no', 'no', 'no', 'yes', 'yes', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'Tetsing', '2025-12-02 00:00:00', '2025-12-02', 'Lyani Sitti', '2025-12-02 21:01:02');
+INSERT INTO `toxicology_results` VALUES('2', '2025-12-03 00:00:00', 'RUIRU0001', 'Test Client', 'PWID', 'no', 'no', 'no', 'no', 'yes', 'no', 'no', 'no', 'no', 'yes', 'no', 'no', 'no', 'no', 'no', 'no', 'yes', 'no', 'no', 'no', 'no', 'no', 'testing', '2025-12-03 00:00:00', '2025-12-18', 'Lyani Sitti', '2025-12-03 10:55:31');
+INSERT INTO `toxicology_results` VALUES('3', '2025-11-05 00:00:00', 'RUIRU0001', 'Test Client', 'PWID', 'yes', 'no', 'no', 'yes', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'yes', 'no', 'no', 'test2', '2025-12-03 00:00:00', '2025-12-03', 'Lyani Sitti', '2025-12-03 11:58:37');
+INSERT INTO `toxicology_results` VALUES('4', '2025-12-03 00:00:00', '10973MAT0002', 'DANIEL WAITHAKA NJERI', 'PWID', 'no', 'no', 'no', 'no', 'no', 'yes', 'no', 'yes', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'no', 'test', '2025-12-03 00:00:00', '2025-12-03', 'Lyani Sitti', '2025-12-03 15:23:34');
 
 
 
@@ -7190,8 +7405,12 @@ CREATE TABLE IF NOT EXISTS `tpt_regimens` (
   `tpt_id` int NOT NULL AUTO_INCREMENT,
   `tpt_regimen_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`tpt_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `tpt_regimens` VALUES('1', '3H for 3 mo');
+INSERT INTO `tpt_regimens` VALUES('2', '6H for 6 mo');
+INSERT INTO `tpt_regimens` VALUES('3', '3HP once weekly for 3 mo');
+INSERT INTO `tpt_regimens` VALUES('4', 'Levofloxacin for 6 mo');
 
 
 
@@ -7211,49 +7430,50 @@ INSERT INTO `transaction_types` VALUES('5', 'Exchange');
 CREATE TABLE IF NOT EXISTS `transfer_forms` (
   `id` int NOT NULL AUTO_INCREMENT,
   `p_id` int NOT NULL,
-  `facilityname` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `mflcode` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  `county` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `sub_county` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `clientName` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `mat_id` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  `sex` varchar(10) COLLATE utf8mb4_general_ci NOT NULL,
+  `facilityname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `mflcode` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `county` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `sub_county` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clientName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `sex` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `dob` date NOT NULL,
-  `client_phone` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `reg_facility` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `client_phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `reg_facility` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `reg_date` date NOT NULL,
   `referral_date` date NOT NULL,
-  `type_of_movement` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  `other_specify` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `from_site` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `to_site` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `reason_transfer` text COLLATE utf8mb4_general_ci NOT NULL,
-  `clinical_history` text COLLATE utf8mb4_general_ci NOT NULL,
-  `psychosocial` text COLLATE utf8mb4_general_ci NOT NULL,
-  `lab_investigations` text COLLATE utf8mb4_general_ci,
-  `vaccinations` text COLLATE utf8mb4_general_ci,
-  `diagnosis` text COLLATE utf8mb4_general_ci NOT NULL,
-  `current_dose` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `type_of_movement` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `other_specify` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `from_site` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `to_site` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `reason_transfer` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinical_history` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `psychosocial` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `lab_investigations` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `vaccinations` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `diagnosis` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `current_dose` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `date_last_administered` datetime NOT NULL,
-  `other_medications` text COLLATE utf8mb4_general_ci,
-  `clinician_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `clinician_org` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `clinician_signature` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `other_medications` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `clinician_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_signature` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `clinician_date` date NOT NULL,
-  `counselor_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `counselor_org` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `counselor_signature` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_signature` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `counselor_date` date NOT NULL,
-  `pdf_filename` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `json_data` text COLLATE utf8mb4_general_ci COMMENT 'JSON data for future API/development use',
+  `pdf_filename` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `json_data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT 'JSON data for future API/development use',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_mat_id` (`mat_id`),
   KEY `idx_p_id` (`p_id`),
   KEY `idx_referral_date` (`referral_date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `transfer_forms` VALUES('1', '2349', 'Ruiru Sub-County Hospital', '', 'Kiambu', 'Ruiru', 'Test Client', 'RUIRU0001', 'Female', '2010-08-02', '', 'Kombani Mat Clinic', '2025-12-03', '2025-12-03', 'Transfer Out', '', 'Kombani Mat Clinic', 'Nagara MAT clinic', 'Self request', 'NAD', 'NAD', 'NAD', 'NAD', 'NAD', 'Methadone', '2025-12-03 12:02:00', '', 'Lyani Sitti', 'other', 'cc', '2025-12-03', 'Peter Kiburi', 'other', 'cc', '2025-12-03', 'RUIRU0001_2025-12-03.pdf', '{\"p_id\":\"2349\",\"facilityname\":\"Ruiru Sub-County Hospital\",\"mflcode\":\"\",\"county\":\"Kiambu\",\"sub_county\":\"Ruiru\",\"clientName\":\"Test Client\",\"mat_id\":\"RUIRU0001\",\"sex\":\"Female\",\"dob\":\"2010-08-02\",\"client_phone\":\"\",\"reg_facility\":\"Kombani Mat Clinic\",\"reg_date\":\"2025-12-03\",\"referral_date\":\"2025-12-03\",\"type_of_movement\":\"Transfer Out\",\"other_specify\":\"\",\"from_site\":\"Kombani Mat Clinic\",\"to_site\":\"Nagara MAT clinic\",\"reason_transfer\":\"Self request\",\"clinical_history\":\"NAD\",\"psychosocial\":\"NAD\",\"lab_investigations\":\"NAD\",\"vaccinations\":\"NAD\",\"diagnosis\":\"NAD\",\"current_dose\":\"Methadone\",\"date_last_administered\":\"2025-12-03T12:02\",\"other_medications\":\"\",\"clinician_name\":\"Lyani Sitti\",\"clinician_org\":\"other\",\"clinician_signature\":\"cc\",\"clinician_date\":\"2025-12-03\",\"counselor_name\":\"Peter Kiburi\",\"counselor_org\":\"other\",\"counselor_signature\":\"cc\",\"counselor_date\":\"2025-12-03\"}', '2025-12-03 12:03:28', '2025-12-03 12:03:28');
 
 
 
@@ -7261,8 +7481,15 @@ CREATE TABLE IF NOT EXISTS `treatment_stage` (
   `stage_id` int NOT NULL AUTO_INCREMENT,
   `stage_of_rx_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`stage_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `treatment_stage` VALUES('1', 'Induction New');
+INSERT INTO `treatment_stage` VALUES('2', 'Re-induction');
+INSERT INTO `treatment_stage` VALUES('3', 'Stabilization');
+INSERT INTO `treatment_stage` VALUES('4', 'Maintenance');
+INSERT INTO `treatment_stage` VALUES('5', 'Cessation');
+INSERT INTO `treatment_stage` VALUES('6', 'Weaned off');
+INSERT INTO `treatment_stage` VALUES('7', 'None');
 
 
 
@@ -7270,33 +7497,33 @@ CREATE TABLE IF NOT EXISTS `triage_services` (
   `id` int NOT NULL AUTO_INCREMENT,
   `patient_id` int NOT NULL,
   `clinician_id` int NOT NULL,
-  `facility_name` varchar(255) DEFAULT NULL,
-  `mfl_code` varchar(50) DEFAULT NULL,
-  `county` varchar(100) DEFAULT NULL,
-  `sub_county` varchar(100) DEFAULT NULL,
+  `facility_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `mfl_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `county` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `sub_county` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `enrolment_date` date DEFAULT NULL,
   `enrolment_time` time DEFAULT NULL,
-  `visit_type` varchar(100) DEFAULT NULL,
-  `client_name` varchar(255) DEFAULT NULL,
-  `nickname` varchar(100) DEFAULT NULL,
-  `mat_id` varchar(100) DEFAULT NULL,
-  `sex` varchar(10) DEFAULT NULL,
-  `presenting_complaints` text,
+  `visit_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `client_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `nickname` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `mat_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `sex` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `presenting_complaints` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `pulse` int DEFAULT NULL,
   `oxygen_saturation` int DEFAULT NULL,
-  `blood_pressure` varchar(20) DEFAULT NULL,
+  `blood_pressure` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `temperature` decimal(4,2) DEFAULT NULL,
   `respiratory_rate` int DEFAULT NULL,
   `height` decimal(5,2) DEFAULT NULL,
   `weight` decimal(5,2) DEFAULT NULL,
   `bmi` decimal(4,2) DEFAULT NULL,
-  `bmi_interpretation` varchar(50) DEFAULT NULL,
-  `cows_provider` varchar(255) DEFAULT NULL,
+  `bmi_interpretation` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `cows_provider` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `cows_date` date DEFAULT NULL,
   `cows_scores` json DEFAULT NULL,
   `cows_totals` json DEFAULT NULL,
   `cows_interpretations` json DEFAULT NULL,
-  `status` enum('incomplete','complete') DEFAULT 'incomplete',
+  `status` enum('incomplete','complete') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT 'incomplete',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -7304,8 +7531,9 @@ CREATE TABLE IF NOT EXISTS `triage_services` (
   KEY `clinician_id` (`clinician_id`),
   CONSTRAINT `triage_services_ibfk_1` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`p_id`),
   CONSTRAINT `triage_services_ibfk_2` FOREIGN KEY (`clinician_id`) REFERENCES `tblusers` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3;
 
+INSERT INTO `triage_services` VALUES('1', '2349', '6', 'Ruiru Sub-County Hospital', '23368', 'Kwale', 'Matuga', '2025-12-03', '07:28:00', '', 'Test Client ', '', 'RUIRU0001', 'Female', '', NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, '', 'Lyani Sitti', '2025-12-03', NULL, NULL, NULL, 'incomplete', '2025-12-03 10:28:59', '2025-12-03 10:28:59');
 
 
 
@@ -7357,21 +7585,21 @@ CREATE TABLE IF NOT EXISTS `viral_load` (
 CREATE TABLE IF NOT EXISTS `voluntary_discontinuation` (
   `id` int NOT NULL AUTO_INCREMENT,
   `visit_date` date NOT NULL,
-  `client_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `facilityname` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `client_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `facilityname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `discontinued_date` date NOT NULL,
-  `mat_id` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  `request_type` text COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Type of discontinuation requested (Abrupt cessation, Accelerated taper, Gradual taper, Other)',
-  `discontinuation_reason` text COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Reasons for discontinuation',
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `request_type` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Type of discontinuation requested (Abrupt cessation, Accelerated taper, Gradual taper, Other)',
+  `discontinuation_reason` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Reasons for discontinuation',
   `discontinue_date` date NOT NULL COMMENT 'Date commenced on discontinuation',
-  `client_signature` text COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Client signature or thumb print',
-  `clinician_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `clinician_org` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `clinician_signature` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `client_signature` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Client signature or thumb print',
+  `clinician_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_signature` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `clinician_date` date NOT NULL,
-  `counselor_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `counselor_org` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `counselor_signature` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_signature` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `counselor_date` date NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

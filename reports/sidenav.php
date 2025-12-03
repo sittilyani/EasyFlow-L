@@ -74,6 +74,8 @@ $user_id = $_SESSION['user_id'] ?? '';
             <i class="fa fa-file"></i>Transfers Report</a>
         <a href="../reports/view_consents.php" target="contentFrame" class="nav-link">
             <i class="fa fa-file"></i>Consents Report</a>
+        <a href="../reports/patient_treatment_card_form3c.php" target="contentFrame" class="nav-link">
+            <i class="fa fa-file"></i>Form 3C - patient treatment card </a>
 
 <?php elseif (in_array($userrole, ['clinician', 'Laboratory Scientist', 'Psychiatrist', 'psychologist'])) : ?>
         <a href="../laboratory/toxicology_results.php" target="contentFrame" class="nav-link">

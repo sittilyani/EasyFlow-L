@@ -71,10 +71,10 @@ $user_id = $_SESSION['user_id'] ?? '';
         <i class="fa fa-microchip"></i>HIV Viral Load</a>
     <a href="../clinician/transfer_form_search.php" target="contentFrame" class="nav-link">
         <i class="fa fa-stethoscope"></i>Transfer Form</a>
-    <!--<a href="../laboratory/toxicology_results.php" target="contentFrame"  class="nav-link">
+    <a href="../laboratory/toxicology_results.php" target="contentFrame"  class="nav-link">
         <i class="fa fa-binoculars"></i>Toxicology Results</a>
-    <a href="../patients/view_all_patients.php" target="contentFrame" class="nav-link">
-        <i class="fa fa-users"></i>View All patients</a>-->
+    <a href="../reports/search_patient_treatment_card_form3c.php" target="contentFrame" class="nav-link">
+        <i class="fa fa-users"></i>Form 3C Yellow Card</a>
 
 </div>
 
