@@ -35,6 +35,7 @@ $rolePermissions = [
             'Biometrics' => '../biometrics/sidenav.php',
             'Profile' => '../profile/sidenav.php',
             'Appointments' => '../appointments/sidenav.php',
+            'Pharmacovigilance' => '../pharmacovigilance/sidenav.php',
         ],
         'sidebars' => ['Patients Summary', 'Daily Consumption Summary', 'Stocks Summary', 'Monthly Consumption Summary'],
     ],
@@ -268,6 +269,12 @@ $allCards = [
         'icon' => 'fa fa-calendar',
         'aria-label' => 'Apointments',
         'link' => '../appointments/sidenav.php',
+        'color' => 'orange',
+    ],
+    'Pharmacovigilance' => [
+        'icon' => 'fa fa-pill',
+        'aria-label' => 'Pharmacovigilance',
+        'link' => '../pharmacovigilance/sidenav.php',
         'color' => 'orange',
     ],
 ];

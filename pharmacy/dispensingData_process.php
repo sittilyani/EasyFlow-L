@@ -31,7 +31,7 @@ function displayMessagesAndRedirect($conn, $successes, $errors, $mat_id) {
     }
 
     // Redirect back to the main dispensing page
-    echo "<script>setTimeout(function(){ window.location.href = 'dispensing.php'; }, 2000);</script>";
+    echo "<script>setTimeout(function(){ window.location.href = 'dispensing.php'; }, 4000);</script>";
     echo "</body></html>";
     exit();
 }

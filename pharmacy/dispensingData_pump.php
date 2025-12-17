@@ -420,8 +420,8 @@ if ($statusResult->num_rows > 0) {
                 <a href="../photos/photo_capture_dispensing.php?p_id=<?php echo htmlspecialchars($currentSettings['p_id']); ?>&action=update" class="update-link">Update Photo</a>
             </div>
         </div>
-
-        <form id="dispenseForm" action="dispensingData_process_with_pump.php" method="post" onsubmit="return validateForm()">
+        <!--dispensingData_process_with_pump.php to replace dispensing.php below-->
+        <form id="dispenseForm" action="../dispensing.php" method="post" onsubmit="return validateForm()">
         <div class="form-container">
 
             <div class="form-group-column">

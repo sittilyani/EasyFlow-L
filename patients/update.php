@@ -182,7 +182,7 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
                 </div>
                 <div class="form_group">
                     <label for="mat_number">MAT Number</label>
-                    <input type="text" name="mat_number" value="<?php echo htmlspecialchars($currentSettings['mat_number']); ?>" required>
+                    <input type="text" name="mat_number" value="<?php echo $currentSettings['mat_number']; ?>" required>
                 </div>
                 <div class="form_group">
                     <label for="clientName">Client Name</label>
@@ -190,15 +190,15 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
                 </div>
                 <div class="form_group">
                     <label for="sname">Surname</label>
-                    <input type="text" name="sname" value="<?php echo htmlspecialchars($currentSettings['sname']); ?>">
+                    <input type="text" name="sname" value="<?php echo $currentSettings['sname']; ?>">
                 </div>
                 <div class="form_group">
                     <label for="nickName">Nickname</label>
-                    <input type="text" name="nickName" value="<?php echo htmlspecialchars($currentSettings['nickName']); ?>">
+                    <input type="text" name="nickName" value="<?php echo $currentSettings['nickName']; ?>">
                 </div>
                 <div class="form_group">
                     <label for="nat_id">National ID</label>
-                    <input type="text" name="nat_id" value="<?php echo htmlspecialchars($currentSettings['nat_id']); ?>">
+                    <input type="text" name="nat_id" value="<?php echo $currentSettings['nat_id']; ?>">
                 </div>
                 <div class="form_group">
                     <label for="dob">Date of Birth</label>
@@ -210,15 +210,15 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
                 </div>
                 <div class="form_group">
                     <label for="p_address">Current Residence</label>
-                    <input type="text" name="p_address" value="<?php echo htmlspecialchars($currentSettings['p_address']); ?>">
+                    <input type="text" name="p_address" value="<?php echo $currentSettings['p_address']; ?>">
                 </div>
                 <div class="form_group">
                     <label for="reg_facility">Enrollment Facility</label>
-                    <input type="text" name="reg_facility" value="<?php echo htmlspecialchars($currentSettings['reg_facility']); ?>" class="readonly-input" readonly>
+                    <input type="text" name="reg_facility" value="<?php echo $currentSettings['reg_facility']; ?>" class="readonly-input" readonly>
                 </div>
                 <div class="form_group">
                     <label for="mflcode">MFL Code</label>
-                    <input type="text" name="mflcode" value="<?php echo htmlspecialchars($currentSettings['mflcode']); ?>" class="readonly-input" readonly>
+                    <input type="text" name="mflcode" value="<?php echo $currentSettings['mflcode']; ?>" class="readonly-input" readonly>
                 </div>
                 <div class="form_group">
                     <label for="county">County</label>
@@ -261,7 +261,7 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
                 </div>
                 <div class="form_group">
                     <label for="residence_scounty">Residence Sub County</label>
-                    <input type="text" name="residence_scounty" value="<?php echo htmlspecialchars($currentSettings['residence_scounty']); ?>">
+                    <input type="text" name="residence_scounty" value="<?php echo $currentSettings['residence_scounty']; ?>">
                 </div>
                 <div class="form-group">
                     <label for="p_address">Physical Address (residence)</label>
@@ -269,7 +269,7 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
                 </div>
                 <div class="form_group">
                     <label for="client_phone">Client Phone</label>
-                    <input type="text" name="client_phone" value="<?php echo htmlspecialchars($currentSettings['client_phone']); ?>">
+                    <input type="text" name="client_phone" value="<?php echo $currentSettings['client_phone']; ?>">
                 </div>
                 <div class="form_group">
                     <label for="mat_status">Enrollment Status (TI or New)</label>
@@ -291,7 +291,7 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
                 </div>
                 <div class="form_group">
                     <label for="transfer_id">Transfer ID</label>
-                    <input type="text" name="transfer_id" value="<?php echo htmlspecialchars($currentSettings['transfer_id']); ?>">
+                    <input type="text" name="transfer_id" value="<?php echo $currentSettings['transfer_id']; ?>">
                 </div>
                 <div class="form_group">
                     <label for="referral_type">Referral Type</label>
@@ -349,7 +349,7 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
                 </div>
                 <div class="form_group">
                     <label for="reffering_fac_client_number">Referring Facility Client Number</label>
-                    <input type="text" name="reffering_fac_client_number" value="<?php echo htmlspecialchars($currentSettings['reffering_fac_client_number']); ?>">
+                    <input type="text" name="reffering_fac_client_number" value="<?php echo $currentSettings['reffering_fac_client_number']; ?>">
 
                     <label for="accompanment_type">Accompaniment Type</label>
                     <select name="accompanment_type">
@@ -370,15 +370,15 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
                 </div>
                 <div class="form_group">
                     <label for="peer_edu_name">Peer Educator Name</label>
-                    <input type="text" name="peer_edu_name" value="<?php echo htmlspecialchars($currentSettings['peer_edu_name']); ?>">
+                    <input type="text" name="peer_edu_name" value="<?php echo $currentSettings['peer_edu_name']; ?>">
                 </div>
                 <div class="form_group">
                     <label for="peer_edu_phone">Peer Educator Phone</label>
-                    <input type="text" name="peer_edu_phone" value="<?php echo htmlspecialchars($currentSettings['peer_edu_phone']); ?>">
+                    <input type="text" name="peer_edu_phone" value="<?php echo $currentSettings['peer_edu_phone']; ?>">
                 </div>
                 <div class="form_group">
                     <label for="rx_supporter_name">Treatment Supporter Name</label>
-                    <input type="text" name="rx_supporter_name" value="<?php echo htmlspecialchars($currentSettings['rx_supporter_name']); ?>">
+                    <input type="text" name="rx_supporter_name" value="<?php echo $currentSettings['rx_supporter_name']; ?>">
                 </div>
                 <div class="form_group">
                     <label for="drugname">Drug</label>
@@ -400,11 +400,11 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
                 </div>
                 <div class="form_group">
                     <label for="dosage">Initial Dosage</label>
-                    <input type="text" name="dosage" value="<?php echo htmlspecialchars($currentSettings['dosage']); ?>" required>
+                    <input type="text" name="dosage" value="<?php echo $currentSettings['dosage']; ?>" required>
                 </div>
                 <div class="form_group">
                     <label for="reasons">Reasons for Dose Adjustments</label>
-                    <input type="text" name="reasons" value="<?php echo htmlspecialchars($currentSettings['reasons']); ?>">
+                    <input type="text" name="reasons" value="<?php echo $currentSettings['reasons']; ?>">
                 </div>
                 <div class="form_group">
                     <label for="current_status">Current Status</label>
