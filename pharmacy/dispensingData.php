@@ -609,7 +609,7 @@ if ($statusResult->num_rows > 0) {
 
             <div class="form-group-column">
                 <div class="form-group">
-                    <label for="current_status">Current Status</label>
+                    <label for="current_status">Current Status</label>current stus
                     <select id="current_status" name="current_status">
                         <?php echo $statusOptions; ?>
                     </select>
@@ -684,7 +684,28 @@ if ($statusResult->num_rows > 0) {
                 </div>
                 <?php endif; ?>
 
-                <button type="submit" class="submit-btn">Dispense</button>
+                <button type="submit" onClick="dispense()" class="submit-btn">Dispense</button>
+
+                <script>
+                    function dispense(){	   //alert(99);
+                       const xhr = new XMLHttpRequest();
+                        xhr.open("GET", "http://192.168.10.6/masterflexapi/pumpapi.php?action=raw&ml=10", true);
+
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState === 4) {
+                                if (xhr.status === 200) {
+                                    //console.log("Response:", xhr.responseText);
+                                    alert(xhr.responseText);
+                                } else {
+                                    //console.error("Error:", xhr.status, xhr.responseText);
+                                }
+                            }
+                        };
+
+                        xhr.send();
+                   }
+
+                </script>
             </div>
             </div>
     </form>

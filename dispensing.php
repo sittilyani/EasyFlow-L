@@ -1,195 +1,112 @@
 <?php
 session_start();
-include '../includes/config.php';
+include 'includes/config.php';
 
-// Include pump manager
-require_once __DIR__ . '/pump/pump_manager.php';
+// In your dispensing.php — replace the whole PumpServiceIntegration class
+// In dispensing.php
 
-// Replace your existing PumpServiceIntegration class with this:
+// In dispensing.php
+
+require_once __DIR__ . '/pump/simple_pump_wrapper.php';
+
 class PumpServiceIntegration {
+    private static $pumpWrapper = null;
+    private static $initialized = false;
 
-    public static function wakeup() {
-        error_log("DISPENSING: Attempting to wake up pump...");
-
-        try {
-            $pumpManager = PumpManager::getInstance();
-
-            // First attempt with retry
-            $result = $pumpManager->wakeup();
-
-            if ($result) {
-                error_log("DISPENSING: Pump wakeup successful");
-                return true;
-            } else {
-                error_log("DISPENSING: Pump wakeup failed, trying fallback...");
-
-                // Fallback: direct initialization and wakeup
-                $pumpManager->initialize();
-                sleep(2); // Give pump time to initialize
-
-                // Try wakeup again
-                $result = $pumpManager->wakeup();
-
-                if ($result) {
-                    error_log("DISPENSING: Pump wakeup successful on retry");
-                    return true;
-                }
-
-                error_log("DISPENSING: All wakeup attempts failed");
-                return false;
+    private static function init() {
+        if (!self::$initialized) {
+            try {
+                self::$pumpWrapper = new SimplePumpWrapper('COM20');
+                self::$initialized = true;
+                error_log("DISPENSING: Pump wrapper initialized for COM20");
+            } catch (Exception $e) {
+                error_log("DISPENSING: Failed to initialize pump: " . $e->getMessage());
+                self::$pumpWrapper = null;
             }
-
-        } catch (Exception $e) {
-            error_log("DISPENSING: Wakeup exception: " . $e->getMessage());
-            return false;
         }
-    }
-
-    public static function dispense($amount_ml) {
-        error_log("DISPENSING: Starting pump dispense for {$amount_ml}ml");
-
-        try {
-            $pumpManager = PumpManager::getInstance();
-            $result = $pumpManager->dispense($amount_ml);
-
-            if ($result) {
-                error_log("DISPENSING: Pump dispense completed successfully");
-                return true;
-            } else {
-                error_log("DISPENSING: Pump dispense failed");
-                return false;
-            }
-
-        } catch (Exception $e) {
-            error_log("DISPENSING: Dispense exception: " . $e->getMessage());
-            return false;
-        }
-    }
-}
-
-// Ensure $conn is a mysqli object
-if (!isset($conn) || !($conn instanceof mysqli)) {
-    die("Database connection failed. Check config.php.");
-}
-$conn->set_charset('utf8mb4');
-
-$mat_id = isset($_POST['mat_id']) ? $_POST['mat_id'] : null;
-
-// --- Initialize Result Arrays ---
-$routineDispenseSuccess = false;
-$otherPrescriptionsSuccess = false;
-$errorMessages = [];
-$successMessages = [];
-
-// --- Helper function to display messages and redirect ---
-function displayMessagesAndRedirect($conn, $successes, $errors, $mat_id) {
-    echo "<html><head><title>Dispensing Results</title>";
-    echo "<style>
-        .success { background-color: #DDFCAF; color: green; font-size: 18px; padding: 15px; margin-bottom: 10px; text-align: center; border-radius: 5px; }
-        .error { background-color: #EDFEB0; color: red; padding: 10px; margin-bottom: 10px; border-radius: 5px; font-weight: bold; }
-    </style>";
-    echo "</head><body>";
-
-    // Display Successes
-    foreach ($successes as $message) {
-        echo "<div class='success'>$message</div>";
-    }
-
-    // Display Errors
-    foreach ($errors as $error) {
-        echo "<div class='error'>$error</div>";
-    }
-
-    // Redirect back to the main dispensing page
-    echo "<script>
-        setTimeout(function(){
-            window.location.href = 'dispensing.php';
-        }, 2000);
-    </script>";
-    echo "</body></html>";
-    exit();
-}
-
-// Pump Service Configuration
-define('PUMP_ENABLED', true);
-define('PUMP_SERVICE_PATH', __DIR__ . 'pump/pump_service.php');
-
-// Safety limits
-define('MAX_DAILY_DOSAGE_MG', 120);
-define('METHADONE_CONCENTRATION', 10);
-
-// Simplified Pump Service Integration
-class PumpServiceIntegration {
-
-    public static function addCommand($type, $amount_ml = null) {
-        if (!PUMP_ENABLED) {
-            error_log("PUMP SIMULATION: Command '$type' added" . ($amount_ml ? " for {$amount_ml}ml" : ""));
-            return 'simulated_' . uniqid();
-        }
-
-        // Include pump service functions
-        if (file_exists(PUMP_SERVICE_PATH)) {
-            require_once PUMP_SERVICE_PATH;
-            return addPumpCommand($type, $amount_ml);
-        } else {
-            error_log("Pump service file not found: " . PUMP_SERVICE_PATH);
-            return false;
-        }
-    }
-
-    public static function dispense($amount_ml) {
-        if (!PUMP_ENABLED) {
-            error_log("PUMP SIMULATION: Dispensing " . number_format($amount_ml, 2) . " ml");
-            sleep(2); // Simulate dispensing time
-            return true;
-        }
-
-        $commandId = self::addCommand('dispense', $amount_ml);
-        if (!$commandId) {
-            return false;
-        }
-
-        // Wait for command to be processed (simplified - in production, you might want to check results)
-        sleep(5 + ($amount_ml * 2));
-        return true;
+        return self::$pumpWrapper;
     }
 
     public static function wakeup() {
-        if (!PUMP_ENABLED) {
-            error_log("PUMP SIMULATION: Pump awakened");
+        error_log("DISPENSING: Starting pump wakeup sequence...");
+
+        // Add initial delay for USB
+        usleep(1500000); // 1.5 seconds
+
+        $wrapper = self::init();
+        if (!$wrapper) {
+            error_log("DISPENSING: No pump wrapper available");
+            return false;
+        }
+
+        // Try wakeup with retries
+        for ($attempt = 1; $attempt <= 3; $attempt++) {
+            error_log("DISPENSING: Wakeup attempt $attempt");
+
+            $result = $wrapper->wakeup();
+
+            if ($result['success']) {
+                error_log("DISPENSING: Wakeup successful on attempt $attempt");
+
+                // Extra delay to ensure pump is ready
+                sleep(1);
+                return true;
+            }
+
+            if ($attempt < 3) {
+                $delay = $attempt * 3; // 3, 6 seconds
+                error_log("DISPENSING: Wakeup failed, retrying in {$delay} seconds...");
+                sleep($delay);
+            }
+        }
+
+        error_log("DISPENSING: All wakeup attempts failed");
+        return false;
+    }
+
+    public static function dispense($amount_ml) {
+        error_log("DISPENSING: Starting dispense of {$amount_ml}ml");
+
+        $wrapper = self::init();
+        if (!$wrapper) {
+            error_log("DISPENSING: No pump wrapper available");
+            return false;
+        }
+
+        // First, ensure pump is awake
+        if (!self::wakeup()) {
+            error_log("DISPENSING: Cannot dispense - wakeup failed");
+            return false;
+        }
+
+        error_log("DISPENSING: Pump awake, sending dispense command...");
+
+        // Send dispense command
+        $result = $wrapper->dispense($amount_ml);
+
+        if ($result['success']) {
+            error_log("DISPENSING: Dispense command accepted");
+
+            // Wait for actual dispensing
+            $dispenseTime = $amount_ml * 2; // 2 seconds per ml
+            error_log("DISPENSING: Waiting {$dispenseTime} seconds for dispensing...");
+            sleep($dispenseTime);
+
+            error_log("DISPENSING: Dispense completed successfully");
             return true;
         }
 
-        $commandId = self::addCommand('wakeup');
-        return (bool)$commandId;
-    }
-}
-
-// Safety validation functions
-function validateDosageSafety($dosage_mg, $mat_id, $conn) {
-    // Check maximum dosage limit
-    if ($dosage_mg > MAX_DAILY_DOSAGE_MG) {
-        throw new Exception("Dosage exceeds maximum safe limit of " . MAX_DAILY_DOSAGE_MG . " mg");
+        error_log("DISPENSING: Dispense command failed");
+        return false;
     }
 
-    // Check for duplicate dispensing on same day
-    $check_query = "SELECT COUNT(*) as count FROM pharmacy WHERE mat_id = ? AND visitDate = CURDATE()";
-    $check_stmt = $conn->prepare($check_query);
-    $check_stmt->bind_param('s', $mat_id);
-    $check_stmt->execute();
-    $result = $check_stmt->get_result();
-    $row = $result->fetch_assoc();
-    $check_stmt->close();
-
-    if ($row['count'] > 0) {
-        throw new Exception("Patient has already been dispensed today");
+    public static function test() {
+        $wrapper = self::init();
+        if ($wrapper) {
+            return $wrapper->test();
+        }
+        return ['success' => false, 'message' => 'Pump not initialized'];
     }
-
-    return true;
-}
-
-function dosageToMl($dosage_mg) {
-    return $dosage_mg / METHADONE_CONCENTRATION;
 }
 
 // Debug: Check what data is being posted

@@ -953,3 +953,11 @@ END$$
 DELIMITER ;
 
 
+Download FTDI chip software for reading the pump
+
+
+https://chat.deepseek.com/a/chat/s/93bc31bc-d902-45da-abe4-05111c19caee 
+
+cd C:\laragon\www\iorpms\pump_python
+C:\laragon\bin\python\python-3.13\python.exe pump_controller.py dispense 2
+
