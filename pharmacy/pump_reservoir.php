@@ -28,13 +28,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         $conn->begin_transaction();
 
-        $stmtUpdate = $conn->prepare("UPDATE pump_reservoir_history SET `to` = NOW() WHERE id = (SELECT id FROM (SELECT id FROM pump_reservoir_history WHERE pump_id = ? ORDER BY created_at DESC LIMIT 1) as latest)");
-        $stmtUpdate->bind_param('i', $dev);
+        # last top up
+        $stmtLastTopUp = $conn->prepare("SELECT id FROM pump_reservoir_history WHERE pump_id = ? AND `to` IS NULL ORDER BY created_at DESC LIMIT 1");
+        $stmtLastTopUp->bind_param('i', $dev);
+        $stmtLastTopUp->execute();
+        $stmtLastTopUp->bind_result($lastTopUp);
+        $stmtLastTopUp->fetch();
+        $stmtLastTopUp->close();
+
+        $stmtUpdate = $conn->prepare("UPDATE pump_reservoir_history SET `to` = NOW() WHERE id = ?");
+        $stmtUpdate->bind_param('i', $lastTopUp);
         $stmtUpdate->execute();
         $stmtUpdate->close();
 
-        $stmtCreate = $conn->prepare("INSERT INTO pump_reservoir_history (`milligrams`, `from`, `to`, `pump_id`) VALUES (?, NOW(), NULL, ?)");
-        $stmtCreate->bind_param('ii', $mg, $dev);
+        $pumpQuery = "SELECT (
+                (SELECT new_milligrams FROM pump_reservoir_history WHERE id = ?) -
+                (SELECT COALESCE(SUM(dosage), 0) FROM pharmacy WHERE pump_id = pd.id AND visitDate >= (SELECT `from` FROM pump_reservoir_history WHERE id = ?))
+            ) AS rem FROM pump_devices pd WHERE pd.id = ?";
+        $pumpStmt = $conn->prepare($pumpQuery);
+        $pumpStmt->bind_param('iii', $lastTopUp, $lastTopUp, $dev);
+        $pumpStmt->execute();
+        $pumpResult = $pumpStmt->get_result();
+        $pumpRow = $pumpResult->fetch_assoc();
+        $remainingQuantity = $pumpRow['rem'] ?? 0;
+
+        $stmtCreate = $conn->prepare("INSERT INTO pump_reservoir_history (`milligrams`, new_milligrams, `from`, `pump_id`) VALUES (?, ?, NOW(), ?)");
+        $stmtCreate->bind_param('idi', $mg, $remainingQuantity + $mg, $dev);
         $stmtCreate->execute();
         $stmtCreate->close();
 
@@ -43,8 +62,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             $error_message = "Error: " . $conn->error;
         }
-
-       
     }
 }
 
@@ -60,7 +77,7 @@ $offset = ($page - 1) * $limit;
 
 // Query pump_reservoir_history ordered by created_at DESC with pagination
 $stmt_history = $conn->prepare("
-    SELECT prs.id, prs.milligrams, prs.from, prs.to, prs.created_at, dev.label AS device_label, dev.port AS device_port,
+    SELECT prs.id, prs.milligrams, prs.new_milligrams, prs.from, prs.to, prs.created_at, dev.label AS device_label, dev.port AS device_port,
     (SELECT COUNT(*) FROM pharmacy p WHERE p.pump_id = dev.id AND p.visitDate >= prs.from AND (prs.to IS NULL OR p.visitDate <= prs.to)) AS dispenses
     FROM pump_reservoir_history prs INNER JOIN pump_devices dev ON prs.pump_id = dev.id ORDER BY created_at DESC LIMIT ? OFFSET ?;
 ");
@@ -223,6 +240,7 @@ $summary = array_map(function ($v) {
                 <tr>
                     <th scope="col">Device</th>
                     <th scope="col">Milligrams</th>
+                    <th scope="col">New milligrams</th>
                     <th scope="col">From</th>
                     <th scope="col">To</th>
                     <th scope="col">Dispenses</th>
@@ -234,6 +252,7 @@ $summary = array_map(function ($v) {
                     <tr>
                         <td scope="row"><?php echo htmlspecialchars($row['device_label']); ?> (<?php echo htmlspecialchars($row['device_port']); ?>)</td>
                         <td><?php echo htmlspecialchars($row['milligrams']); ?></td>
+                        <td><?php echo htmlspecialchars($row['new_milligrams']); ?></td>
                         <td><?php echo htmlspecialchars($row['from']); ?></td>
                         <td><?php echo htmlspecialchars($row['to'] ?? ''); ?></td>
                         <td><?php echo htmlspecialchars($row['dispenses'] ?? 0); ?></td>
