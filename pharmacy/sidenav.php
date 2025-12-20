@@ -51,6 +51,8 @@ $user_id = $_SESSION['user_id'] ?? '';
                     <i class="fa fa-ban"></i>Dispense without pump</a>
                 <a href="../pharmacy/dispensing_pump.php" target="contentFrame" class="nav-link" style="background: yellow; color: #000000; margin-top: 10px;">
                     <i class="fa fa-ban"></i>Dispense with Pump</a>
+                <a href="../pharmacy/pump_reservoir.php" target="contentFrame" class="nav-link">
+                    <i class="fa fa-hourglass-half"></i>Pump reservoir</a>
                 <a href="../clinician/other_prescriptions.php" target="contentFrame" class="nav-link">
                     <i class="fa fa-adjust"></i>Prescribe other drugs</a>
                 <a href="../pharmacy/prisons_module.php" target="contentFrame" class="nav-link">
