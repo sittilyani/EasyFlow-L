@@ -1,7 +1,7 @@
 <?php
-$host = 'localhost';
+$host = 'host.docker.internal';
 $username = 'root';
-$password = '';
+$password = 'root-pwd';
 $database = 'methadone';
 
 $conn = new mysqli($host, $username, $password, $database);
