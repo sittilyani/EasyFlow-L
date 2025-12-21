@@ -268,6 +268,31 @@ if ($statusResult->num_rows > 0) {
 } else {
     $statusOptions = "<option value=''>No status found</option>";
 }
+
+$stmt_devices = $conn->prepare("SELECT * FROM pump_devices");
+$stmt_devices->execute();
+$result_devices = $stmt_devices->get_result();
+$devices = $result_devices->fetch_all(MYSQLI_ASSOC);
+
+$sql_str = "SELECT (
+    SELECT JSON_OBJECTAGG(id, rem) FROM (
+        SELECT
+        id,
+        (
+            (SELECT new_milligrams FROM pump_reservoir_history WHERE pump_id = pd.id AND `topup_to` IS NULL ORDER BY created_at DESC) -
+            (SELECT COALESCE(SUM(dosage), 0) FROM pharmacy WHERE pump_id = pd.id AND dispDate >= (SELECT `topup_from` FROM pump_reservoir_history WHERE pump_id = pd.id AND `topup_to` IS NULL ORDER BY created_at DESC))
+        ) AS rem
+        FROM pump_devices pd GROUP BY pd.id
+    ) tbl
+)";
+
+$resultJson = $conn->query($sql_str)->fetch_row()[0] ?? '{}';
+$rem = json_decode($resultJson, true);
+
+if (isset($_SESSION['errorMessages'])) {
+    $errorMessages = $_SESSION['errorMessages'];
+    unset($_SESSION['errorMessages']);
+}
 ?>
 
 <!DOCTYPE html>
@@ -420,8 +445,21 @@ if ($statusResult->num_rows > 0) {
                 <a href="../photos/photo_capture_dispensing.php?p_id=<?php echo htmlspecialchars($currentSettings['p_id']); ?>&action=update" class="update-link">Update Photo</a>
             </div>
         </div>
+
+        <?php if (isset($errorMessages)): ?>
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+                <?php foreach ($errorMessages as $error): ?>
+                    <p><?php echo htmlspecialchars($error); ?></p>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
         <!--dispensingData_process_with_pump.php to replace dispensing.php below-->
-        <form id="dispenseForm" action="../dispensing.php" method="post" onsubmit="return validateForm()">
+        <form id="dispenseForm" action="../dispensing-pump.php" method="post" onsubmit="return validateForm()">
         <div class="form-container">
 
             <div class="form-group-column">
@@ -492,8 +530,22 @@ if ($statusResult->num_rows > 0) {
                     <label for="pharm_officer_name">Dispensing Officer Name</label>
                     <input type="text" name="pharm_officer_name" class="readonly-input" value="<?php echo htmlspecialchars($pharm_office_name); ?>">
                 </div>
+                <div class="form-group">
+                    <label for="pump_device">Pump Device</label>
+                    <select id="pump_device" name="pump_device" required <?php if (count($devices) === 1) echo 'disabled' ?>>
+                        <?php if (count($devices) !== 1): ?>
+                            <option value="" disabled hidden selected>select device</option>
+                        <?php endif; ?>
+                        <?php foreach ($devices as $row): ?>
+                            <option value="<?php echo $row['id'] ?>" <?php if (count($devices) === 1) echo 'selected' ?>>
+                                <?php echo $row['label'] ?> (<?php echo $row['port'] ?>)
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
                 <input type="hidden" name="daysToNextAppointment" value="<?php echo $daysToAppointment; ?>">
                 <input type="hidden" name="isMissed" value="<?php echo $isMissed ? 'true' : 'false'; ?>">
+                <input type="hidden" name="mat_id" value="<?php echo $userId; ?>">
                 <div class="form-group" style="visibility: hidden;"><label></label><input type="text"></div>
                 <div class="form-group" style="visibility: hidden;"><label></label><input type="text"></div>
             </div>
@@ -569,6 +621,9 @@ if ($statusResult->num_rows > 0) {
         <button onclick="closeAlert()">OK</button>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="/assets/js/bootstrap.min.js"></script>
+
     <script>
         function validateForm() {
             const currentStatus = document.getElementById('current_status').value;
@@ -576,12 +631,33 @@ if ($statusResult->num_rows > 0) {
                 document.getElementById('customAlert').style.display = 'block';
                 return false;
             }
+
+            const remObj = JSON.parse('<?php echo json_encode($rem); ?>');
+            const dosage = parseInt(document.querySelector('input[name="dosage"]').value);
+
+            const pumpDevice = document.getElementById('pump_device').value;
+            
+            if (remObj[pumpDevice] <= dosage) {
+                alert('Remaining quantity for the selected pump device is less than the dosage.');
+                return false;
+            }
+
+            localStorage.setItem('prev_device', pumpDevice);
+
             return true;
         }
 
         function closeAlert() {
             document.getElementById('customAlert').style.display = 'none';
         }
+
+        window.addEventListener('DOMContentLoaded', function() {
+            const prevDevice = localStorage.getItem('prev_device');
+
+            if (prevDevice) {
+                document.getElementById('pump_device').value = prevDevice;
+            }
+        });
     </script>
 </body>
 </html>
