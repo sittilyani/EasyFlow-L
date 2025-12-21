@@ -280,7 +280,7 @@ $sql_str = "SELECT (
         id,
         (
             (SELECT new_milligrams FROM pump_reservoir_history WHERE pump_id = pd.id AND `to` IS NULL ORDER BY created_at DESC) -
-            (SELECT COALESCE(SUM(dosage), 0) FROM pharmacy WHERE pump_id = pd.id AND visitDate >= (SELECT `from` FROM pump_reservoir_history WHERE pump_id = pd.id AND `to` IS NULL ORDER BY created_at DESC))
+            (SELECT COALESCE(SUM(dosage), 0) FROM pharmacy WHERE pump_id = pd.id AND dispDate >= (SELECT `from` FROM pump_reservoir_history WHERE pump_id = pd.id AND `to` IS NULL ORDER BY created_at DESC))
         ) AS rem
         FROM pump_devices pd GROUP BY pd.id
     ) tbl

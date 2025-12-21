@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $pumpQuery = "SELECT (
                 (SELECT new_milligrams FROM pump_reservoir_history WHERE id = ?) -
-                (SELECT COALESCE(SUM(dosage), 0) FROM pharmacy WHERE pump_id = pd.id AND visitDate >= (SELECT `from` FROM pump_reservoir_history WHERE id = ?))
+                (SELECT COALESCE(SUM(dosage), 0) FROM pharmacy WHERE pump_id = pd.id AND dispDate >= (SELECT `from` FROM pump_reservoir_history WHERE id = ?))
             ) AS rem FROM pump_devices pd WHERE pd.id = ?";
         $pumpStmt = $conn->prepare($pumpQuery);
         $pumpStmt->bind_param('iii', $lastTopUp, $lastTopUp, $dev);
@@ -51,9 +51,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $pumpResult = $pumpStmt->get_result();
         $pumpRow = $pumpResult->fetch_assoc();
         $remainingQuantity = $pumpRow['rem'] ?? 0;
+        $newTotal = $remainingQuantity + $mg;
 
         $stmtCreate = $conn->prepare("INSERT INTO pump_reservoir_history (`milligrams`, new_milligrams, `from`, `pump_id`) VALUES (?, ?, NOW(), ?)");
-        $stmtCreate->bind_param('idi', $mg, $remainingQuantity + $mg, $dev);
+        $stmtCreate->bind_param('idi', $mg, $newTotal, $dev);
         $stmtCreate->execute();
         $stmtCreate->close();
 
@@ -78,7 +79,7 @@ $offset = ($page - 1) * $limit;
 // Query pump_reservoir_history ordered by created_at DESC with pagination
 $stmt_history = $conn->prepare("
     SELECT prs.id, prs.milligrams, prs.new_milligrams, prs.from, prs.to, prs.created_at, dev.label AS device_label, dev.port AS device_port,
-    (SELECT COUNT(*) FROM pharmacy p WHERE p.pump_id = dev.id AND p.visitDate >= prs.from AND (prs.to IS NULL OR p.visitDate <= prs.to)) AS dispenses
+    (SELECT COUNT(*) FROM pharmacy p WHERE p.pump_id = dev.id AND p.dispDate >= prs.from AND (prs.to IS NULL OR p.dispDate <= prs.to)) AS dispenses
     FROM pump_reservoir_history prs INNER JOIN pump_devices dev ON prs.pump_id = dev.id ORDER BY created_at DESC LIMIT ? OFFSET ?;
 ");
 $stmt_history->bind_param('ii', $limit, $offset);
@@ -101,7 +102,7 @@ $sql_str_builder = [
             id,
             (
                 (SELECT new_milligrams FROM pump_reservoir_history WHERE pump_id = pd.id AND `to` IS NULL ORDER BY created_at DESC) -
-                (SELECT COALESCE(SUM(dosage), 0) FROM pharmacy WHERE pump_id = pd.id AND visitDate >= (SELECT `from` FROM pump_reservoir_history WHERE pump_id = pd.id AND `to` IS NULL ORDER BY created_at DESC))
+                (SELECT COALESCE(SUM(dosage), 0) FROM pharmacy WHERE pump_id = pd.id AND dispDate >= (SELECT `from` FROM pump_reservoir_history WHERE pump_id = pd.id AND `to` IS NULL ORDER BY created_at DESC))
             ) AS rem
             FROM pump_devices pd GROUP BY id
         ) tbl
@@ -111,7 +112,14 @@ $sql_str_builder = [
 foreach ($date_filters as $filter => $date_filter) {
     $sql_str_builder[] = "
         (SELECT JSON_OBJECTAGG(pump, count) FROM
-        (SELECT COALESCE(pump_id, 'undefined') AS pump, sum(dosage) AS count from pharmacy WHERE visitDate >= $date_filter GROUP BY pump_id) {$filter}_pump)
+        (SELECT pd.id AS pump, COALESCE(pharmacy_totals.total_dosage, 0) AS count
+         FROM pump_devices pd
+         LEFT JOIN (
+             SELECT pump_id, SUM(dosage) AS total_dosage
+             FROM pharmacy
+             WHERE dispDate >= $date_filter
+             GROUP BY pump_id
+         ) AS pharmacy_totals ON pd.id = pharmacy_totals.pump_id) {$filter}_pump)
         AS $filter
     ";
 }
