@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS `pump_reservoir_history` (
     `pump_id` INT NOT NULL,
     `milligrams` DECIMAL(10, 2) NOT NULL,
     `new_milligrams` DECIMAL(10, 2) NOT NULL,
-    `from` DATETIME NOT NULL,
-    `to` DATETIME NULL,
+    `topup_from` DATETIME NOT NULL,
+    `topup_to` DATETIME NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     KEY (`pump_id`),
@@ -21,3 +21,7 @@ CREATE TABLE IF NOT EXISTS `pump_reservoir_history` (
 
 ALTER TABLE `pharmacy` ADD COLUMN `pump_id` INT NULL;
 ALTER TABLE `pharmacy` ADD CONSTRAINT `pharmacy_pump_link` FOREIGN KEY (`pump_id`) REFERENCES `pump_devices`(`id`);
+
+-- Updated scripts
+ALTER TABLE `pump_reservoir_history` CHANGE COLUMN `from` `topup_from` DATETIME NOT NULL;
+ALTER TABLE `pump_reservoir_history` CHANGE COLUMN `to` `topup_to` DATETIME NULL;

@@ -73,7 +73,7 @@ try {
 
     // 3. Missed Appointment Check
     if ($isMissed || $DaysToNextAppointment == 0) {
-        $routineErrors[] = "Routine Dispensing Failed: Client has a **Missed Appointment** or **No appointment date**. Kindly refer to the clinician.";
+        // $routineErrors[] = "Routine Dispensing Failed: Client has a **Missed Appointment** or **No appointment date**. Kindly refer to the clinician.";
     }
 
     // 4. Dosage Validation
@@ -86,8 +86,8 @@ try {
         pd.label,
         pd.port,
         (
-            (SELECT new_milligrams FROM pump_reservoir_history WHERE pump_id = pd.id AND `to` IS NULL ORDER BY created_at DESC) -
-            (SELECT COALESCE(SUM(dosage), 0) FROM pharmacy WHERE pump_id = pd.id AND dispDate >= (SELECT `from` FROM pump_reservoir_history WHERE pump_id = pd.id AND `to` IS NULL ORDER BY created_at DESC))
+            (SELECT new_milligrams FROM pump_reservoir_history WHERE pump_id = pd.id AND `topup_to` IS NULL ORDER BY created_at DESC) -
+            (SELECT COALESCE(SUM(dosage), 0) FROM pharmacy WHERE pump_id = pd.id AND dispDate >= (SELECT `topup_from` FROM pump_reservoir_history WHERE pump_id = pd.id AND `topup_to` IS NULL ORDER BY created_at DESC))
         ) AS rem
         FROM pump_devices pd WHERE pd.id = ?";
     $pumpStmt = $conn->prepare($pumpQuery);

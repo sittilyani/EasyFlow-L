@@ -29,21 +29,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $conn->begin_transaction();
 
         # last top up
-        $stmtLastTopUp = $conn->prepare("SELECT id FROM pump_reservoir_history WHERE pump_id = ? AND `to` IS NULL ORDER BY created_at DESC LIMIT 1");
+        $stmtLastTopUp = $conn->prepare("SELECT id FROM pump_reservoir_history WHERE pump_id = ? AND `topup_to` IS NULL ORDER BY created_at DESC LIMIT 1");
         $stmtLastTopUp->bind_param('i', $dev);
         $stmtLastTopUp->execute();
         $stmtLastTopUp->bind_result($lastTopUp);
         $stmtLastTopUp->fetch();
         $stmtLastTopUp->close();
 
-        $stmtUpdate = $conn->prepare("UPDATE pump_reservoir_history SET `to` = NOW() WHERE id = ?");
+        $stmtUpdate = $conn->prepare("UPDATE pump_reservoir_history SET `topup_to` = NOW() WHERE id = ?");
         $stmtUpdate->bind_param('i', $lastTopUp);
         $stmtUpdate->execute();
         $stmtUpdate->close();
 
         $pumpQuery = "SELECT (
                 (SELECT new_milligrams FROM pump_reservoir_history WHERE id = ?) -
-                (SELECT COALESCE(SUM(dosage), 0) FROM pharmacy WHERE pump_id = pd.id AND dispDate >= (SELECT `from` FROM pump_reservoir_history WHERE id = ?))
+                (SELECT COALESCE(SUM(dosage), 0) FROM pharmacy WHERE pump_id = pd.id AND dispDate >= (SELECT `topup_from` FROM pump_reservoir_history WHERE id = ?))
             ) AS rem FROM pump_devices pd WHERE pd.id = ?";
         $pumpStmt = $conn->prepare($pumpQuery);
         $pumpStmt->bind_param('iii', $lastTopUp, $lastTopUp, $dev);
@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $remainingQuantity = $pumpRow['rem'] ?? 0;
         $newTotal = $remainingQuantity + $mg;
 
-        $stmtCreate = $conn->prepare("INSERT INTO pump_reservoir_history (`milligrams`, new_milligrams, `from`, `pump_id`) VALUES (?, ?, NOW(), ?)");
+        $stmtCreate = $conn->prepare("INSERT INTO pump_reservoir_history (`milligrams`, new_milligrams, `topup_from`, `pump_id`) VALUES (?, ?, NOW(), ?)");
         $stmtCreate->bind_param('idi', $mg, $newTotal, $dev);
         $stmtCreate->execute();
         $stmtCreate->close();
@@ -78,8 +78,8 @@ $offset = ($page - 1) * $limit;
 
 // Query pump_reservoir_history ordered by created_at DESC with pagination
 $stmt_history = $conn->prepare("
-    SELECT prs.id, prs.milligrams, prs.new_milligrams, prs.from, prs.to, prs.created_at, dev.label AS device_label, dev.port AS device_port,
-    (SELECT COUNT(*) FROM pharmacy p WHERE p.pump_id = dev.id AND p.dispDate >= prs.from AND (prs.to IS NULL OR p.dispDate <= prs.to)) AS dispenses
+    SELECT prs.id, prs.milligrams, prs.new_milligrams, prs.topup_from, prs.topup_to, prs.created_at, dev.label AS device_label, dev.port AS device_port,
+    (SELECT COUNT(*) FROM pharmacy p WHERE p.pump_id = dev.id AND p.dispDate >= prs.topup_from AND (prs.topup_to IS NULL OR p.dispDate <= prs.topup_to)) AS dispenses
     FROM pump_reservoir_history prs INNER JOIN pump_devices dev ON prs.pump_id = dev.id ORDER BY created_at DESC LIMIT ? OFFSET ?;
 ");
 $stmt_history->bind_param('ii', $limit, $offset);
@@ -101,8 +101,8 @@ $sql_str_builder = [
             SELECT
             id,
             (
-                (SELECT new_milligrams FROM pump_reservoir_history WHERE pump_id = pd.id AND `to` IS NULL ORDER BY created_at DESC) -
-                (SELECT COALESCE(SUM(dosage), 0) FROM pharmacy WHERE pump_id = pd.id AND dispDate >= (SELECT `from` FROM pump_reservoir_history WHERE pump_id = pd.id AND `to` IS NULL ORDER BY created_at DESC))
+                (SELECT new_milligrams FROM pump_reservoir_history WHERE pump_id = pd.id AND `topup_to` IS NULL ORDER BY created_at DESC) -
+                (SELECT COALESCE(SUM(dosage), 0) FROM pharmacy WHERE pump_id = pd.id AND dispDate >= (SELECT `topup_from` FROM pump_reservoir_history WHERE pump_id = pd.id AND `topup_to` IS NULL ORDER BY created_at DESC))
             ) AS rem
             FROM pump_devices pd GROUP BY id
         ) tbl
@@ -261,8 +261,8 @@ $summary = array_map(function ($v) {
                         <td scope="row"><?php echo htmlspecialchars($row['device_label']); ?> (<?php echo htmlspecialchars($row['device_port']); ?>)</td>
                         <td><?php echo htmlspecialchars($row['milligrams']); ?></td>
                         <td><?php echo htmlspecialchars($row['new_milligrams']); ?></td>
-                        <td><?php echo htmlspecialchars($row['from']); ?></td>
-                        <td><?php echo htmlspecialchars($row['to'] ?? ''); ?></td>
+                        <td><?php echo htmlspecialchars($row['topup_from']); ?></td>
+                        <td><?php echo htmlspecialchars($row['topup_to'] ?? ''); ?></td>
                         <td><?php echo htmlspecialchars($row['dispenses'] ?? 0); ?></td>
                     </tr>
                 <?php endforeach; ?>
