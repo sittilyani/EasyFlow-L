@@ -1,0 +1,8490 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.2
+-- https://www.phpmyadmin.net/
+--
+-- Host: localhost:3306
+-- Generation Time: Dec 17, 2025 at 04:21 PM
+-- Server version: 8.4.3
+-- PHP Version: 8.3.26
+
+SET FOREIGN_KEY_CHECKS=0;
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `methadone`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `administrationroutes`
+--
+
+CREATE TABLE `administrationroutes` (
+  `route_id` int NOT NULL,
+  `routetype` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `administrationroutes`
+--
+
+TRUNCATE TABLE `administrationroutes`;
+--
+-- Dumping data for table `administrationroutes`
+--
+
+INSERT INTO `administrationroutes` (`route_id`, `routetype`, `date_created`) VALUES
+(1, 'Oral', '2025-05-28 00:00:00'),
+(2, 'Intramuscular', '2025-05-28 00:00:00'),
+(3, 'Intravenous', '2025-05-28 00:00:00'),
+(4, 'Sub Cutaneous', '2025-05-28 00:00:00'),
+(5, 'Rectal', '2025-05-28 00:00:00'),
+(6, 'Vaginal', '2025-05-28 00:00:00'),
+(7, 'Inhalation', '2025-05-28 00:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `backup_log`
+--
+
+CREATE TABLE `backup_log` (
+  `id` int NOT NULL,
+  `backup_date` date NOT NULL,
+  `backup_type` enum('morning','midday') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `backup_file` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `backup_log`
+--
+
+TRUNCATE TABLE `backup_log`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `categories`
+--
+
+CREATE TABLE `categories` (
+  `id` int NOT NULL,
+  `name` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `description` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `photo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `categories`
+--
+
+TRUNCATE TABLE `categories`;
+--
+-- Dumping data for table `categories`
+--
+
+INSERT INTO `categories` (`id`, `name`, `description`, `photo`) VALUES
+(1, 'Medicines', NULL, NULL),
+(2, 'Non Pharmaceuticals', NULL, NULL),
+(3, 'Laboratory', NULL, NULL),
+(4, 'Nutrition', NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `client_consents`
+--
+
+CREATE TABLE `client_consents` (
+  `id` int NOT NULL,
+  `p_id` int NOT NULL COMMENT 'ID from the patients table',
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `client_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `sex` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `visit_date` date NOT NULL,
+  `cso` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `declaration_phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `national_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `client_age` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `guardian_accompany` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'If accompanied by guardian/parent',
+  `guardian_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `guardian_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `mat_facility` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_signature` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_date` date NOT NULL,
+  `counselor_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_signature` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_date` date NOT NULL,
+  `pdf_filename` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'Stored name of the generated PDF file',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `consent_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'yes'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `client_consents`
+--
+
+TRUNCATE TABLE `client_consents`;
+--
+-- Dumping data for table `client_consents`
+--
+
+INSERT INTO `client_consents` (`id`, `p_id`, `mat_id`, `client_name`, `sex`, `visit_date`, `cso`, `declaration_phone`, `national_id`, `client_age`, `guardian_accompany`, `guardian_name`, `guardian_id`, `mat_facility`, `clinician_name`, `clinician_org`, `clinician_signature`, `clinician_date`, `counselor_name`, `counselor_org`, `counselor_signature`, `counselor_date`, `pdf_filename`, `created_at`, `consent_status`) VALUES
+(1, 9428, '23368MAT01256', 'OMAR SALIM DENMARK', 'Male', '2025-11-24', 'Reachout Center Trust', '0222336655', '1111111', '41', 'Nugu', 'Nugus', '33344422', 'Kombani Mat Clinic', 'Clinician Clinician', 'Kombani Mat Clinic', 'MM', '2025-11-24', 'Pyschiatrist User', 'Kombani Mat Clinic', 'NN', '2025-11-24', '23368MAT01256_20251124_092722.pdf', '2025-11-24 09:27:22', 'yes'),
+(2, 1873, '10507MAT0927', 'HARTMAN ALULU ALULU', 'Male', '2025-12-04', 'CSO - LVCT', '', '', '', '', '', '', 'Karuri Health Centre', 'Peter Kiburi', 'Karuri Health Centre', 'nnnnnn', '2025-12-04', 'Edith Mbugua', 'Karuri Health Centre', 'nnnnnn', '2025-12-04', '10507MAT0927_20251204_075817.pdf', '2025-12-04 07:58:17', 'yes');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `clinical_encounters`
+--
+
+CREATE TABLE `clinical_encounters` (
+  `id` int NOT NULL,
+  `triage_id` int NOT NULL,
+  `patient_id` int NOT NULL,
+  `clinician_id` int NOT NULL,
+  `medical_history` json DEFAULT NULL,
+  `medical_medication` json DEFAULT NULL,
+  `hiv_diagnosis_date` date DEFAULT NULL,
+  `hiv_facility_care` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `other_medical_problems` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `allergies` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `allergies_other` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `contraception_use` enum('yes','no') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `contraception_method` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `last_menstrual_period` date DEFAULT NULL,
+  `pregnancy_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `pregnancy_weeks` int DEFAULT NULL,
+  `breastfeeding` enum('yes','no') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `mental_health_diagnosis` enum('yes','no') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `mental_health_condition` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `mental_health_other` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `mental_health_medication` enum('yes','no') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `mental_health_medication_details` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `suicidal_thoughts` enum('yes','no') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `psychiatric_hospitalization` enum('yes','no') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `family_drug_use` enum('yes','no') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `family_mental_health` enum('yes','no') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `family_medical_conditions` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `family_medical_other` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `general_appearance` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `skin_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `head_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `eyes_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `ears_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `nose_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `mouth_throat_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `neck_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `chest_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `heart_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `abdomen_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `genitalia_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `extremities_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `neurological_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `musculoskeletal_examination` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `diagnosis_opioid_use` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `other_diagnoses` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `treatment_plan` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `medication_prescribed` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `medication_other` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `initial_dose` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `next_appointment` date DEFAULT NULL,
+  `clinician_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `clinician_signature` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `patient_consent` enum('yes','no') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `status` enum('draft','completed') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT 'draft',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+--
+-- Truncate table before insert `clinical_encounters`
+--
+
+TRUNCATE TABLE `clinical_encounters`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `clinic_visits`
+--
+
+CREATE TABLE `clinic_visits` (
+  `clinic_id` int NOT NULL,
+  `visit_name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `clinic_visits`
+--
+
+TRUNCATE TABLE `clinic_visits`;
+--
+-- Dumping data for table `clinic_visits`
+--
+
+INSERT INTO `clinic_visits` (`clinic_id`, `visit_name`) VALUES
+(1, 'Initial visit'),
+(2, 'Follow up 1'),
+(3, 'Follow up 2'),
+(4, 'Follow up 3'),
+(5, 'Follow up 4'),
+(6, 'Follow up 5'),
+(7, 'Follow up 6'),
+(8, 'Follow up 7'),
+(9, 'Follow up 8'),
+(10, 'Follow up 9'),
+(11, 'Follow up 10'),
+(12, 'Other follow up');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `consents`
+--
+
+CREATE TABLE `consents` (
+  `consent_id` int NOT NULL,
+  `clientName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `hcw_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `date_of_consent` datetime DEFAULT CURRENT_TIMESTAMP,
+  `visitDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `consent_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `counties`
+--
+
+CREATE TABLE `counties` (
+  `id` int NOT NULL,
+  `county_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `county_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `region` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `counties`
+--
+
+TRUNCATE TABLE `counties`;
+--
+-- Dumping data for table `counties`
+--
+
+INSERT INTO `counties` (`id`, `county_code`, `county_name`, `region`, `date_created`) VALUES
+(1, '001', 'Mombasa (County)', 'Coast', '2025-01-10 00:00:00'),
+(2, '002', 'Kwale', 'Coast', '2025-01-10 00:00:00'),
+(3, '003', 'Kilifi', 'Coast', '2025-01-10 00:00:00'),
+(4, '004', 'Tana River', 'Coast', '2025-01-10 00:00:00'),
+(5, '005', 'Lamu', 'Coast', '2025-01-10 00:00:00'),
+(6, '006', 'Taita Taveta', 'Coast', '2025-01-10 00:00:00'),
+(7, '007', 'Garissa', 'North Eastern', '2025-01-10 00:00:00'),
+(8, '008', 'Wajir', 'North Eastern', '2025-01-10 00:00:00'),
+(9, '009', 'Mandera', 'North Eastern', '2025-01-10 00:00:00'),
+(10, '010', 'Marsabit', 'North Eastern', '2025-01-10 00:00:00'),
+(11, '011', 'Isiolo', 'North Eastern', '2025-01-10 00:00:00'),
+(12, '012', 'Meru', 'Eastern', '2025-01-10 00:00:00'),
+(13, '013', 'Tharaka-Nithi', 'Eastern', '2025-01-10 00:00:00'),
+(14, '014', 'Embu', 'Eastern', '2025-01-10 00:00:00'),
+(15, '015', 'Kitui', 'Eastern', '2025-01-10 00:00:00'),
+(16, '016', 'Machakos', 'Eastern', '2025-01-10 00:00:00'),
+(17, '017', 'Makueni', 'Eastern', '2025-01-10 00:00:00'),
+(18, '018', 'Nyandarua', 'Central', '2025-01-10 00:00:00'),
+(19, '019', 'Nyeri', 'Central', '2025-01-10 00:00:00'),
+(20, '020', 'Kirinyaga', 'Central', '2025-01-10 00:00:00'),
+(21, '021', 'Murang\'a', 'Central', '2025-01-10 00:00:00'),
+(22, '022', 'Kiambu', 'Central', '2025-01-10 00:00:00'),
+(23, '023', 'Turkana', 'Rift Valley', '2025-01-10 00:00:00'),
+(24, '024', 'West Pokot', 'Rift Valley', '2025-01-10 00:00:00'),
+(25, '025', 'Samburu', 'Rift Valley', '2025-01-10 00:00:00'),
+(26, '026', 'Trans-Nzoia', 'Rift Valley', '2025-01-10 00:00:00'),
+(27, '027', 'Uasin Gishu', 'Rift Valley', '2025-01-10 00:00:00'),
+(28, '028', 'Elgeyo-Marakwet', 'Rift Valley', '2025-01-10 00:00:00'),
+(29, '029', 'Nandi', 'Rift Valley', '2025-01-10 00:00:00'),
+(30, '030', 'Baringo', 'Rift Valley', '2025-01-10 00:00:00'),
+(31, '031', 'Laikipia', 'Rift Valley', '2025-01-10 00:00:00'),
+(32, '032', 'Nakuru', 'Rift Valley', '2025-01-10 00:00:00'),
+(33, '033', 'Narok', 'Rift Valley', '2025-01-10 00:00:00'),
+(34, '034', 'Kajiado', 'Rift Valley', '2025-01-10 00:00:00'),
+(35, '035', 'Kericho', 'Rift Valley', '2025-01-10 00:00:00'),
+(36, '036', 'Bomet', 'Rift Valley', '2025-01-10 00:00:00'),
+(37, '037', 'Kakamega', 'Western', '2025-01-10 00:00:00'),
+(38, '038', 'Vihiga', 'Western', '2025-01-10 00:00:00'),
+(39, '039', 'Bungoma', 'Western', '2025-01-10 00:00:00'),
+(40, '040', 'Busia', 'Western', '2025-01-10 00:00:00'),
+(41, '041', 'Siaya', 'Nyanza', '2025-01-10 00:00:00'),
+(42, '042', 'Kisumu', 'Nyanza', '2025-01-10 00:00:00'),
+(43, '043', 'Homa Bay', 'Nyanza', '2025-01-10 00:00:00'),
+(44, '044', 'Migori', 'Nyanza', '2025-01-10 00:00:00'),
+(45, '045', 'Kisii', 'Nyanza', '2025-01-10 00:00:00'),
+(46, '046', 'Nyamira', 'Nyanza', '2025-01-10 00:00:00'),
+(47, '047', 'Nairobi (County)', 'Nairobi (City)', '2025-01-10 00:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `csos`
+--
+
+CREATE TABLE `csos` (
+  `cso_id` int NOT NULL,
+  `cso_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `csos`
+--
+
+TRUNCATE TABLE `csos`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `daily_report_comments`
+--
+
+CREATE TABLE `daily_report_comments` (
+  `comment_id` int NOT NULL,
+  `log_date` date NOT NULL,
+  `drugID` int NOT NULL,
+  `comments` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `daily_report_comments`
+--
+
+TRUNCATE TABLE `daily_report_comments`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `deleted_patients`
+--
+
+CREATE TABLE `deleted_patients` (
+  `p_id` int NOT NULL,
+  `reg_facility` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `mflcode` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `county` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `scounty` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `reg_date` datetime DEFAULT '2017-01-01 00:00:00',
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `mat_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `clientName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `sname` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `nickName` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `nat_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `dob` date NOT NULL,
+  `age` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sex` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `marital_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `residence_scounty` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `p_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `client_phone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `mat_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `transfer_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `referral_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `cso` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `referring_facility` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `reffering_fac_client_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `accompanment_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `peer_edu_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `peer_edu_phone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `rx_supporter_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `drugname` varchar(225) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `dosage` double(10,2) DEFAULT NULL,
+  `reasons` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `current_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `status_change_notes` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'Normal',
+  `hcw_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `comp_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `last_vlDate` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `results` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `next_appointment` date NOT NULL,
+  `psycho_social_tca` date DEFAULT NULL,
+  `psychiatric_tca` date DEFAULT NULL,
+  `nursing_tca` date DEFAULT NULL,
+  `nutrition_tca` date DEFAULT NULL,
+  `laboratory_tca` date DEFAULT NULL,
+  `records_tca` date DEFAULT NULL,
+  `peer_tca` date DEFAULT NULL,
+  `admin_tca` date DEFAULT NULL,
+  `religion` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `occupation` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `deleted_prescriptions`
+--
+
+CREATE TABLE `deleted_prescriptions` (
+  `del_id` int NOT NULL,
+  `disp_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `clientName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sex` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `drugname` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `dosage` int DEFAULT NULL,
+  `pharm_officer_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `dispDate` date DEFAULT NULL,
+  `deletion_reason` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `deleted_by` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `date_of_deletion` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dispensing_comments`
+--
+
+CREATE TABLE `dispensing_comments` (
+  `comment_id` int NOT NULL,
+  `log_date` date NOT NULL,
+  `drugID` int NOT NULL,
+  `comments` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `dispensing_comments`
+--
+
+TRUNCATE TABLE `dispensing_comments`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dosing`
+--
+
+CREATE TABLE `dosing` (
+  `id` int NOT NULL,
+  `dosage` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `dosing`
+--
+
+TRUNCATE TABLE `dosing`;
+--
+-- Dumping data for table `dosing`
+--
+
+INSERT INTO `dosing` (`id`, `dosage`) VALUES
+(1, 'OD'),
+(2, 'BD'),
+(3, 'TID'),
+(4, 'TDS'),
+(5, 'QID'),
+(6, 'PRN');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `drug`
+--
+
+CREATE TABLE `drug` (
+  `drugID` int NOT NULL,
+  `drugName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `drugCategory` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `price` double DEFAULT '10',
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `drug`
+--
+
+TRUNCATE TABLE `drug`;
+--
+-- Dumping data for table `drug`
+--
+
+INSERT INTO `drug` (`drugID`, `drugName`, `drugCategory`, `description`, `price`, `date_created`) VALUES
+(2, 'Methadone', NULL, '', 150, '2025-09-18 12:31:41'),
+(6, 'Buprenorphine 2mg', 'narcotic', 'Suppress the brain neural system and calms the patient', 10, '2025-09-18 12:31:41'),
+(7, 'Buprenorphine 4mg', 'narcotic', 'Suppress the brain neural system and calms the patient', 10, '2025-09-18 12:31:41'),
+(8, 'Buprenorphine 8mg', 'narcotic', 'Suppress the brain neural system and calms the patient', 10, '2025-09-18 12:31:41'),
+(9, 'Naltrexone 50mg', 'stimulant', 'Used where analgesic drugs have low pain threshold', 10, '2025-09-18 12:31:41'),
+(10, 'Naltrexone 100mg', 'narcotic', 'Used where analgesic drugs have low pain threshold', 10, '2025-09-18 12:31:41'),
+(11, 'Naltrexone 150mg', 'narcotic', 'Used where analgesic drugs have low pain threshold', 10, '2025-09-18 12:31:41'),
+(12, 'Naloxone 1mg/mL inj', 'Antidote', 'Antidote for Methadone poisoning or overdose', 10, '2025-09-18 12:31:41'),
+(13, 'Naltrexone Implant', 'narcotic', 'Used where analgesic drugs have low pain threshold', 10, '2025-09-18 12:31:41'),
+(746, 'Ibuprofen Tablet BP 400mg', 'Medicines', NULL, 3, '2025-09-18 12:31:41'),
+(747, 'Paracetamol Tablet BP 500mg', 'Medicines', NULL, 2, '2025-09-18 12:31:41'),
+(748, 'Piroxicam Capsules USP', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(749, 'Meloxicam Tablet 7.5mg BP', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(750, 'Soluble Paracetamol BP 1000mg', 'Medicines', NULL, 40, '2025-09-18 12:31:41'),
+(751, 'Ibuprofen 400mg/Paracetamol 325mg BP', 'Medicines', NULL, 20, '2025-09-18 12:31:41'),
+(752, 'Aceclofenac 100mg/Paracetamol 500mg/Chlorzoxazone 375mg', 'Medicines', NULL, 35, '2025-09-18 12:31:41'),
+(753, 'Aceclofenac 100mg/Paracetamol 500mg/Chlorzoxazone 500mg', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(754, 'Diclofenac 50mg/Paracetamol 500mg/Chlorzoxazone 250mg', 'Medicines', NULL, 25, '2025-09-18 12:31:41'),
+(755, 'Paracetamol Tablet BP 500mg/Caffeine 65mg', 'Medicines', NULL, 20, '2025-09-18 12:31:41'),
+(756, 'Etoricoxib Tablet 60mg', 'Medicines', NULL, 40, '2025-09-18 12:31:41'),
+(757, 'Etoricoxib Tablet 90mg', 'Medicines', NULL, 45, '2025-09-18 12:31:41'),
+(758, 'Etoricoxib Tablet 120mg', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(759, 'Cetirizine Hydrochloride Tablet 10mg', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(760, 'Montelukast 10mg/Levocetirizine 5mg', 'Medicines', NULL, 70, '2025-09-18 12:31:41'),
+(761, 'Montelukast 10mg', 'Medicines', NULL, 75, '2025-09-18 12:31:41'),
+(762, 'Ephedrine 12mg/Theophyline 120mg', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(763, 'Salbutamol Inhaler 100mcg', 'Medicines', NULL, 350, '2025-09-18 12:31:41'),
+(764, 'Betamethasone 0.25mg/Dexchlorpheniramine Maleate BP 2mg', 'Medicines', NULL, 15, '2025-09-18 12:31:41'),
+(765, 'Paracetamol 500mg/Chlorzoxazone 250mg', 'Medicines', NULL, 25, '2025-09-18 12:31:41'),
+(766, 'Diclofenac 100mg', 'Medicines', NULL, 10, '2025-09-18 12:31:41'),
+(767, 'Predinsolone 5mg', 'Medicines', NULL, 3, '2025-09-18 12:31:41'),
+(768, 'Paracetamol 500mg/Hyoscine Butylbromide 10mg', 'Medicines', NULL, 25, '2025-09-18 12:31:41'),
+(769, 'Doxylamine Succ. 10mg/Pyridoxine 10mg ', 'Medicines', NULL, 25, '2025-09-18 12:31:41'),
+(770, 'Metoclopramide 10mg', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(771, 'Meloxicam EP Tablet 7.5mg', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(772, 'Meloxicam EP Tablet 15mg', 'Medicines', NULL, 10, '2025-09-18 12:31:41'),
+(773, 'Promethazine 25mg', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(774, 'Paracetamol 120mg/5ml', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(775, 'Ibuprofen 100mg/5ml', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(776, 'Ibuprofen 100mg/Paracetamol 125mg BP', 'Medicines', NULL, 300, '2025-09-18 12:31:41'),
+(777, 'Loratidine USP 10mg', 'Medicines', NULL, 15, '2025-09-18 12:31:41'),
+(778, 'Hyoscine - N- Butylbromide 10mg', 'Medicines', NULL, 10, '2025-09-18 12:31:41'),
+(779, 'Metronidazole 400mg', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(780, 'Tetracycline Eye Ointment USP', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(781, 'Betamethasone 0.1% w/v/Neomycin 0.5 %w/v', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(782, 'Ciprofloxacin/Dexamethasone Eye/Ear Drops', 'Medicines', NULL, 300, '2025-09-18 12:31:41'),
+(783, 'Ciprofloxacin 0.3% USP', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(784, 'Dextran 70 USP 1mg/Hypromellose USP 3mg', 'Medicines', NULL, 350, '2025-09-18 12:31:41'),
+(785, 'Cipro 0.3%/Beclomethasone 0.025%/Clotrimazole 1%/Lignocaine 2% Ear Drops', 'Medicines', NULL, 300, '2025-09-18 12:31:41'),
+(786, 'fluticasone propionate ', 'Medicines', NULL, 950, '2025-09-18 12:31:41'),
+(787, 'Esomeprazole', 'Medicines', NULL, 30, '2025-09-18 12:31:41'),
+(788, 'Omeprazole Satchets', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(789, 'Omeprazole ', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(790, 'Pantoprazole Delayed Release', 'Medicines', NULL, 35, '2025-09-18 12:31:41'),
+(791, 'Clotrimazole Vaginal Tablets 200mg', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(792, 'Ketocozole 200mg  BP', 'Medicines', NULL, 10, '2025-09-18 12:31:41'),
+(793, 'Amoxicllin 125mg/5mL', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(794, 'Co-trimoxazole 240mg/5mL', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(795, 'Ampicillin/Cloxacillin 250mg/5mL', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(796, 'Ampicillin/Cloxacillin 250mg/250mg', 'Medicines', NULL, 10, '2025-09-18 12:31:41'),
+(797, 'Flucloxacillin 125mg/5mL', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(798, 'Azithromycin Oral Suspension 200mg', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(799, 'Vitamin B Complex', 'Medicines', NULL, 20, '2025-09-18 12:31:41'),
+(800, 'Levocetirizine 5mg', 'Medicines', NULL, 20, '2025-09-18 12:31:41'),
+(801, 'Maternity Pads', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(802, 'Absorbent Cotton Wool 400mg', 'Medicines', NULL, 350, '2025-09-18 12:31:41'),
+(803, 'Adult Diapers XL', 'Medicines', NULL, 15, '2025-09-18 12:31:41'),
+(804, 'Adult Diapers L', 'Medicines', NULL, 15, '2025-09-18 12:31:41'),
+(805, 'Adult Pants L', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(806, 'Sulphadoxine 500mg/Pyrimethamine 25mg', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(807, 'Terbinafine 250mg', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(808, 'Fluconazole 150mg', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(809, 'Griseofulvin 250mg', 'Medicines', NULL, 10, '2025-09-18 12:31:41'),
+(810, 'Griseofulvin 125mg', 'Medicines', NULL, 10, '2025-09-18 12:31:41'),
+(811, 'Artemether 20mg/Lumefantrine 120mg', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(812, 'Povidone-Iodine USP 1%', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(813, 'Amoxicillin 500mg', 'Medicines', NULL, 6.6, '2025-09-18 12:31:41'),
+(814, 'Cefuroxime 500mg USP', 'Medicines', NULL, 400, '2025-09-18 12:31:41'),
+(815, 'Cefixime 400mg USP', 'Medicines', NULL, 350, '2025-09-18 12:31:41'),
+(816, 'Azithromycin 500mg USP', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(817, 'Nitrofurantoin 100mg', 'Medicines', NULL, 10, '2025-09-18 12:31:41'),
+(818, 'Tinidazole 500mg', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(819, 'Amoxicillin 250mg', 'Medicines', NULL, 3.3, '2025-09-18 12:31:41'),
+(820, 'Doxycycline 100mg', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(821, 'Secnidazole 1g', 'Medicines', NULL, 80, '2025-09-18 12:31:41'),
+(822, 'Levonogestrel 0.15mg/Ethinylestradiol 0.03mg', 'Medicines', NULL, 300, '2025-09-18 12:31:41'),
+(823, 'Sildenafil 50mg ', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(824, 'Sildenafil 100mg ', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(825, 'Levonogestrel 0.75mg', 'Medicines', NULL, 200, '2025-09-18 12:31:41'),
+(826, 'Beta Sodium Phosphate 2mg/ml/Beta Dipropionate 5mg/ml Suspension for Inj,2ml', 'Medicines', NULL, 900, '2025-09-18 12:31:41'),
+(827, 'Medroxyprogesterone Injection 150mg/mL', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(828, 'Diclofenac 75mg Injection', 'Medicines', NULL, 20, '2025-09-18 12:31:41'),
+(829, 'Carbamazepine 200mg BP', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(830, 'Amitriptyline 25mg', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(831, 'Phenobarbital 30mg', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(832, 'Diazepam 5mg', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(833, 'Maternity Pants', 'Medicines', NULL, 200, '2025-09-18 12:31:41'),
+(834, 'Amoxicillin/Clavulanate 457mg/5mL', 'Medicines', NULL, 1200, '2025-09-18 12:31:41'),
+(835, 'Amoxicillin/Clavulanate 228.5mg/5mL', 'Medicines', NULL, 850, '2025-09-18 12:31:41'),
+(836, 'Tamsulosin 0.4mg', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(837, 'Amoxicillin/Clavulanate 625mg', 'Medicines', NULL, 300, '2025-09-18 12:31:41'),
+(838, 'Amoxicillin/Clavulanate 1000mg', 'Medicines', NULL, 400, '2025-09-18 12:31:41'),
+(839, 'Amoxicillin/Clavulanate 375mg', 'Medicines', NULL, 250, '2025-09-18 12:31:41'),
+(840, 'Ciprofloxacin 500mg USP', 'Medicines', NULL, 10, '2025-09-18 12:31:41'),
+(841, 'Finasteride 5mg/Tamsulosin 400mcg', 'Medicines', NULL, 75, '2025-09-18 12:31:41'),
+(842, 'Flucloxacillin Injection 500mg Vial', 'Medicines', NULL, 80, '2025-09-18 12:31:41'),
+(843, 'HydrocortisoneInjection 100mg', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(844, 'Lidocaine Injection 20mg/mL, 30mL', 'Medicines', NULL, 60, '2025-09-18 12:31:41'),
+(845, 'Cefuroxime 125mg/5mL', 'Medicines', NULL, 350, '2025-09-18 12:31:41'),
+(846, 'Cefalexin 125mh/5mL', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(847, 'Ampicillin 60mg/cloxacillin 30mg/0.6mL', 'Medicines', NULL, 500, '2025-09-18 12:31:41'),
+(848, 'Amlodipine 5mg/Losartan 50mg/Hydrochlorothiazide 12.5mg', 'Medicines', NULL, 70, '2025-09-18 12:31:41'),
+(849, 'Flucloxacillin 250mg/Amoxicillin 250mg', 'Medicines', NULL, 500, '2025-09-18 12:31:41'),
+(850, 'Ceftriaxone 1g', 'Medicines', NULL, 80, '2025-09-18 12:31:41'),
+(851, 'Urine Bag', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(852, 'Zinc Sulfate DT 20mg', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(853, 'Normal Saline Nasal Drops', 'Medicines', NULL, 80, '2025-09-18 12:31:41'),
+(854, 'Hyoscine - N- Butylbromide 5mg/5mL', 'Medicines', NULL, 120, '2025-09-18 12:31:41'),
+(855, 'Orals Rehydration Salts', 'Medicines', NULL, 20, '2025-09-18 12:31:41'),
+(856, 'Ondasetron 2mg/5mL', 'Medicines', NULL, 450, '2025-09-18 12:31:41'),
+(857, 'Zinc Sulfate 20mg Syrup', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(858, 'Nystatin 100,000 units', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(859, 'Glucosamine/Chondroitin/Cod Liver/Omega 3', 'Medicines', NULL, 75, '2025-09-18 12:31:41'),
+(860, 'Calcium/Magnesium/Vitamin D', 'Medicines', NULL, 30, '2025-09-18 12:31:41'),
+(861, 'Calcium 320mg/Phosphorus 137.5mg', 'Medicines', NULL, 35, '2025-09-18 12:31:41'),
+(862, 'Lansoprazole/Tinidazole/Clarithromycin', 'Medicines', NULL, 1000, '2025-09-18 12:31:41'),
+(863, 'Amoxicillin,clarithromycin,Esomeprazole', 'Medicines', NULL, 1300, '2025-09-18 12:31:41'),
+(864, 'lansoprazole/Amoxicilin/Clarithromycin', 'Medicines', NULL, 1300, '2025-09-18 12:31:41'),
+(865, 'syringe 10cc', 'Medicines', NULL, 10, '2025-09-18 12:31:41'),
+(866, 'Syringe 5cc', 'Medicines', NULL, 10, '2025-09-18 12:31:41'),
+(867, 'Lactulose solution', 'Medicines', NULL, 450, '2025-09-18 12:31:41'),
+(868, 'magaldrate and simethicone 200ml', 'Medicines', NULL, 500, '2025-09-18 12:31:41'),
+(869, 'Sodium alginate 500mg/sodium bicarbonate/calcium carbonate', 'Medicines', NULL, 700, '2025-09-18 12:31:41'),
+(870, 'Aluminium Hydroxide 365mg/magnesium hydroxyde/simethicone', 'Medicines', NULL, 450, '2025-09-18 12:31:41'),
+(871, 'Aluminium Hydroxide 120mg/Magnesium Trisilicate 250mg', 'Medicines', NULL, 120, '2025-09-18 12:31:41'),
+(872, 'Aluminium oxide 200mg/Magnesium hydroxyde 400mg/simethicone 30mg', 'Medicines', NULL, 350, '2025-09-18 12:31:41'),
+(873, 'Alginic Acid Aluminium Hydroxide 365mg/magnesium hydroxyde/simethicone ', 'Medicines', NULL, 400, '2025-09-18 12:31:41'),
+(874, 'Sucralfate/Oxetacaine', 'Medicines', NULL, 400, '2025-09-18 12:31:41'),
+(875, 'Aluminium Hydroxide 300mg/magnesium hydroxyde 150mg/simethicone 100mg', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(876, 'Aluminium Hydroxide 150mg/Magnesium Trisilicate 250mg', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(877, 'Magaldrate 480mg and simethicone 20mg', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(878, 'Ferric Ammonium Citrate 200mg/Folic 1.5mg/Cyanocobalamin 50mcg/Ethanol', 'Medicines', NULL, 450, '2025-09-18 12:31:41'),
+(879, 'Dried Ferrous Sulphate 200mg/Folic Acid 0.4mg', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(880, 'Ferrous Fumarate 305mg/Folic Acid 0.75mg/Cyanocobalamin 5mcg/Ascorbic Acid 75mg/Zinc Sulphate 5mg', 'Medicines', NULL, 20, '2025-09-18 12:31:41'),
+(881, 'Iron 50mg/Manganese 1.33mg/Copper 0.70mg', 'Medicines', NULL, 80, '2025-09-18 12:31:41'),
+(882, 'Diloxanide Furoate 250mg/Metronidazole 200mg/Dicyclomine 10mg/5mL', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(883, 'Metronidazole 200mg/5mL', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(884, 'Metronidazole Benzoate 200mg/5mL', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(885, 'Multivitamin Syrup', 'Medicines', NULL, 300, '2025-09-18 12:31:41'),
+(886, 'Secnidazole 750mg/15mL', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(887, 'Cyproheptadine 4mg/ B Vitamins/Minerals', 'Medicines', NULL, 15, '2025-09-18 12:31:41'),
+(888, 'Cyproheptadine 2mg/ B Vitamins/Minerals', 'Medicines', NULL, 350, '2025-09-18 12:31:41'),
+(889, 'Cyproheptadine 2mg/ Tricholine Citrate 275mg', 'Medicines', NULL, 300, '2025-09-18 12:31:41'),
+(890, 'Ambroxol Hydrochloride 15mg/5mL', 'Medicines', NULL, 250, '2025-09-18 12:31:41'),
+(891, 'Adovas Syrup', 'Medicines', NULL, 350, '2025-09-18 12:31:41'),
+(892, 'Sulbutamol 1mg/Bromhexine 2mg/Guaifenesin 50mg', 'Medicines', NULL, 250, '2025-09-18 12:31:41'),
+(893, 'Chlorpheniramine 2mg/Sodium Citrate 44mg/Guaifenesin 80mg/Ammonium Chloride 100mg/Levomenthol 0.8mg', 'Medicines', NULL, 200, '2025-09-18 12:31:41'),
+(894, 'Dextromethorphan 10mg/Chlorpheniramine 2mg/Pseudoephedrine 30mg', 'Medicines', NULL, 230, '2025-09-18 12:31:41'),
+(895, 'Dextromethorphan 10mg/Chlorpheniramine 2mg/Pseudoephedrine 30mg/Paracetamol', 'Medicines', NULL, 230, '2025-09-18 12:31:41'),
+(896, 'Promethazine 2.5mg/Diphenhydramine 5mg/Ammonium Cl 90mg/Sodium Citrate 45mg/Ephedrine Hcl 7.5mg', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(897, 'Dextromethorphan 10mg/Cetirizine 5mg/Phenylephrine Hcl 5mg', 'Medicines', NULL, 300, '2025-09-18 12:31:41'),
+(898, 'SalbutamoL Sulfate 2mg/Bromhexine Hcl 4mg/Guaifenesin 100mg/ Menthol 1mg', 'Medicines', NULL, 300, '2025-09-18 12:31:41'),
+(899, 'Chlorpheniramine 2mg/Pseudoephedrine 10mg/Paracetamol 120mg', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(900, 'Diphenhydramine 10mg/Promethazine 5mg/Ammonium Chloride 180mg/Sodium Citrate 90mg', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(901, 'Chlorpheniramine 2mg/Pseudoephedrine 30mg/Guaifenesin 100mg', 'Medicines', NULL, 300, '2025-09-18 12:31:41'),
+(902, 'Chlorpheniramine 2mg/Pseudoephedrine 30mg/Sodium Citrate 44mg/Dextromethorphan 10mg/Menthol 1mg', 'Medicines', NULL, 250, '2025-09-18 12:31:41'),
+(903, 'Cod Liver Oil, Vitamin A&D, Calcium', 'Medicines', NULL, 600, '2025-09-18 12:31:41'),
+(904, 'Bonnisan', 'Medicines', NULL, 450, '2025-09-18 12:31:41'),
+(905, 'Sodium Bicarbonate 50mg/Terpeneless Dillseed Oil 2.15mg', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(906, 'Levosalbutamol 1mg/5mg', 'Medicines', NULL, 300, '2025-09-18 12:31:41'),
+(907, 'Levocetirizine 2.5mg', 'Medicines', NULL, 200, '2025-09-18 12:31:41'),
+(908, 'Desloratidine 2.5mg/5mL', 'Medicines', NULL, 380, '2025-09-18 12:31:41'),
+(909, 'Loratidine USP 5mg/5mL', 'Medicines', NULL, 300, '2025-09-18 12:31:41'),
+(910, 'Predinsolone 5mg/5mL', 'Medicines', NULL, 200, '2025-09-18 12:31:41'),
+(911, 'Promethazine Hcl, 5mg/5mL', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(912, 'Chlorpheniramine Maleate 4mg', 'Medicines', NULL, 2, '2025-09-18 12:31:41'),
+(913, 'Chlorpheniramine Maleate 2mg/5mL', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(914, 'Cetirizine HCL 5mg/5mL', 'Medicines', NULL, 80, '2025-09-18 12:31:41'),
+(915, 'Sodium Lactate IV Infusion', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(916, 'Sodium Chloride, 0.9%', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(917, 'Erythromycin 125mg/5mL', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(918, 'Clarithromycin 500mg', 'Medicines', NULL, 350, '2025-09-18 12:31:41'),
+(919, 'Diloxanide Furoate 500mg/Metronidazole 400mg', 'Medicines', NULL, 300, '2025-09-18 12:31:41'),
+(920, 'Azithromycin 1g/Fluconazole 150mg/Secnidazole 1g', 'Medicines', NULL, 500, '2025-09-18 12:31:41'),
+(921, 'Ciprofloxacin 500mg/Tinidazole 600mg', 'Medicines', NULL, 250, '2025-09-18 12:31:41'),
+(922, 'Cefalexin 500mg', 'Medicines', NULL, 15, '2025-09-18 12:31:41'),
+(923, 'Tramadol 50mg', 'Medicines', NULL, 10, '2025-09-18 12:31:41'),
+(924, 'Cefadroxil 500mg', 'Medicines', NULL, 400, '2025-09-18 12:31:41'),
+(925, 'Pregnancy Test Strip', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(926, 'Metformin HCl 500mg', 'Medicines', NULL, 8, '2025-09-18 12:31:41'),
+(927, 'Metformin HCl 850mg', 'Medicines', NULL, 15, '2025-09-18 12:31:41'),
+(928, 'Norethisterone 5mg', 'Medicines', NULL, 45, '2025-09-18 12:31:41'),
+(929, 'Clomifene 50mg', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(930, 'Fluconazole 150mg/Azithromycin 1g/Secnidazole 1g', 'Medicines', NULL, 850, '2025-09-18 12:31:41'),
+(931, 'Glibenclamide 5mg', 'Medicines', NULL, 7, '2025-09-18 12:31:41'),
+(932, 'Metformin 500mg', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(933, 'Amlodipine 5mg', 'Medicines', NULL, 10, '2025-09-18 12:31:41'),
+(934, 'Hydrochlorothiazide 50mg', 'Medicines', NULL, 4, '2025-09-18 12:31:41'),
+(935, 'Acetylsalicylic Acid 75mg', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(936, 'Anusol', 'Medicines', NULL, 80, '2025-09-18 12:31:41'),
+(937, 'Atenolol 50mg', 'Medicines', NULL, 8, '2025-09-18 12:31:41'),
+(938, 'Losartan 50mg', 'Medicines', NULL, 45, '2025-09-18 12:31:41'),
+(939, 'Carvedilol 12.5mg', 'Medicines', NULL, 20, '2025-09-18 12:31:41'),
+(940, 'Carvedilol 6.25mg', 'Medicines', NULL, 15, '2025-09-18 12:31:41'),
+(941, 'Nifedipine 20mg', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(942, 'Losartan 50mg/Hydrochlorothiazide 12.5mg', 'Medicines', NULL, 10, '2025-09-18 12:31:41'),
+(943, 'Atorvastatin 20mg ', 'Medicines', NULL, 20, '2025-09-18 12:31:41'),
+(944, 'Enalapril 10mg', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(945, 'Enalapril 5mg', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(946, 'Co-trimoxazole 480mg Tablets', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(947, 'Co-trimoxazole 960mg Tablets', 'Medicines', NULL, 10, '2025-09-18 12:31:41'),
+(948, 'Blood Lancets', 'Medicines', NULL, 300, '2025-09-18 12:31:41'),
+(949, 'Benzyl Benzoate Application 25%', 'Medicines', NULL, 300, '2025-09-18 12:31:41'),
+(950, 'Toothpaste', 'Medicines', NULL, 250, '2025-09-18 12:31:41'),
+(951, 'Calcium Antiacids', 'Medicines', NULL, 20, '2025-09-18 12:31:41'),
+(952, 'Touch ang Go', 'Medicines', NULL, 300, '2025-09-18 12:31:41'),
+(953, 'Hydrocortisone Ointment 1% w/w', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(954, 'Hydrocortisone Cream 1% w/w', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(955, 'Neomycin 5mg/Bacitracin 2.5mg/Gramicidin 0.5mg Powder', 'Medicines', NULL, 200, '2025-09-18 12:31:41'),
+(956, 'Neomycin 5mg/Bacitracin 250 IU', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(957, 'Neomycin 3.5mg/Bacitracin 5000 units/Bacitracin 500 units', 'Medicines', NULL, 350, '2025-09-18 12:31:41'),
+(958, 'Condoms', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(959, 'Bandages', 'Medicines', NULL, 30, '2025-09-18 12:31:41'),
+(960, 'Diclofenac Gel 1%', 'Medicines', NULL, 80, '2025-09-18 12:31:41'),
+(961, 'Clotrimazole 1% w/w/Beclomethasone Dipropionate 0.025% w/w', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(962, 'Betamethasone Dipropionate, Gentamicin & Clotrimazole  Cream', 'Medicines', NULL, 200, '2025-09-18 12:31:41'),
+(963, 'Clotrimazole 10.0% w/w/Betamethasone 0.5mg', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(964, 'Clotrimazole 1.0% w/w', 'Medicines', NULL, 70, '2025-09-18 12:31:41'),
+(965, 'Beclomethasone 0.025%, Miconazole 2%, Neomycin Sulphate 0.5% Chlorocresol 0.25%', 'Medicines', NULL, 200, '2025-09-18 12:31:41'),
+(966, 'Betamethasone Valerate 0.1% w/w', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(967, 'Betamethasone Valerate 0.1% w/w/Salicylic acid 3% w/w', 'Medicines', NULL, 250, '2025-09-18 12:31:41'),
+(968, 'Silver Sulfadiazine 1% w/w', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(969, 'Calamine Lotion', 'Medicines', NULL, 80, '2025-09-18 12:31:41'),
+(970, 'Surgical Spirit 70% v/v', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(971, 'Povidone-Iodine USP 10% w/v', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(972, 'Chlorine 3.5% w/v', 'Medicines', NULL, 450, '2025-09-18 12:31:41'),
+(973, 'Sterile Paraffin Dressing ', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(974, 'Sodium Bicarbonate 300mg ', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(975, 'Indomethacin 25mg', 'Medicines', NULL, 3, '2025-09-18 12:31:41'),
+(976, 'Esomeprazole 20mg', 'Medicines', NULL, 35, '2025-09-18 12:31:41'),
+(977, 'Albendazole 400mg', 'Medicines', NULL, 250, '2025-09-18 12:31:41'),
+(978, 'Ketoconazole 2% w/v', 'Medicines', NULL, 500, '2025-09-18 12:31:41'),
+(979, 'Ivermectin BP 6mg', 'Medicines', NULL, 250, '2025-09-18 12:31:41'),
+(980, 'Lidocaine HCl/Cetylpyridinium', 'Medicines', NULL, 900, '2025-09-18 12:31:41'),
+(981, 'Trimetabol', 'Medicines', NULL, 1100, '2025-09-18 12:31:41'),
+(982, 'Diclofenac/Linseed/Methyl Salicylate/Racementhol/Benzyl Alcohol', 'Medicines', NULL, 300, '2025-09-18 12:31:41'),
+(983, 'Good Morning Lung Tonic', 'Medicines', NULL, 130, '2025-09-18 12:31:41'),
+(984, 'Kofgon Red', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(985, 'Tricohist ', 'Medicines', NULL, 180, '2025-09-18 12:31:41'),
+(986, 'Diphenhydramine 10mg/Promethazine 5mg/Ammonium Chloride 180mg', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(987, 'Diclofenac Sodium Slow Release 100mg', 'Medicines', NULL, 10, '2025-09-18 12:31:41'),
+(988, 'Tretinoine 0.05% w/w', 'Medicines', NULL, 250, '2025-09-18 12:31:41'),
+(989, 'Telmisartan 80mg/Amlodipine 5mg', 'Medicines', NULL, 80, '2025-09-18 12:31:41'),
+(990, 'Sulfadoxine/Pyrimethamine', 'Medicines', NULL, 80, '2025-09-18 12:31:41'),
+(991, 'Flucloxacillin/Amoxicillin 250mg/5mL', 'Medicines', NULL, 350, '2025-09-18 12:31:41'),
+(992, 'Sensodyne Toothpaste', 'Medicines', NULL, 350, '2025-09-18 12:31:41'),
+(993, 'Sildenafil 100mg/5g', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(994, 'aceclofenac/Paracetamol/Chlorzoxazone', 'Medicines', NULL, 15, '2025-09-18 12:31:41'),
+(995, 'Canullas G22 (Blue)', 'Medicines', NULL, 30, '2025-09-18 12:31:41'),
+(996, 'Canullas G24(Yellow)', 'Medicines', NULL, 30, '2025-09-18 12:31:41'),
+(997, 'FloraNorm Satchets', 'Medicines', NULL, 130, '2025-09-18 12:31:41'),
+(998, 'Amoxicillin 1g/Clavulanate 200mg', 'Medicines', NULL, 200, '2025-09-18 12:31:41'),
+(999, 'Insulin Syringes, 0.5mL', 'Medicines', NULL, 30, '2025-09-18 12:31:41'),
+(1000, 'Insulin Syringes, 1mL', 'Medicines', NULL, 30, '2025-09-18 12:31:41'),
+(1001, 'Diclofenac/Paracetamol/Chlorzoxazone', 'Medicines', NULL, 15, '2025-09-18 12:31:41'),
+(1002, 'Tranexamic Acid 500mg/5mL', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(1003, 'Carbocisteine 100mg', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(1004, 'Carbocisteine 100mg/Promethazine 2.5mg', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(1005, 'Needle G21', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(1006, 'Needle G23', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(1007, 'Omeprazole Inj 40mg', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(1008, 'Ondasetron 4mg/2mL', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(1009, 'Dihydroartemisinin 40mg/Piperaquine 320mg', 'Medicines', NULL, 250, '2025-09-18 12:31:41'),
+(1010, 'Paracetamol/Codeine Phosphate/Doxylamine, Caffeine', 'Medicines', NULL, 15, '2025-09-18 12:31:41'),
+(1011, 'Lubricating Jelly', 'Medicines', NULL, 280, '2025-09-18 12:31:41'),
+(1012, 'Timolol Eye Drops 0.5%', 'Medicines', NULL, 150, '2025-09-18 12:31:41'),
+(1013, 'Herbal Cough Lozenges', 'Medicines', NULL, 30, '2025-09-18 12:31:41'),
+(1014, 'Miconazole Nitrate 2%w/w', 'Medicines', NULL, 100, '2025-09-18 12:31:41'),
+(1015, 'Medicated Soap', 'Medicines', NULL, 200, '2025-09-18 12:31:41'),
+(1016, 'Strepsils', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(1017, 'Mupirocin Ointment 2%', 'Medicines', NULL, 750, '2025-09-18 12:31:41'),
+(1018, 'Mupirocin 2%/Betamethasone 0.5% Ointment', 'Medicines', NULL, 850, '2025-09-18 12:31:41'),
+(1019, 'Anti-Rabies Vaccine', 'Medicines', NULL, 1200, '2025-09-18 12:31:41'),
+(1020, 'Insulin 70/30', 'Medicines', NULL, 700, '2025-09-18 12:31:41'),
+(1021, 'Bisacodyl 5mg', 'Medicines', NULL, 5, '2025-09-18 12:31:41'),
+(1022, 'Clindamycin 300mg', 'Medicines', NULL, 250, '2025-09-18 12:31:41'),
+(1023, 'Diloxanide 250mg/Metronidazole 200mg/Dicyclomine 10mg', 'Medicines', NULL, 300, '2025-09-18 12:31:41'),
+(1024, 'Fluconazole 200mg ', 'Medicines', NULL, 15, '2025-09-18 12:31:41'),
+(1025, 'Crotamiton+Sulphur', 'Medicines', NULL, 200, '2025-09-18 12:31:41'),
+(1026, 'Surgical Masks', 'Medicines', NULL, 10, '2025-09-18 12:31:41'),
+(1027, 'MENTHO PLUS BALM', 'Medicines', NULL, 80, '2025-09-18 12:31:41'),
+(1028, 'Albendazole 400mg/10mL', 'Medicines', NULL, 50, '2025-09-18 12:31:41'),
+(1030, 'HPV vaccines', 'medicines', '', 200, '2025-09-18 15:02:22'),
+(1031, 'New drug', 'antihistamine', 'bhcr', 15, '2025-09-23 08:13:22'),
+(1032, 'Tenofovir/lamivudine/dolutegravir', 'antiviral', 'Tablets', 1, '2025-11-05 10:38:57'),
+(1033, 'Ibuprofen 200mg', 'analgesic', 'Tablets', 10, '2025-11-07 10:29:16'),
+(1034, 'Methadone 50 mg Tablet', 'antihistamine', 'Test', 120, '2025-12-03 11:33:26');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `drugcategory`
+--
+
+CREATE TABLE `drugcategory` (
+  `id` int NOT NULL,
+  `catname` varchar(225) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `drugcategory`
+--
+
+TRUNCATE TABLE `drugcategory`;
+--
+-- Dumping data for table `drugcategory`
+--
+
+INSERT INTO `drugcategory` (`id`, `catname`, `description`) VALUES
+(1, 'antihistamine', 'Relieves inflammatory symptoms'),
+(2, 'narcotic', 'Used where analgesic drugs have low pain threshold'),
+(3, 'stimulant', 'Stimulates the brain and can be used to relieve depressive symptoms'),
+(4, 'analgesic', 'This is are non-steroidal anti-inflammatory drugs classes'),
+(5, 'antibacterial', 'Any naturally-derived drugs for management of bacterial infections'),
+(6, 'antiviral', 'Kills or inactivates or stops viral replication'),
+(7, 'steroids', 'This are corticosteroids and other steroids used in inflammatory management'),
+(9, 'Antidote', 'Antidote for Methadone poisoning or overdose'),
+(10, 'Antipsychotic', 'Suppress the brain neural system and calms the patient'),
+(12, 'medicines', 'other prescritions');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `drug_sources`
+--
+
+CREATE TABLE `drug_sources` (
+  `source_id` int NOT NULL,
+  `source_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `drug_sources`
+--
+
+TRUNCATE TABLE `drug_sources`;
+--
+-- Dumping data for table `drug_sources`
+--
+
+INSERT INTO `drug_sources` (`source_id`, `source_name`, `date_created`) VALUES
+(1, 'KEMSA', '2024-03-08 15:57:41'),
+(2, 'MEDS', '2024-03-08 15:58:45'),
+(5, 'Malindi MAT Clinic', '2024-03-08 16:26:21');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `durationunits`
+--
+
+CREATE TABLE `durationunits` (
+  `unit_id` int NOT NULL,
+  `duration` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `durationunits`
+--
+
+TRUNCATE TABLE `durationunits`;
+--
+-- Dumping data for table `durationunits`
+--
+
+INSERT INTO `durationunits` (`unit_id`, `duration`, `date_created`) VALUES
+(1, 'hours', '2025-05-28 00:00:00'),
+(2, 'days', '2025-05-28 00:00:00'),
+(3, 'weeks', '2025-05-28 00:00:00'),
+(4, 'months', '2025-05-28 00:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `education_level`
+--
+
+CREATE TABLE `education_level` (
+  `edu_id` int NOT NULL,
+  `edu_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `education_level`
+--
+
+TRUNCATE TABLE `education_level`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `employment_status`
+--
+
+CREATE TABLE `employment_status` (
+  `emp_id` int NOT NULL,
+  `emp_status_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `employment_status`
+--
+
+TRUNCATE TABLE `employment_status`;
+--
+-- Dumping data for table `employment_status`
+--
+
+INSERT INTO `employment_status` (`emp_id`, `emp_status_name`) VALUES
+(3, 'Self Employed'),
+(1, 'Skilled Employment'),
+(4, 'Unemployed'),
+(2, 'Unskilled Employment');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `enrolment_status`
+--
+
+CREATE TABLE `enrolment_status` (
+  `enrolment_id` int NOT NULL,
+  `enrolment_status_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `decsription` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `enrolment_status`
+--
+
+TRUNCATE TABLE `enrolment_status`;
+--
+-- Dumping data for table `enrolment_status`
+--
+
+INSERT INTO `enrolment_status` (`enrolment_id`, `enrolment_status_name`, `decsription`, `date_created`) VALUES
+(1, 'New', 'New on Methadone and never enrolled elsewhere except for a rehabilitation program if any.', '2024-04-18 11:33:16'),
+(2, 'Transfer In', 'This is a client enrolled elsewhere and has been transferred in for services due to different reasons', '2024-04-18 11:33:16'),
+(3, 'Re-induction', 'Defaulted or stopped and coming back', '2024-11-14 00:00:00'),
+(5, 'Transit', 'On transit', '2024-01-03 00:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `facerecognitionnodes`
+--
+
+CREATE TABLE `facerecognitionnodes` (
+  `Id` int NOT NULL,
+  `PatientId` int DEFAULT NULL,
+  `Complexity` double NOT NULL,
+  `Data` longblob NOT NULL,
+  `L1Norm` double NOT NULL,
+  `DistanceToParent` double DEFAULT NULL,
+  `LeftId` int DEFAULT NULL,
+  `Radius` double NOT NULL,
+  `RightId` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `facerecognitionnodes`
+--
+
+TRUNCATE TABLE `facerecognitionnodes`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `facilities`
+--
+
+CREATE TABLE `facilities` (
+  `id` int NOT NULL,
+  `facilityname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `mflcode` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `countyname` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `subcountyname` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `owner` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sdp` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `agency` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `emr` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `emrstatus` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `infrastructuretype` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `latitude` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `longitude` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `facilities`
+--
+
+TRUNCATE TABLE `facilities`;
+--
+-- Dumping data for table `facilities`
+--
+
+INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(1, 'Bartabwa Healty Centre', '14241', 'Baringo', 'Baringo North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2, 'Barwessa Health Centre', '14243', 'Baringo', 'Baringo North', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.70307', '35.69858', '2025-07-13 05:15:02'),
+(3, 'Chemolingot District Hospital', '14321', 'Baringo', 'East Pokot', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.98724', '35.9877', '2025-07-13 05:15:02'),
+(4, 'Eldama Ravine District Hospital', '14432', 'Baringo', 'Koibatek', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.0467', '35.72458', '2025-07-13 05:15:02'),
+(5, 'Emining Health Centre', '14446', 'Baringo', 'Mogotio', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.14357', '35.88708', '2025-07-13 05:15:02'),
+(6, 'Esageri Health Centre', '14477', 'Baringo', 'Koibatek', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.01726', '35.82863', '2025-07-13 05:15:02'),
+(7, 'Illingarua Dispensary', '14568', 'Baringo', 'Marigat', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(8, 'Baringo County Refferal Hospital', '14607', 'Baringo', 'Baringo Central', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(9, 'Kabartonjo Referral Hospital', '14609', 'Baringo', 'Baringo North', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(10, 'Kampi Samaki Health Centre', '14677', 'Baringo', 'Marigat', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.61668', '36.02536', '2025-07-13 05:15:02'),
+(11, 'Kapkelelwa Dispensary', '14710', 'Baringo', 'Baringo Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.37565', '35.71838', '2025-07-13 05:15:02'),
+(12, 'Kimalel Health Centre', '14867', 'Baringo', 'Marigat', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.46478', '35.8914', '2025-07-13 05:15:02'),
+(13, 'Kipsaraman Dispensary', '14912', 'Baringo', 'Baringo North', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.73753', '35.8302', '2025-07-13 05:15:02'),
+(14, 'Kiptagich Health Centre', '14923', 'Baringo', 'Baringo Central', 'Ministry of Health', 'No Partner', 'No Agency', 'KenyaEMR', 'Active', 'On Premises', '0.3633', '35.7918', '2025-07-13 05:15:02'),
+(15, 'Kisanana Health Centre', '14940', 'Baringo', 'Mogotio', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.116', '36.0974', '2025-07-13 05:15:02'),
+(16, 'Kiserian Dispensary', '14941', 'Baringo', 'Marigat', 'Other Faith Based', 'No Partner', 'No Agency', '', '', 'On Premises', '0.55011', '36.12037', '2025-07-13 05:15:02'),
+(17, 'Kituro Health Centre', '14953', 'Baringo', 'Baringo Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.47839', '35.78888', '2025-07-13 05:15:02'),
+(18, 'Kokwa Dispensary', '14976', 'Baringo', 'Marigat', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.06067', '36.07001', '2025-07-13 05:15:02'),
+(19, 'Kolowa Health Centre', '14979', 'Baringo', 'East Pokot', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '1.2162', '35.7587', '2025-07-13 05:15:02'),
+(20, 'Loboi Dispensary', '15042', 'Baringo', 'Marigat', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.35236', '36.06683', '2025-07-13 05:15:02'),
+(21, 'Marigat Catholic Mission', '15137', 'Baringo', 'Marigat', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.468', '35.98309', '2025-07-13 05:15:02'),
+(22, 'Marigat Sub District Hospital', '15138', 'Baringo', 'Marigat', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.47083', '35.98265', '2025-07-13 05:15:02'),
+(23, 'Mercy Hospital', '15174', 'Baringo', 'Koibatek', 'Other Faith Based', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.05388', '35.7241', '2025-07-13 05:15:02'),
+(24, 'Mochongoi Health Centre', '15192', 'Baringo', 'Marigat', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.31273', '36.18598', '2025-07-13 05:15:02'),
+(25, 'Mogorwa Health Centre', '15197', 'Baringo', 'Baringo Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.30883', '35.71667', '2025-07-13 05:15:02'),
+(26, 'Mogotio Catholic Dispensary', '15198', 'Baringo', 'Mogotio', 'Other Faith Based', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.02096', '35.95896', '2025-07-13 05:15:02'),
+(27, 'Nginyang Health Centre', '15347', 'Baringo', 'Tiaty East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.96816', '36.0202', '2025-07-13 05:15:02'),
+(28, 'Ngubereti Health Centre', '15353', 'Baringo', 'Mogotio', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.06719', '35.89343', '2025-07-13 05:15:02'),
+(29, 'Ol-Arabel Dispensary', '15386', 'Baringo', 'Marigat', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.27593', '36.25416', '2025-07-13 05:15:02'),
+(30, 'Olkokwe Health Centre', '15410', 'Baringo', 'Mogotio', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.0823', '36.06841', '2025-07-13 05:15:02'),
+(31, 'Salawa Health Centre', '15522', 'Baringo', 'Baringo Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.49678', '35.66091', '2025-07-13 05:15:02'),
+(32, 'Seretunin Health Centre', '15549', 'Baringo', 'Baringo Central', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.55313', '35.7876', '2025-07-13 05:15:02'),
+(33, 'Sirwa Dispensary (Mogotio)', '15593', 'Baringo', 'Mogotio', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.17711', '35.77176', '2025-07-13 05:15:02'),
+(34, 'Tangulbei Sub county', '15707', 'Baringo', 'Tiaty East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(35, 'Tenges Health Centre', '15718', 'Baringo', 'Baringo Central', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.32243', '35.80703', '2025-07-13 05:15:02'),
+(36, 'Timboroa Health Centre', '15725', 'Baringo', 'Koibatek', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.06395', '35.54387', '2025-07-13 05:15:02'),
+(37, 'Torongo Health Centre', '15735', 'Baringo', 'Koibatek', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.12517', '35.60115', '2025-07-13 05:15:02'),
+(38, 'Lamaiwe Dispensary', '17348', 'Baringo', 'Marigat', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.34118', '36.24574', '2025-07-13 05:15:02'),
+(39, 'Sirata Dispensary', '17350', 'Baringo', 'Marigat', 'Other Public Institution', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.45825', '36.10045', '2025-07-13 05:15:02'),
+(40, 'Eldume Dispensary', '17351', 'Baringo', 'Marigat', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.43994', '35.99533', '2025-07-13 05:15:02'),
+(41, 'Mogotio  Sub-County Hospital Baringo', '20005', 'Baringo', 'Mogotio', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(42, 'Arroket Dispensary', '14215', 'Bomet', 'Sotik', 'Private Enterprise (Institution)', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.61894', '35.07315', '2025-07-13 05:15:02'),
+(43, 'Bomet Health Centre', '14261', 'Bomet', 'Bomet Central', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.78278', '35.33863', '2025-07-13 05:15:02'),
+(44, 'Chamalal Dispensary', '14285', 'Bomet', 'Konoin', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', 'Stalled/Inactive', 'On Premises', '-0.52237', '35.2081', '2025-07-13 05:15:02'),
+(45, 'Chebangang Health Centre', '14289', 'Bomet', 'Konoin', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.54881', '35.28923', '2025-07-13 05:15:02'),
+(46, 'Chebilat Dispensary', '14295', 'Bomet', 'Sotik', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', 'Stalled/Inactive', 'On Premises', '-0.68974', '35.0766', '2025-07-13 05:15:02'),
+(47, 'Chebitet Dispensary', '14298', 'Bomet', 'Konoin', 'Company Medical Service', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-0.480732', '35.273706', '2025-07-13 05:15:02'),
+(48, 'Cheboyo Dispensary', '14302', 'Bomet', 'Chepalungu', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.93847', '35.13898', '2025-07-13 05:15:02'),
+(49, 'Chebunyo Dispensary', '14304', 'Bomet', 'Chepalungu', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.96389', '35.19167', '2025-07-13 05:15:02'),
+(50, 'Chemaner  Health Centre (Bomet)', '14311', 'Bomet', 'Bomet East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(51, 'Chepchabas Dispensary', '14331', 'Bomet', 'Konoin', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.52295', '35.2604', '2025-07-13 05:15:02'),
+(52, 'Cheptabes Dispensary', '14365', 'Bomet', 'Konoin', 'Private Enterprise (Institution)', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-0.60177', '35.3607', '2025-07-13 05:15:02'),
+(53, 'Cheptalal Sub-County Hospital', '14366', 'Bomet', 'Konoin', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(54, 'Chesoen Dispensary', '14384', 'Bomet', 'Bomet Central', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-0.69778', '35.29588', '2025-07-13 05:15:02'),
+(55, 'Irwaga Health Centre', '14580', 'Bomet', 'Bomet East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.75593', '35.44957', '2025-07-13 05:15:02'),
+(56, 'Itembe Dispensary', '14585', 'Bomet', 'Chepalungu', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', 'Stalled/Inactive', 'On Premises', '-0.78589', '35.19619', '2025-07-13 05:15:02'),
+(57, 'Kaboson Health Centre', '14628', 'Bomet', 'Chepalungu', 'Christian Health Association of Kenya', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.98822', '35.2314', '2025-07-13 05:15:02'),
+(58, 'Kapkesosio Dispensary', '14714', 'Bomet', 'Chepalungu', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.84667', '35.31861', '2025-07-13 05:15:02'),
+(59, 'Kapkimolwa Dispensary', '14717', 'Bomet', 'Bomet East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-0.86094', '35.39295', '2025-07-13 05:15:02'),
+(60, 'Kapkoros Sub-County Hospital', '14728', 'Bomet', 'Bomet Central', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(61, 'Kaplong Hospital', '14741', 'Bomet', 'Sotik', 'Kenya Episcopal Conference-Catholic Secretariat', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.67722', '35.13892', '2025-07-13 05:15:02'),
+(62, 'Kipsonoi Health Centre', '14920', 'Bomet', 'Sotik', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.6985', '35.17979', '2025-07-13 05:15:02'),
+(63, 'Kipsuter Dispensary', '14921', 'Bomet', 'Chepalungu', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.9239', '35.24203', '2025-07-13 05:15:02'),
+(64, 'Kiptulwa Health Centre', '14932', 'Bomet', 'Sotik', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(65, 'Kitoben Dispensary', '14952', 'Bomet', 'Bomet Central', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-0.7325', '35.40991', '2025-07-13 05:15:02'),
+(66, 'Koiwa Health Centre', '14970', 'Bomet', 'Konoin', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.61911', '35.36066', '2025-07-13 05:15:02'),
+(67, 'Koiwa Medical Clinic', '14971', 'Bomet', 'Konoin', 'Company Medical Service', 'HJF-South Rift Valley', 'DOD', '', 'Stalled/Inactive', 'On Premises', '-0.57995', '35.2969', '2025-07-13 05:15:02'),
+(68, 'Longisa County Referral  Hospital', '15077', 'Bomet', 'Bomet East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(69, 'Lugumek Dispensary', '15100', 'Bomet', 'Chepalungu', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-0.99967', '35.29324', '2025-07-13 05:15:02'),
+(70, 'Makimeny Dispensary', '15116', 'Bomet', 'Chepalungu', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.84045', '35.30113', '2025-07-13 05:15:02'),
+(71, 'Marinyin Dispensary', '15139', 'Bomet', 'Konoin', 'Private Enterprise (Institution)', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-0.43195', '35.29576', '2025-07-13 05:15:02'),
+(72, 'Merigi Health Centre', '15178', 'Bomet', 'Bomet East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(73, 'Mogogosiek Health Centre', '15195', 'Bomet', 'Konoin', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.61797', '35.27375', '2025-07-13 05:15:02'),
+(74, 'Ndanai', '15322', 'Bomet', 'Sotik', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.8433', '35.09288', '2025-07-13 05:15:02'),
+(75, 'Ndarawetta Health centre', '15323', 'Bomet', 'Bomet Central', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(76, 'Olbutyo Health Centre', '15388', 'Bomet', 'Chepalungu', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.85441', '35.27215', '2025-07-13 05:15:02'),
+(77, 'Olokyin Health Centre', '15421', 'Bomet', 'Bomet East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.94278', '35.38611', '2025-07-13 05:15:02'),
+(78, 'Rongena Dispensary', '15497', 'Bomet', 'Sotik', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-0.73848', '35.09139', '2025-07-13 05:15:02'),
+(79, 'Sigor Sub-District Hospital', '15565', 'Bomet', 'Chepalungu', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.91417', '35.29807', '2025-07-13 05:15:02'),
+(80, 'Silibwet Dispensary (Bomet)', '15570', 'Bomet', 'Bomet Central', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.43822', '35.20883', '2025-07-13 05:15:02'),
+(81, 'Simotwet Dispensary', '15576', 'Bomet', 'Konoin', 'Company Medical Service', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-0.46979', '35.2936', '2025-07-13 05:15:02'),
+(82, 'Siongiroi Health Centre', '15587', 'Bomet', 'Chepalungu', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.89144', '35.21049', '2025-07-13 05:15:02'),
+(83, 'Sotik Health Centre', '15619', 'Bomet', 'Sotik', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.6941', '35.10716', '2025-07-13 05:15:02'),
+(84, 'Tarakwa Health centre', '15710', 'Bomet', 'Bomet Central', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(85, 'Tegat  Sub-County Hospital', '15714', 'Bomet', 'Bomet East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(86, 'Tenduet Dispensary', '15717', 'Bomet', 'Konoin', 'Company Medical Service', 'HJF-South Rift Valley', 'DOD', '', 'Stalled/Inactive', 'On Premises', '-0.49864', '35.28729', '2025-07-13 05:15:02'),
+(87, 'Tenwek Mission Hospital', '15719', 'Bomet', 'Bomet Central', 'Christian Health Association of Kenya', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.74331', '35.35942', '2025-07-13 05:15:02'),
+(88, 'Kembu Dispensary', '17083', 'Bomet', 'Bomet East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-0.8645', '35.46411', '2025-07-13 05:15:02'),
+(89, 'Kapisimba Dispensary', '18506', 'Bomet', 'Chepalungu', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', 'Stalled/Inactive', 'On Premises', '-0.92395', '35.20801', '2025-07-13 05:15:02'),
+(90, 'Mulot  Health Centre', '18519', 'Bomet', 'Bomet East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(91, 'Kimuchul Dispensary', '18524', 'Bomet', 'Bomet East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-0.46792', '35.31038', '2025-07-13 05:15:02'),
+(92, 'Kaproret Dispensary', '19294', 'Bomet', 'Konoin', 'Private Enterprise (Institution)', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-0.43543', '35.25642', '2025-07-13 05:15:02'),
+(93, 'Mulot stand alone (Bomet)', '22168', 'Bomet', 'Bomet East', 'Other Faith Based', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(94, 'DICE ICL  BOMET', '24618', 'Bomet', 'Bomet Central', 'Non-Governmental Organizations', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(95, 'Bokoli Hospital', '15808', 'Bungoma', 'Webuye West', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', '0.71026', '34.66171', '2025-07-13 05:15:02'),
+(96, 'Bukembe Dispensary', '15819', 'Bungoma', 'Kanduyi', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.611939', '34.658292', '2025-07-13 05:15:02'),
+(97, 'Bulondo Dispensary', '15821', 'Bungoma', 'Kanduyi', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.49746', '34.4841', '2025-07-13 05:15:02'),
+(98, 'Bumula Sub County Hospital', '15825', 'Bungoma', 'Bumula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(99, 'Bungoma County Referral Hospital', '15828', 'Bungoma', 'Kanduyi', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(100, 'A.C.K Butonge Dispensary', '15837', 'Bungoma', 'Sirisia', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(101, 'Chebukaka Health Centre', '15848', 'Bungoma', 'Kabuchai', 'Other Faith Based', 'USAID Dumisha Afya', 'USAID', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(102, 'Chepkube Dispensary', '15854', 'Bungoma', 'Cheptais', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.84009', '34.43328', '2025-07-13 05:15:02'),
+(103, 'Cheptais Sub County Hospital', '15855', 'Bungoma', 'Cheptais', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(104, 'Chesikaki Dispensary', '15856', 'Bungoma', 'Cheptais', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.79371', '34.51192', '2025-07-13 05:15:02'),
+(105, 'Chwele Sub County Hospital', '15860', 'Bungoma', 'Kabuchai', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(106, 'Chwele Friends Dispensary', '15861', 'Bungoma', 'Sirisia', 'Christian Health Association of Kenya', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.76134', '34.54924', '2025-07-13 05:15:02'),
+(107, 'Dreamland Mc Hospital', '15864', 'Bungoma', 'Kimilili', 'Other Faith Based', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(108, 'Ekitale Dispensary', '15869', 'Bungoma', 'Kanduyi', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.555681', '34.612614', '2025-07-13 05:15:02'),
+(109, 'Elgon View Medical Cottage', '15871', 'Bungoma', 'Kanduyi', 'Private Enterprise (Institution)', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.56893', '34.56295', '2025-07-13 05:15:02'),
+(110, 'GK Prison Dispensary (Bungoma South)', '15890', 'Bungoma', 'Kanduyi', 'Other Public Institution', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(111, 'Kaboywo Dispensary', '15909', 'Bungoma', 'Mt Elgon', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.91243', '34.76319', '2025-07-13 05:15:02'),
+(112, 'Kaborom Dispensary', '15910', 'Bungoma', 'Mt Elgon', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', '0.86638', '34.78542', '2025-07-13 05:15:02'),
+(113, 'Kabuchai Health Centre', '15911', 'Bungoma', 'Kabuchai', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.64657', '34.56012', '2025-07-13 05:15:02'),
+(114, 'Kabula  Health Centre', '15912', 'Bungoma', 'Bumula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(115, 'Kamenjo Dispensary', '15917', 'Bungoma', 'Mt Elgon', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.85277', '34.77174', '2025-07-13 05:15:02'),
+(116, 'Kamukuywa (ACK) Dispensary', '15918', 'Bungoma', 'Tongaren', 'Christian Health Association of Kenya', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.80856', '34.7973', '2025-07-13 05:15:02'),
+(117, 'Kamuneru Dispensary', '15919', 'Bungoma', 'Mt Elgon', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.82261', '34.63985', '2025-07-13 05:15:02'),
+(118, 'Kanganga Dispensary', '15920', 'Bungoma', 'Cheptais', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.83473', '34.46462', '2025-07-13 05:15:02'),
+(119, 'Kapkateny Dispensary', '15922', 'Bungoma', 'Cheptais', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.80089', '34.62329', '2025-07-13 05:15:02'),
+(120, 'Kapsambu Dispensary', '15923', 'Bungoma', 'Cheptais', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', '0.80008', '34.59409', '2025-07-13 05:15:02'),
+(121, 'Kaptalelio Dispensary', '15924', 'Bungoma', 'Mt Elgon', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.89057', '34.74822', '2025-07-13 05:15:02'),
+(122, 'Kaptanai Dispensary', '15926', 'Bungoma', 'Sirisia', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.785202', '34.538567', '2025-07-13 05:15:02'),
+(123, 'Karima Dispensary', '15927', 'Bungoma', 'Tongaren', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.73638', '34.8396', '2025-07-13 05:15:02'),
+(124, 'Khalumuli Dispensary', '15932', 'Bungoma', 'Webuye West', 'Other Public Institution', 'USAID Dumisha Afya', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.57937', '34.71409', '2025-07-13 05:15:02'),
+(125, 'Khaoya Dispensary', '15933', 'Bungoma', 'Webuye East', 'Other Public Institution', 'USAID Dumisha Afya', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.72903', '34.79794', '2025-07-13 05:15:02'),
+(126, 'Khasoko Health Centre', '15935', 'Bungoma', 'Bumula', 'Christian Health Association of Kenya', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.48411', '34.40231', '2025-07-13 05:15:02'),
+(127, 'Kibabii Health Centre', '15941', 'Bungoma', 'Kanduyi', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.61879', '34.5253', '2025-07-13 05:15:02'),
+(128, 'Kibingei Dispensary', '15942', 'Bungoma', 'Kimilili', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.779342', '34.676922', '2025-07-13 05:15:02'),
+(129, 'Kibisi Dispensary', '15943', 'Bungoma', 'Tongaren', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.69552', '34.8563', '2025-07-13 05:15:02'),
+(130, 'Kibuke Dispensary', '15944', 'Bungoma', 'Bumula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.584938', '34.482621', '2025-07-13 05:15:02'),
+(131, 'Kimaeti Health Centre', '15947', 'Bungoma', 'Bumula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(132, 'Kimalewa Health Centre', '15948', 'Bungoma', 'Kabuchai', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.78073', '34.63977', '2025-07-13 05:15:02'),
+(133, 'Kimilili Subcounty Hospital', '15950', 'Bungoma', 'Kimilili', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(134, 'Kopsiro Model Health Centre', '15956', 'Bungoma', 'Cheptais', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(135, 'Korosiandet Dispensary', '15958', 'Bungoma', 'Sirisia', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.74446', '34.4391', '2025-07-13 05:15:02'),
+(136, 'Lugulu Friends Mission Hospital', '15965', 'Bungoma', 'Webuye West', 'Other Faith Based', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.66131', '34.75278', '2025-07-13 05:15:02'),
+(137, 'Lukhome Dispensary (Kabuchai)', '15966', 'Bungoma', 'Kabuchai', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(138, 'Lukhuna Dispensary', '15967', 'Bungoma', 'Tongaren', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.805321', '34.940111', '2025-07-13 05:15:02'),
+(139, 'Lungai Dispensary', '15973', 'Bungoma', 'Tongaren', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.80184', '34.8964', '2025-07-13 05:15:02'),
+(140, 'Lurare Dispensary', '15976', 'Bungoma', 'Webuye East', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.7301', '34.64831', '2025-07-13 05:15:02'),
+(141, 'Lwanda Health Centre (Kabuchai)', '15979', 'Bungoma', 'Kabuchai', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(142, 'Lwandanyi Dispensary', '15980', 'Bungoma', 'Sirisia', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.78881', '34.41682', '2025-07-13 05:15:02'),
+(143, 'Machwele Dispensary', '15984', 'Bungoma', 'Bumula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.586889', '34.442898', '2025-07-13 05:15:02'),
+(144, 'Maeni Dispensary', '15986', 'Bungoma', 'Kimilili', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.78226', '34.75182', '2025-07-13 05:15:02'),
+(145, 'Makhanga Dispensary', '15989', 'Bungoma', 'Tongaren', 'Non-Governmental Organizations', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', '0.80807', '34.88781', '2025-07-13 05:15:02'),
+(146, 'Makhonge Health Centre', '15990', 'Bungoma', 'Kimilili', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.82135', '34.79694', '2025-07-13 05:15:02'),
+(147, 'Makutano Health Centre', '15992', 'Bungoma', 'Tongaren', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(148, 'Malakisi Health Centre', '15994', 'Bungoma', 'Sirisia', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.68234', '34.42086', '2025-07-13 05:15:02'),
+(149, 'Mechimeru Model Health Center', '16014', 'Bungoma', 'Kanduyi', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(150, 'Miendo Dispensary', '16015', 'Bungoma', 'Webuye West', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.65883', '34.6902', '2025-07-13 05:15:02'),
+(151, 'Mihuu Dispensary', '16016', 'Bungoma', 'Webuye East', 'Other Public Institution', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', '0.61299', '34.76456', '2025-07-13 05:15:02'),
+(152, 'Milo Health Centre', '16018', 'Bungoma', 'Webuye West', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', '0.61314', '34.76489', '2025-07-13 05:15:02'),
+(153, 'Miluki Dispensary', '16019', 'Bungoma', 'Bumula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.637559', '34.491559', '2025-07-13 05:15:02'),
+(154, 'Mission of Mercy Clinic', '16020', 'Bungoma', 'Kanduyi', 'Faith Based Organization', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.576916', '34.55349', '2025-07-13 05:15:02'),
+(155, 'Mt Elgon Sub County Hospital', '16025', 'Bungoma', 'Mt Elgon', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(156, 'Mukhe Dispensary', '16028', 'Bungoma', 'Webuye West', 'Other Public Institution', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', '0.71387', '34.71429', '2025-07-13 05:15:02'),
+(157, 'Mumbule Dispensary', '16034', 'Bungoma', 'Kanduyi', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.45896', '34.60707', '2025-07-13 05:15:02'),
+(158, 'Mwihila Mission Hospital', '16058', 'Bungoma', 'Kanduyi', 'Other Faith Based', 'No Partner', 'No Agency', '', '', 'On Premises', '0.17753', '34.61397', '2025-07-13 05:15:02'),
+(159, 'Naitiri Sub-County Hospital', '16061', 'Bungoma', 'Tongaren', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(160, 'Nasianda Health Centre', '16075', 'Bungoma', 'Bumula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(161, 'Nasusi Dispensary', '16076', 'Bungoma', 'Kimilili', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.819819', '34.7451', '2025-07-13 05:15:02'),
+(162, 'Ndalu Health Centre', '16079', 'Bungoma', 'Tongaren', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.84314', '34.99304', '2025-07-13 05:15:02'),
+(163, 'Ngalasia Dispensary', '16081', 'Bungoma', 'Kabuchai', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.62662', '34.61406', '2025-07-13 05:15:02'),
+(164, 'Nzoia Sugar Dispensary', '16085', 'Bungoma', 'Kanduyi', 'Company Medical Service', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', '0.56803', '34.65321', '2025-07-13 05:15:02'),
+(165, 'Sacha Health Centre', '16099', 'Bungoma', 'Mt Elgon', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.80338', '34.6419', '2025-07-13 05:15:02'),
+(166, 'Siboti Health Centre', '16124', 'Bungoma', 'Bumula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.62874', '34.46034', '2025-07-13 05:15:02'),
+(167, 'Sikulu Dispensary', '16125', 'Bungoma', 'Kabuchai', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.724645', '34.860585', '2025-07-13 05:15:02'),
+(168, 'Sinoko Dispensary (Bungoma East)', '16126', 'Bungoma', 'Webuye East', 'Other Public Institution', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', '0.65232', '34.6906', '2025-07-13 05:15:02'),
+(169, 'Sirisia Sub County Hospital', '16130', 'Bungoma', 'Sirisia', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(170, 'St Damiano Mission Hospital', '16138', 'Bungoma', 'Kanduyi', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(171, 'Tamlega Dispensary', '16148', 'Bungoma', 'Sirisia', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.71358', '34.41711', '2025-07-13 05:15:02'),
+(172, 'Tongaren Model Health Centre', '16152', 'Bungoma', 'Tongaren', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(173, 'Tuikut Dispensary', '16153', 'Bungoma', 'Cheptais', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', '0.81263', '34.49839', '2025-07-13 05:15:02'),
+(174, 'Webuye Health Centre', '16160', 'Bungoma', 'Webuye East', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(175, 'Webuye Hospital', '16161', 'Bungoma', 'Webuye West', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(176, 'Mahanga Dispensary', '16388', 'Bungoma', 'Webuye West', 'Other Public Institution', 'USAID Dumisha Afya', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.6225', '34.85276', '2025-07-13 05:15:02'),
+(177, 'Matulo Dispensary', '16389', 'Bungoma', 'Webuye West', 'Other Public Institution', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.60569', '34.72766', '2025-07-13 05:15:02'),
+(178, 'Ruanda Dispensary', '16487', 'Bungoma', 'Kabuchai', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.813562', '34.5457', '2025-07-13 05:15:02'),
+(179, 'Mayanja Dispensary', '16489', 'Bungoma', 'Kanduyi', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.669255', '34.5281', '2025-07-13 05:15:02'),
+(180, 'Emmanuel Medical Clinic (Bungoma East)', '16707', 'Bungoma', 'Webuye East', 'Private Enterprise (Institution)', 'USAID Dumisha Afya', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.70971', '34.75768', '2025-07-13 05:15:02'),
+(181, 'Kayaya Dispensary', '16710', 'Bungoma', 'Webuye West', 'Other Public Institution', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', '0.63961', '34.73002', '2025-07-13 05:15:02'),
+(182, 'Lukusi Dispensary', '16711', 'Bungoma', 'Webuye East', 'Other Public Institution', 'USAID Dumisha Afya', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.6132', '34.764', '2025-07-13 05:15:02'),
+(183, 'Koshok Dispensary', '17073', 'Bungoma', 'Mt Elgon', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.83895', '34.66057', '2025-07-13 05:15:02'),
+(184, 'Luuya Dispensary', '17116', 'Bungoma', 'Kabuchai', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.65194', '34.63839', '2025-07-13 05:15:02'),
+(185, 'Nalondo Health Centre (Model)', '17117', 'Bungoma', 'Kabuchai', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.65533', '34.58842', '2025-07-13 05:15:02'),
+(186, 'Bahai Dispensary', '17190', 'Bungoma', 'Kimilili', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.73894', '34.74928', '2025-07-13 05:15:02'),
+(187, 'Bituyu Dispensary', '17193', 'Bungoma', 'Kimilili', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', '0.74392', '34.69958', '2025-07-13 05:15:02'),
+(188, 'Luucho Dispensary', '17608', 'Bungoma', 'Kabuchai', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.62701', '34.55818', '2025-07-13 05:15:02'),
+(189, 'Sango Natiri Dispensary', '17986', 'Bungoma', 'Tongaren', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.83209', '34.91034', '2025-07-13 05:15:02'),
+(190, 'Sirakaru Dispensary', '17990', 'Bungoma', 'Tongaren', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.72574', '34.89712', '2025-07-13 05:15:02'),
+(191, 'Nzoia Medical Centre', '18111', 'Bungoma', 'Kanduyi', 'Private Practice - Unspecified', 'USAID Dumisha Afya', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.57167', '34.65132', '2025-07-13 05:15:02'),
+(192, 'Sikusi Dispensary', '18145', 'Bungoma', 'Kabuchai', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.6934', '34.55788', '2025-07-13 05:15:02'),
+(193, 'Kamukuywa Dispensary', '18346', 'Bungoma', 'Kimilili', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.78026', '34.79005', '2025-07-13 05:15:02'),
+(194, 'Khalala Dispensary', '18362', 'Bungoma', 'Webuye West', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.46618', '34.65546', '2025-07-13 05:15:02'),
+(195, 'Chemwa Bridge Dispensary', '18563', 'Bungoma', 'Kabuchai', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.60997', '34.57533', '2025-07-13 05:15:02'),
+(196, 'Chesinende Dispensary', '18582', 'Bungoma', 'Mt Elgon', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.90214', '34.78021', '2025-07-13 05:15:02'),
+(197, 'Chemworemwo Dispensary', '18583', 'Bungoma', 'Mt Elgon', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.86858', '34.73034', '2025-07-13 05:15:02'),
+(198, 'Lumboka Medical Services', '18852', 'Bungoma', 'Kanduyi', 'Company Medical Service', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', '0.57028', '34.56314', '2025-07-13 05:15:02'),
+(199, 'Chebon Medical Clinic', '19155', 'Bungoma', 'Mt Elgon', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', '', 'On Premises', '0.84112', '34.71382', '2025-07-13 05:15:02'),
+(200, 'Lunakwe Dispensary', '20156', 'Bungoma', 'Bumula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.52177', '34.43074', '2025-07-13 05:15:02'),
+(201, 'Chebukwabi Dispensary', '20159', 'Bungoma', 'Kimilili', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.79613', '34.66577', '2025-07-13 05:15:02'),
+(202, 'Kamasielo Dispensary', '20223', 'Bungoma', 'Kimilili', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.83355', '34.77753', '2025-07-13 05:15:02'),
+(203, 'Bungoma West Medical Services', '20323', 'Bungoma', 'Kanduyi', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', '', 'On Premises', '0.57584', '34.5578', '2025-07-13 05:15:02'),
+(204, 'Kambini Dispensary', '20392', 'Bungoma', 'Kimilili', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.7259', '34.7265', '2025-07-13 05:15:02'),
+(205, 'Ranje Dispensary', '20483', 'Bungoma', 'Kanduyi', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.57568', '34.55689', '2025-07-13 05:15:02'),
+(206, 'Kongoli Dispensary', '20484', 'Bungoma', 'Kanduyi', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', '0.56548', '34.45678', '2025-07-13 05:15:02'),
+(207, 'Ace Africa (k) Wellness Centre', '20823', 'Bungoma', 'Kanduyi', 'Non-Governmental Organizations', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.2456', '34.256', '2025-07-13 05:15:02'),
+(208, 'Matisi Dispensary', '21187', 'Bungoma', 'Webuye West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(209, 'Muanda Dispensary', '21481', 'Bungoma', 'Bumula', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(210, 'Talitia Dispensary', '21608', 'Bungoma', 'Bumula', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(211, 'Machakha Dispensary', '21620', 'Bungoma', 'Sirisia', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(212, 'Ndengelwa Dispensary', '21700', 'Bungoma', 'Kanduyi', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(213, 'Musikoma Dispensary', '21701', 'Bungoma', 'Kanduyi', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(214, 'Namarambi Dispensary', '21771', 'Bungoma', 'Webuye East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(215, 'Misikhu Dispensary', '21783', 'Bungoma', 'Webuye West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(216, 'Mukwa Dispensary', '21822', 'Bungoma', 'Bumula', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(217, 'Sambocho Health Centre', '21896', 'Bungoma', 'Mt Elgon', 'Other Faith Based', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(218, 'Kitabisi Dispensary', '21943', 'Bungoma', 'Bumula', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(219, 'Chebukutumi Dispensary', '22003', 'Bungoma', 'Sirisia', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(220, 'St Bakhita Mission', '22151', 'Bungoma', 'Webuye East', 'Other Faith Based', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(221, 'Mwomo Dispensary', '22490', 'Bungoma', 'Bumula', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(222, 'Bukokholo Dispensary', '22500', 'Bungoma', 'Sirisia', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(223, 'Namwatikho Dispensary', '22501', 'Bungoma', 'Webuye East', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(224, 'Kaptama Health Centre', '22508', 'Bungoma', 'Mt Elgon', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(225, 'Lwakhakha Dispensary', '22752', 'Bungoma', 'Sirisia', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(226, 'Kituni Dispensary', '22999', 'Bungoma', 'Webuye West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(227, 'Kolani Dispensary', '23458', 'Bungoma', 'Sirisia', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(228, 'Bisunu Dispensary', '23587', 'Bungoma', 'Sirisia', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(229, 'Kory Family Hospital Kimilili', '23738', 'Bungoma', 'Kimilili', 'Private Practice - Private Company', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(230, 'Ngoli Community', '24875', 'Bungoma', 'Bumula', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(231, 'Kimilili Sasa Wellness Centre', '30550', 'Bungoma', 'Kimilili', 'Non-Governmental Organizations', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(232, 'Aboloi Dispensary', '15789', 'Busia', 'Teso North', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', '0.65654', '34.39563', '2025-07-13 05:15:02'),
+(233, 'Agenga Dispensary (Samia)', '15790', 'Busia', 'Samia', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', '0.25266', '34.07067', '2025-07-13 05:15:02'),
+(234, 'Akichelesit Dispensary', '15792', 'Busia', 'Teso North', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', '0.69133', '34.34332', '2025-07-13 05:15:02'),
+(235, 'Alupe Sub County Referral Hospital', '15795', 'Busia', 'Teso South', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(236, 'Amaase Dispensary', '15797', 'Busia', 'Teso South', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(237, 'Amukura Health Centre', '15798', 'Busia', 'Teso South', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.56216', '34.27321', '2025-07-13 05:15:02'),
+(238, 'Amukura Mission Health Centre', '15799', 'Busia', 'Teso South', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.572', '34.27269', '2025-07-13 05:15:02'),
+(239, 'Angurai Health Centre', '15800', 'Busia', 'Teso North', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', '0.70935', '34.35149', '2025-07-13 05:15:02'),
+(240, 'Apokor Dispensary', '15802', 'Busia', 'Teso South', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.52922', '34.28329', '2025-07-13 05:15:02'),
+(241, 'Budalangi Dispensary', '15811', 'Busia', 'Bunyala', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.13036', '34.02777', '2025-07-13 05:15:02'),
+(242, 'Buduta Dispensary', '15813', 'Busia', 'Samia', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.22236', '34.10953', '2025-07-13 05:15:02'),
+(243, 'Bujumba Dispensary', '15816', 'Busia', 'Butula', 'Other Faith Based', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', '0.32244', '34.21409', '2025-07-13 05:15:02'),
+(244, 'Bulwani Dispensary', '15822', 'Busia', 'Bunyala', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.00877', '34.01344', '2025-07-13 05:15:02'),
+(245, 'Bumala A Health Centre', '15823', 'Busia', 'Butula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', '0.30231', '34.1914', '2025-07-13 05:15:02'),
+(246, 'Bumala B Health Centre', '15824', 'Busia', 'Butula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', '0.38995', '34.3501', '2025-07-13 05:15:02'),
+(247, 'Bumutiru Dispensary', '15826', 'Busia', 'Butula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.37592', '34.25369', '2025-07-13 05:15:02'),
+(248, 'Burinda Dispensary', '15830', 'Busia', 'Butula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.3', '34.22', '2025-07-13 05:15:02'),
+(249, 'Busembe Dispensary', '15831', 'Busia', 'Samia', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.18495', '34.01644', '2025-07-13 05:15:02'),
+(250, 'Busia County Referral Hospital', '15834', 'Busia', 'Matayos', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(251, 'Busibwabo Dispensary', '15835', 'Busia', 'Matayos', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.41086', '34.20122', '2025-07-13 05:15:02'),
+(252, 'Butula Mission Health Centre', '15838', 'Busia', 'Butula', 'Other Faith Based', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.34325', '34.33363', '2025-07-13 05:15:02'),
+(253, 'Bwaliro Dispensary', '15840', 'Busia', 'Butula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.37825', '34.3162', '2025-07-13 05:15:02');
+INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(254, 'GK Prisons Dispensary (Busia)', '15891', 'Busia', 'Matayos', 'Other Public Institution', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.45296', '34.11452', '2025-07-13 05:15:02'),
+(255, 'Igara Dispensary', '15897', 'Busia', 'Nambale', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.53294', '34.36315', '2025-07-13 05:15:02'),
+(256, 'Khayo Dispensary', '15937', 'Busia', 'Nambale', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.51051', '34.38897', '2025-07-13 05:15:02'),
+(257, 'Khunyangu Sub County Hospital', '15939', 'Busia', 'Butula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(258, 'Kolanya Salvation Army Dispensary', '15953', 'Busia', 'Teso North', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', '0.70583', '34.39716', '2025-07-13 05:15:02'),
+(259, 'Lukolis Model Health Centre', '15968', 'Busia', 'Teso South', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.58257', '34.20852', '2025-07-13 05:15:02'),
+(260, 'Lupida Health Centre', '15975', 'Busia', 'Nambale', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.57713', '34.35258', '2025-07-13 05:15:02'),
+(261, 'Madende Health Centre', '15985', 'Busia', 'Nambale', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(262, 'Malaba Dispensary', '15993', 'Busia', 'Teso North', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', '0.63727', '34.28789', '2025-07-13 05:15:02'),
+(263, 'Malanga Dispensary', '15995', 'Busia', 'Nambale', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.40382', '34.29667', '2025-07-13 05:15:02'),
+(264, 'Matayos Health Centre', '16004', 'Busia', 'Matayos', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', '0.36597', '34.16523', '2025-07-13 05:15:02'),
+(265, 'Moding Health Centre', '16021', 'Busia', 'Teso North', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.75381', '34.34789', '2025-07-13 05:15:02'),
+(266, 'Moru Karisa Dispensary', '16024', 'Busia', 'Teso South', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.54768', '34.20959', '2025-07-13 05:15:02'),
+(267, 'Mukhobola Health Centre', '16029', 'Busia', 'Bunyala', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', '0.08157', '34.02985', '2025-07-13 05:15:02'),
+(268, 'Munongo Dispensary', '16043', 'Busia', 'Matayos', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.38073', '34.12145', '2025-07-13 05:15:02'),
+(269, 'Nambale Sub County Hospital', '16066', 'Busia', 'Nambale', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(270, 'Namboboto Dispensary', '16067', 'Busia', 'Samia', 'Christian Health Association of Kenya', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.30717', '34.09106', '2025-07-13 05:15:02'),
+(271, 'Nambuku Model Health Centre', '16068', 'Busia', 'Samia', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.31828', '34.11037', '2025-07-13 05:15:02'),
+(272, 'Namuduru Dispensary', '16069', 'Busia', 'Samia', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.169026', '34.099694', '2025-07-13 05:15:02'),
+(273, 'Nangina Dispensary', '16072', 'Busia', 'Samia', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.27726', '34.09862', '2025-07-13 05:15:02'),
+(274, 'Holy Family Nangina Mission Hospital', '16073', 'Busia', 'Samia', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(275, 'Nasewa Health Centre', '16074', 'Busia', 'Matayos', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.3989', '34.23049', '2025-07-13 05:15:02'),
+(276, 'Obekai Dispensary', '16087', 'Busia', 'Teso South', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.51161', '34.20972', '2025-07-13 05:15:02'),
+(277, 'Port Victoria Hospital', '16091', 'Busia', 'Bunyala', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', '0.0972', '33.97581', '2025-07-13 05:15:02'),
+(278, 'Rukala Model Health Centre', '16095', 'Busia', 'Bunyala', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.05662', '33.99211', '2025-07-13 05:15:02'),
+(279, 'Rumbiye Dispensary', '16096', 'Busia', 'Samia', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.19768', '34.09549', '2025-07-13 05:15:02'),
+(280, 'Sio Port Sub County Hospital', '16128', 'Busia', 'Samia', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(281, 'Sirimba Dispensary', '16129', 'Busia', 'Bunyala', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.14419', '34.05895', '2025-07-13 05:15:02'),
+(282, 'Sisenye Dispensary', '16131', 'Busia', 'Bunyala', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', '0.1493', '34.011', '2025-07-13 05:15:02'),
+(283, 'St Clare Medical Centre', '16137', 'Busia', 'Nambale', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Dumisha Afya', 'USAID', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(284, 'St Marys Health Unit Chelelemuk', '16140', 'Busia', 'Teso North', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(285, 'Tanaka Nursing Home', '16149', 'Busia', 'Matayos', 'Private Enterprise (Institution)', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.453786', '34.118', '2025-07-13 05:15:02'),
+(286, 'Teso  North Sub county Hospital', '16150', 'Busia', 'Teso North', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', '0.62253', '34.34481', '2025-07-13 05:15:02'),
+(287, 'Your Family Clinic', '16165', 'Busia', 'Matayos', 'Private Practice - Nurse / Midwife', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(288, 'Ochude Dispensary', '16420', 'Busia', 'Teso South', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', '0.47997', '34.17638', '2025-07-13 05:15:02'),
+(289, 'Changara (GOK) Dispensary', '16421', 'Busia', 'Teso North', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', '0.73757', '34.42136', '2025-07-13 05:15:02'),
+(290, 'Wakhungu Dispensary', '16479', 'Busia', 'Samia', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.261219', '34.1094', '2025-07-13 05:15:02'),
+(291, 'Kabuodo Dispensary', '16480', 'Busia', 'Samia', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.312307', '34.1649', '2025-07-13 05:15:02'),
+(292, 'Sikarira Dispensary', '16485', 'Busia', 'Butula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.340637', '34.329', '2025-07-13 05:15:02'),
+(293, 'Musibiriri Dispensary', '16486', 'Busia', 'Butula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.328138', '34.3599', '2025-07-13 05:15:02'),
+(294, 'Lwanyange Dispensary', '17155', 'Busia', 'Nambale', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', '0.42945', '34.27544', '2025-07-13 05:15:02'),
+(295, 'Bukalama Dispensary', '17156', 'Busia', 'Matayos', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.45067', '34.18741', '2025-07-13 05:15:02'),
+(296, 'Masendebale Dispensary', '17157', 'Busia', 'Butula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.32557', '34.37383', '2025-07-13 05:15:02'),
+(297, 'Bukhalalire Dispensary', '17158', 'Busia', 'Butula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.31826', '34.27498', '2025-07-13 05:15:02'),
+(298, 'Ikonzo Model Health Centre', '17165', 'Busia', 'Butula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(299, 'Kamolo Dispensary', '17242', 'Busia', 'Teso North', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', '0.58756', '34.29439', '2025-07-13 05:15:02'),
+(300, 'Okook Dispensary', '17245', 'Busia', 'Teso South', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.60872', '34.20855', '2025-07-13 05:15:02'),
+(301, 'Osieko Dispensary', '17680', 'Busia', 'Bunyala', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', '0.02794', '34.01509', '2025-07-13 05:15:02'),
+(302, 'Buburi Community Health Clinic', '18120', 'Busia', 'Samia', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(303, 'Busia Trailer Park Clinic', '18126', 'Busia', 'Matayos', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', '0.46404', '34.10008', '2025-07-13 05:15:02'),
+(304, 'Nasira Dispensary', '19887', 'Busia', 'Matayos', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', '0.44842', '34.20905', '2025-07-13 05:15:02'),
+(305, 'Pesi Medical Centre', '20167', 'Busia', 'Teso South', 'Private Practice - Medical Specialist', 'No Partner', 'No Agency', '', '', 'On Premises', '0.45704', '34.1243', '2025-07-13 05:15:02'),
+(306, 'Amongura Community Dispensary', '20170', 'Busia', 'Teso South', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(307, 'Esikulu Dispensary', '20171', 'Busia', 'Matayos', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.004118', '34.15664', '2025-07-13 05:15:02'),
+(308, 'Ngelechom Community Dispensary', '20181', 'Busia', 'Teso South', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.57339', '34.17067', '2025-07-13 05:15:02'),
+(309, 'Kamuriai GOK  Dispensary', '21024', 'Busia', 'Teso North', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(310, 'Kwangamor Dispensary', '21033', 'Busia', 'Teso South', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.58578', '34.23073', '2025-07-13 05:15:02'),
+(311, 'Akiriamasi Dispensary', '21034', 'Busia', 'Teso South', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.54572', '34.21068', '2025-07-13 05:15:02'),
+(312, 'Apatit Dispensary', '21035', 'Busia', 'Teso South', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(313, 'Khajula Dispensary', '21036', 'Busia', 'Bunyala', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(314, 'Busagwa Dispensary', '21037', 'Busia', 'Bunyala', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', '', 'On Premises', '0.10781', '34.05794', '2025-07-13 05:15:02'),
+(315, 'Muyafwa Dispensary', '21040', 'Busia', 'Matayos', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.32979', '34.16189', '2025-07-13 05:15:02'),
+(316, 'Burumba Dispensary', '21041', 'Busia', 'Matayos', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.44783', '34.11532', '2025-07-13 05:15:02'),
+(317, 'Mayenje Dispensary', '21042', 'Busia', 'Matayos', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.40642', '34.10741', '2025-07-13 05:15:02'),
+(318, 'Mundembu Dispensary', '21044', 'Busia', 'Nambale', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.46888', '34.38245', '2025-07-13 05:15:02'),
+(319, 'Musokoto Dispensary', '21046', 'Busia', 'Nambale', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.50877', '34.33187', '2025-07-13 05:15:02'),
+(320, 'Namusala Dispensary', '21059', 'Busia', 'Butula', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.32725', '34.30559', '2025-07-13 05:15:02'),
+(321, 'Neela Dispensary', '21060', 'Busia', 'Butula', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.35115', '34.28621', '2025-07-13 05:15:02'),
+(322, 'Appex Hosp', '21136', 'Busia', 'Teso North', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(323, 'Survivors Organization Clinic', '21966', 'Busia', 'Teso South', 'Non-Governmental Organizations', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(324, 'Akukuranut Drop Off Point', '23509', 'Busia', 'Teso North', 'Non-Governmental Organizations', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(325, 'West side cottage', '23835', 'Busia', 'Teso North', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(326, 'ALoete Disp', '24603', 'Busia', 'Teso North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(327, 'Arror Health Centre', '14216', 'Elgeyo Marakwet', 'Marakwet West', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', '0.95125', '35.62007', '2025-07-13 05:15:02'),
+(328, 'Assumption Sisters Dispensary', '14218', 'Elgeyo Marakwet', 'Keiyo North', 'Other Faith Based', 'No Partner', 'No Agency', '', '', 'On Premises', '0.71528', '35.51798', '2025-07-13 05:15:02'),
+(329, 'Biretwa health centre', '14256', 'Elgeyo Marakwet', 'Keiyo South', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.53801', '35.55826', '2025-07-13 05:15:02'),
+(330, 'Chebiemit District Hospital', '14294', 'Elgeyo Marakwet', 'Marakwet West', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.85334', '35.50237', '2025-07-13 05:15:02'),
+(331, 'Chebororwa Health Centre', '14301', 'Elgeyo Marakwet', 'Marakwet West', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.94421', '35.39224', '2025-07-13 05:15:02'),
+(332, 'Chegilet Health Centre', '14306', 'Elgeyo Marakwet', 'Keiyo North', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(333, 'Chemworor Health Centre', '14327', 'Elgeyo Marakwet', 'Marakwet East', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', '1.07424', '35.57328', '2025-07-13 05:15:02'),
+(334, 'Chepkorio Health Centre', '14346', 'Elgeyo Marakwet', 'Keiyo South', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.38539', '35.53656', '2025-07-13 05:15:02'),
+(335, 'Cheptongei Health Centre', '14373', 'Elgeyo Marakwet', 'Marakwet West', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(336, 'Chesoi Health Centre', '14385', 'Elgeyo Marakwet', 'Marakwet East', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '1.07013', '35.59397', '2025-07-13 05:15:02'),
+(337, 'Chesongoch Health Centre', '14386', 'Elgeyo Marakwet', 'Marakwet East', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '1.12623', '35.64294', '2025-07-13 05:15:02'),
+(338, 'Endo Health Centre', '14456', 'Elgeyo Marakwet', 'Marakwet East', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', '1.26352', '35.6262', '2025-07-13 05:15:02'),
+(339, 'Flax Dispensary', '14499', 'Elgeyo Marakwet', 'Keiyo South', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.37328', '35.48215', '2025-07-13 05:15:02'),
+(340, 'Flourspar Health Centre', '14500', 'Elgeyo Marakwet', 'Keiyo South', 'Private Enterprise (Institution)', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.32281', '35.64258', '2025-07-13 05:15:02'),
+(341, 'Iten County Referral Hospital', '14586', 'Elgeyo Marakwet', 'Keiyo North', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(342, 'Kabetwa Health Centre', '14612', 'Elgeyo Marakwet', 'Marakwet East', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', 'Stalled/Inactive', 'On Premises', '1.16066', '35.64437', '2025-07-13 05:15:02'),
+(343, 'Kamogo Health Centre', '14674', 'Elgeyo Marakwet', 'Marakwet East', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', 'Stalled/Inactive', 'On Premises', '1.19097', '35.60613', '2025-07-13 05:15:02'),
+(344, 'Kamwosor sub-county hospital', '14680', 'Elgeyo Marakwet', 'Keiyo South', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(345, 'Kapchelal Health Centre', '14692', 'Elgeyo Marakwet', 'Keiyo North', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(346, 'Kapcherop Health Centre', '14695', 'Elgeyo Marakwet', 'Marakwet West', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.04875', '35.32414', '2025-07-13 05:15:02'),
+(347, 'Kapkoi Health Centre', '14721', 'Elgeyo Marakwet', 'Keiyo North', 'Other Faith Based', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', '0.52489', '35.50735', '2025-07-13 05:15:02'),
+(348, 'Kapsowar (AIC) Hospital', '14767', 'Elgeyo Marakwet', 'Marakwet West', 'Christian Health Association of Kenya', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.98108', '35.56081', '2025-07-13 05:15:02'),
+(349, 'Kaptalamwa Health Centre', '14774', 'Elgeyo Marakwet', 'Marakwet West', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '1.10585', '35.43086', '2025-07-13 05:15:02'),
+(350, 'Kaptarakwa Sub-District Hospital', '14776', 'Elgeyo Marakwet', 'Keiyo South', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.46425', '35.54283', '2025-07-13 05:15:02'),
+(351, 'Kapteren Health Centre', '14781', 'Elgeyo Marakwet', 'Keiyo North', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.56239', '35.47861', '2025-07-13 05:15:02'),
+(352, 'Kapyego Health Centre', '14798', 'Elgeyo Marakwet', 'Marakwet East', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', '1.14584', '35.47924', '2025-07-13 05:15:02'),
+(353, 'Katee Dispensary', '14816', 'Elgeyo Marakwet', 'Marakwet West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.90395', '35.51493', '2025-07-13 05:15:02'),
+(354, 'Kimnai Health Centre', '14874', 'Elgeyo Marakwet', 'Marakwet West', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(355, 'Kocholwo Sub County Hospital', '14961', 'Elgeyo Marakwet', 'Keiyo South', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(356, 'Lelboinet Health Centre (Keiyo)', '15019', 'Elgeyo Marakwet', 'Keiyo South', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', '0.35535', '35.57549', '2025-07-13 05:15:02'),
+(357, 'Mogil Health Centre', '15193', 'Elgeyo Marakwet', 'Marakwet East', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', '1.06114', '35.6415', '2025-07-13 05:15:02'),
+(358, 'Msekekwa Health Centre', '15238', 'Elgeyo Marakwet', 'Keiyo North', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.75823', '35.51188', '2025-07-13 05:15:02'),
+(359, 'Muskut Health Centre', '15260', 'Elgeyo Marakwet', 'Keiyo South', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.36931', '35.62697', '2025-07-13 05:15:02'),
+(360, 'Sergoit Health Centre (Keiyo)', '15554', 'Elgeyo Marakwet', 'Keiyo North', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(361, 'Simotwo Dispensary (Keiyo)', '15578', 'Elgeyo Marakwet', 'Keiyo South', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', '0.21973', '35.53799', '2025-07-13 05:15:02'),
+(362, 'Tambach Sub-County Hospital', '15703', 'Elgeyo Marakwet', 'Keiyo North', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(363, 'Tot Sub-District Hospital', '15738', 'Elgeyo Marakwet', 'Marakwet East', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.20878', '35.65627', '2025-07-13 05:15:02'),
+(364, 'Kaparon Health Centre', '16335', 'Elgeyo Marakwet', 'Marakwet East', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.28751', '35.6575', '2025-07-13 05:15:02'),
+(365, 'Dallas Dispensary', '11984', 'Embu', 'Manyatta', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.53616', '37.45455', '2025-07-13 05:15:02'),
+(366, 'Embu Provincial General Hospital', '12004', 'Embu', 'Manyatta', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.53679', '37.4518', '2025-07-13 05:15:02'),
+(367, 'GK Prison Dispensary (Embu)', '12045', 'Embu', 'Manyatta', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.55005', '37.46725', '2025-07-13 05:15:02'),
+(368, 'Kairuri Health Center', '12130', 'Embu', 'Manyatta', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(369, 'Kamumu Dispensary', '12164', 'Embu', 'Mbeere North', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.50326', '37.72964', '2025-07-13 05:15:02'),
+(370, 'Kanja Health Centre', '12179', 'Embu', 'Runyenjes', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.37803', '37.52897', '2025-07-13 05:15:02'),
+(371, 'Kanyuambora Dispensary', '12185', 'Embu', 'Mbeere North', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.46412', '37.72055', '2025-07-13 05:15:02'),
+(372, 'Karau Health Centre', '12198', 'Embu', 'Manyatta', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.38344', '37.46619', '2025-07-13 05:15:02'),
+(373, 'Karurumo Rhtc', '12203', 'Embu', 'Runyenjes', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.46839', '37.65303', '2025-07-13 05:15:02'),
+(374, 'Kiambere Dam Dispensary', '12271', 'Embu', 'Mbeere North', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.61021', '37.88728', '2025-07-13 05:15:02'),
+(375, 'Kiamuringa Dispensary', '12274', 'Embu', 'Mbeere South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.56868', '37.53033', '2025-07-13 05:15:02'),
+(376, 'Kianjokoma Sub-District Hospital', '12279', 'Embu', 'Runyenjes', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.39709', '37.5016', '2025-07-13 05:15:02'),
+(377, 'Kibugu Health Centre', '12287', 'Embu', 'Manyatta', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.44466', '37.43484', '2025-07-13 05:15:02'),
+(378, 'Kigumo Dispensary', '12300', 'Embu', 'Runyenjes', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.4155', '37.63236', '2025-07-13 05:15:02'),
+(379, 'Kirie Dispensary', '12333', 'Embu', 'Mbeere North', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.58001', '37.78069', '2025-07-13 05:15:02'),
+(380, 'Kithegi Dispensary', '12353', 'Embu', 'Manyatta', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.50586', '37.55029', '2025-07-13 05:15:02'),
+(381, 'Kithimu Dispensary', '12359', 'Embu', 'Manyatta', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.51213', '37.51841', '2025-07-13 05:15:02'),
+(382, 'Consolata Kyeni Hospital', '12413', 'Embu', 'Runyenjes', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.41331', '37.58781', '2025-07-13 05:15:02'),
+(383, 'Makengi Dispensary (Embu)', '12453', 'Embu', 'Manyatta', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.450033', '37.51984', '2025-07-13 05:15:02'),
+(384, 'Makima Dispensary', '12454', 'Embu', 'Mbeere South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.79798', '37.58597', '2025-07-13 05:15:02'),
+(385, 'Mbita Dispensary ( Mbeere )', '12501', 'Embu', 'Mbeere South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(386, 'Nembure Health Centre', '12642', 'Embu', 'Manyatta', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.47437', '37.51053', '2025-07-13 05:15:02'),
+(387, 'Nthagaiya Catholic Dispensary', '12673', 'Embu', 'Runyenjes', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.46898', '37.57668', '2025-07-13 05:15:02'),
+(388, 'Runyenjes District Hospital', '12719', 'Embu', 'Runyenjes', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.42451', '37.57058', '2025-07-13 05:15:02'),
+(389, 'Embu Children Clinic', '12790', 'Embu', 'Manyatta', 'Christian Health Association of Kenya', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.54218', '37.46597', '2025-07-13 05:15:02'),
+(390, 'Acef Ena Health Centre', '12791', 'Embu', 'Runyenjes', 'Other Faith Based', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.47344', '37.55271', '2025-07-13 05:15:02'),
+(391, 'Wachoro Dispensary', '12838', 'Embu', 'Mbeere South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.76024', '37.31839', '2025-07-13 05:15:02'),
+(392, 'Gategi Health Centre', '16463', 'Embu', 'Mbeere South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.74977', '37.42371', '2025-07-13 05:15:02'),
+(393, 'Ishiara Sub-District Hospital', '16464', 'Embu', 'Mbeere North', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.45797', '37.78821', '2025-07-13 05:15:02'),
+(394, 'Kiambere Health Centre', '16465', 'Embu', 'Mbeere South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.69182', '37.79485', '2025-07-13 05:15:02'),
+(395, 'Kiritiri Health Centre', '16466', 'Embu', 'Mbeere South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.78109', '37.77562', '2025-07-13 05:15:02'),
+(396, 'Mbeere District Hospital', '16467', 'Embu', 'Mbeere North', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.46412', '37.72055', '2025-07-13 05:15:02'),
+(397, 'St Basils Catholic Dispensary', '18115', 'Embu', 'Manyatta', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(398, 'Kamweli Dispensary', '20509', 'Embu', 'Mbeere South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.53113', '37.4528', '2025-07-13 05:15:02'),
+(399, 'Embu Dice', '21117', 'Embu', 'Manyatta', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(400, 'Kitololoni Catholic Dispensary', '22152', 'Embu', 'Mbeere South', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(401, 'G K Prisons (Thika)', '10289', 'Garissa', 'Garissa', 'Ministry of Health', 'No Partner', 'No Agency', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', '-1.03929', '37.078', '2025-07-13 05:15:02'),
+(402, 'Dadaab Sub-County Hospital', '13316', 'Garissa', 'Dadaab', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(403, 'Bura District Hospital', '13339', 'Garissa', 'Fafi', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.00918', '40.3366', '2025-07-13 05:15:02'),
+(404, 'Garissa County Referral Hospital', '13346', 'Garissa', 'Garissa', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(405, 'GK Prison Dispensary (Garissa)', '13350', 'Garissa', 'Garissa', 'Other Public Institution', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.45389', '39.63966', '2025-07-13 05:15:02'),
+(406, 'Iftin Sub-District Hospital', '13369', 'Garissa', 'Garissa', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.47579', '39.65659', '2025-07-13 05:15:02'),
+(407, 'Kotile Health Centre', '13385', 'Garissa', 'Ijara', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.96993', '40.20611', '2025-07-13 05:15:02'),
+(408, 'Ijara Sub County Hospital - Masalani', '13406', 'Garissa', 'Ijara', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(409, 'Modogashe Hospital', '13411', 'Garissa', 'Lagdera', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(410, 'Nanighi Health Centre', '13413', 'Garissa', 'Fafi', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.85459', '39.86681', '2025-07-13 05:15:02'),
+(411, 'Police Line Dispensary (Garissa)', '13420', 'Garissa', 'Garissa', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.46111', '39.639', '2025-07-13 05:15:02'),
+(412, 'Sisters Maternity Home (Simaho)', '13442', 'Garissa', 'Garissa', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.45487', '39.63867', '2025-07-13 05:15:02'),
+(413, 'Utawala Dispensary', '13448', 'Garissa', 'Garissa', 'Other Public Institution', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.44087', '39.64524', '2025-07-13 05:15:02'),
+(414, 'Alikune Dispensary', '17012', 'Garissa', 'Dadaab', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.2067', '40.0079', '2025-07-13 05:15:02'),
+(415, 'Medina Hospital', '19037', 'Garissa', 'Garissa', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.46587', '39.64987', '2025-07-13 05:15:02'),
+(416, 'Bismillahi Medical Clinic (Garissa)', '19167', 'Garissa', 'Garissa', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.44958', '39.64025', '2025-07-13 05:15:02'),
+(417, 'GK Prison Medium (Garissa)', '23606', 'Garissa', 'Garissa', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(418, 'Adiedo Dispensary', '13463', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.42727', '34.60247', '2025-07-13 05:15:02'),
+(419, 'Agawo Health Centre', '13466', 'Homa Bay', 'Rachuonyo South', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(420, 'Alum Beach Dispensary', '13472', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.44673', '34.48747', '2025-07-13 05:15:02'),
+(421, 'Ang’iya Dispensary', '13479', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(422, 'Asumbi Mission Hospital', '13488', 'Homa Bay', 'Rangwe', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(423, 'Atemo Health Centre', '13489', 'Homa Bay', 'Kabondo Kasipul', 'Christian Health Association of Kenya', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.503', '34.83291', '2025-07-13 05:15:02'),
+(424, 'Bora Bora Clinic', '13509', 'Homa Bay', 'Ndhiwa', 'Private Enterprise (Institution)', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.73072', '34.36853', '2025-07-13 05:15:02'),
+(425, 'Chuowe Dispensary', '13529', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.32141', '34.77078', '2025-07-13 05:15:02'),
+(426, 'Chuthber Dispensary', '13530', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.39885', '34.72371', '2025-07-13 05:15:02'),
+(427, 'GK Prison Dispensary (Homa Bay)', '13578', 'Homa Bay', 'Homa Bay Town', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.53018', '34.46596', '2025-07-13 05:15:02'),
+(428, 'GodBer Health Center', '13584', 'Homa Bay', 'Kabondo Kasipul', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(429, 'Godbura Health Centre', '13585', 'Homa Bay', 'Suba South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.7223', '34.08519', '2025-07-13 05:15:02'),
+(430, 'Gongo Dispensary', '13587', 'Homa Bay', 'Rangwe', 'Community', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.52814', '34.62109', '2025-07-13 05:15:02'),
+(431, 'Got Kojowi Health Centre', '13589', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.74146', '34.26536', '2025-07-13 05:15:02'),
+(432, 'Got Oyaro Dispensary', '13592', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.39452', '34.53262', '2025-07-13 05:15:02'),
+(433, 'Holy Family Oriang Mission Dispensary', '13604', 'Homa Bay', 'Kabondo Kasipul', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.44541', '34.92139', '2025-07-13 05:15:02'),
+(434, 'Homa Hills Health Centre', '13606', 'Homa Bay', 'Karachuonyo', 'Non-Governmental Organizations', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.35379', '34.46834', '2025-07-13 05:15:02'),
+(435, 'Homa Lime Health Centre', '13607', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.43037', '34.55277', '2025-07-13 05:15:02'),
+(436, 'Homa Bay County Teaching and Referral Hospital', '13608', 'Homa Bay', 'Homa Bay Town', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.53325', '34.46121', '2025-07-13 05:15:02'),
+(437, 'Jawabu (Community) Medical Clinic', '13633', 'Homa Bay', 'Kabondo Kasipul', 'Private Enterprise (Institution)', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.44757', '34.89305', '2025-07-13 05:15:02'),
+(438, 'Jophas Clinic', '13636', 'Homa Bay', 'Rangwe', 'Private Enterprise (Institution)', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(439, 'Kabondo Sub County Hospital', '13638', 'Homa Bay', 'Kabondo Kasipul', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(440, 'Kolunga Dispensary', '13642', 'Homa Bay', 'Mbita', 'Community', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(441, 'Kager Dispensary', '13643', 'Homa Bay', 'Rangwe', 'Non-Governmental Organizations', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.56097', '34.53711', '2025-07-13 05:15:02'),
+(442, 'Kajieyi Dispensary', '13646', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.37471', '34.74031', '2025-07-13 05:15:02'),
+(443, 'Kandiege SCH', '13653', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(444, 'Kauma Health Centre', '13658', 'Homa Bay', 'Kabondo Kasipul', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(445, 'Kendu Adventist Hospital', '13667', 'Homa Bay', 'Karachuonyo', 'Christian Health Association of Kenya', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.40151', '34.66465', '2025-07-13 05:15:02'),
+(446, 'Kendu Sub District Hospital', '13668', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(447, 'Kiasa Dispensary', '13686', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.75302', '34.30196', '2025-07-13 05:15:02'),
+(448, 'Kigwa Dispensary', '13691', 'Homa Bay', 'Suba South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.67382', '34.20986', '2025-07-13 05:15:02'),
+(449, 'Kimonge Health Centre', '13693', 'Homa Bay', 'Kabondo Kasipul', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(450, 'Kisaku Dispensary', '13700', 'Homa Bay', 'Suba South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.66163', '34.10946', '2025-07-13 05:15:02'),
+(451, 'Kisegi SDH', '13701', 'Homa Bay', 'Suba South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(452, 'Kitare Health Centre', '13705', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.506', '34.33066', '2025-07-13 05:15:02'),
+(453, 'Kiwa Island Dispensary', '13707', 'Homa Bay', 'Suba South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.7513', '34.03312', '2025-07-13 05:15:02'),
+(454, 'Kobuya Dispensary', '13708', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.35144', '34.78689', '2025-07-13 05:15:02'),
+(455, 'Kogweno Oriang Dispensary', '13711', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(456, 'Kokwanyo Health Centre', '13712', 'Homa Bay', 'Kabondo Kasipul', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.41206', '34.78627', '2025-07-13 05:15:02'),
+(457, 'Kosele Dispensary', '13721', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.42044', '34.68755', '2025-07-13 05:15:02'),
+(458, 'Kwamo Dispensary', '13728', 'Homa Bay', 'Ndhiwa', 'Community', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.71297', '34.30875', '2025-07-13 05:15:02'),
+(459, 'Lambwe Dispensary', '13731', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.55591', '34.32535', '2025-07-13 05:15:02'),
+(460, 'Lambwe Forest Dispensary', '13732', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.67757', '34.307', '2025-07-13 05:15:02'),
+(461, 'Lela (Community) Dispensary', '13733', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.35833', '34.71111', '2025-07-13 05:15:02'),
+(462, 'Lwanda Gwassi Dispendary', '13742', 'Homa Bay', 'Suba South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(463, 'Magina Health Centre', '13751', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.69821', '34.51851', '2025-07-13 05:15:02'),
+(464, 'Magunga Health Centre', '13753', 'Homa Bay', 'Suba South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.68872', '34.14833', '2025-07-13 05:15:02'),
+(465, 'Malela Dispensary', '13761', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.58486', '34.39193', '2025-07-13 05:15:02'),
+(466, 'Mangima SDA Health Centre', '13768', 'Homa Bay', 'Rachuonyo South', 'Christian Health Association of Kenya', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.55951', '34.70676', '2025-07-13 05:15:02'),
+(467, 'Manyatta (SDA) Dispensary', '13769', 'Homa Bay', 'Rangwe', 'Christian Health Association of Kenya', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.50578', '34.61985', '2025-07-13 05:15:02'),
+(468, 'Marindi Sub County Referral Hospital', '13777', 'Homa Bay', 'Homa Bay Town', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(469, 'Masogo Dispensary', '13784', 'Homa Bay', 'Kabondo Kasipul', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.42549', '34.82331', '2025-07-13 05:15:02'),
+(470, 'Matata Nursing Hospital', '13789', 'Homa Bay', 'Rachuonyo South', 'Other Faith Based', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.50385', '34.73827', '2025-07-13 05:15:02'),
+(471, 'Mawego Health Centre', '13795', 'Homa Bay', 'Karachuonyo', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.39283', '34.77082', '2025-07-13 05:15:02'),
+(472, 'Mbita DH', '13798', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(473, 'Miriu Health Centre', '13812', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.35494', '34.75608', '2025-07-13 05:15:02'),
+(474, 'Mirogi Health Centre', '13813', 'Homa Bay', 'Ndhiwa', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.69962', '34.38402', '2025-07-13 05:15:02'),
+(475, 'Msare Health Centre', '13828', 'Homa Bay', 'Suba South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.59192', '34.18781', '2025-07-13 05:15:02'),
+(476, 'Ndhiwa DH', '13841', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(477, 'Ndhuru Dispensary', '13842', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.51271', '34.41892', '2025-07-13 05:15:02'),
+(478, 'Ndiru Health Centre', '13843', 'Homa Bay', 'Rangwe', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.52233', '34.57814', '2025-07-13 05:15:02'),
+(479, 'Ngegu Dispensary', '13849', 'Homa Bay', 'Rangwe', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.49253', '34.51017', '2025-07-13 05:15:02'),
+(480, 'Ngodhe Island Dispensary', '13854', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(481, 'Nguku Dispensary', '13855', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.80291', '34.36585', '2025-07-13 05:15:02'),
+(482, 'Nyabola Dispensary', '13863', 'Homa Bay', 'Rachuonyo South', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.553', '34.71608', '2025-07-13 05:15:02'),
+(483, 'Nyadenda Health Centre', '13870', 'Homa Bay', 'Suba South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.60605', '34.23837', '2025-07-13 05:15:02'),
+(484, 'Nyagoro Health Center', '13875', 'Homa Bay', 'Rangwe', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(485, 'Nyalgosi Dispensary', '13889', 'Homa Bay', 'Rachuonyo South', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.45458', '34.68672', '2025-07-13 05:15:02'),
+(486, 'Nyamasi Dispensary', '13902', 'Homa Bay', 'Homa Bay Town', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.62408', '34.4521', '2025-07-13 05:15:02'),
+(487, 'Nyamrisra Health Centre', '13915', 'Homa Bay', 'Suba South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.57025', '34.09686', '2025-07-13 05:15:02'),
+(488, 'Nyandiwa Dispensary', '13920', 'Homa Bay', 'Suba South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.72455', '34.05126', '2025-07-13 05:15:02'),
+(489, 'Nyangiela Sub District Hospital', '13926', 'Homa Bay', 'Rachuonyo South', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(490, 'Nyatoto Health Centre', '13946', 'Homa Bay', 'Suba South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.55661', '34.27185', '2025-07-13 05:15:02'),
+(491, 'NYS Dispensary (Suba)', '13949', 'Homa Bay', 'Suba South', 'Other Public Institution', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.60789', '34.25982', '2025-07-13 05:15:02'),
+(492, 'Obalwanda Dispensary', '13950', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.49418', '34.2833', '2025-07-13 05:15:02'),
+(493, 'Obanga Health Centre', '13951', 'Homa Bay', 'Suba South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.68652', '34.07781', '2025-07-13 05:15:02'),
+(494, 'Ober Kabuoch Dispensary', '13952', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.76661', '34.43956', '2025-07-13 05:15:02'),
+(495, 'Ober Health Center', '13953', 'Homa Bay', 'Kabondo Kasipul', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(496, 'Obunga Dispensary', '13957', 'Homa Bay', 'Rangwe', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.55712', '34.62644', '2025-07-13 05:15:02'),
+(497, 'Obwanda Dispensary', '13958', 'Homa Bay', 'Rangwe', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.47666', '34.59013', '2025-07-13 05:15:02'),
+(498, 'Ogande Dispensary', '13962', 'Homa Bay', 'Homa Bay Town', 'Christian Health Association of Kenya', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.58832', '34.50667', '2025-07-13 05:15:02'),
+(499, 'Ogongo Sub County Hospital', '13967', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(500, 'Okiki Amayo Health Centre', '13972', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.41198', '34.51135', '2025-07-13 05:15:02'),
+(501, 'Olando Dispensary', '13974', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.43246', '34.65263', '2025-07-13 05:15:02'),
+(502, 'Ombek Health Centre', '13978', 'Homa Bay', 'Rachuonyo South', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02');
+INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(503, 'Ombo Kachieng Dispensary', '13979', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(504, 'Omboga Dispensary', '13980', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.43925', '34.62273', '2025-07-13 05:15:02'),
+(505, 'Omiro Dispensary', '13981', 'Homa Bay', 'Kabondo Kasipul', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.45299', '34.80357', '2025-07-13 05:15:02'),
+(506, 'Othoro Sub District Hospital', '14002', 'Homa Bay', 'Kabondo Kasipul', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.89053', '34.38688', '2025-07-13 05:15:02'),
+(507, 'Pala Level4', '14011', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(508, 'Ponge Dispensary - Ndhiwa', '14015', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(509, 'Ponge Dispensary (Mbita)', '14016', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.52066', '34.26754', '2025-07-13 05:15:02'),
+(510, 'Rachuonyo sub-county Hospital', '14022', 'Homa Bay', 'Rachuonyo South', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(511, 'Randung Dispensary', '14031', 'Homa Bay', 'Rangwe', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(512, 'Rangwe (SDA) Dispensary', '14035', 'Homa Bay', 'Rangwe', 'Christian Health Association of Kenya', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.59816', '34.5836', '2025-07-13 05:15:02'),
+(513, 'Rangwe Sub-District Hospital', '14036', 'Homa Bay', 'Rangwe', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.60106', '34.58135', '2025-07-13 05:15:02'),
+(514, 'Rariw Dispensary', '14038', 'Homa Bay', 'Rangwe', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.58085', '34.61745', '2025-07-13 05:15:02'),
+(515, 'Raruowa Health Centre', '14039', 'Homa Bay', 'Rachuonyo North', 'Kenya Episcopal Conference-Catholic Secretariat', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.41175', '34.55658', '2025-07-13 05:15:02'),
+(516, 'Roadblock Clinic', '14056', 'Homa Bay', 'Ndhiwa', 'Private Enterprise (Institution)', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.72947', '34.36915', '2025-07-13 05:15:02'),
+(517, 'St Mercelline Roo Dispensary (Suba)', '14059', 'Homa Bay', 'Suba South', 'Other Faith Based', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.55831', '34.12547', '2025-07-13 05:15:02'),
+(518, 'Seka Health Centre', '14074', 'Homa Bay', 'Suba South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.73846', '34.13543', '2025-07-13 05:15:02'),
+(519, 'Sena Health Centre', '14075', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.46828', '34.06427', '2025-07-13 05:15:02'),
+(520, 'Shirikisho Health Centre', '14078', 'Homa Bay', 'Rachuonyo South', 'Other Faith Based', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(521, 'Simbi Kogembo Dispensary', '14089', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.36474', '34.62989', '2025-07-13 05:15:02'),
+(522, 'Simbiri Nanbell Health Centre', '14090', 'Homa Bay', 'Rachuonyo South', 'Private Enterprise (Institution)', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.42618', '34.70728', '2025-07-13 05:15:02'),
+(523, 'Sino Health Centre', '14092', 'Homa Bay', 'Rachuonyo South', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(524, 'Soklo Dispensary', '14095', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.46828', '34.03159', '2025-07-13 05:15:02'),
+(525, 'St Pauls Health Centre', '14124', 'Homa Bay', 'Homa Bay Town', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(526, 'Suba District Hospital', '14130', 'Homa Bay', 'Suba South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.59857', '34.1675', '2025-07-13 05:15:02'),
+(527, 'Sulwe Clinic', '14132', 'Homa Bay', 'Rachuonyo South', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.50635', '34.73679', '2025-07-13 05:15:02'),
+(528, 'Swindon Clinic', '14138', 'Homa Bay', 'Rachuonyo South', 'Private Enterprise (Institution)', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.48705', '34.76996', '2025-07-13 05:15:02'),
+(529, 'Takawiri Dispensary', '14140', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.47441', '34.08651', '2025-07-13 05:15:02'),
+(530, 'Tom Mboya Memorial SCH', '14150', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(531, 'Tonga Health Centre', '14152', 'Homa Bay', 'Suba South', 'Kenya Episcopal Conference-Catholic Secretariat', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.69311', '34.12379', '2025-07-13 05:15:02'),
+(532, 'Ugina Health Centre', '14155', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.47813', '33.98636', '2025-07-13 05:15:02'),
+(533, 'Usao Health Centre', '14162', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.47394', '34.38572', '2025-07-13 05:15:02'),
+(534, 'Viagenco Medical Center', '14167', 'Homa Bay', 'Mbita', 'Non-Governmental Organizations', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(535, 'Wagwe Health Center', '14168', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(536, 'Wakula Health Centre', '14169', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.45066', '33.98847', '2025-07-13 05:15:02'),
+(537, 'Waware Dispensary', '14171', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(538, 'Wiga Dispensary', '14172', 'Homa Bay', 'Homa Bay Town', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(539, 'Wire Dispensary', '14174', 'Homa Bay', 'Rachuonyo South', 'Christian Health Association of Kenya', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(540, 'Yokia Dispensary', '14176', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(541, 'Maram Dispensary', '16258', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.67527', '34.5468', '2025-07-13 05:15:02'),
+(542, 'Okok Dispensary', '16259', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.6829', '34.42877', '2025-07-13 05:15:02'),
+(543, 'Oriang (SDA) Health Centre', '16284', 'Homa Bay', 'Rachuonyo North', 'Christian Health Association of Kenya', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.39968', '34.62755', '2025-07-13 05:15:02'),
+(544, 'Kijawa Dispensary', '16765', 'Homa Bay', 'Homa Bay Town', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.61988', '34.47081', '2025-07-13 05:15:02'),
+(545, 'Miniambo Dispensary', '16766', 'Homa Bay', 'Homa Bay Town', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.53761', '34.48563', '2025-07-13 05:15:02'),
+(546, 'Oridi Dispensary', '16767', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.77833', '34.37896', '2025-07-13 05:15:02'),
+(547, 'Amoyo Dispensary', '16768', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.82297', '34.35597', '2025-07-13 05:15:02'),
+(548, 'Kadhola Dispensary', '16769', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.81123', '34.28983', '2025-07-13 05:15:02'),
+(549, 'Lwanda Awiti Dispensary', '16770', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.7964', '34.27632', '2025-07-13 05:15:02'),
+(550, 'Ndisi Dispensary', '16771', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.68057', '34.34749', '2025-07-13 05:15:02'),
+(551, 'Nyaoga Dispensary', '16876', 'Homa Bay', 'Rachuonyo North', 'Non-Governmental Organizations', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(552, 'Hope Compassionate (ACK) Dispensary', '16983', 'Homa Bay', 'Homa Bay Town', 'Christian Health Association of Kenya', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.53423', '34.46021', '2025-07-13 05:15:02'),
+(553, 'Oneno Dispensary', '16985', 'Homa Bay', 'Rangwe', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.55689', '34.54841', '2025-07-13 05:15:02'),
+(554, 'Nyalkinyi (Jersey) Dispensary', '16986', 'Homa Bay', 'Homa Bay Town', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.53279', '34.49332', '2025-07-13 05:15:02'),
+(555, 'Asumbi Annex Dispensary', '16987', 'Homa Bay', 'Homa Bay Town', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.6246', '34.50363', '2025-07-13 05:15:02'),
+(556, 'Yala Dispensary', '17069', 'Homa Bay', 'Rachuonyo South', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(557, 'Tala Health Centre', '17170', 'Homa Bay', 'Kabondo Kasipul', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(558, 'Integrated Development Fund (Idf) VCT', '17585', 'Homa Bay', 'Kabondo Kasipul', 'Non-Governmental Organizations', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.44715', '34.88965', '2025-07-13 05:15:02'),
+(559, 'Remba Dispensary', '17593', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.56106', '33.9279', '2025-07-13 05:15:02'),
+(560, 'Rusinga Island of Hope Humanist Health Centre', '17594', 'Homa Bay', 'Mbita', 'Private Enterprise (Institution)', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.42356', '34.14039', '2025-07-13 05:15:02'),
+(561, 'Young Generation Centre Dispensary (Med 25)', '17690', 'Homa Bay', 'Mbita', 'Private Enterprise (Institution)', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(562, 'Ringiti Dispensary', '17710', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.56106', '33.9279', '2025-07-13 05:15:02'),
+(563, 'Ngeri Dispensary', '17711', 'Homa Bay', 'Suba South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.59819', '34.10402', '2025-07-13 05:15:02'),
+(564, 'Osani Community Dispensary', '17726', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'No Partner', 'No Agency', 'KenyaEMR', 'Discontinued', 'On Premises', '-0.8375', '34.3018', '2025-07-13 05:15:02'),
+(565, 'Good Shepherd Angiya', '17747', 'Homa Bay', 'Ndhiwa', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(566, 'DICE IRDO - Mbita', '17846', 'Homa Bay', 'Mbita', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(567, 'Oyuma Dispensary (Rachuonyo)', '17852', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.36542', '34.61512', '2025-07-13 05:15:02'),
+(568, 'Nyawango Dispensary', '18051', 'Homa Bay', 'Kabondo Kasipul', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.41461', '34.75861', '2025-07-13 05:15:02'),
+(569, 'Kiembe Dispensary', '18077', 'Homa Bay', 'Suba South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.65355', '34.13381', '2025-07-13 05:15:02'),
+(570, 'Nyakweri Dispensary', '18420', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(571, 'Ragwe Dispensary', '18530', 'Homa Bay', 'Kabondo Kasipul', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.52177', '34.66174', '2025-07-13 05:15:02'),
+(572, 'Koywech Dispensary', '18531', 'Homa Bay', 'Rachuonyo South', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.44755', '34.72799', '2025-07-13 05:15:02'),
+(573, 'Atela Health Centre', '18610', 'Homa Bay', 'Kabondo Kasipul', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(574, 'Got Kamondi Dispensary', '18874', 'Homa Bay', 'Kabondo Kasipul', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.42111', '34.91194', '2025-07-13 05:15:02'),
+(575, 'Kachuth Dispensary', '18876', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.33342', '34.42402', '2025-07-13 05:15:02'),
+(576, 'Otange Dispensary', '18877', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.81805', '34.37872', '2025-07-13 05:15:02'),
+(577, 'Ongamo Dispensary', '18892', 'Homa Bay', 'Rachuonyo South', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(578, 'Makongeni Health Centre', '19858', 'Homa Bay', 'Homa Bay Town', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.53', '34.5', '2025-07-13 05:15:02'),
+(579, 'Pala Masogo Health Center', '19859', 'Homa Bay', 'Homa Bay Town', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(580, 'Nyarut Health Centre', '19860', 'Homa Bay', 'Rangwe', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.47', '34.5', '2025-07-13 05:15:02'),
+(581, 'Koduogo Dispensary', '19861', 'Homa Bay', 'Homa Bay Town', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.57', '34.4', '2025-07-13 05:15:02'),
+(582, 'Nyawawa Dispensary', '19863', 'Homa Bay', 'Rangwe', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.65', '34.6', '2025-07-13 05:15:02'),
+(583, 'Nyawita Dispensary', '19864', 'Homa Bay', 'Rangwe', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.57', '34.6', '2025-07-13 05:15:02'),
+(584, 'Wikoteng Dispensary', '19865', 'Homa Bay', 'Rangwe', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(585, 'Obuya Dispensary', '19866', 'Homa Bay', 'Rangwe', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.53', '34.6', '2025-07-13 05:15:02'),
+(586, 'Nyambare Dispensary', '19867', 'Homa Bay', 'Rangwe', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.56', '34.6', '2025-07-13 05:15:02'),
+(587, 'Nduga Dispensary', '19868', 'Homa Bay', 'Rangwe', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.58', '34.6', '2025-07-13 05:15:02'),
+(588, 'Wikondiek Dispensary', '19909', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(589, 'Sindo DICE', '20029', 'Homa Bay', 'Suba South', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(590, 'Kasewe Dispensary', '20153', 'Homa Bay', 'Kabondo Kasipul', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.444', '34.444', '2025-07-13 05:15:02'),
+(591, 'Ngeta Dispensary', '20168', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.36394', '34.58051', '2025-07-13 05:15:02'),
+(592, 'Kangir Dispensary', '20169', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(593, 'Nyangajo Dispensary', '20172', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.40441', '34.64601', '2025-07-13 05:15:02'),
+(594, 'Ndere Dispensary', '20173', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(595, 'Kobodo Dispensary', '20241', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.4587', '34.5426', '2025-07-13 05:15:02'),
+(596, 'Unga Dispensary', '20242', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.7598', '34.41336', '2025-07-13 05:15:02'),
+(597, 'Lwanda Kobita Dispensary', '20285', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(598, 'Kome Dispensary', '20347', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.65', '34.6', '2025-07-13 05:15:02'),
+(599, 'Ringa Dispensary', '20364', 'Homa Bay', 'Kabondo Kasipul', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.47464', '34.8515', '2025-07-13 05:15:02'),
+(600, 'Malongo Dispensary', '20379', 'Homa Bay', 'Suba South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.64172', '34.0567', '2025-07-13 05:15:02'),
+(601, 'Asumbi Teachers Training College', '21118', 'Homa Bay', 'Rangwe', 'Private Practice - Nurse / Midwifery', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.6018', '34.23737', '2025-07-13 05:15:02'),
+(602, 'Janeiro Nursing Home', '21135', 'Homa Bay', 'Rangwe', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.5483', '34.507', '2025-07-13 05:15:02'),
+(603, 'Orego Health Centre', '21163', 'Homa Bay', 'Homa Bay Town', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.6221', '34.544', '2025-07-13 05:15:02'),
+(604, 'St Francis of Assis Dispensary', '21209', 'Homa Bay', 'Rachuonyo South', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.52931', '34.74842', '2025-07-13 05:15:02'),
+(605, 'Kokech Mirondo Health Center', '21212', 'Homa Bay', 'Rachuonyo South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.50455', '34.69198', '2025-07-13 05:15:02'),
+(606, 'Kodula Dispensary', '21246', 'Homa Bay', 'Karachuonyo', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.3451', '34.79', '2025-07-13 05:15:02'),
+(607, 'Magao Dispensary', '21247', 'Homa Bay', 'Karachuonyo', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(608, 'Opemble Dispensary', '21252', 'Homa Bay', 'Suba South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(609, 'Nyamadede Community Dispensary', '21282', 'Homa Bay', 'Suba South', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(610, 'Mukuyu Health Centre', '21412', 'Homa Bay', 'Suba South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(611, 'Rakwaro Dispensary', '21482', 'Homa Bay', 'Karachuonyo', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(612, 'Odino Health Centre', '21488', 'Homa Bay', 'Kabondo Kasipul', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(613, 'Awach Health Centre', '21489', 'Homa Bay', 'Kabondo Kasipul', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(614, 'Ojunge Health Centre', '21610', 'Homa Bay', 'Homa Bay Town', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(615, 'Bondo Awino', '21648', 'Homa Bay', 'Rachuonyo South', 'Other Faith Based', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(616, 'Oredho Health Centre', '21961', 'Homa Bay', 'Rachuonyo South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(617, 'Kilusi Health Centre', '22190', 'Homa Bay', 'Kabondo Kasipul', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(618, 'Litare community health centre', '22476', 'Homa Bay', 'Mbita', 'Non-Governmental Organizations', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(619, 'Aimo Dispensary', '22860', 'Homa Bay', 'Rachuonyo South', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(620, 'Ringa Health Centre', '23432', 'Homa Bay', 'Kabondo Kasipul', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(621, 'Langi Kodera DISPENSARY', '25260', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'No Partner', 'No Agency', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(622, 'Arombe Medical Centre', '28500', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(623, 'GK prison health center( Rachuonyo North)', '30176', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(624, 'ACK Dispensary (Isiolo)', '11918', 'Isiolo', 'Isiolo', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', '0.35699', '37.57572', '2025-07-13 05:15:02'),
+(625, 'Apu Dispensary', '11933', 'Isiolo', 'Isiolo', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.27955', '37.54604', '2025-07-13 05:15:02'),
+(626, 'Basa Dispensary', '11947', 'Isiolo', 'Merti', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '1.1823', '38.58158', '2025-07-13 05:15:02'),
+(627, 'Eremet Dispensary', '12012', 'Isiolo', 'Isiolo', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.43324', '37.6026', '2025-07-13 05:15:02'),
+(628, 'Gafarsa Health Centre', '12025', 'Isiolo', 'Garbatulla', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.93696', '38.58865', '2025-07-13 05:15:02'),
+(629, 'Garbatulla District Hospital', '12029', 'Isiolo', 'Garbatulla', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.52697', '38.51422', '2025-07-13 05:15:02'),
+(630, 'GK Prison Dispensary (Isiolo)', '12046', 'Isiolo', 'Isiolo', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.35758', '37.58541', '2025-07-13 05:15:02'),
+(631, 'Isiolo District Hospital', '12094', 'Isiolo', 'Isiolo', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.3658', '37.58997', '2025-07-13 05:15:02'),
+(632, 'Kinna Health Centre', '12323', 'Isiolo', 'Garbatulla', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.32042', '38.20633', '2025-07-13 05:15:02'),
+(633, 'Kula Mawe Dispensary', '12389', 'Isiolo', 'Garbatulla', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.56725', '38.19658', '2025-07-13 05:15:02'),
+(634, 'Merti Health Centre', '12514', 'Isiolo', 'Merti', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '1.06678', '38.66636', '2025-07-13 05:15:02'),
+(635, 'Oldonyiro Dispensary (Isiolo)', '12697', 'Isiolo', 'Isiolo', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.64913', '36.9938', '2025-07-13 05:15:02'),
+(636, 'Sericho Health Centre', '12729', 'Isiolo', 'Garbatulla', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '1.13778', '39.10453', '2025-07-13 05:15:02'),
+(637, 'Narrapu Dispensary', '16221', 'Isiolo', 'Isiolo', 'Community', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.61001', '36.95726', '2025-07-13 05:15:02'),
+(638, 'Waso AIPCA Dispensary (Isiolo)', '17774', 'Isiolo', 'Isiolo', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(639, 'GALAXY', '22162', 'Isiolo', 'Isiolo', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(640, 'Amboseli Dispensary', '14200', 'Kajiado', 'Loitokitok', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-2.74492', '37.3667', '2025-07-13 05:15:02'),
+(641, 'Sucos Hospital', '14204', 'Kajiado', 'Kajiado East', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.61761', '36.7349', '2025-07-13 05:15:02'),
+(642, 'Bissil Health Centre', '14259', 'Kajiado', 'Kajiado Central', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(643, 'Embulbul Catholic Dispensary', '14445', 'Kajiado', 'Kajiado North', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(644, 'Emotoroki Dispensary', '14448', 'Kajiado', 'Kajiado Central', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-2.29397', '37.03052', '2025-07-13 05:15:02'),
+(645, 'Entarara Health Centre', '14467', 'Kajiado', 'Loitokitok', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-2.9954', '37.62565', '2025-07-13 05:15:02'),
+(646, 'Entasopia Health Centre', '14469', 'Kajiado', 'Kajiado West', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.78378', '36.0535', '2025-07-13 05:15:02'),
+(647, 'Ewuaso Kedong Health Centre', '14486', 'Kajiado', 'Kajiado West', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(648, 'Fatima Health Centre (Lenkism)', '14493', 'Kajiado', 'Loitokitok', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-2.39994', '37.21487', '2025-07-13 05:15:02'),
+(649, 'Fatima Maternity Hospital', '14494', 'Kajiado', 'Kajiado North', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.39545', '36.7445', '2025-07-13 05:15:02'),
+(650, 'Fr Andrian Heath Centre', '14503', 'Kajiado', 'Kajiado Central', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.841986', '36.791349', '2025-07-13 05:15:02'),
+(651, 'GK Prison Dispensary (Athi River)', '14517', 'Kajiado', 'Kajiado East', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.47463', '36.9358', '2025-07-13 05:15:02'),
+(652, 'Illasit Medical Clinic', '14567', 'Kajiado', 'Loitokitok', 'Private Practice - Clinical Officer', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-2.95799', '37.57027', '2025-07-13 05:15:02'),
+(653, 'Iltilal Health Centre', '14569', 'Kajiado', 'Loitokitok', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-2.86835', '37.8768', '2025-07-13 05:15:02'),
+(654, 'Immurtot Health Centre', '14573', 'Kajiado', 'Loitokitok', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-2.87405', '37.40271', '2025-07-13 05:15:02'),
+(655, 'Isinet Health Centre', '14581', 'Kajiado', 'Loitokitok', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(656, 'Isinya Health Centre', '14582', 'Kajiado', 'Kajiado East', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.68803', '36.85117', '2025-07-13 05:15:02'),
+(657, 'Kajiado (AIC) Dispensary', '14650', 'Kajiado', 'Kajiado Central', 'Christian Health Association of Kenya', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.83119', '36.80599', '2025-07-13 05:15:02'),
+(658, 'Kajiado County Referral Hospital', '14652', 'Kajiado', 'Kajiado Central', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(659, 'Kimana Health Centre', '14868', 'Kajiado', 'Kajiado North', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-2.8145', '37.53042', '2025-07-13 05:15:02'),
+(660, 'Kitengela sub-county hospital', '14950', 'Kajiado', 'Kajiado East', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(661, 'Kitengela Medical Services', '14951', 'Kajiado', 'Kajiado East', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.47115', '36.9633', '2025-07-13 05:15:02'),
+(662, 'Langata Enkima Dispensary', '15012', 'Kajiado', 'Loitokitok', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-2.84124', '37.67148', '2025-07-13 05:15:02'),
+(663, 'Loitokitok Sub County Hospital', '15051', 'Kajiado', 'Loitokitok', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(664, 'Magadi Hospital', '15107', 'Kajiado', 'Kajiado West', 'Company Medical Service', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.90267', '36.28629', '2025-07-13 05:15:02'),
+(665, 'Mashuru Health Centre', '15150', 'Kajiado', 'Kajiado East', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-2.10442', '37.12928', '2025-07-13 05:15:02'),
+(666, 'Matasia Nursing Home', '15153', 'Kajiado', 'Kajiado North', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.38423', '36.6553', '2025-07-13 05:15:02'),
+(667, 'Mawepi Medical and VCT Centre ', '15161', 'Kajiado', 'Kajiado East', 'Private Practice', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(668, 'Merueshi Village Community Health Centre', '15180', 'Kajiado', 'Kajiado East', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-2.37219', '37.54465', '2025-07-13 05:15:02'),
+(669, 'Meto Dispensary', '15182', 'Kajiado', 'Kajiado Central', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-2.4109', '36.54962', '2025-07-13 05:15:02'),
+(670, 'Mile 46 Health Centre', '15185', 'Kajiado', 'Kajiado West', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.89661', '36.5882', '2025-07-13 05:15:02'),
+(671, 'Mosiro Health Centre (Kajiado West)', '15226', 'Kajiado', 'Kajiado West', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(672, 'Namanga Health Centre', '15294', 'Kajiado', 'Kajiado Central', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-2.54315', '36.78729', '2025-07-13 05:15:02'),
+(673, 'Namelok Health Centre', '15296', 'Kajiado', 'Loitokitok', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-2.7155', '37.45466', '2025-07-13 05:15:02'),
+(674, 'Ngatataek Health Centre', '15340', 'Kajiado', 'Kajiado Central', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(675, 'Ngong Sub-County Hospital', '15351', 'Kajiado', 'Kajiado North', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(676, 'Nkama Dispensary', '15361', 'Kajiado', 'Loitokitok', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-2.94072', '37.55075', '2025-07-13 05:15:02'),
+(677, 'Ol-Malaika Health Centre', '15413', 'Kajiado', 'Kajiado West', 'Faith Based Organization', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.56631', '36.7993', '2025-07-13 05:15:02'),
+(678, 'Oltepesi Dispensary', '15434', 'Kajiado', 'Kajiado West', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.46806', '36.738', '2025-07-13 05:15:02'),
+(679, 'Ongata Rongai Sub County Hospital', '15440', 'Kajiado', 'Kajiado North', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(680, 'Rombo Health Centre', '15490', 'Kajiado', 'Loitokitok', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.05975', '37.69964', '2025-07-13 05:15:02'),
+(681, 'Shompole Health Centre', '15560', 'Kajiado', 'Kajiado West', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(682, 'Simba Health Centre', '15574', 'Kajiado', 'Kajiado East', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-2.15929', '37.59477', '2025-07-13 05:15:02'),
+(683, 'St Mary Health Centre (Kiserian)', '15652', 'Kajiado', 'Kajiado West', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.4024', '36.6832', '2025-07-13 05:15:02'),
+(684, 'St Therese Dispensary', '15667', 'Kajiado', 'Kajiado East', 'Kenya Episcopal Conference - Catholic Secretariat', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.47944', '36.95978', '2025-07-13 05:15:02'),
+(685, 'Tumaini Clinic', '15748', 'Kajiado', 'Loitokitok', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.04752', '37.69739', '2025-07-13 05:15:02'),
+(686, 'Wama Nursing Home', '15767', 'Kajiado', 'Kajiado North', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.23851', '36.4593', '2025-07-13 05:15:02'),
+(687, 'Wanainchi Jamii Materinty and Nursing Home', '15770', 'Kajiado', 'Kajiado North', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(688, 'Zam Zam Medical Services', '15787', 'Kajiado', 'Kajiado North', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(689, 'Beacon of Hope Clinic (Ongata Rongai)', '16667', 'Kajiado', 'Kajiado North', 'Private Practice - General Practitioner', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(690, 'Drop Inn Ray Clinic', '16668', 'Kajiado', 'Kajiado North', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.38778', '36.7523', '2025-07-13 05:15:02'),
+(691, 'Tropical Medical Clinic', '17767', 'Kajiado', 'Loitokitok', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-2.92623', '37.50921', '2025-07-13 05:15:02'),
+(692, 'Ololua Dispensary', '17799', 'Kajiado', 'Kajiado North', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(693, 'Urafiki Medical Clinic', '18142', 'Kajiado', 'Kajiado East', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', '-1.61452', '36.90083', '2025-07-13 05:15:02'),
+(694, 'Topcare Nursing Home', '18189', 'Kajiado', 'Kajiado East', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.4721', '36.95599', '2025-07-13 05:15:02'),
+(695, 'St Pauls Hospital', '18190', 'Kajiado', 'Kajiado East', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(696, 'Nairobi Women Hospital Ongata Rongai', '18195', 'Kajiado', 'Kajiado North', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.39603', '36.74622', '2025-07-13 05:15:02'),
+(697, 'Ajam Mission Health Centre', '18398', 'Kajiado', 'Kajiado West', 'Non-Governmental Organizations', 'No Partner', 'No Agency', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(698, 'Kitengela Centre of Hope', '18401', 'Kajiado', 'Kajiado East', 'Private Practice - Nurse / Midwife', 'HOPE Worldwide Kenya', 'Global Fund', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(699, 'Kitengela Medical Services Kajiado', '18976', 'Kajiado', 'Kajiado Central', 'Private Practice - General Practitioner', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.84235', '36.04567', '2025-07-13 05:15:02'),
+(700, 'Imbirikani Dispensary', '19108', 'Kajiado', 'Loitokitok', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-2.54497', '37.52914', '2025-07-13 05:15:02'),
+(701, 'Nairobi Womens Hospital Kitengela', '21283', 'Kajiado', 'Kajiado East', 'Private Practice - General Practitioner', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(702, 'Matasia Health Centre', '22612', 'Kajiado', 'Kajiado North', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(703, 'St. Crispin Afya Hospital ', '28630', 'Kajiado', 'Kajiado Central', 'Private Practice', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(704, 'Ahmadiya Hospital', '15791', 'Kakamega', 'Mumias East', 'Other Faith Based', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.31409', '34.57571', '2025-07-13 05:15:02'),
+(705, 'Ap Line Dispensary', '15801', 'Kakamega', 'Lurambi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.27532', '34.75514', '2025-07-13 05:15:02'),
+(706, 'Approved Dispensary', '15804', 'Kakamega', 'Lurambi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.29318', '34.76131', '2025-07-13 05:15:02'),
+(707, 'Buchangu Dispensary', '15810', 'Kakamega', 'Navakholo', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.44564', '34.67083', '2025-07-13 05:15:02'),
+(708, 'Budonga Dispensary', '15812', 'Kakamega', 'Navakholo', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.39812', '34.610223', '2025-07-13 05:15:02'),
+(709, 'Bukaya Health Centre', '15817', 'Kakamega', 'Mumias West', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.26004', '34.44942', '2025-07-13 05:15:02'),
+(710, 'Bukura Health Centre', '15820', 'Kakamega', 'Lurambi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.21919', '34.62051', '2025-07-13 05:15:02'),
+(711, 'Bungasi Health Centre', '15827', 'Kakamega', 'Mumias West', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.19947', '34.39919', '2025-07-13 05:15:02'),
+(712, 'Bushiangala Health Centre', '15832', 'Kakamega', 'Ikolomani', 'Other Faith Based', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.1872', '34.68388', '2025-07-13 05:15:02'),
+(713, 'Bushiri Health Centre', '15833', 'Kakamega', 'Navakholo', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.36613', '34.7292', '2025-07-13 05:15:02'),
+(714, 'Butere Sub County Hospital', '15836', 'Kakamega', 'Butere', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(715, 'Central Clinic (Likuyani)', '15843', 'Kakamega', 'Likuyani', 'Private Enterprise (Institution)', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(716, 'Chebwai Mission Dispensary', '15849', 'Kakamega', 'Malava', 'Other Faith Based', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.49933', '34.83212', '2025-07-13 05:15:02'),
+(717, 'Chegulo Dispensary', '15850', 'Kakamega', 'Malava', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.493803', '34.788307', '2025-07-13 05:15:02'),
+(718, 'Chekalini Health Centre', '15851', 'Kakamega', 'Lugari', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(719, 'Chevoso Dispensary', '15857', 'Kakamega', 'Malava', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.36948', '34.81167', '2025-07-13 05:15:02'),
+(720, 'Chimoi Dispensary', '15858', 'Kakamega', 'Malava', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(721, 'Chombeli Health Centre', '15859', 'Kakamega', 'Malava', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.45621', '34.75151', '2025-07-13 05:15:02'),
+(722, 'Elukhambi Dispensary', '15872', 'Kakamega', 'Lurambi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.199222', '34.610867', '2025-07-13 05:15:02'),
+(723, 'Elwasambi Dispensary', '15873', 'Kakamega', 'Mumias East', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.28893', '34.56794', '2025-07-13 05:15:02'),
+(724, 'Elwesero Model Health Centre', '15874', 'Kakamega', 'Lurambi', 'Community', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(725, 'St. Monica Eregi Mission Health Centre', '15881', 'Kakamega', 'Ikolomani', 'Other Faith Based', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(726, 'Eshikhuyu Dispensary', '15882', 'Kakamega', 'Lurambi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.26474', '34.65593', '2025-07-13 05:15:02'),
+(727, 'Eshiongo Dispensary', '15883', 'Kakamega', 'Navakholo', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.31418', '34.69385', '2025-07-13 05:15:02'),
+(728, 'GK Prisons Dispensary (Kakamega Central)', '15892', 'Kakamega', 'Lurambi', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.27284', '34.75309', '2025-07-13 05:15:02'),
+(729, 'Iguhu Sub County Hospital', '15899', 'Kakamega', 'Ikolomani', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(730, 'Ileho Health Centre', '15900', 'Kakamega', 'Shinyalu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.29034', '34.94566', '2025-07-13 05:15:02'),
+(731, 'Imbiakalo Dispensary', '15901', 'Kakamega', 'Malava', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.41007', '34.75233', '2025-07-13 05:15:02'),
+(732, 'Jamia Medical Centre', '15906', 'Kakamega', 'Mumias West', 'Supreme Council for Kenya Muslims', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.335181', '34.4861', '2025-07-13 05:15:02'),
+(733, 'Kakamega Forest Dispensary', '15914', 'Kakamega', 'Shinyalu', 'Ministry of Health', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.2358', '34.86755', '2025-07-13 05:15:02'),
+(734, 'Kakamega County General Hospital', '15915', 'Kakamega', 'Lurambi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(735, 'Kambiri Health Centre', '15916', 'Kakamega', 'Shinyalu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.37415', '34.91101', '2025-07-13 05:15:02'),
+(736, 'Khalaba Health Centre', '15931', 'Kakamega', 'Matungu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.42734', '34.54832', '2025-07-13 05:15:02'),
+(737, 'Kharanda  Health Centre', '15934', 'Kakamega', 'Navakholo', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(738, 'Khaunga Dispensary', '15936', 'Kakamega', 'Mumias East', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.37687', '34.58407', '2025-07-13 05:15:02'),
+(739, 'Khwisero Health Centre', '15940', 'Kakamega', 'Khwisero', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.11', '34.48', '2025-07-13 05:15:02'),
+(740, 'Kilingili Health Centre', '15945', 'Kakamega', 'Ikolomani', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.1422', '34.68151', '2025-07-13 05:15:02'),
+(741, 'Kimangeti Dispensary', '15949', 'Kakamega', 'Malava', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.43404', '34.90868', '2025-07-13 05:15:02'),
+(742, 'Kongoni Health Centre', '15955', 'Kakamega', 'Likuyani', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.78012', '35.12526', '2025-07-13 05:15:02'),
+(743, 'St Charles Lwanga Health Centre', '15957', 'Kakamega', 'Lugari', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.62801', '34.88434', '2025-07-13 05:15:02'),
+(744, 'Kuvasali Health Centre', '15959', 'Kakamega', 'Malava', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.42106', '34.94322', '2025-07-13 05:15:02'),
+(745, 'Likuyani Sub-County Hospital', '15961', 'Kakamega', 'Likuyani', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(746, 'Lugari Forest Dispensary', '15964', 'Kakamega', 'Lugari', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.66328', '34.90693', '2025-07-13 05:15:02');
+INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(747, 'Lumakanda Sub County Hospital', '15969', 'Kakamega', 'Lugari', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.63478', '34.97615', '2025-07-13 05:15:02'),
+(748, 'Lumani Dispensary', '15970', 'Kakamega', 'Lugari', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.4904', '34.72177', '2025-07-13 05:15:02'),
+(749, 'Lunganyiro Health Centre', '15972', 'Kakamega', 'Matungu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(750, 'Lunyito Dispensary', '15974', 'Kakamega', 'Lugari', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.6736', '34.8755', '2025-07-13 05:15:02'),
+(751, 'Lusheya Health Centre', '15977', 'Kakamega', 'Mumias East', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.30453', '34.53606', '2025-07-13 05:15:02'),
+(752, 'Lutaso Dispensary', '15978', 'Kakamega', 'Navakholo', 'Other Faith Based', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.44406', '34.71081', '2025-07-13 05:15:02'),
+(753, 'Mabusi Health Centre', '15983', 'Kakamega', 'Likuyani', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.83445', '35.08051', '2025-07-13 05:15:02'),
+(754, 'Mahanga Dispensary (Lugari)', '15987', 'Kakamega', 'Lugari', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(755, 'Majengo Dispensary', '15988', 'Kakamega', 'Lugari', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.65113', '34.9983', '2025-07-13 05:15:02'),
+(756, 'Makunga Rhdc', '15991', 'Kakamega', 'Mumias East', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.31', '34.62', '2025-07-13 05:15:02'),
+(757, 'Malava Sub County Hospital', '15996', 'Kakamega', 'Malava', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(758, 'Malekha Dispensary', '15997', 'Kakamega', 'Malava', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.462644', '34.796357', '2025-07-13 05:15:02'),
+(759, 'Manyala Sub-District Hospital', '15999', 'Kakamega', 'Butere', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.1604', '34.45262', '2025-07-13 05:15:02'),
+(760, 'Mapengo Dispensary', '16000', 'Kakamega', 'Lugari', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.64823', '34.85997', '2025-07-13 05:15:02'),
+(761, 'Matete Health Centre', '16005', 'Kakamega', 'Lugari', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.55456', '34.8057', '2025-07-13 05:15:02'),
+(762, 'Matioli Dispensary', '16006', 'Kakamega', 'Lurambi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.36881', '34.71162', '2025-07-13 05:15:02'),
+(763, 'Matunda Maternity Home', '16007', 'Kakamega', 'Likuyani', 'Private Enterprise (Institution)', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(764, 'Matunda Sub-District Hospital', '16008', 'Kakamega', 'Likuyani', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.8257', '35.11558', '2025-07-13 05:15:02'),
+(765, 'Maturu Dispensary', '16009', 'Kakamega', 'Lugari', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.60774', '34.86937', '2025-07-13 05:15:02'),
+(766, 'Mautuma Sub County Hospital', '16010', 'Kakamega', 'Lugari', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.72482', '34.98169', '2025-07-13 05:15:02'),
+(767, 'Mbagara Dispensary', '16011', 'Kakamega', 'Lugari', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.72582', '35.00844', '2025-07-13 05:15:02'),
+(768, 'Muhaka Health Centre', '16027', 'Kakamega', 'Khwisero', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(769, 'Mukumu Hospital', '16030', 'Kakamega', 'Shinyalu', 'Other Faith Based', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.21583', '34.76837', '2025-07-13 05:15:02'),
+(770, 'Mukuyu Dispensary', '16031', 'Kakamega', 'Lugari', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.73333', '34.95742', '2025-07-13 05:15:02'),
+(771, 'Mulwanda Health Centre', '16033', 'Kakamega', 'Khwisero', 'Christian Health Association of Kenya', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(772, 'Mumias Model Health Centre', '16035', 'Kakamega', 'Mumias West', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.335497', '34.4483', '2025-07-13 05:15:02'),
+(773, 'Matungu Sub-County Hospital', '16037', 'Kakamega', 'Matungu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(774, 'Mumias Sugar Clinic', '16038', 'Kakamega', 'Mumias West', 'Private Practice - Nurse / Midwife', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.347621', '34.4998', '2025-07-13 05:15:02'),
+(775, 'Mundoli Health Centre', '16040', 'Kakamega', 'Khwisero', 'Other Faith Based', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.10961', '34.5775', '2025-07-13 05:15:02'),
+(776, 'Munganga Dispensary', '16041', 'Kakamega', 'Mumias East', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(777, 'Mungungu Dispensary', '16042', 'Kakamega', 'Matungu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(778, 'Munyuki Dispensary', '16046', 'Kakamega', 'Lugari', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.63492', '34.93926', '2025-07-13 05:15:02'),
+(779, 'Murhanda Medical Clinic', '16047', 'Kakamega', 'Shinyalu', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '0.26391', '34.79599', '2025-07-13 05:15:02'),
+(780, 'Murudef Dispensary', '16048', 'Kakamega', 'Ikolomani', 'Private Enterprise (Institution)', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(781, 'Musembe Dispensary (Lugari)', '16051', 'Kakamega', 'Lugari', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.6192', '34.93003', '2025-07-13 05:15:02'),
+(782, 'Mutingongo Dispensary', '16054', 'Kakamega', 'Malava', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(783, 'Emutsesa Health Centre', '16055', 'Kakamega', 'Khwisero', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(784, 'Nabongo Dispensary', '16059', 'Kakamega', 'Lurambi', 'Community', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.28473', '34.74541', '2025-07-13 05:15:02'),
+(785, 'Nala Maternity and Nursing Home', '16062', 'Kakamega', 'Lurambi', 'Private Enterprise (Institution)', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.28164', '34.74907', '2025-07-13 05:15:02'),
+(786, 'Namagara Dispensary', '16064', 'Kakamega', 'Malava', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.50423', '34.87852', '2025-07-13 05:15:02'),
+(787, 'Namasoli Health Centre', '16065', 'Kakamega', 'Khwisero', 'Christian Health Association of Kenya', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.14408', '34.52882', '2025-07-13 05:15:02'),
+(788, 'Namulungu Dispensary', '16070', 'Kakamega', 'Matungu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.45129', '34.46232', '2025-07-13 05:15:02'),
+(789, 'National Youth Service Dispensary (Turbo)', '16077', 'Kakamega', 'Lugari', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(790, 'Navakholo Sub-District Hospital', '16078', 'Kakamega', 'Navakholo', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.41373', '34.68229', '2025-07-13 05:15:02'),
+(791, 'Nzoia (ACK) Dispensary', '16084', 'Kakamega', 'Likuyani', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', '0.867575', '35.04447', '2025-07-13 05:15:02'),
+(792, 'Nzoia Matete Dispensary', '16086', 'Kakamega', 'Lugari', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.70791', '35.00997', '2025-07-13 05:15:02'),
+(793, 'Sango Dispensary', '16100', 'Kakamega', 'Likuyani', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.72878', '35.07275', '2025-07-13 05:15:02'),
+(794, 'Savane Dispensary', '16101', 'Kakamega', 'Ikolomani', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.17', '34.72382', '2025-07-13 05:15:02'),
+(795, 'Seregeya Dispensary', '16102', 'Kakamega', 'Likuyani', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.66375', '35.10736', '2025-07-13 05:15:02'),
+(796, 'Shamakhubu Health Centre', '16104', 'Kakamega', 'Shinyalu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.26468', '34.82788', '2025-07-13 05:15:02'),
+(797, 'Shamberere Health Centre', '16105', 'Kakamega', 'Malava', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(798, 'Shibwe Sub-County Hospital', '16107', 'Kakamega', 'Ikolomani', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(799, 'Shihalia Dispensary', '16108', 'Kakamega', 'Ikolomani', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.18853', '34.704223', '2025-07-13 05:15:02'),
+(800, 'Shihome Dispensary', '16109', 'Kakamega', 'Malava', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.39138', '34.79209', '2025-07-13 05:15:02'),
+(801, 'Shikokho Dispensary', '16110', 'Kakamega', 'Ikolomani', 'Private Enterprise (Institution)', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.18303', '34.72056', '2025-07-13 05:15:02'),
+(802, 'Shikunga Health Centre', '16111', 'Kakamega', 'Butere', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.21743', '34.49913', '2025-07-13 05:15:02'),
+(803, 'Shikusa Health Centre', '16112', 'Kakamega', 'Shinyalu', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.31857', '34.81241', '2025-07-13 05:15:02'),
+(804, 'Shikusi Dispensary', '16113', 'Kakamega', 'Shinyalu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.20371', '34.79913', '2025-07-13 05:15:02'),
+(805, 'Eshimukoko Health Centre', '16114', 'Kakamega', 'Butere', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.21534', '34.56581', '2025-07-13 05:15:02'),
+(806, 'Eshinutsa Health Centre', '16115', 'Kakamega', 'Khwisero', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.15045', '34.63458', '2025-07-13 05:15:02'),
+(807, 'Shiraha Health Centre', '16116', 'Kakamega', 'Butere', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.19682', '34.57071', '2025-07-13 05:15:02'),
+(808, 'Shisaba Dispensary', '16118', 'Kakamega', 'Butere', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.23641', '34.55751', '2025-07-13 05:15:02'),
+(809, 'Shiseso Health Centre', '16119', 'Kakamega', 'Ikolomani', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.23131', '34.70353', '2025-07-13 05:15:02'),
+(810, 'Shitsitswi Health Centre', '16121', 'Kakamega', 'Butere', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.26325', '34.50429', '2025-07-13 05:15:02'),
+(811, 'Shivanga Health Centre', '16122', 'Kakamega', 'Malava', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.53218', '34.84643', '2025-07-13 05:15:02'),
+(812, 'Shibanze Dispensary', '16123', 'Kakamega', 'Matungu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.415591', '34.529008', '2025-07-13 05:15:02'),
+(813, 'Sinoko Dispensary (Likuyani)', '16127', 'Kakamega', 'Likuyani', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.86778', '35.07629', '2025-07-13 05:15:02'),
+(814, 'Sonak Community Medical Centre', '16132', 'Kakamega', 'Khwisero', 'Private Practice - Nurse / Midwife', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(815, 'Soy Sambu Dispensary', '16134', 'Kakamega', 'Likuyani', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.77699', '35.10492', '2025-07-13 05:15:02'),
+(816, 'St Marys Hospital (Mumias)', '16141', 'Kakamega', 'Mumias West', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(817, 'Chief Milimu Dispensary', '16144', 'Kakamega', 'Shinyalu', 'Private Enterprise (Institution)', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(818, 'St Pius Musoli Health Centre', '16145', 'Kakamega', 'Ikolomani', 'Other Faith Based', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.20501', '34.66461', '2025-07-13 05:15:02'),
+(819, 'Sivilie Health Centre', '16147', 'Kakamega', 'Navakholo', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(820, 'Turbo Forest Dispensary', '16154', 'Kakamega', 'Likuyani', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.65858', '35.06033', '2025-07-13 05:15:02'),
+(821, 'Imulama Dispensary', '16481', 'Kakamega', 'Ikolomani', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.23999', '34.67035', '2025-07-13 05:15:02'),
+(822, 'Shikumu Dispensary', '16483', 'Kakamega', 'Ikolomani', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.17222', '34.66717', '2025-07-13 05:15:02'),
+(823, 'Imalaba Dispensary', '16484', 'Kakamega', 'Ikolomani', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.16255', '34.68576', '2025-07-13 05:15:02'),
+(824, 'Elwangale Health Centre', '16714', 'Kakamega', 'Khwisero', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.148298', '34.6726', '2025-07-13 05:15:02'),
+(825, 'Ikuywa Dispensary', '16717', 'Kakamega', 'Shinyalu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.2089', '34.9426', '2025-07-13 05:15:02'),
+(826, 'Emusanda Health Centre', '16762', 'Kakamega', 'Lurambi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(827, 'Musembe Dispensary', '16865', 'Kakamega', 'Shinyalu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.21168', '34.8422', '2025-07-13 05:15:02'),
+(828, 'Ematiha Dispensary', '16867', 'Kakamega', 'Navakholo', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.36153', '34.76605', '2025-07-13 05:15:02'),
+(829, 'Nyaporo Dispensary', '17082', 'Kakamega', 'Mumias East', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.32964', '34.62579', '2025-07-13 05:15:02'),
+(830, 'Eshirembe Dispensary', '17133', 'Kakamega', 'Lurambi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.25437', '34.62122', '2025-07-13 05:15:02'),
+(831, 'Malaha Dispensary', '17150', 'Kakamega', 'Mumias East', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.35522', '34.61352', '2025-07-13 05:15:02'),
+(832, 'Namirama Dispensary', '17178', 'Kakamega', 'Navakholo', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.42671', '34.70493', '2025-07-13 05:15:02'),
+(833, 'Eshikulu Dispensary', '17217', 'Kakamega', 'Mumias West', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.30169', '34.43925', '2025-07-13 05:15:02'),
+(834, 'Mabole Health Centre', '17297', 'Kakamega', 'Butere', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.18594', '34.50627', '2025-07-13 05:15:02'),
+(835, 'Lukohe Health Centre', '17298', 'Kakamega', 'Butere', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(836, 'Emalindi Health Centre', '17409', 'Kakamega', 'Khwisero', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.13171', '34.61713', '2025-07-13 05:15:02'),
+(837, 'Shinyalu Model Health Centre', '17596', 'Kakamega', 'Shinyalu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(838, 'Mugomari Dispensary', '17597', 'Kakamega', 'Shinyalu', 'Community', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.22008', '34.73814', '2025-07-13 05:15:02'),
+(839, 'Manda Dispensary', '17681', 'Kakamega', 'Malava', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.57174', '34.86275', '2025-07-13 05:15:02'),
+(840, 'Kakamega Grace  Medical Centre', '17825', 'Kakamega', 'Lurambi', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(841, 'Indangalasia Dispensary', '17929', 'Kakamega', 'Matungu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.31675', '34.39497', '2025-07-13 05:15:02'),
+(842, 'Mirere Health Centre', '17931', 'Kakamega', 'Matungu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.45476', '34.42738', '2025-07-13 05:15:02'),
+(843, 'Eluche', '18361', 'Kakamega', 'Mumias East', 'Community', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.3317', '34.54226', '2025-07-13 05:15:02'),
+(844, 'Lumino Dispensary', '18624', 'Kakamega', 'Likuyani', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.71054', '35.15068', '2025-07-13 05:15:02'),
+(845, 'Mlimani Dispensary', '18625', 'Kakamega', 'Likuyani', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.86396', '35.01574', '2025-07-13 05:15:02'),
+(846, 'Mugai Dispensary', '18779', 'Kakamega', 'Malava', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.43183', '34.80622', '2025-07-13 05:15:02'),
+(847, 'Kamashia', '18802', 'Kakamega', 'Mumias East', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.29334', '34.50681', '2025-07-13 05:15:02'),
+(848, 'Butere Iranda Health Centre', '18939', 'Kakamega', 'Butere', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.2442', '34.46411', '2025-07-13 05:15:02'),
+(849, 'Imanga Health Centre', '18941', 'Kakamega', 'Butere', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.27533', '34.47337', '2025-07-13 05:15:02'),
+(850, 'Eshiabwali Health Centre', '19899', 'Kakamega', 'Khwisero', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.12723', '34.63458', '2025-07-13 05:15:02'),
+(851, 'Sakali Dispensary', '19960', 'Kakamega', 'Lurambi', 'Private Practice - Nurse / Midwife', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.31285', '34.79081', '2025-07-13 05:15:02'),
+(852, 'Isumba Dispensary', '19991', 'Kakamega', 'Lurambi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.24218', '34.63962', '2025-07-13 05:15:02'),
+(853, 'Emukaba Dispensary', '20039', 'Kakamega', 'Lurambi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.34257', '34.76333', '2025-07-13 05:15:02'),
+(854, 'Sisokhe Dispensary', '20041', 'Kakamega', 'Navakholo', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.4331', '34.61191', '2025-07-13 05:15:02'),
+(855, 'Butingo Dispensary', '20043', 'Kakamega', 'Navakholo', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.35586', '34.63533', '2025-07-13 05:15:02'),
+(856, 'Kisembe Dispensary', '20044', 'Kakamega', 'Navakholo', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.35586', '34.61191', '2025-07-13 05:15:02'),
+(857, 'Vikunga Dispensary', '20174', 'Kakamega', 'Shinyalu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.13762', '34.43658', '2025-07-13 05:15:02'),
+(858, 'Virhembe Nursing Home', '20175', 'Kakamega', 'Shinyalu', 'Non-Governmental Organizations', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(859, 'Shianda Dispensary', '20194', 'Kakamega', 'Mumias East', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.3222', '34.57247', '2025-07-13 05:15:02'),
+(860, 'Ebuhala Health Centre', '20515', 'Kakamega', 'Khwisero', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.1357', '34.53126', '2025-07-13 05:15:02'),
+(861, 'Mundobelwa Health centre', '20516', 'Kakamega', 'Khwisero', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.1572', '34.6128', '2025-07-13 05:15:02'),
+(862, 'Ekambuli Health Centre', '20673', 'Kakamega', 'Khwisero', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.106466', '34.57092', '2025-07-13 05:15:02'),
+(863, 'Ivochio Dispensary', '21089', 'Kakamega', 'Shinyalu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.28746', '34.80715', '2025-07-13 05:15:02'),
+(864, 'KANCO DIC Kakamega', '21802', 'Kakamega', 'Lurambi', 'Non-Governmental Organizations', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(865, 'Mumias Sub County Hospital', '25166', 'Kakamega', 'Mumias West', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(866, 'AIC Litein Mission Hospital', '14178', 'Kericho', 'Bureti', 'Other Faith Based', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.58621', '35.1865', '2025-07-13 05:15:02'),
+(867, 'Ainamoi Health Centre', '14192', 'Kericho', 'Ainamoi', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.299435', '35.27442', '2025-07-13 05:15:02'),
+(868, 'Cheborgei Health Centre', '14300', 'Kericho', 'Bureti', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.57824', '35.14351', '2025-07-13 05:15:02'),
+(869, 'Chemase Dispensary', '14314', 'Kericho', 'Belgut', 'Private Enterprise (Institution)', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-0.41526', '35.30371', '2025-07-13 05:15:02'),
+(870, 'Chemosot Health Centre', '14323', 'Kericho', 'Bureti', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.50979', '35.17105', '2025-07-13 05:15:02'),
+(871, 'Chepsir Dispensary', '14362', 'Kericho', 'Kipkelion East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.28354', '35.4259', '2025-07-13 05:15:02'),
+(872, 'Forttenan Sub District Hospital', '14501', 'Kericho', 'Kipkelion West', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.13723', '35.34428', '2025-07-13 05:15:02'),
+(873, 'GK Prisons Dispensary (Kericho)', '14521', 'Kericho', 'Ainamoi', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.36676', '35.28465', '2025-07-13 05:15:02'),
+(874, 'JFK Engineering Disp', '14596', 'Kericho', 'Belgut', 'Private Enterprise (Institution)', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-0.41415', '35.18607', '2025-07-13 05:15:02'),
+(875, 'Kabianga Health Centre', '14613', 'Kericho', 'Belgut', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.44595', '35.14648', '2025-07-13 05:15:02'),
+(876, 'Kabutii-Matiret Dispensary', '14633', 'Kericho', 'Sigowet/Soin', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.38998', '35.01269', '2025-07-13 05:15:02'),
+(877, 'Kamawoi Dispensary', '14671', 'Kericho', 'Belgut', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.39043', '35.12798', '2025-07-13 05:15:02'),
+(878, 'Kamwingi Dispensary', '14679', 'Kericho', 'Kipkelion East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.07181', '35.562', '2025-07-13 05:15:02'),
+(879, 'Kapkatet District Hospital', '14706', 'Kericho', 'Bureti', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.62738', '35.19319', '2025-07-13 05:15:02'),
+(880, 'Kedowa Dispensary', '14824', 'Kericho', 'Kipkelion East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.2121', '35.56792', '2025-07-13 05:15:02'),
+(881, 'Kericho District Hospital', '14831', 'Kericho', 'Ainamoi', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.37207', '35.28053', '2025-07-13 05:15:02'),
+(882, 'Kericho Municipal Health Centre', '14833', 'Kericho', 'Ainamoi', 'Local Authority', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.37028', '35.28449', '2025-07-13 05:15:02'),
+(883, 'Kipchimchim M Hospital', '14890', 'Kericho', 'Ainamoi', 'Other Faith Based', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-0.32737', '35.26811', '2025-07-13 05:15:02'),
+(884, 'Kipkelion Sub District Hospital', '14897', 'Kericho', 'Kipkelion West', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.19425', '35.4642', '2025-07-13 05:15:02'),
+(885, 'Kipketer Dispensary', '14899', 'Kericho', 'Belgut', 'Private Enterprise (Institution)', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-0.34802', '35.13104', '2025-07-13 05:15:02'),
+(886, 'Kipsitet Dispensary', '14919', 'Kericho', 'Sigowet/Soin', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.23015', '35.16232', '2025-07-13 05:15:02'),
+(887, 'Kiptere Dispensary', '14928', 'Kericho', 'Sigowet/Soin', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.39442', '35.10649', '2025-07-13 05:15:02'),
+(888, 'Kipwastuiyo Health Centre', '14935', 'Kericho', 'Bureti', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.61945', '35.10999', '2025-07-13 05:15:02'),
+(889, 'Kunyak Dispensary', '15001', 'Kericho', 'Kipkelion West', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.15103', '35.29147', '2025-07-13 05:15:02'),
+(890, 'lemotit Dispensary', '15026', 'Kericho', 'Kipkelion East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.09137', '35.5203', '2025-07-13 05:15:02'),
+(891, 'Litein Dispensary', '15039', 'Kericho', 'Bureti', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.58307', '35.18905', '2025-07-13 05:15:02'),
+(892, 'Londiani District Hospital', '15074', 'Kericho', 'Kipkelion East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.1663', '35.59242', '2025-07-13 05:15:02'),
+(893, 'Manyoror Dispensary', '15121', 'Kericho', 'Ainamoi', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.29489', '35.33774', '2025-07-13 05:15:02'),
+(894, 'Mogwa Dispensary', '15201', 'Kericho', 'Sigowet/Soin', 'Private Enterprise (Institution)', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-0.39135', '35.01499', '2025-07-13 05:15:02'),
+(895, 'Momoniat Health Centre', '15219', 'Kericho', 'Kipkelion East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.24272', '35.4523', '2025-07-13 05:15:02'),
+(896, 'Mtaragon Health Centre', '15242', 'Kericho', 'Kipkelion West', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.1121', '35.42033', '2025-07-13 05:15:02'),
+(897, 'Quadalupe Sisters Roret', '15475', 'Kericho', 'Bureti', 'Kenya Episcopal Conference-Catholic Secretariat', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-0.50251', '35.10005', '2025-07-13 05:15:02'),
+(898, 'Roret Sub-District Hospital', '15498', 'Kericho', 'Bureti', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.50033', '35.09931', '2025-07-13 05:15:02'),
+(899, 'Sigowet Sub-District Hospital', '15568', 'Kericho', 'Sigowet/Soin', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.39564', '35.04871', '2025-07-13 05:15:02'),
+(900, 'Siloam Hospital', '15571', 'Kericho', 'Ainamoi', 'Private Enterprise (Institution)', 'HJF-South Rift Valley', 'DOD', '', 'Stalled/Inactive', 'On Premises', '-0.35835', '35.27805', '2025-07-13 05:15:02'),
+(901, 'Sosiot Health Centre', '15617', 'Kericho', 'Belgut', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.361', '35.17356', '2025-07-13 05:15:02'),
+(902, 'Unilever Central Hospital', '15761', 'Kericho', 'Ainamoi', 'Private Enterprise (Institution)', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.36309', '35.29879', '2025-07-13 05:15:02'),
+(903, 'Tea Research Foundation Dispensary', '16471', 'Kericho', 'Kipkelion East', 'Private Enterprise (Institution)', 'HJF-South Rift Valley', 'DOD', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(904, 'Kapsoit', '17138', 'Kericho', 'Belgut', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.31991', '35.21256', '2025-07-13 05:15:02'),
+(905, 'Kapsuser', '17139', 'Kericho', 'Belgut', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.3909', '35.2216', '2025-07-13 05:15:02'),
+(906, 'Ketitui Dispensary', '17210', 'Kericho', 'Ainamoi', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.29949', '35.24129', '2025-07-13 05:15:02'),
+(907, 'Live With Hope', '17589', 'Kericho', 'Ainamoi', 'Other Faith Based', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.36457', '35.26912', '2025-07-13 05:15:02'),
+(908, 'Kericho GK Prisons Medium Dispensary', '18616', 'Kericho', 'Ainamoi', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(909, 'Hope World Wide', '19114', 'Kericho', 'Ainamoi', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.48474', '35.28027', '2025-07-13 05:15:02'),
+(910, 'Kapsongoi Dispensary', '19157', 'Kericho', 'Belgut', 'Private Enterprise (Institution)', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-0.40806', '35.26881', '2025-07-13 05:15:02'),
+(911, 'Sosiot Medical Centre', '20846', 'Kericho', 'Belgut', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.3636', '35.17013', '2025-07-13 05:15:02'),
+(912, 'Cardinal Otunga Health Centre', '10019', 'Kiambu', 'Gatundu North', 'Faith Based', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(913, 'Anmer Dispensary', '10029', 'Kiambu', 'Kiambu Town', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.13699', '36.84742', '2025-07-13 05:15:02'),
+(914, 'Beta Care Nursing Home', '10058', 'Kiambu', 'Githunguri', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.06305', '36.78275', '2025-07-13 05:15:02'),
+(915, 'Boore Clinic', '10074', 'Kiambu', 'Thika Town', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.02794', '37.0685', '2025-07-13 05:15:02'),
+(916, 'Cianda Dispensary', '10097', 'Kiambu', 'Kiambaa', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.13066', '36.7646', '2025-07-13 05:15:02'),
+(917, 'Ebenezer Medical Clinic (Lari)', '10158', 'Kiambu', 'Lari', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.0401', '36.63841', '2025-07-13 05:15:02'),
+(918, 'Gachege dispensary', '10194', 'Kiambu', 'Gatundu North', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.90974', '36.90974', '2025-07-13 05:15:02'),
+(919, 'Gakoe Health centre', '10202', 'Kiambu', 'Gatundu North', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.04491', '37.18638', '2025-07-13 05:15:02'),
+(920, 'Gathanga Health Centre', '10214', 'Kiambu', 'Kiambaa', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(921, 'Gatundu District Hospital', '10233', 'Kiambu', 'Gatundu South', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.01409', '36.90613', '2025-07-13 05:15:02'),
+(922, 'Gichuru Dispensary', '10252', 'Kiambu', 'Kikuyu', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.21413', '36.66036', '2025-07-13 05:15:02'),
+(923, 'Gitare health centre', '10257', 'Kiambu', 'Gatundu South', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(924, 'Githiga Health Centre', '10263', 'Kiambu', 'Githunguri', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.083', '36.7462', '2025-07-13 05:15:02'),
+(925, 'Githunguri health centre', '10269', 'Kiambu', 'Githunguri', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.05738', '36.77783', '2025-07-13 05:15:02'),
+(926, 'GK Prison Dispensary (Ruiru)', '10288', 'Kiambu', 'Ruiru', 'Ministry of Health', 'LVCT Prisons', 'CDC', '', '', 'On Premises', '-1.14118', '36.92695', '2025-07-13 05:15:02'),
+(927, 'GK Prisons Dispensary (Kiambu Town)', '10290', 'Kiambu', 'Kiambu Town', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(928, 'GSU Dispensary (Ruiru)', '10304', 'Kiambu', 'Juja', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.12859', '36.9732', '2025-07-13 05:15:02'),
+(929, 'Holy Cross Dispensary', '10321', 'Kiambu', 'Limuru', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.18891', '36.59773', '2025-07-13 05:15:02'),
+(930, 'Igegania Sub-District Hospital', '10338', 'Kiambu', 'Gatundu North', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.97363', '36.92842', '2025-07-13 05:15:02'),
+(931, 'Immaculate Heart of Mary Hosp.', '10349', 'Kiambu', 'Thika Town', 'Kenya Episcopal Conference-Catholic Secretariat', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(932, 'Jkuat Hospital', '10378', 'Kiambu', 'Juja', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.10176', '37.01437', '2025-07-13 05:15:02'),
+(933, 'Juja Farm health centre', '10386', 'Kiambu', 'Juja', 'Ministry of Health', 'Kiambu County Endeleza Program', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.16671', '37.08161', '2025-07-13 05:15:02'),
+(934, 'Kagaa Dispensary', '10394', 'Kiambu', 'Githunguri', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.02817', '36.70875', '2025-07-13 05:15:02'),
+(935, 'Kagwe Dispensary', '10413', 'Kiambu', 'Githunguri', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.00315', '36.73671', '2025-07-13 05:15:02'),
+(936, 'Kalimoni Hospital', '10438', 'Kiambu', 'Juja', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kiambu County Endeleza Program', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(937, 'Karatu health centre', '10489', 'Kiambu', 'Gatundu South', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.94502', '36.82669', '2025-07-13 05:15:02'),
+(938, 'Karuri Health Centre', '10507', 'Kiambu', 'Kiambaa', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.17594', '36.7523', '2025-07-13 05:15:02'),
+(939, 'Kiambu District Hospital', '10539', 'Kiambu', 'Kiambu Town', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.17209', '36.83098', '2025-07-13 05:15:02'),
+(940, 'Kiambu Institute of Science and Technology Dispens', '10540', 'Kiambu', 'Kiambu Town', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.18149', '36.836', '2025-07-13 05:15:02'),
+(941, 'Kiganjo Dispensary', '10581', 'Kiambu', 'Gatundu South', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.98574', '36.83115', '2025-07-13 05:15:02'),
+(942, 'Kigumo Health Centre', '10587', 'Kiambu', 'Githunguri', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(943, 'Kihara Sub-District Hospital', '10591', 'Kiambu', 'Kiambaa', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.21427', '36.76768', '2025-07-13 05:15:02'),
+(944, 'Kijabe (AIC) Hospital', '10602', 'Kiambu', 'Lari', 'Christian Health Association of Kenya', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.94611', '36.59506', '2025-07-13 05:15:02'),
+(945, 'Kikuyu (PCEA) Hospital', '10603', 'Kiambu', 'Kikuyu', 'Other Faith Based', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.26526', '36.66959', '2025-07-13 05:15:02'),
+(946, 'Lari Health Centre', '10655', 'Kiambu', 'Lari', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.00873', '36.62671', '2025-07-13 05:15:02'),
+(947, 'Limuru Health Centre', '10661', 'Kiambu', 'Limuru', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.1106', '36.64101', '2025-07-13 05:15:02'),
+(948, 'Limuru Nursing Home', '10662', 'Kiambu', 'Limuru', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.109', '36.64083', '2025-07-13 05:15:02'),
+(949, 'Lussigetti Sub-county Hospital', '10666', 'Kiambu', 'Kikuyu', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(950, 'Mama Margaret Medical Clinic', '10676', 'Kiambu', 'Gatundu South', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.0236', '36.84103', '2025-07-13 05:15:02'),
+(951, 'Kijabe (AIC) Hospital Marira Medical Clinic', '10693', 'Kiambu', 'Lari', 'Other Faith Based', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.03294', '36.62211', '2025-07-13 05:15:02'),
+(952, 'Martmerg Medical Clinic', '10695', 'Kiambu', 'Ruiru', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.18953', '36.93209', '2025-07-13 05:15:02'),
+(953, 'Mary Help of the Sick Hospital', '10698', 'Kiambu', 'Thika Town', 'Kenya Episcopal Conference-Catholic Secretariat', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.95761', '36.9015', '2025-07-13 05:15:02'),
+(954, 'Mbici Dispensary', '10711', 'Kiambu', 'Gatundu North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.96211', '36.87871', '2025-07-13 05:15:02'),
+(955, 'Miguta Dispensary', '10726', 'Kiambu', 'Githunguri', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.07076', '36.83032', '2025-07-13 05:15:02'),
+(956, 'St. Mulumba mission hospital', '10765', 'Kiambu', 'Thika Town', 'Kenya Episcopal Conference-Catholic Secretariat', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(957, 'Munyu Health Centre', '10774', 'Kiambu', 'Thika Town', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.11445', '37.16934', '2025-07-13 05:15:02'),
+(958, 'Nazareth Hospital', '10825', 'Kiambu', 'Limuru', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.13613', '36.72546', '2025-07-13 05:15:02'),
+(959, 'Ndeiya Health Centre', '10831', 'Kiambu', 'Limuru', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.15348', '36.59682', '2025-07-13 05:15:02'),
+(960, 'Ngenda health centre', '10864', 'Kiambu', 'Gatundu South', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.0383', '36.88643', '2025-07-13 05:15:02'),
+(961, 'Ngewa Health Centre', '10865', 'Kiambu', 'Githunguri', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.09497', '36.8672', '2025-07-13 05:15:02'),
+(962, 'Ngoliba health centre', '10869', 'Kiambu', 'Thika Town', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.09859', '37.33472', '2025-07-13 05:15:02'),
+(963, 'Ngorongo health centre', '10872', 'Kiambu', 'Gatundu North', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.9385', '36.90652', '2025-07-13 05:15:02'),
+(964, 'Nyathuna Sub District Hospital', '10895', 'Kiambu', 'Kabete', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.18629', '36.68463', '2025-07-13 05:15:02'),
+(965, 'Plainsview Nursing Home', '10940', 'Kiambu', 'Ruiru', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.15274', '36.95942', '2025-07-13 05:15:02'),
+(966, 'Ruiru Sub-County Hospital', '10973', 'Kiambu', 'Ruiru', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(967, 'Ruiru Hospital Limited', '10974', 'Kiambu', 'Ruiru', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.14414', '36.95795', '2025-07-13 05:15:02'),
+(968, 'Sacred Heart Dispensary', '10988', 'Kiambu', 'Kiambaa', 'Other Faith Based', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.18784', '36.76598', '2025-07-13 05:15:02'),
+(969, 'St Charles Lwanga Dispensary', '11030', 'Kiambu', 'Limuru', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.11859', '36.62635', '2025-07-13 05:15:02'),
+(970, 'St Joseph Catholic Dispensary (Ruiru)', '11041', 'Kiambu', 'Ruiru', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.19973', '36.92644', '2025-07-13 05:15:02'),
+(971, 'Thigio Dispensary (Kiambu West)', '11093', 'Kiambu', 'Limuru', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.1986', '36.60476', '2025-07-13 05:15:02'),
+(972, 'Thika Level 5 Hospital', '11094', 'Kiambu', 'Thika Town', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.04148', '37.07628', '2025-07-13 05:15:02'),
+(973, 'Thika Nursing Home', '11097', 'Kiambu', 'Thika Town', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.04035', '37.06921', '2025-07-13 05:15:02'),
+(974, 'Tigoni sub county hospital', '11104', 'Kiambu', 'Limuru', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(975, 'Uthiru Dispensary', '11141', 'Kiambu', 'Kabete', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.25498', '36.71171', '2025-07-13 05:15:02'),
+(976, 'Wangige Health Centre', '11170', 'Kiambu', 'Kabete', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(977, 'Warazo Medical Clinic (Ruiru)', '11175', 'Kiambu', 'Kasarani', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(978, 'Githunguri health centre (Ruiru)', '16748', 'Kiambu', 'Ruiru', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.15475', '36.93845', '2025-07-13 05:15:02'),
+(979, 'Partners In Prevention', '16749', 'Kiambu', 'Thika Town', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.02794', '37.0685', '2025-07-13 05:15:02'),
+(980, 'Hamundia Health Centre', '16753', 'Kiambu', 'Juja', 'Ministry of Health', 'Kiambu County Endeleza Program', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.1631', '36.99889', '2025-07-13 05:15:02'),
+(981, 'Family Health Options Kenya Clinic', '16756', 'Kiambu', 'Thika Town', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.03051', '37.07241', '2025-07-13 05:15:02'),
+(982, 'Kiandutu Health Centre', '16814', 'Kiambu', 'Thika Town', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.02996', '37.04612', '2025-07-13 05:15:02'),
+(983, 'Tinganga Catholic Dispensary', '17094', 'Kiambu', 'Kiambu Town', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.13311', '36.81938', '2025-07-13 05:15:02'),
+(984, 'Seth Medical Clinic', '17267', 'Kiambu', 'Limuru', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.11061', '36.64437', '2025-07-13 05:15:02'),
+(985, 'St Angela Melici Health Centre', '17362', 'Kiambu', 'Kabete', 'Other Faith Based', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.22872', '36.70614', '2025-07-13 05:15:02'),
+(986, '12 Engineers', '17486', 'Kiambu', 'Thika Town', 'Ministry of Health', 'HJF-Nairobi', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-1.07354', '37.14413', '2025-07-13 05:15:02'),
+(987, 'Nazareth Hospital (Ruiru)', '17490', 'Kiambu', 'Ruiru', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.14729', '36.94985', '2025-07-13 05:15:02'),
+(988, 'Gituamba Community Dispensary', '17837', 'Kiambu', 'Gatundu North', 'Community Development Fund', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.90646', '36.86095', '2025-07-13 05:15:02'),
+(989, 'GK Prisons Thika', '17877', 'Kiambu', 'Thika Town', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(990, 'St Anns Medical Centre', '17989', 'Kiambu', 'Kabete', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.30147', '36.75371', '2025-07-13 05:15:02'),
+(991, 'LVCT Health Thika', '18345', 'Kiambu', 'Thika Town', 'Private Enterprise (Institution)', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(992, 'Makongeni dispensary', '18432', 'Kiambu', 'Thika Town', 'Local Authority', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.06234', '37.10882', '2025-07-13 05:15:02'),
+(993, 'Gachororo health centre', '18608', 'Kiambu', 'Juja', 'Ministry of Health', 'Kiambu County Endeleza Program', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.08697', '37.02015', '2025-07-13 05:15:02'),
+(994, 'Mundoro Community Dispensary', '18658', 'Kiambu', 'Gatundu South', 'Community Development Fund', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.95055', '36.76462', '2025-07-13 05:15:02'),
+(995, 'Langata Health centre (Ruiru)', '18762', 'Kiambu', 'Ruiru', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02');
+INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(996, 'Cordis Maria Dispensary', '19722', 'Kiambu', 'Ruiru', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.21589', '36.93658', '2025-07-13 05:15:02'),
+(997, 'Holy family catholic hospital githunguri', '19963', 'Kiambu', 'Githunguri', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(998, 'Child & Family Wellness Clinic', '19985', 'Kiambu', 'Kiambu Town', 'Other Faith Based', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.17535', '36.8304', '2025-07-13 05:15:02'),
+(999, 'Kanyoni Community Dispensary', '20218', 'Kiambu', 'Gatundu North', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.92336', '36.85143', '2025-07-13 05:15:02'),
+(1000, 'Avenue Healthcare Thika', '20628', 'Kiambu', 'Thika Town', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.03879', '37.07748', '2025-07-13 05:15:02'),
+(1001, 'Tinganga Dispensary', '20819', 'Kiambu', 'Kiambu Town', 'Ministry of Health', 'No Partner', 'No Agency', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1002, 'AAR Health Care Ruaka', '21981', 'Kiambu', 'Kiambaa', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1003, 'Equity Afia m/c', '22434', 'Kiambu', 'Thika Town', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1004, 'MPEG Dice', '22742', 'Kiambu', 'Thika Town', 'Non-Governmental Organizations', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1005, 'Lvct Ruaka Dice', '24969', 'Kiambu', 'Kiambaa', 'Non-Governmental Organizations', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1006, 'Kiaswa Initiative Clinic', '27179', 'Kiambu', 'Juja', 'Non-Governmental Organizations', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1007, 'ADC Danisa Dispensary', '11196', 'Kilifi', 'Magarini', 'Non-Governmental Organizations', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.05351', '39.50986', '2025-07-13 05:15:02'),
+(1008, 'Adu Dispensary', '11198', 'Kilifi', 'Magarini', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-2.83976', '39.98014', '2025-07-13 05:15:02'),
+(1009, 'Amani Medical Clinic (Kilifi)', '11217', 'Kilifi', 'Kilifi North', 'Private Enterprise (Institution)', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.64157', '39.84783', '2025-07-13 05:15:02'),
+(1010, 'Mrs - 77 Artillery Battallion (Mariakani)', '11225', 'Kilifi', 'Kaloleni', 'Armed Forces', 'HJF-Nairobi', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1011, 'Bakhita Dispensary', '11236', 'Kilifi', 'Malindi', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.17445', '40.06918', '2025-07-13 05:15:02'),
+(1012, 'Bamba Sub-County Hospital', '11237', 'Kilifi', 'Ganze', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1013, 'Bamba Maternity Nursing Home', '11238', 'Kilifi', 'Ganze', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1014, 'Baolala Dispensary', '11244', 'Kilifi', 'Malindi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.17962', '39.78562', '2025-07-13 05:15:02'),
+(1015, 'Baricho Dispensary', '11248', 'Kilifi', 'Magarini', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1016, 'Bomani Dispensary', '11255', 'Kilifi', 'Kilifi South', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.88414', '39.74945', '2025-07-13 05:15:02'),
+(1017, 'Bombi Dispensary', '11256', 'Kilifi', 'Magarini', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.07925', '39.47874', '2025-07-13 05:15:02'),
+(1018, 'Bwagamoyo Dispensary', '11266', 'Kilifi', 'Rabai', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.9402', '39.64462', '2025-07-13 05:15:02'),
+(1019, 'Chakama Dispensary', '11276', 'Kilifi', 'Magarini', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.122', '39.63333', '2025-07-13 05:15:02'),
+(1020, 'Chasimba Health Centre', '11282', 'Kilifi', 'Kilifi South', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.73513', '39.70028', '2025-07-13 05:15:02'),
+(1021, 'Roka Medical Clinic', '11288', 'Kilifi', 'Kilifi North', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1022, 'Cowdray Dispensary', '11293', 'Kilifi', 'Kilifi North', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.28859', '40.07671', '2025-07-13 05:15:02'),
+(1023, 'Dagamra Dispensary', '11297', 'Kilifi', 'Magarini', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.14893', '39.91768', '2025-07-13 05:15:02'),
+(1024, 'Dida Dispensary', '11305', 'Kilifi', 'Ganze', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.42885', '39.80529', '2025-07-13 05:15:02'),
+(1025, 'Dzikunze Dispensary', '11359', 'Kilifi', 'Ganze', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.29437', '39.74882', '2025-07-13 05:15:02'),
+(1026, 'Fundi Issa Dispensary', '11379', 'Kilifi', 'Magarini', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-2.92982', '40.09493', '2025-07-13 05:15:02'),
+(1027, 'Gahaleni Dispensary', '11380', 'Kilifi', 'Malindi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.27017', '40.0951', '2025-07-13 05:15:02'),
+(1028, 'Meridian Hospital Kilifi', '11381', 'Kilifi', 'Kilifi North', 'Private Practice - Medical Specialist', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1029, 'Ganda Dispensary', '11382', 'Kilifi', 'Malindi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.21609', '40.06558', '2025-07-13 05:15:02'),
+(1030, 'Ganze Health Centre', '11383', 'Kilifi', 'Ganze', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.542621', '39.691999', '2025-07-13 05:15:02'),
+(1031, 'Garashi Dispensary', '11384', 'Kilifi', 'Magarini', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.13088', '39.8913', '2025-07-13 05:15:02'),
+(1032, 'Gede Health Centre', '11387', 'Kilifi', 'Kilifi North', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.30853', '40.01106', '2025-07-13 05:15:02'),
+(1033, 'Giriama Mission Dispensary', '11392', 'Kilifi', 'Kaloleni', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.81442', '39.58588', '2025-07-13 05:15:02'),
+(1034, 'GK Prison Dispensary (Magarini)', '11394', 'Kilifi', 'Magarini', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1035, 'GK Prisons Clinic (Malindi)', '11396', 'Kilifi', 'Malindi', 'Other Public Institution', 'No Partner', 'No Agency', 'KenyaEMR', 'Active', 'On Premises', '-3.11808', '40.05276', '2025-07-13 05:15:02'),
+(1036, 'Gongoni Health Centre', '11401', 'Kilifi', 'Magarini', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.0364', '40.13346', '2025-07-13 05:15:02'),
+(1037, 'Gotani Dispensary', '11404', 'Kilifi', 'Kaloleni', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.7863', '39.54034', '2025-07-13 05:15:02'),
+(1038, 'Jaribuni Dispensary', '11430', 'Kilifi', 'Ganze', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.6326', '39.74256', '2025-07-13 05:15:02'),
+(1039, 'Jibana Sub District Hospital', '11432', 'Kilifi', 'Kaloleni', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.83116', '39.68587', '2025-07-13 05:15:02'),
+(1040, 'Jilore Dispensary', '11433', 'Kilifi', 'Malindi', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.18857', '39.90593', '2025-07-13 05:15:02'),
+(1041, 'Junju Dispensary', '11444', 'Kilifi', 'Kilifi South', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.82977', '39.76133', '2025-07-13 05:15:02'),
+(1042, 'Kadaina Community Dispensary', '11445', 'Kilifi', 'Kilifi North', 'Community', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.40301', '39.9276', '2025-07-13 05:15:02'),
+(1043, 'Kadzinuni Dispensary', '11447', 'Kilifi', 'Kilifi North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.74511', '39.81237', '2025-07-13 05:15:02'),
+(1044, 'Kakoneni Dispensary', '11452', 'Kilifi', 'Malindi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', '', '', 'On Premises', '-3.16442', '39.86595', '2025-07-13 05:15:02'),
+(1045, 'Kakuyuni Dispensary (Malindi)', '11453', 'Kilifi', 'Malindi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.22034', '40.00194', '2025-07-13 05:15:02'),
+(1046, 'Kanamai Health Care', '11454', 'Kilifi', 'Kilifi South', 'Private Enterprise (Institution)', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.91889', '39.76094', '2025-07-13 05:15:02'),
+(1047, 'Kilifi County Hospital', '11474', 'Kilifi', 'Kilifi North', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1048, 'Kinarani Dispensary', '11481', 'Kilifi', 'Kaloleni', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.72962', '39.579', '2025-07-13 05:15:02'),
+(1049, 'Kisauni Medical Clinic', '11487', 'Kilifi', 'Kilifi North', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.62741', '39.85219', '2025-07-13 05:15:02'),
+(1050, 'Kiwandani Dispensary', '11493', 'Kilifi', 'Kilifi North', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.5684', '39.8762', '2025-07-13 05:15:02'),
+(1051, 'Kizingo Health Centre', '11497', 'Kilifi', 'Kilifi South', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.78195', '39.67704', '2025-07-13 05:15:02'),
+(1052, 'Kombeni Dispensary', '11498', 'Kilifi', 'Rabai', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.9128', '39.58706', '2025-07-13 05:15:02'),
+(1053, 'Lenga Dispensary', '11517', 'Kilifi', 'Rabai', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.86697', '39.66193', '2025-07-13 05:15:02'),
+(1054, 'Maamba Medical Clinic', '11528', 'Kilifi', 'Kilifi South', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.91889', '39.76094', '2025-07-13 05:15:02'),
+(1055, 'Madamani Dispensary', '11532', 'Kilifi', 'Ganze', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.39435', '39.74878', '2025-07-13 05:15:02'),
+(1056, 'Madunguni Dispensary', '11534', 'Kilifi', 'Malindi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.18333', '39.97451', '2025-07-13 05:15:02'),
+(1057, 'Makanzani Dispensary', '11547', 'Kilifi', 'Rabai', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.86938', '39.60597', '2025-07-13 05:15:02'),
+(1058, 'AIC Malanga', '11553', 'Kilifi', 'Ganze', 'Christian Health Association of Kenya', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1059, 'Malindi District Hospital', '11555', 'Kilifi', 'Malindi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.22649', '40.1247', '2025-07-13 05:15:02'),
+(1060, 'Mambrui Dispensary', '11559', 'Kilifi', 'Magarini', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.1183', '40.15677', '2025-07-13 05:15:02'),
+(1061, 'Marafa Health Centre', '11562', 'Kilifi', 'Magarini', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.02853', '39.95973', '2025-07-13 05:15:02'),
+(1062, 'Marereni Dispensary', '11563', 'Kilifi', 'Magarini', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-2.86296', '40.14481', '2025-07-13 05:15:02'),
+(1063, 'Mariakani District Hospital', '11566', 'Kilifi', 'Kaloleni', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.8631', '39.47214', '2025-07-13 05:15:02'),
+(1064, 'Marikebuni Dispensary', '11571', 'Kilifi', 'Magarini', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.09017', '40.00028', '2025-07-13 05:15:02'),
+(1065, 'Matolani Dispensary', '11578', 'Kilifi', 'Magarini', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.10202', '39.66969', '2025-07-13 05:15:02'),
+(1066, 'Matsangoni Health Center', '11580', 'Kilifi', 'Kilifi North', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1067, 'Mgamboni Dispensary', '11601', 'Kilifi', 'Kaloleni', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.84538', '39.66317', '2025-07-13 05:15:02'),
+(1068, 'Midoina Dispensary', '11609', 'Kilifi', 'Ganze', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.56209', '39.32264', '2025-07-13 05:15:02'),
+(1069, 'Mijomboni Dispensary', '11610', 'Kilifi', 'Kilifi North', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.26951', '40.00334', '2025-07-13 05:15:02'),
+(1070, 'Mirihini Dispensary', '11618', 'Kilifi', 'Ganze', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.43813', '39.59241', '2025-07-13 05:15:02'),
+(1071, 'Mizijini Dispensary', '11625', 'Kilifi', 'Magarini', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-2.96167', '40.00046', '2025-07-13 05:15:02'),
+(1072, 'David Kariuki Medical Centre', '11632', 'Kilifi', 'Malindi', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.21872', '40.12152', '2025-07-13 05:15:02'),
+(1073, 'Mnarani Dispensary', '11636', 'Kilifi', 'Kilifi North', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.644', '39.8393', '2025-07-13 05:15:02'),
+(1074, 'Muryachakwe Dispensary', '11653', 'Kilifi', 'Ganze', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.28833', '39.57636', '2025-07-13 05:15:02'),
+(1075, 'St Marys Msabaha Catholic Dispensary', '11654', 'Kilifi', 'Malindi', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.26492', '40.0516', '2025-07-13 05:15:02'),
+(1076, 'Msumarini Dispensary', '11659', 'Kilifi', 'Kilifi South', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.87227', '39.79793', '2025-07-13 05:15:02'),
+(1077, 'Mt Harmony Clinic', '11661', 'Kilifi', 'Kilifi South', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.94607', '39.74022', '2025-07-13 05:15:02'),
+(1078, 'Mtepeni Dispensary', '11666', 'Kilifi', 'Kilifi South', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.90731', '39.72585', '2025-07-13 05:15:02'),
+(1079, 'Mtondia Dispensary', '11667', 'Kilifi', 'Kilifi North', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.57878', '39.86885', '2025-07-13 05:15:02'),
+(1080, 'Mtondia Medical Clinic', '11668', 'Kilifi', 'Kilifi North', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.57536', '39.87069', '2025-07-13 05:15:02'),
+(1081, 'Mtwapa Health Centre', '11672', 'Kilifi', 'Kilifi South', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.94795', '39.73872', '2025-07-13 05:15:02'),
+(1082, 'Mtwapa Nursing Home', '11673', 'Kilifi', 'Kilifi South', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.94698', '39.74173', '2025-07-13 05:15:02'),
+(1083, 'Muyeye Health Centre (Municipal)', '11677', 'Kilifi', 'Malindi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1084, 'Muyeye Medical Clinic', '11678', 'Kilifi', 'Malindi', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.24161', '40.11486', '2025-07-13 05:15:02'),
+(1085, 'Mwangatini Dispensary', '11689', 'Kilifi', 'Magarini', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.1423', '40.042289', '2025-07-13 05:15:02'),
+(1086, 'Mwawesa Medical Clinic', '11696', 'Kilifi', 'Malindi', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.22309', '40.10757', '2025-07-13 05:15:02'),
+(1087, 'Ngerenya Dispensary', '11713', 'Kilifi', 'Kilifi North', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.51368', '39.86228', '2025-07-13 05:15:02'),
+(1088, 'Ngomeni Dispensary', '11715', 'Kilifi', 'Magarini', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1089, 'Palakumi Dispensary', '11730', 'Kilifi', 'Ganze', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.62565', '39.60708', '2025-07-13 05:15:02'),
+(1090, 'Pingilikani Dispensary', '11738', 'Kilifi', 'Kilifi South', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.77463', '39.77309', '2025-07-13 05:15:02'),
+(1091, 'Rabai Rural Health Demonstration Centre', '11748', 'Kilifi', 'Rabai', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.93899', '39.5664', '2025-07-13 05:15:02'),
+(1092, 'Rainbow Community Care', '11751', 'Kilifi', 'Magarini', 'Community', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.18099', '40.11512', '2025-07-13 05:15:02'),
+(1093, 'Rea Vipingo Dispensary', '11755', 'Kilifi', 'Kilifi South', 'Company Medical Service', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.82222', '39.79516', '2025-07-13 05:15:02'),
+(1094, 'Ribe Dispensary', '11756', 'Kilifi', 'Rabai', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.88517', '39.63157', '2025-07-13 05:15:02'),
+(1095, 'Roka Maweni Dispensary', '11758', 'Kilifi', 'Kilifi North', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.4436', '39.92867', '2025-07-13 05:15:02'),
+(1096, 'Royal Health Care', '11759', 'Kilifi', 'Malindi', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.21658', '40.12222', '2025-07-13 05:15:02'),
+(1097, 'Sabaki Dispensary', '11761', 'Kilifi', 'Magarini', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.1669', '40.11085', '2025-07-13 05:15:02'),
+(1098, 'Sokoke Dispensary', '11802', 'Kilifi', 'Ganze', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.52547', '39.78235', '2025-07-13 05:15:02'),
+(1099, 'Sosoni Dispensary', '11805', 'Kilifi', 'Magarini', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.02795', '39.323', '2025-07-13 05:15:02'),
+(1100, 'St Lukes (ACK) Nursing home Kaloleni', '11818', 'Kilifi', 'Kaloleni', 'Other Faith Based', 'Mkomani Clinic society', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1101, 'St Theresa Dispensary', '11826', 'Kilifi', 'Kilifi South', 'Christian Health Association of Kenya', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.7925', '39.7038', '2025-07-13 05:15:02'),
+(1102, 'Star Hospital', '11829', 'Kilifi', 'Malindi', 'Private Enterprise (Institution)', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.21473', '40.1188', '2025-07-13 05:15:02'),
+(1103, 'Takaungu Dispensary', '11836', 'Kilifi', 'Kilifi North', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.68301', '39.86112', '2025-07-13 05:15:02'),
+(1104, 'Tawfiq Muslim Hospital', '11843', 'Kilifi', 'Malindi', 'Supreme Council for Kenya Muslims', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.22078', '40.11293', '2025-07-13 05:15:02'),
+(1105, 'Chamalo Medical Clinic', '11845', 'Kilifi', 'Ganze', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1106, 'Timboni Community Dispensary', '11851', 'Kilifi', 'Kilifi North', 'Community', 'Mkomani Clinic society', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-3.34844', '40.0117', '2025-07-13 05:15:02'),
+(1107, 'Tsangatsini Dispensary', '11859', 'Kilifi', 'Kaloleni', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.42862', '39.26989', '2025-07-13 05:15:02'),
+(1108, 'Vipingo Rural Demonstration Health Centre', '11881', 'Kilifi', 'Kilifi South', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.81928', '39.80962', '2025-07-13 05:15:02'),
+(1109, 'Vitengeni Health Centre', '11883', 'Kilifi', 'Ganze', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.35899', '39.70818', '2025-07-13 05:15:02'),
+(1110, 'Wananchi Nursing Home', '11891', 'Kilifi', 'Kilifi North', 'Private Enterprise (Institution)', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1111, 'Watamu (SDA) Dispensary', '11893', 'Kilifi', 'Kilifi North', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1112, 'Watamu Community Health Care', '11894', 'Kilifi', 'Kilifi North', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1113, 'Watamu Dispensary', '11895', 'Kilifi', 'Kilifi North', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1114, 'Watamu Maternity and Nursing Home', '11896', 'Kilifi', 'Kilifi North', 'Private Practice', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1115, 'Oasis Medical Center', '11912', 'Kilifi', 'Kilifi South', 'Other Faith Based', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.93024', '39.74955', '2025-07-13 05:15:02'),
+(1116, 'Dagamra Medical Clinic', '16186', 'Kilifi', 'Rabai', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.92117', '39.53951', '2025-07-13 05:15:02'),
+(1117, 'Mariakani Community Health Care Services', '16188', 'Kilifi', 'Kaloleni', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.85987', '39.47604', '2025-07-13 05:15:02'),
+(1118, 'Chalani Dispensary', '16191', 'Kilifi', 'Kaloleni', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.75508', '39.63076', '2025-07-13 05:15:02'),
+(1119, 'St Bennedticto Health Centre', '16526', 'Kilifi', 'Magarini', 'Private Enterprise (Institution)', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.19804', '40.11096', '2025-07-13 05:15:02'),
+(1120, 'Kokotoni Dispensary', '17017', 'Kilifi', 'Rabai', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.92054', '39.52444', '2025-07-13 05:15:02'),
+(1121, 'Viragoni Dispensary', '17689', 'Kilifi', 'Kaloleni', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.71134', '39.51517', '2025-07-13 05:15:02'),
+(1122, 'The Omari Project', '17966', 'Kilifi', 'Malindi', 'Private Enterprise (Institution)', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.13403', '40.07474', '2025-07-13 05:15:02'),
+(1123, 'Bomu Medical Centre (Mariakani)', '18267', 'Kilifi', 'Kaloleni', 'Non-Governmental Organizations', 'Mkomani Clinic society', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-3.87523', '39.48301', '2025-07-13 05:15:02'),
+(1124, 'Maweni Community Clinic', '18302', 'Kilifi', 'Malindi', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.13381', '40.07217', '2025-07-13 05:15:02'),
+(1125, 'Ziani Dispensary', '18374', 'Kilifi', 'Kilifi South', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1126, 'Kijana Heri Medical Clinic', '20345', 'Kilifi', 'Malindi', 'Non - Governmental Organizations', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.07631', '40.14216', '2025-07-13 05:15:02'),
+(1127, 'Kambi Ya Waya Dispensary', '20771', 'Kilifi', 'Magarini', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '2.92282', '40.13977', '2025-07-13 05:15:02'),
+(1128, 'Konjora Dispensary', '21539', 'Kilifi', 'Kilifi North', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1129, 'Mulunguni Dispensary', '21787', 'Kilifi', 'Magarini', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1130, 'ICRH Drop in centre', '22479', 'Kilifi', 'Kilifi North', 'Non-Governmental Organizations', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1131, 'Kilifi GK Prison VCT', '22481', 'Kilifi', 'Kilifi North', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1132, 'St Marys Health Care', '22554', 'Kilifi', 'Kilifi South', 'Kenya Episcopal Conference Catholic Secrariat', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1133, 'Mtwapa Drop in and resource centre', '22679', 'Kilifi', 'Kilifi South', 'Public Institution -Parastatal', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1134, 'Tamba Pwani', '22982', 'Kilifi', 'Kilifi North', 'Non Govermental Organisation', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1135, 'Jambo Medical Centre', '22996', 'Kilifi', 'Kilifi South', 'Private Practice', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1136, 'Gold Star Drop in Centre', '23412', 'Kilifi', 'Malindi', 'Non-Governmental Organizations', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1137, 'Kaloleni GK Prison Dispensary', '24209', 'Kilifi', 'Kaloleni', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1138, 'Baricho Health Centre', '10049', 'Kirinyaga', 'Kirinyaga West', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.55313', '37.23931', '2025-07-13 05:15:02'),
+(1139, 'Christian Community Services Wanguru Dispensary', '10093', 'Kirinyaga', 'Kirinyaga South', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1140, 'Ciagini  Health Centre', '10096', 'Kirinyaga', 'Kirinyaga North/Mwea West', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.75627', '37.37958', '2025-07-13 05:15:02'),
+(1141, 'Difathas Health Centre', '10110', 'Kirinyaga', 'Kirinyaga South', 'Ministry of Health', 'Wezesha Afya', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.55419', '37.40213', '2025-07-13 05:15:02'),
+(1142, 'Gaciongo Dispensary (Kirinyaga)', '10197', 'Kirinyaga', 'Kirinyaga East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.47597', '37.41332', '2025-07-13 05:15:02'),
+(1143, 'Gathambi Health Centre', '10213', 'Kirinyaga', 'Kirinyaga West', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.46888', '37.21157', '2025-07-13 05:15:02'),
+(1144, 'Gathigiriri Health Centre', '10217', 'Kirinyaga', 'Kirinyaga South', 'Ministry of Health', 'Wezesha Afya', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.69317', '37.40495', '2025-07-13 05:15:02'),
+(1145, 'Gatithi Dispensary', '10221', 'Kirinyaga', 'Kirinyaga West', 'Ministry of Health', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.5832', '37.19138', '2025-07-13 05:15:02'),
+(1146, 'Gatugura Dispensary', '10229', 'Kirinyaga', 'Kirinyaga East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.46074', '37.3188', '2025-07-13 05:15:02'),
+(1147, 'Gatumbi (SDA) Dispensary', '10232', 'Kirinyaga', 'Kirinyaga East', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.41832', '37.39322', '2025-07-13 05:15:02'),
+(1148, 'Gatwe Health Centre', '10239', 'Kirinyaga', 'Kirinyaga Central', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.43474', '37.28817', '2025-07-13 05:15:02'),
+(1149, 'GK Mwea (Gathigiriri)', '10285', 'Kirinyaga', 'Kirinyaga South', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1150, 'Joshua Memorial Mbai Dispensary', '10379', 'Kirinyaga', 'Kirinyaga East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.44404', '37.41089', '2025-07-13 05:15:02'),
+(1151, 'Kabare Health Centre', '10388', 'Kirinyaga', 'Kirinyaga East', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.50573', '37.32042', '2025-07-13 05:15:02'),
+(1152, 'Kagio Catholic Dispensary (Mary Immucate Catholic', '10398', 'Kirinyaga', 'Kirinyaga West', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.63112', '37.25387', '2025-07-13 05:15:02'),
+(1153, 'Kagio Nursing Home (Kagio)', '10399', 'Kirinyaga', 'Kirinyaga West', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.63112', '37.25078', '2025-07-13 05:15:02'),
+(1154, 'Kagumo Health Centre', '10402', 'Kirinyaga', 'Kirinyaga West', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.4742', '37.23719', '2025-07-13 05:15:02'),
+(1155, 'Kairini Dispensary', '10431', 'Kirinyaga', 'Kirinyaga West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.54418', '37.16929', '2025-07-13 05:15:02'),
+(1156, 'Kanjinji Dispensary', '10436', 'Kirinyaga', 'Kirinyaga South', 'Ministry of Health', 'Wezesha Afya', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.61171', '37.40819', '2025-07-13 05:15:02'),
+(1157, 'Kamweti Dispensary', '10458', 'Kirinyaga', 'Kirinyaga East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.41442', '37.31365', '2025-07-13 05:15:02'),
+(1158, 'Kandongu Dispensary', '10461', 'Kirinyaga', 'Kirinyaga North/Mwea West', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.6658', '37.29463', '2025-07-13 05:15:02'),
+(1159, 'Kangaita Health Centre', '10462', 'Kirinyaga', 'Kirinyaga Central', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.42508', '37.27245', '2025-07-13 05:15:02'),
+(1160, 'Kangaru Dispensary (Kirinyaga)', '10468', 'Kirinyaga', 'Kirinyaga West', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.63589', '37.24518', '2025-07-13 05:15:02'),
+(1161, 'Kangu Dispensary', '10471', 'Kirinyaga', 'Kirinyaga South', 'Ministry of Health', 'Wezesha Afya', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.57092', '37.35595', '2025-07-13 05:15:02'),
+(1162, 'Karumandi Health Centre', '10504', 'Kirinyaga', 'Kirinyaga East', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1163, 'Kerugoya District Hospital', '10520', 'Kirinyaga', 'Kirinyaga Central', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.50435', '37.28065', '2025-07-13 05:15:02'),
+(1164, 'Kiamanyeki Dispensary', '10532', 'Kirinyaga', 'Kirinyaga South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.69829', '37.38112', '2025-07-13 05:15:02'),
+(1165, 'Kiamutugu Health Centre', '10545', 'Kirinyaga', 'Kirinyaga East', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.46852', '37.39054', '2025-07-13 05:15:02'),
+(1166, 'Kiangombe Dispensary', '10555', 'Kirinyaga', 'Kirinyaga East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1167, 'Kiangai Health Centre', '10556', 'Kirinyaga', 'Kirinyaga West', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.47869', '37.17832', '2025-07-13 05:15:02'),
+(1168, 'Kianjege Dispensary', '10562', 'Kirinyaga', 'Kirinyaga West', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.574', '37.16596', '2025-07-13 05:15:02'),
+(1169, 'Kianyaga Catholic Health Centre', '10564', 'Kirinyaga', 'Kirinyaga East', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.4907', '37.36577', '2025-07-13 05:15:02'),
+(1170, 'Kianyaga Sub-District Hospital', '10565', 'Kirinyaga', 'Kirinyaga East', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.50418', '37.32452', '2025-07-13 05:15:02'),
+(1171, 'Kiaragana Dispensary', '10566', 'Kirinyaga', 'Kirinyaga West', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.498', '37.1965', '2025-07-13 05:15:02'),
+(1172, 'Kibirigwi Health Centre', '10571', 'Kirinyaga', 'Kirinyaga West', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.52603', '37.17958', '2025-07-13 05:15:02'),
+(1173, 'Kiburu Dispensary', '10574', 'Kirinyaga', 'Kirinyaga West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.5413', '37.20747', '2025-07-13 05:15:02'),
+(1174, 'Kimbimbi Sub-District Hospital', '10609', 'Kirinyaga', 'Kirinyaga South', 'Ministry of Health', 'Wezesha Afya', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.61965', '37.36607', '2025-07-13 05:15:02'),
+(1175, 'Kirogo Dispensary', '10635', 'Kirinyaga', 'Kirinyaga South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.66408', '37.38963', '2025-07-13 05:15:02'),
+(1176, 'Kiumbu Health Centre', '10641', 'Kirinyaga', 'Kirinyaga South', 'Ministry of Health', 'Wezesha Afya', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.71739', '37.46682', '2025-07-13 05:15:02'),
+(1177, 'Kutus Dispensary', '10647', 'Kirinyaga', 'Kirinyaga South', 'Ministry of Health', 'Wezesha Afya', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.57294', '37.32502', '2025-07-13 05:15:02'),
+(1178, 'Mount Kenya (ACK) Hospital', '10738', 'Kirinyaga', 'Kirinyaga Central', 'Christian Health Association of Kenya', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1179, 'Mumbuini Dispensary', '10766', 'Kirinyaga', 'Kirinyaga South', 'Ministry of Health', 'Wezesha Afya', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.60638', '37.46157', '2025-07-13 05:15:02'),
+(1180, 'Murinduko Health Centre', '10781', 'Kirinyaga', 'Kirinyaga South', 'Ministry of Health', 'Wezesha Afya', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.57543', '37.44161', '2025-07-13 05:15:02'),
+(1181, 'Mutithi Health Centre', '10798', 'Kirinyaga', 'Kirinyaga North/Mwea West', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.72679', '37.32272', '2025-07-13 05:15:02'),
+(1182, 'Mutitu Community Dispensary', '10799', 'Kirinyaga', 'Kirinyaga Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.52248', '37.24834', '2025-07-13 05:15:02'),
+(1183, 'Mwea Medical Centre', '10806', 'Kirinyaga', 'Kirinyaga South', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.68873', '37.36255', '2025-07-13 05:15:02'),
+(1184, 'Mwea Mission (Our Lady of Lourdes) Hospital', '10808', 'Kirinyaga', 'Kirinyaga North/Mwea West', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.66427', '37.34997', '2025-07-13 05:15:02'),
+(1185, 'Nguka Health Centre', '10873', 'Kirinyaga', 'Kirinyaga North/Mwea West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.66503', '37.3267', '2025-07-13 05:15:02'),
+(1186, 'Njegas Health Centre', '10880', 'Kirinyaga', 'Kirinyaga North/Mwea West', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.61565', '37.34555', '2025-07-13 05:15:02'),
+(1187, 'Rukanga  Health Centre', '10975', 'Kirinyaga', 'Kirinyaga North/Mwea West', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.72451', '37.26481', '2025-07-13 05:15:02'),
+(1188, 'Rurii Kiandegwa Dispensary', '10980', 'Kirinyaga', 'Kirinyaga North/Mwea West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.734', '37.33627', '2025-07-13 05:15:02'),
+(1189, 'Sagana Catholic Dispensary', '10991', 'Kirinyaga', 'Kirinyaga West', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.65862', '37.21884', '2025-07-13 05:15:02'),
+(1190, 'Sagana Sub-District Hospital', '10994', 'Kirinyaga', 'Kirinyaga West', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.66671', '37.20909', '2025-07-13 05:15:02'),
+(1191, 'St Andrews Kabare (ACK) Dispensary', '11021', 'Kirinyaga', 'Kirinyaga East', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.50575', '37.32045', '2025-07-13 05:15:02'),
+(1192, 'St Teresa Catholic Dispensary', '11069', 'Kirinyaga', 'Kirinyaga North/Mwea West', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.734994', '37.3772', '2025-07-13 05:15:02'),
+(1193, 'Thiba Health Centre', '11092', 'Kirinyaga', 'Kirinyaga North/Mwea West', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.68995', '37.34597', '2025-07-13 05:15:02'),
+(1194, 'Ucheru Community Health Centre', '11130', 'Kirinyaga', 'Kirinyaga Central', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.54802', '37.26567', '2025-07-13 05:15:02'),
+(1195, 'Wamumu Dispensary', '11164', 'Kirinyaga', 'Kirinyaga North/Mwea West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1196, 'Gatuto Dispensary', '16386', 'Kirinyaga', 'Kirinyaga Central', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.57083', '37.30204', '2025-07-13 05:15:02'),
+(1197, 'Mukangu Health Centre', '16387', 'Kirinyaga', 'Kirinyaga West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.54987', '37.15393', '2025-07-13 05:15:02'),
+(1198, 'Kariko Dispensary', '16445', 'Kirinyaga', 'Kirinyaga Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.45475', '37.24698', '2025-07-13 05:15:02'),
+(1199, 'Silvercrest Medicare Hospital', '17618', 'Kirinyaga', 'Kirinyaga South', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1200, 'Mbiri (ACK) Dispensary', '18174', 'Kirinyaga', 'Kirinyaga East', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.49449', '37.39971', '2025-07-13 05:15:02'),
+(1201, 'Thigirichi Mukui', '18578', 'Kirinyaga', 'Kirinyaga West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.60256', '37.18985', '2025-07-13 05:15:02'),
+(1202, 'Karimaini Community Dispensary', '18670', 'Kirinyaga', 'Kirinyaga West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.51988', '37.21751', '2025-07-13 05:15:02'),
+(1203, 'Mwea Dice', '18833', 'Kirinyaga', 'Kirinyaga North/Mwea West', 'Non-Governmental Organizations', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1204, 'Kiamuthambi Dispensary', '19431', 'Kirinyaga', 'Kirinyaga Central', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.56236', '37.28073', '2025-07-13 05:15:02'),
+(1205, 'South Ngariama Dispensary', '20395', 'Kirinyaga', 'Kirinyaga South', 'Ministry of Health', 'Wezesha Afya', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.60691', '37.4618', '2025-07-13 05:15:02'),
+(1206, 'Kiarukungu Dispensary', '20543', 'Kirinyaga', 'Kirinyaga South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.62345', '37.40076', '2025-07-13 05:15:02'),
+(1207, 'Kerugoya GK prison ', '21503', 'Kirinyaga', 'Kirinyaga Central', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1208, 'Kerugoya Fortis Medical and Cancer Centre', '22372', 'Kirinyaga', 'Kirinyaga Central', 'Private Practice - Nurse / Midwifery', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1209, 'Kirinyaga Treatment Centre', '25158', 'Kirinyaga', 'Kirinyaga North/Mwea West', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1210, 'Kirinyaga Treatment Centre Annex', '32224', 'Kirinyaga', 'Kirinyaga North/Mwea West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1211, 'Amani Medical Centre (Suneka)', '13474', 'Kisii', 'Bonchari', 'Private Enterprise (Institution)', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.67886', '34.70765', '2025-07-13 05:15:02'),
+(1212, 'Bitare Dispensary', '13502', 'Kisii', 'Bonchari', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.7049', '34.69538', '2025-07-13 05:15:02'),
+(1213, 'Boige Health Centre', '13505', 'Kisii', 'South Mugirango', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.83089', '34.66809', '2025-07-13 05:15:02'),
+(1214, 'Borangi Health Centre', '13511', 'Kisii', 'Bobasi', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.86912', '34.84983', '2025-07-13 05:15:02'),
+(1215, 'Bosongo Hospital', '13515', 'Kisii', 'Kitutu Chache South', 'Private Enterprise (Institution)', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.66426', '34.75456', '2025-07-13 05:15:02'),
+(1216, 'Christamarianne  Hospital', '13527', 'Kisii', 'Nyaribari Chache', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1217, 'Daraja Medical Clinic', '13531', 'Kisii', 'Kitutu Chache South', 'Private Enterprise (Institution)', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.66604', '34.76348', '2025-07-13 05:15:02'),
+(1218, 'Eberege Dispensary', '13536', 'Kisii', 'Bomachoge Borabu', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.90612', '34.69099', '2025-07-13 05:15:02'),
+(1219, 'Ebiosi Dispensary', '13537', 'Kisii', 'Bobasi', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.84897', '34.87589', '2025-07-13 05:15:02'),
+(1220, 'Egetonto Dispensary (Gucha)', '13538', 'Kisii', 'Bomachoge Chache', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.74327', '34.70785', '2025-07-13 05:15:02'),
+(1221, 'Medical Link (Gucha)', '13539', 'Kisii', 'Bomachoge Chache', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1222, 'Ekerubo Dispensary (Masaba)', '13541', 'Kisii', 'Nyaribari Masaba', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.89771', '34.94024', '2025-07-13 05:15:02'),
+(1223, 'Entanda Dispensary', '13545', 'Kisii', 'Kitutu Chache North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.56873', '34.84354', '2025-07-13 05:15:02'),
+(1224, 'Eramba Dispensary', '13546', 'Kisii', 'Kitutu Chache North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.546938', '34.7811', '2025-07-13 05:15:02'),
+(1225, 'Etago Sub-District Hospital', '13550', 'Kisii', 'South Mugirango', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.90237', '34.6593', '2025-07-13 05:15:02'),
+(1226, 'Gesabakwa Health Centre', '13558', 'Kisii', 'Bobasi', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.89926', '34.82809', '2025-07-13 05:15:02'),
+(1227, 'Gesuguri Dispensary', '13560', 'Kisii', 'Bonchari', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.69106', '34.73619', '2025-07-13 05:15:02'),
+(1228, 'Gesure Dispensary', '13561', 'Kisii', 'Bobasi', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1229, 'Gesusu Sub-District Hospital', '13564', 'Kisii', 'Nyaribari Masaba', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.85822', '34.90788', '2025-07-13 05:15:02'),
+(1230, 'Getembe Hospital', '13567', 'Kisii', 'Kitutu Chache South', 'Private Enterprise (Institution)', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.67409', '34.76964', '2025-07-13 05:15:02'),
+(1231, 'Geteri Dispensary', '13568', 'Kisii', 'Nyaribari Masaba', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.782208', '34.877981', '2025-07-13 05:15:02'),
+(1232, 'Giatunda Dispensary', '13573', 'Kisii', 'South Mugirango', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.726023', '34.6649', '2025-07-13 05:15:02'),
+(1233, 'GK Prisons Dispensary (Kisii)', '13580', 'Kisii', 'Kitutu Chache South', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.67523', '34.77568', '2025-07-13 05:15:02'),
+(1234, 'Gotichaki Dispensary', '13593', 'Kisii', 'South Mugirango', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.77408', '34.64925', '2025-07-13 05:15:02'),
+(1235, 'Gucha District Hospital', '13594', 'Kisii', 'Bomachoge Chache', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.79631', '34.72383', '2025-07-13 05:15:02'),
+(1236, 'Hema Hospital', '13603', 'Kisii', 'Kitutu Chache South', 'Private Enterprise (Institution)', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.67496', '34.77007', '2025-07-13 05:15:02'),
+(1237, 'Ibacho Sub-District Hospital', '13611', 'Kisii', 'Nyaribari Masaba', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.89806', '34.94024', '2025-07-13 05:15:02'),
+(1238, 'Ibeno Sub-District Hospital', '13612', 'Kisii', 'Nyaribari Chache', 'Ministry of Health', 'KISII COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.77956', '34.85261', '2025-07-13 05:15:02');
+INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(1239, 'Igare Medical Clinic', '13613', 'Kisii', 'Bobasi', 'Private Enterprise (Institution)', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1240, 'Iranda Health Centre', '13620', 'Kisii', 'Kitutu Chache South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.62703', '34.74898', '2025-07-13 05:15:02'),
+(1241, 'Irondi Dispensary', '13621', 'Kisii', 'Nyaribari Chache', 'Ministry of Health', 'KISII COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.7861', '34.87875', '2025-07-13 05:15:02'),
+(1242, 'Isecha Health Centre', '13623', 'Kisii', 'Kitutu Chache North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.57383', '34.86413', '2025-07-13 05:15:02'),
+(1243, 'Itibo Eramani Dispensary', '13627', 'Kisii', 'Bobasi', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.754818', '34.740259', '2025-07-13 05:15:02'),
+(1244, 'Itumbe Dispensary', '13630', 'Kisii', 'Bobasi', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.75783', '34.77571', '2025-07-13 05:15:02'),
+(1245, 'Iyabe District Hospital (Kisii South)', '13631', 'Kisii', 'Bonchari', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.69344', '34.67911', '2025-07-13 05:15:02'),
+(1246, 'Kegogi Health Centre', '13662', 'Kisii', 'Kitutu Chache North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.54476', '34.84187', '2025-07-13 05:15:02'),
+(1247, 'Kenyambi Health Centre', '13671', 'Kisii', 'Bobasi', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.83844', '34.86165', '2025-07-13 05:15:02'),
+(1248, 'Bomachoge Borabu Sub County Referral Hospital', '13673', 'Kisii', 'Bomachoge Borabu', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1249, 'Kenyerere Sub County Hospital', '13674', 'Kisii', 'Bobasi', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1250, 'Kenyerere Dispensary (Masaba)', '13675', 'Kisii', 'Nyaribari Masaba', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.78225', '34.89352', '2025-07-13 05:15:02'),
+(1251, 'Keumbu S D Hospital', '13680', 'Kisii', 'Nyaribari Chache', 'Ministry of Health', 'KISII COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1252, 'Kiagware Dispensary', '13681', 'Kisii', 'South Mugirango', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.8558', '34.6798', '2025-07-13 05:15:02'),
+(1253, 'Kiamokama Health Centre', '13683', 'Kisii', 'Nyaribari Masaba', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.83124', '34.88341', '2025-07-13 05:15:02'),
+(1254, 'Kiaruta Dispensary', '13685', 'Kisii', 'Bonchari', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.65647', '34.73602', '2025-07-13 05:15:02'),
+(1255, 'Kiogoro Sub-County Hospital', '13696', 'Kisii', 'Nyaribari Chache', 'Ministry of Health', 'KISII COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1256, 'Kionyo Sub County Hospital', '13697', 'Kisii', 'Bobasi', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1257, 'Kisii Teaching and Referral Hospital (Level 6)', '13703', 'Kisii', 'Kitutu Chache South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1258, 'Magena Dispensary', '13748', 'Kisii', 'Bomachoge Borabu', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.90464', '34.7966', '2025-07-13 05:15:02'),
+(1259, 'Magenche Dispensary', '13749', 'Kisii', 'Bomachoge Borabu', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.94943', '34.72377', '2025-07-13 05:15:02'),
+(1260, 'Marani District Hospital', '13772', 'Kisii', 'Kitutu Chache North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.57824', '34.79825', '2025-07-13 05:15:02'),
+(1261, 'Masimba Sub-District Hospital', '13783', 'Kisii', 'Nyaribari Masaba', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.86074', '34.94024', '2025-07-13 05:15:02'),
+(1262, 'Masongo Health Centre', '13786', 'Kisii', 'Nyaribari Chache', 'Ministry of Health', 'KISII COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1263, 'Matongo Dispensary', '13790', 'Kisii', 'Kitutu Chache South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.63125', '34.72113', '2025-07-13 05:15:02'),
+(1264, 'Misesi Dispensary (Gucha)', '13814', 'Kisii', 'Bomachoge Chache', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.74101', '34.68447', '2025-07-13 05:15:02'),
+(1265, 'Mokason Clinic', '13819', 'Kisii', 'Kitutu Chache South', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.65878', '34.7605', '2025-07-13 05:15:02'),
+(1266, 'Monianku Health Centre', '13821', 'Kisii', 'South Mugirango', 'Christian Health Association of Kenya', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.967', '34.6828', '2025-07-13 05:15:02'),
+(1267, 'St Barbara Mosocho Health Centre', '13822', 'Kisii', 'Kitutu Chache South', 'Kenya Episcopal Conference-Catholic Secretariat', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.60007', '34.74206', '2025-07-13 05:15:02'),
+(1268, 'Moticho Health Centre', '13825', 'Kisii', 'South Mugirango', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.88662', '34.6315', '2025-07-13 05:15:02'),
+(1269, 'Nduru District Hospital', '13847', 'Kisii', 'South Mugirango', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.80782', '34.62814', '2025-07-13 05:15:02'),
+(1270, 'Nyacheki Sub-District Hospital', '13867', 'Kisii', 'Bobasi', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.89071', '34.8772', '2025-07-13 05:15:02'),
+(1271, 'Nyachenge Dispensary', '13868', 'Kisii', 'Bobasi', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.8443', '34.77546', '2025-07-13 05:15:02'),
+(1272, 'Nyachogochogo Dispensary', '13869', 'Kisii', 'Bobasi', 'Other Faith Based', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.88336', '34.80192', '2025-07-13 05:15:02'),
+(1273, 'Nyagesenda Dispensary', '13871', 'Kisii', 'Kitutu Chache North', 'Christian Health Association of Kenya', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.58515', '34.81869', '2025-07-13 05:15:02'),
+(1274, 'Nyagiki Dispensary', '13872', 'Kisii', 'Bobasi', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.76715', '34.76468', '2025-07-13 05:15:02'),
+(1275, 'Nyagoto Dispensary', '13876', 'Kisii', 'Kitutu Chache North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.54442', '34.80708', '2025-07-13 05:15:02'),
+(1276, 'Nyaguta Dispensary', '13878', 'Kisii', 'Nyaribari Chache', 'Ministry of Health', 'KISII COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.74249', '34.80746', '2025-07-13 05:15:02'),
+(1277, 'Nyakegogi Dispensary', '13882', 'Kisii', 'Bobasi', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.75259', '34.77343', '2025-07-13 05:15:02'),
+(1278, 'Nyakwana Dispensary', '13886', 'Kisii', 'Nyaribari Chache', 'Ministry of Health', 'KISII COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.75938', '34.8078', '2025-07-13 05:15:02'),
+(1279, 'Nyamache District Hospital', '13891', 'Kisii', 'Bobasi', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.85352', '34.82805', '2025-07-13 05:15:02'),
+(1280, 'Nyamagundo Health Centre', '13892', 'Kisii', 'Bonchari', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.63928', '34.70238', '2025-07-13 05:15:02'),
+(1281, 'Nyamagwa H/C', '13893', 'Kisii', 'Bobasi', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1282, 'Nyamasege Dispensary', '13901', 'Kisii', 'Bomachoge Chache', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.82896', '34.76979', '2025-07-13 05:15:02'),
+(1283, 'Nyamasibi Health Centre', '13903', 'Kisii', 'Nyaribari Masaba', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.82412', '34.95551', '2025-07-13 05:15:02'),
+(1284, 'Nyambunwa Medical Clinic', '13906', 'Kisii', 'Bonchari', 'Private Enterprise (Institution)', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.67839', '34.70762', '2025-07-13 05:15:02'),
+(1285, 'Nyamemiso Dispensary', '13908', 'Kisii', 'Nyaribari Chache', 'Ministry of Health', 'KISII COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.69725', '34.81683', '2025-07-13 05:15:02'),
+(1286, 'Nyanchwa  Hospital', '13918', 'Kisii', 'Nyaribari Chache', 'Christian Health Association of Kenya', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1287, 'Nyangena Hospital', '13925', 'Kisii', 'Kitutu Chache South', 'Private Enterprise (Institution)', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.66243', '34.74911', '2025-07-13 05:15:02'),
+(1288, 'Nyanko Dispensary', '13931', 'Kisii', 'Nyaribari Chache', 'Ministry of Health', 'KISII COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.71996', '34.80737', '2025-07-13 05:15:02'),
+(1289, 'Nyansakia Health Centre', '13933', 'Kisii', 'Bobasi', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.76236', '34.75', '2025-07-13 05:15:02'),
+(1290, 'Nyansancha Dispensary', '13934', 'Kisii', 'Nyaribari Chache', 'Ministry of Health', 'KISII COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.69502', '34.75321', '2025-07-13 05:15:02'),
+(1291, 'Nyansira Dispensary', '13938', 'Kisii', 'Nyaribari Chache', 'Ministry of Health', 'KISII COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.76023', '34.90346', '2025-07-13 05:15:02'),
+(1292, 'Nyasike Dispensary', '13942', 'Kisii', 'Nyaribari Masaba', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.852338', '34.9723', '2025-07-13 05:15:02'),
+(1293, 'Nyatike Health Centre', '13945', 'Kisii', 'South Mugirango', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.74203', '34.63857', '2025-07-13 05:15:02'),
+(1294, 'Omobera Dispensary', '13982', 'Kisii', 'Bomachoge Borabu', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.89096', '34.74765', '2025-07-13 05:15:02'),
+(1295, 'Nyamogonchoro Dispensary', '13983', 'Kisii', 'South Mugirango', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.898421', '34.679', '2025-07-13 05:15:02'),
+(1296, 'Omogwa Dispensary', '13984', 'Kisii', 'South Mugirango', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.796646', '34.6345', '2025-07-13 05:15:02'),
+(1297, 'Omosaria Dispensary', '13986', 'Kisii', 'Bobasi', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.83125', '34.76477', '2025-07-13 05:15:02'),
+(1298, 'Oresi Sub County Hospital', '13991', 'Kisii', 'Kitutu Chache South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1299, 'Oroche Dispensary', '13992', 'Kisii', 'Bonchari', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.66678', '34.71222', '2025-07-13 05:15:02'),
+(1300, 'Our Lady of Lourdes Dispensary (Gucha)', '14004', 'Kisii', 'Bomachoge Chache', 'Kenya Episcopal Conference-Catholic Secretariat', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.79924', '34.72462', '2025-07-13 05:15:02'),
+(1301, 'Raganga Health Centre', '14025', 'Kisii', 'Kitutu Chache South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.60166', '34.71288', '2025-07-13 05:15:02'),
+(1302, 'Ram Hospital', '14028', 'Kisii', 'Kitutu Chache South', 'Private Enterprise (Institution)', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.6743', '34.77374', '2025-07-13 05:15:02'),
+(1303, 'Ramasha Dispensary', '14029', 'Kisii', 'Nyaribari Masaba', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.89348', '34.9731', '2025-07-13 05:15:02'),
+(1304, 'Riana Health Centre', '14045', 'Kisii', 'Bonchari', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.65744', '34.66423', '2025-07-13 05:15:02'),
+(1305, 'Riokindo Health Centre', '14052', 'Kisii', 'Bomachoge Borabu', 'Christian Health Association of Kenya', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.88487', '34.7322', '2025-07-13 05:15:02'),
+(1306, 'Riotanchi Health Centre', '14054', 'Kisii', 'Bonchari', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.70679', '34.71659', '2025-07-13 05:15:02'),
+(1307, 'Ritumbe Health Centre', '14055', 'Kisii', 'Bobasi', 'Kenya Episcopal Conference-Catholic Secretariat', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.91962', '34.84671', '2025-07-13 05:15:02'),
+(1308, 'Rusinga Dispensary', '14062', 'Kisii', 'Bobasi', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.80165', '34.79143', '2025-07-13 05:15:02'),
+(1309, 'Sengera Health Centre (Gucha)', '14076', 'Kisii', 'Bomachoge Chache', 'Kenya Episcopal Conference-Catholic Secretariat', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.86483', '34.7203', '2025-07-13 05:15:02'),
+(1310, 'Sieka Dispensary', '14083', 'Kisii', 'Kitutu Chache North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.57337', '34.76402', '2025-07-13 05:15:02'),
+(1311, 'Sosera Dispensary', '14099', 'Kisii', 'Nyaribari Masaba', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.8623', '34.98804', '2025-07-13 05:15:02'),
+(1312, 'Suguta Health Centre', '14131', 'Kisii', 'South Mugirango', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.92291', '34.6488', '2025-07-13 05:15:02'),
+(1313, 'Tabaka Mission Hospital', '14139', 'Kisii', 'South Mugirango', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.74452', '34.6665', '2025-07-13 05:15:02'),
+(1314, 'Taracha Dispensary', '14142', 'Kisii', 'Nyaribari Chache', 'Ministry of Health', 'KISII COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.76113', '34.8574', '2025-07-13 05:15:02'),
+(1315, 'Nyamagesa Dispensary', '16265', 'Kisii', 'Nyaribari Masaba', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.802632', '34.9211', '2025-07-13 05:15:02'),
+(1316, 'Ekerubo Dispensary (Kisii South)', '16422', 'Kisii', 'Bonchari', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.70116', '34.73971', '2025-07-13 05:15:02'),
+(1317, 'Nyabioto Dispensary', '16423', 'Kisii', 'Bonchari', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.67609', '34.73916', '2025-07-13 05:15:02'),
+(1318, 'Entanke Dispensary', '16424', 'Kisii', 'Bonchari', 'Community', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.6124', '34.6743', '2025-07-13 05:15:02'),
+(1319, 'Isamwera Dispensary', '16425', 'Kisii', 'Bonchari', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.64629', '34.7196', '2025-07-13 05:15:02'),
+(1320, 'Nyamagiri Dispensary', '16878', 'Kisii', 'Bonchari', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.67227', '34.64011', '2025-07-13 05:15:02'),
+(1321, 'Itembu Dispensary', '16879', 'Kisii', 'Bomachoge Borabu', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.92049', '34.69432', '2025-07-13 05:15:02'),
+(1322, 'Nyabiosi Dispensary', '16880', 'Kisii', 'South Mugirango', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.94902', '34.6321', '2025-07-13 05:15:02'),
+(1323, 'Nyagichenche (SDA) Dispensary', '16881', 'Kisii', 'South Mugirango', 'Christian Health Association of Kenya', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.76056', '34.64529', '2025-07-13 05:15:02'),
+(1324, 'Openda Dispensary', '16973', 'Kisii', 'South Mugirango', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.87572', '34.66757', '2025-07-13 05:15:02'),
+(1325, 'Bokimai Dispensary', '16974', 'Kisii', 'South Mugirango', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.7327', '34.65188', '2025-07-13 05:15:02'),
+(1326, 'Eburi Dispensary', '16975', 'Kisii', 'South Mugirango', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.86503', '34.62972', '2025-07-13 05:15:02'),
+(1327, 'Motonto Health Centre', '16984', 'Kisii', 'Bobasi', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1328, 'Emeroka Dispensary', '17272', 'Kisii', 'Nyaribari Masaba', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.80833', '34.90503', '2025-07-13 05:15:02'),
+(1329, 'Rikendo Dispensary', '17347', 'Kisii', 'Nyaribari Chache', 'Ministry of Health', 'KISII COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.79947', '34.84542', '2025-07-13 05:15:02'),
+(1330, 'Keera Dispensary', '17435', 'Kisii', 'Kitutu Chache South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.60892', '34.80754', '2025-07-13 05:15:02'),
+(1331, 'Kenyenya Medical Clinic (Kenyenya)', '17677', 'Kisii', 'Bomachoge Borabu', 'Private Practice - Clinical Officer', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.8865', '34.7867', '2025-07-13 05:15:02'),
+(1332, 'Nyaore Dispensary', '17714', 'Kisii', 'Kitutu Chache South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.60829', '34.76812', '2025-07-13 05:15:02'),
+(1333, 'Keragia Dispensary', '18336', 'Kisii', 'Bomachoge Chache', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1334, 'Igorera Medical Clinic', '18340', 'Kisii', 'Bomachoge Borabu', 'Private Enterprise (Institution)', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.90836', '34.79625', '2025-07-13 05:15:02'),
+(1335, 'Moogi Dispensary', '18447', 'Kisii', 'Bomachoge Chache', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.87644', '34.70189', '2025-07-13 05:15:02'),
+(1336, 'Gionsaria Dispensary', '19916', 'Kisii', 'Bobasi', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1337, 'Kiobegi Dispensary', '19917', 'Kisii', 'Bobasi', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1338, 'Egetuki GOK Dispensary', '19984', 'Kisii', 'Bomachoge Chache', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.771849', '34.7819', '2025-07-13 05:15:02'),
+(1339, 'Kioge Dispensary', '20113', 'Kisii', 'Kitutu Chache South', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.37663', '34.4468', '2025-07-13 05:15:02'),
+(1340, 'Mosocho Market Dispensary', '20114', 'Kisii', 'Kitutu Chache South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1341, 'INTERNATIONAL MEDICAL CORPS TEKELEZA DICE KISII', '20408', 'Kisii', 'Kitutu Chache South', 'Non-Governmental Organizations', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1342, 'Tumaini Welliness Centre', '20437', 'Kisii', 'Kitutu Chache South', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1343, 'Oasis Specialist Hospital', '20619', 'Kisii', 'Kitutu Chache South', 'Private Practice - Medical Specialist', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.40089', '34.46193', '2025-07-13 05:15:02'),
+(1344, 'St Agnes Health Care Clinic', '20668', 'Kisii', 'Bobasi', 'Private Practice - Nurse / Midwifery', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.45415', '34.46648', '2025-07-13 05:15:02'),
+(1345, 'St Catherines Mission Ichuni', '20914', 'Kisii', 'Nyaribari Masaba', 'Kenya Episcopal Conference-Catholic Secretariat', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1346, 'Lenmek Hospital', '20919', 'Kisii', 'Bobasi', 'Private Practice - Medical Specialist', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.46874', '34.44215', '2025-07-13 05:15:02'),
+(1347, 'Maroba Health Centre', '21449', 'Kisii', 'Bomachoge Chache', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1348, 'Kineni Health Centre', '22257', 'Kisii', 'Bomachoge Chache', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1349, 'NYAKEIBOREIRE', '22657', 'Kisii', 'South Mugirango', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1350, 'NYAKEYO', '22699', 'Kisii', 'South Mugirango', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1351, 'Administration Police Dispensary (Kisumu)', '13464', 'Kisumu', 'Kisumu Central', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1352, 'Aga Khan Hospital (Kisumu)', '13465', 'Kisumu', 'Kisumu Central', 'Private Enterprise (Institution)', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.09937', '34.75621', '2025-07-13 05:15:02'),
+(1353, 'Ahero County Hospital', '13468', 'Kisumu', 'Nyando', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.17321', '34.92367', '2025-07-13 05:15:02'),
+(1354, 'Airport Health Centre', '13469', 'Kisumu', 'Kisumu West', 'Local Authority', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1355, 'Andingo Opanga Dispensary', '13477', 'Kisumu', 'Nyakach', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1356, 'Arito Langi Health Centre', '13484', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1357, 'Asat Beach Dispensary', '13487', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.18267', '34.51846', '2025-07-13 05:15:02'),
+(1358, 'Awasi Mission Health Center', '13491', 'Kisumu', 'Nyando', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.16043', '35.07395', '2025-07-13 05:15:02'),
+(1359, 'Bar Korwa Health Centre', '13498', 'Kisumu', 'Seme', 'Kenya Episcopal Conference-Catholic Secretariat', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1360, 'Bodi Health Centre', '13503', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.16328', '34.51242', '2025-07-13 05:15:02'),
+(1361, 'Bonde Dispensary', '13506', 'Kisumu', 'Nyakach', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.31432', '34.88627', '2025-07-13 05:15:02'),
+(1362, 'Bunde Health Centre', '13518', 'Kisumu', 'Nyando', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1363, 'Chemelil GOK Dispensary', '13521', 'Kisumu', 'Muhoroni', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.10732', '35.10848', '2025-07-13 05:15:02'),
+(1364, 'Chemelil Sugar Health Centre', '13522', 'Kisumu', 'Muhoroni', 'Company Medical Service', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.15153', '35.18239', '2025-07-13 05:15:02'),
+(1365, 'Chiga Dispensary', '13524', 'Kisumu', 'Kisumu East', 'Local Authority', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.09345', '34.83829', '2025-07-13 05:15:02'),
+(1366, 'Chulaimbo County Hospital', '13528', 'Kisumu', 'Kisumu West', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1367, 'Disciples of Mercy Clinic', '13534', 'Kisumu', 'Kisumu East', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.05596', '34.80129', '2025-07-13 05:15:02'),
+(1368, 'GK Prisons Dispensary (Kibos)', '13579', 'Kisumu', 'Kisumu East', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.06744', '34.8209', '2025-07-13 05:15:02'),
+(1369, 'Got Nyabondo Health Centre', '13591', 'Kisumu', 'Kisumu East', 'Local Authority', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1370, 'Hongo Ogosa Health Centre', '13609', 'Kisumu', 'Nyando', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.18603', '34.89364', '2025-07-13 05:15:02'),
+(1371, 'Gita Sub County Hospital', '13647', 'Kisumu', 'Kisumu East', 'Local Authority', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.02782', '34.79048', '2025-07-13 05:15:02'),
+(1372, 'Kandege Dispensary', '13652', 'Kisumu', 'Muhoroni', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.21452', '35.3071', '2025-07-13 05:15:02'),
+(1373, 'Kanyagwal Dispensary', '13654', 'Kisumu', 'Nyando', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.23887', '34.8797', '2025-07-13 05:15:02'),
+(1374, 'Katito Sub County Hospital', '13657', 'Kisumu', 'Nyakach', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1375, 'Kibigori Health Centre', '13687', 'Kisumu', 'Muhoroni', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1376, 'Kibogo Dispensary', '13688', 'Kisumu', 'Nyakach', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.29259', '35.01362', '2025-07-13 05:15:02'),
+(1377, 'Kibos Sugar Research Dispensary', '13689', 'Kisumu', 'Kisumu East', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.03396', '34.81761', '2025-07-13 05:15:02'),
+(1378, 'Kinasia Health Centre', '13694', 'Kisumu', 'Nyando', 'Ministry of Health', 'Kisumu CHMT CoAg (Uzima ToGo)', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1379, 'Kisumu County Hospital', '13704', 'Kisumu', 'Kisumu Central', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1380, 'Kodiaga Prison Health Centre', '13709', 'Kisumu', 'Kisumu West', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.06211', '34.70884', '2025-07-13 05:15:02'),
+(1381, 'Kombewa County  Referral Hospital', '13714', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1382, 'Koru Mission Health Centre', '13719', 'Kisumu', 'Muhoroni', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.18582', '35.27415', '2025-07-13 05:15:02'),
+(1383, 'Korwenje Dispensary', '13720', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.04739', '34.49191', '2025-07-13 05:15:02'),
+(1384, 'Kowino Dispensary', '13722', 'Kisumu', 'Kisumu Central', 'Local Authority', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.11414', '34.76895', '2025-07-13 05:15:02'),
+(1385, 'Kodingo Health Centre', '13727', 'Kisumu', 'Nyakach', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1386, 'Lumumba Sub County Hospital', '13738', 'Kisumu', 'Kisumu Central', 'Local Authority', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1387, 'Makindu Dispensary', '13759', 'Kisumu', 'Muhoroni', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.14086', '35.12573', '2025-07-13 05:15:02'),
+(1388, 'Manyuanda Sub county Hospital', '13770', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1389, 'Maseno Mission Hospital', '13781', 'Kisumu', 'Kisumu West', 'Christian Health Association of Kenya', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.00026', '34.61169', '2025-07-13 05:15:02'),
+(1390, 'Maseno University Health centre', '13782', 'Kisumu', 'Kisumu West', 'Parastatal', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1391, 'Masogo Sub County Hospital', '13785', 'Kisumu', 'Muhoroni', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1392, 'Migosi Sub County Hospital', '13807', 'Kisumu', 'Kisumu Central', 'Local Authority', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1393, 'Milimani Hospital', '13808', 'Kisumu', 'Kisumu Central', 'Private Enterprise (Institution)', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '-0.1217', '34.75328', '2025-07-13 05:15:02'),
+(1394, 'Miranga Sub County Hospital', '13810', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1395, 'Miwani Health Centre', '13816', 'Kisumu', 'Muhoroni', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1396, 'Mnara Dispensary', '13817', 'Kisumu', 'Muhoroni', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.16969', '35.23274', '2025-07-13 05:15:02'),
+(1397, 'Muhoroni County Hospital', '13831', 'Kisumu', 'Muhoroni', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1398, 'Muhoroni Sugar Company (Musco) Dispensary', '13832', 'Kisumu', 'Muhoroni', 'Company Medical Service', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.15182', '35.18489', '2025-07-13 05:15:02'),
+(1399, 'Nduru Kadero Health Centre', '13848', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1400, 'Nightingale Medical Centre', '13856', 'Kisumu', 'Kisumu Central', 'Private Enterprise (Institution)', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.08317', '34.7728', '2025-07-13 05:15:02'),
+(1401, 'Nyabondo Mission Hospital', '13864', 'Kisumu', 'Nyakach', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.38168', '34.97848', '2025-07-13 05:15:02'),
+(1402, 'Nyahera Sub Sub County Hospital', '13880', 'Kisumu', 'Kisumu West', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1403, 'Nyakach (AIC) Dispensary', '13881', 'Kisumu', 'Nyakach', 'Christian Health Association of Kenya', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.38434', '34.93101', '2025-07-13 05:15:02'),
+(1404, 'Nyakongo health Centre', '13884', 'Kisumu', 'Nyando', 'Ministry of Health', 'Kisumu CHMT CoAg (Uzima ToGo)', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1405, 'Nyalenda Health Centre', '13887', 'Kisumu', 'Kisumu Central', 'Local Authority', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.1226', '34.75211', '2025-07-13 05:15:02'),
+(1406, 'Nyalunya Health Centre', '13890', 'Kisumu', 'Kisumu East', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1407, 'Nyamarimba Sub County Hospital', '13899', 'Kisumu', 'Nyakach', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1408, 'Nyakach County Hospital', '13921', 'Kisumu', 'Nyakach', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1409, 'Nyangande Sub County Hospital', '13923', 'Kisumu', 'Nyando', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1410, 'Nyangoma Sub county Hospital', '13928', 'Kisumu', 'Muhoroni', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1411, 'Jaramogi Oginga Odinga Teaching & Referral Hospital', '13939', 'Kisumu', 'Kisumu Central', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1412, 'Ober Kamoth Sub County Hospital', '13954', 'Kisumu', 'Kisumu West', 'Local Authority', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1413, 'Oboch Dispensary', '13955', 'Kisumu', 'Nyakach', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.38896', '34.93802', '2025-07-13 05:15:02'),
+(1414, 'Obumba Dispensary', '13956', 'Kisumu', 'Muhoroni', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.09184', '34.90175', '2025-07-13 05:15:02'),
+(1415, 'Ogen Dispensary', '13965', 'Kisumu', 'Muhoroni', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.03917', '35.18204', '2025-07-13 05:15:02'),
+(1416, 'Ogra Health Centre', '13968', 'Kisumu', 'Muhoroni', 'Non-Governmental Organizations', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.11154', '34.95048', '2025-07-13 05:15:02'),
+(1417, 'Ojola Sub County Hospital', '13971', 'Kisumu', 'Kisumu West', 'Local Authority', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1418, 'Olasi Dispensary (Nyando)', '13976', 'Kisumu', 'Nyando', 'Ministry of Health', 'Kisumu CHMT CoAg (Uzima ToGo)', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.26736', '35.04453', '2025-07-13 05:15:02'),
+(1419, 'Olps Clinic', '13977', 'Kisumu', 'Kisumu East', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.07817', '34.79355', '2025-07-13 05:15:02'),
+(1420, 'Opapla Health Centre', '13990', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1421, 'Pand Pieri Community Dispensary', '14012', 'Kisumu', 'Kisumu Central', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1422, 'Port Florence Hospital', '14017', 'Kisumu', 'Kisumu West', 'Private Enterprise (Institution)', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.07429', '34.70296', '2025-07-13 05:15:02'),
+(1423, 'Rabuor Sub county Hospital', '14020', 'Kisumu', 'Nyando', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.15333', '34.8299', '2025-07-13 05:15:02'),
+(1424, 'Rachar Sugar Belt Hospital', '14021', 'Kisumu', 'Muhoroni', 'Private Enterprise (Institution)', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.15497', '35.19964', '2025-07-13 05:15:02'),
+(1425, 'Rae Dispensary', '14024', 'Kisumu', 'Nyakach', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.2382', '34.95691', '2025-07-13 05:15:02'),
+(1426, 'Railways Dispensary (Kisumu)', '14027', 'Kisumu', 'Kisumu Central', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.10109', '34.74821', '2025-07-13 05:15:02'),
+(1427, 'Ratta Health Centre', '14040', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.04529', '34.53948', '2025-07-13 05:15:02'),
+(1428, 'Riat Dispensary', '14046', 'Kisumu', 'Kisumu West', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.02097', '34.66381', '2025-07-13 05:15:02'),
+(1429, 'Rodi Health Centre', '14057', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1430, 'Rota Health Centre', '14060', 'Kisumu', 'Kisumu West', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1431, 'Sango Rota Health centre', '14066', 'Kisumu', 'Nyakach', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1432, 'Sigoti Health Centre', '14086', 'Kisumu', 'Nyakach', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.34667', '34.97091', '2025-07-13 05:15:02'),
+(1433, 'Simba Opepo Health Centre', '14088', 'Kisumu', 'Kisumu East', 'Local Authority', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1434, 'Siriba Dispensary', '14094', 'Kisumu', 'Kisumu West', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.00079', '34.61057', '2025-07-13 05:15:02'),
+(1435, 'Sondu Sub County Hospital', '14096', 'Kisumu', 'Nyakach', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1436, 'St Clare Bolo Health Centre', '14104', 'Kisumu', 'Nyakach', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.34803', '34.87407', '2025-07-13 05:15:02'),
+(1437, 'St Elizabeth Chiga Health Centre', '14106', 'Kisumu', 'Kisumu East', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.09891', '34.84461', '2025-07-13 05:15:02'),
+(1438, 'St. Marks Lela Health Centre', '14118', 'Kisumu', 'Kisumu West', 'Local Authority', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1439, 'St Monica Hospital', '14120', 'Kisumu', 'Kisumu East', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.0422', '34.76971', '2025-07-13 05:15:02'),
+(1440, 'St Vincents De Paul Health Centre', '14128', 'Kisumu', 'Muhoroni', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.16969', '35.23278', '2025-07-13 05:15:02'),
+(1441, 'Star Maternity & Nursing Home', '14129', 'Kisumu', 'Kisumu Central', 'Private Enterprise (Institution)', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.12177', '34.75308', '2025-07-13 05:15:02'),
+(1442, 'Tamu Health Centre', '14141', 'Kisumu', 'Muhoroni', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.10022', '35.20432', '2025-07-13 05:15:02'),
+(1443, 'Kasongo Dispensary', '16282', 'Kisumu', 'Muhoroni', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.16046', '35.1999', '2025-07-13 05:15:02'),
+(1444, 'Kadinda Health Centre', '16283', 'Kisumu', 'Nyando', 'Non-Governmental Organizations', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.24004', '34.89063', '2025-07-13 05:15:02'),
+(1445, 'Lvct Health-Tivoli', '16662', 'Kisumu', 'Kisumu Central', 'Non-Governmental Organizations', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1446, 'Impact Healthcare Services', '16663', 'Kisumu', 'Kisumu Central', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1447, 'Usoma Health Centre', '16664', 'Kisumu', 'Kisumu West', 'Local Authority', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1448, 'St Jane Nursing Home', '16870', 'Kisumu', 'Nyakach', 'Other Faith Based', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.33158', '34.8456', '2025-07-13 05:15:02'),
+(1449, 'St Jones &Ring Road Health Clinic', '16882', 'Kisumu', 'Kisumu Central', 'Private Enterprise (Institution)', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.12409', '34.75811', '2025-07-13 05:15:02'),
+(1450, 'Koru Dispensary', '17110', 'Kisumu', 'Muhoroni', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.1807', '35.26685', '2025-07-13 05:15:02'),
+(1451, 'Mashambani Health Centre', '17111', 'Kisumu', 'Muhoroni', 'Community', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1452, 'Holo Dispensary', '17118', 'Kisumu', 'Nyando', 'Ministry of Health', 'Kisumu CHMT CoAg (Uzima ToGo)', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.16982', '35.10123', '2025-07-13 05:15:02'),
+(1453, 'Mama Plister Blair Health Centre', '17121', 'Kisumu', 'Muhoroni', 'Private Enterprise (Institution)', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.12894', '34.96551', '2025-07-13 05:15:02'),
+(1454, 'Tuungane Youth Transition Centre', '17166', 'Kisumu', 'Kisumu Central', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.08976', '34.76629', '2025-07-13 05:15:02'),
+(1455, 'Kuoyo Kaila Health Centre', '17171', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1456, 'Kolenyo Health Centre', '17172', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1457, 'Onyinjo Dispensary', '17173', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.07104', '34.53725', '2025-07-13 05:15:02'),
+(1458, 'Lwala Kadawa Health Centre', '17174', 'Kisumu', 'Kisumu West', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1459, 'Sunga Dispensary', '17175', 'Kisumu', 'Kisumu West', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.0339', '34.58966', '2025-07-13 05:15:02'),
+(1460, 'Victoria Sub District Hospital', '17376', 'Kisumu', 'Kisumu Central', 'Ministry of Health', 'CIHEB Entrench', 'CDC', '', '', 'On Cloud', '-0.11147', '34.75107', '2025-07-13 05:15:02'),
+(1461, 'K-MET Corkran Medical Clinic', '17554', 'Kisumu', 'Kisumu Central', 'Non-Governmental Organizations', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1462, 'Oriang Alwala Dispensary', '18086', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1463, 'Langi Kawino Dispensary', '18250', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.10116', '34.57652', '2025-07-13 05:15:02'),
+(1464, 'Wanganga Health Centre', '18283', 'Kisumu', 'Nyando', 'Community', 'Kisumu CHMT CoAg (Uzima ToGo)', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1465, 'Ahero Medical Centre', '18291', 'Kisumu', 'Nyando', 'Private Practice - Nurse / Midwife', 'Kisumu CHMT CoAg (Uzima ToGo)', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.17296', '34.92412', '2025-07-13 05:15:02'),
+(1466, 'Kemri Clinic', '18301', 'Kisumu', 'Kisumu West', 'Parastatal', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.0765', '34.67583', '2025-07-13 05:15:02'),
+(1467, 'Masaba Hospital Kisumu', '18414', 'Kisumu', 'Kisumu West', 'Private Practice - General Practitioner', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.03925', '34.62876', '2025-07-13 05:15:02'),
+(1468, 'The Hope Medical Centre-Awasi', '18415', 'Kisumu', 'Nyando', 'Christian Health Association of Kenya', 'Kisumu CHMT CoAg (Uzima ToGo)', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.16453', '35.07167', '2025-07-13 05:15:02'),
+(1469, 'Katolo-Manyatta Dispensary', '18421', 'Kisumu', 'Nyando', 'Community', 'Kisumu CHMT CoAg (Uzima ToGo)', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.22764', '34.96644', '2025-07-13 05:15:02'),
+(1470, 'Oriang Kanyadwera Dispensary', '18422', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.07289', '34.45264', '2025-07-13 05:15:02'),
+(1471, 'Magina Health Center', '18430', 'Kisumu', 'Nyando', 'Ministry of Health', 'Kisumu CHMT CoAg (Uzima ToGo)', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.21349', '34.93507', '2025-07-13 05:15:02'),
+(1472, 'House of Hope Medical Centre', '18720', 'Kisumu', 'Nyakach', 'Private Practice - General Practitioner', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.26418', '34.98087', '2025-07-13 05:15:02'),
+(1473, 'Radienya Dispensary', '18722', 'Kisumu', 'Nyakach', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.41036', '34.97416', '2025-07-13 05:15:02'),
+(1474, 'Pedo Dispensary', '18725', 'Kisumu', 'Nyakach', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.33796', '34.90802', '2025-07-13 05:15:02'),
+(1475, 'Nyabondo Rehabilitation Centre', '18867', 'Kisumu', 'Nyakach', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.38172', '34.97882', '2025-07-13 05:15:02'),
+(1476, 'Amani Medical Clinic Yatta', '18921', 'Kisumu', 'Nyando', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', 'KenyaEMR', 'Active', 'On Premises', '-1.52265', '37.33527', '2025-07-13 05:15:02'),
+(1477, 'Kisumu Police Line Dispensary', '19869', 'Kisumu', 'Kisumu Central', 'Armed Forces', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1478, 'OTIENO OWALA HEALTH CENTRE', '20024', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1479, 'Osewre Dispensary', '20069', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.13337', '34.44436', '2025-07-13 05:15:02'),
+(1480, 'Avenue Hospital Kisumu', '20123', 'Kisumu', 'Kisumu Central', 'Private Enterprise (Institution)', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.088626', '34.770387', '2025-07-13 05:15:02'),
+(1481, 'Mbaka Oromo Health Centre', '20199', 'Kisumu', 'Kisumu West', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02');
+INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(1482, 'Onyuongo Dispensary', '20209', 'Kisumu', 'Nyakach', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.32515', '35.00533', '2025-07-13 05:15:02'),
+(1483, 'Dago Jonyo Dispensary', '20377', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.18251', '34.50411', '2025-07-13 05:15:02'),
+(1484, 'Manyatta Community Medical Clinic', '20512', 'Kisumu', 'Kisumu East', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.09366', '34.78063', '2025-07-13 05:15:02'),
+(1485, 'Tumaini DiCE Kisumu', '20523', 'Kisumu', 'Kisumu Central', 'Non-Governmental Organisations', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.1031', '34.76178', '2025-07-13 05:15:02'),
+(1486, 'Keeping alive Society Hope', '20700', 'Kisumu', 'Kisumu Central', 'Non-Governmental Organizations', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1487, 'St.Monica Hospital (Town Clinic)', '20836', 'Kisumu', 'Kisumu Central', 'Kenya MPDB - Institution', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1488, 'Maseno University AIDS Control Unit(Kisumu Town Campus)', '20905', 'Kisumu', 'Kisumu Central', 'Public Institution - Academic', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1489, 'Tumaini Sondu Dice', '20934', 'Kisumu', 'Nyakach', 'Non-Governmental Organisations', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1490, 'AAR Health Care-Kisumu', '20956', 'Kisumu', 'Kisumu Central', 'Private Practice - General Practitioner', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.10465', '34.75328', '2025-07-13 05:15:02'),
+(1491, 'Orongo Dispensary', '21047', 'Kisumu', 'Kisumu East', 'Local Authority', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.14321', '34.78863', '2025-07-13 05:15:02'),
+(1492, 'Mainga Health Centre', '21208', 'Kisumu', 'Kisumu West', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1493, 'Anza Mapema Clinic', '21220', 'Kisumu', 'Kisumu Central', 'Non-Governmental Organizations', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1494, 'Angola Community Dispensary', '21236', 'Kisumu', 'Kisumu East', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.12713', '34.8245', '2025-07-13 05:15:02'),
+(1495, 'Lolwe Health Centre', '21262', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1496, 'Kuoyo Health Center', '21705', 'Kisumu', 'Kisumu East', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1497, 'St. Jairus', '21766', 'Kisumu', 'Kisumu West', 'Private Practice - Private Company', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1498, 'MAAYGO Dice', '22094', 'Kisumu', 'Kisumu Central', 'Non-Governmental Organizations', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1499, 'Bongu Konyango Dispensary', '22192', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1500, 'Kisumu Specialist Hospital', '22354', 'Kisumu', 'Kisumu East', 'Private Practice - Medical Specialist', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1501, 'Tumaini Dice Awasi', '22564', 'Kisumu', 'Muhoroni', 'Non-Governmental Organizations', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1502, 'Lvct Health-Manyatta Dice', '24200', 'Kisumu', 'Kisumu Central', 'Non-Governmental Organizations', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1503, 'Maaygo Railways', '27025', 'Kisumu', 'Kisumu Central', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1504, 'Chuluni Health Centre', '11974', 'Kitui', 'Kitui East', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1505, 'Endau Dispensary', '12008', 'Kitui', 'Kitui East', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.31745', '38.51505', '2025-07-13 05:15:02'),
+(1506, 'Faith Nursing Home (Ikutha)', '12013', 'Kitui', 'Kitui South', 'Private Practice - Nurse / Midwife', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-2.06618', '38.17985', '2025-07-13 05:15:02'),
+(1507, 'GK Kitui', '12047', 'Kitui', 'Kitui Central', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1508, 'Ikanga Sub county Hospital', '12077', 'Kitui', 'Kitui South', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1509, 'Ikutha  Sub County Hospital', '12080', 'Kitui', 'Kitui South', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1510, 'Inyuu Dispensary', '12091', 'Kitui', 'Kitui East', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.41856', '38.15532', '2025-07-13 05:15:02'),
+(1511, 'Itongolani Dispensary', '12099', 'Kitui', 'Mwingi West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.86442', '37.9713', '2025-07-13 05:15:02'),
+(1512, 'Kakeani Health Centre', '12134', 'Kitui', 'Kitui West', 'Ministry of Health', 'Tujimudu', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1513, 'Kaliku Dispensary', '12151', 'Kitui', 'Kitui East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.29244', '38.30107', '2025-07-13 05:15:02'),
+(1514, 'Kalimani Disensary', '12153', 'Kitui', 'Kitui West', 'Ministry of Health', 'Tujimudu', 'CDC', '', '', 'On Premises', '-1.33963', '37.94476', '2025-07-13 05:15:02'),
+(1515, 'Kamutei Health Centre', '12166', 'Kitui', 'Kitui South', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.98252', '38.03841', '2025-07-13 05:15:02'),
+(1516, 'Kamuwongo Health Centre', '12169', 'Kitui', 'Mwingi North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1517, 'Kaningo Health Centre', '12178', 'Kitui', 'Mwingi North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.20952', '38.32968', '2025-07-13 05:15:02'),
+(1518, 'Kanyangi  Hospital', '12184', 'Kitui', 'Kitui Rural', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1519, 'Kanyunga Health Centre', '12186', 'Kitui', 'Mwingi Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.97474', '38.12475', '2025-07-13 05:15:02'),
+(1520, 'Kanziku Health Centre', '12190', 'Kitui', 'Kitui South', 'Ministry of Health', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.98086', '38.35155', '2025-07-13 05:15:02'),
+(1521, 'Kasaala Health Centre', '12204', 'Kitui', 'Kitui South', 'Ministry of Health', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-2.13709', '38.26674', '2025-07-13 05:15:02'),
+(1522, 'Kasilili Medical Clinic', '12209', 'Kitui', 'Kitui East', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.22538', '38.18897', '2025-07-13 05:15:02'),
+(1523, 'Kasunguni Dispensary', '12210', 'Kitui', 'Kitui East', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.52112', '38.24915', '2025-07-13 05:15:02'),
+(1524, 'Kasyala Health Centre', '12211', 'Kitui', 'Kitui Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1525, 'Katakani Dispensary', '12213', 'Kitui', 'Mwingi North', 'Other Faith Based', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.62788', '38.15888', '2025-07-13 05:15:02'),
+(1526, 'Katilini Health Centre', '12241', 'Kitui', 'Kitui South', 'Ministry of Health', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-2.05287', '37.98517', '2025-07-13 05:15:02'),
+(1527, 'Katse Health Centre', '12242', 'Kitui', 'Mwingi North', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.50905', '38.0806', '2025-07-13 05:15:02'),
+(1528, 'Katutu Health Center', '12249', 'Kitui', 'Kitui West', 'Ministry of Health', 'Tujimudu', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1529, 'Katyethoka Health Centre', '12251', 'Kitui', 'Kitui South', 'Ministry of Health', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.49759', '38.19709', '2025-07-13 05:15:02'),
+(1531, 'Kauwi Sub-District Hospital', '12255', 'Kitui', 'Kitui West', 'Ministry of Health', 'Tujimudu', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.2462', '37.91488', '2025-07-13 05:15:02'),
+(1532, 'Kavuta Dispensary', '12262', 'Kitui', 'Kitui Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.48693', '37.89803', '2025-07-13 05:15:02'),
+(1533, 'Kisasi Health Centre (Kitui)', '12340', 'Kitui', 'Kitui Rural', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1534, 'Kisayani Health Centre', '12342', 'Kitui', 'Kitui South', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.42771', '38.10994', '2025-07-13 05:15:02'),
+(1535, 'Kiseveni Dispensary', '12346', 'Kitui', 'Kitui West', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', '', '', 'On Premises', '-1.25993', '37.85411', '2025-07-13 05:15:02'),
+(1536, 'Kitui District Hospital', '12366', 'Kitui', 'Kitui Central', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.36984', '38.01367', '2025-07-13 05:15:02'),
+(1537, 'Kivuuni Dispensary', '12379', 'Kitui', 'Kitui Rural', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.61166', '38.14396', '2025-07-13 05:15:02'),
+(1538, 'Konyu Dispensary', '12383', 'Kitui', 'Mwingi North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.42161', '37.9844', '2025-07-13 05:15:02'),
+(1539, 'Kwa Mulungu Dispensary', '12393', 'Kitui', 'Kitui West', 'Ministry of Health', 'Tujimudu', 'CDC', '', '', 'On Premises', '-1.32613', '37.90672', '2025-07-13 05:15:02'),
+(1540, 'Kwa Mutonga Health Centre', '12394', 'Kitui', 'Kitui West', 'Ministry of Health', 'Tujimudu', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1541, 'Kwa Vonza Dispensary', '12396', 'Kitui', 'Kitui Rural', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.38308', '37.82991', '2025-07-13 05:15:02'),
+(1542, 'Kyamatu Dispensary', '12403', 'Kitui', 'Kitui East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.56838', '38.34606', '2025-07-13 05:15:02'),
+(1543, 'Kyangunga Health Centre', '12406', 'Kitui', 'Kitui Central', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1544, 'Kyatune Health Centre', '12410', 'Kitui', 'Kitui South', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.4627', '38.06948', '2025-07-13 05:15:02'),
+(1545, 'Kyethani Health Centre', '12414', 'Kitui', 'Mwingi West', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.84465', '38.00819', '2025-07-13 05:15:02'),
+(1546, 'Kyuso District Hospital', '12420', 'Kitui', 'Mwingi North', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.55173', '38.21806', '2025-07-13 05:15:02'),
+(1547, 'Malalani Health Centre', '12459', 'Kitui', 'Kitui East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1548, 'Mama Vero Clinic', '12464', 'Kitui', 'Kitui West', 'Private Enterprise (Institution)', 'Tujimudu', 'CDC', '', '', 'On Premises', '-1.23303', '37.91605', '2025-07-13 05:15:02'),
+(1549, 'Masyungwa Health Centre', '12479', 'Kitui', 'Mwingi North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.40025', '38.36584', '2025-07-13 05:15:02'),
+(1550, 'Mathuki Health Centre', '12483', 'Kitui', 'Mwingi Central', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.04828', '38.2364', '2025-07-13 05:15:02'),
+(1551, 'Matinyani Health Centre', '12486', 'Kitui', 'Kitui West', 'Ministry of Health', 'Tujimudu', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1552, 'Mavui Dispensary', '12495', 'Kitui', 'Mwingi West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.95196', '37.87376', '2025-07-13 05:15:02'),
+(1553, 'Miambani Catholic', '12518', 'Kitui', 'Kitui Central', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.26211', '38.11138', '2025-07-13 05:15:02'),
+(1554, 'Miambani Health Centre', '12519', 'Kitui', 'Kitui Central', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.26173', '38.11068', '2025-07-13 05:15:02'),
+(1555, 'Mbitini Health Centre', '12521', 'Kitui', 'Kitui Rural', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.59104', '38.1173', '2025-07-13 05:15:02'),
+(1556, 'Migwani Sub-District Hospital', '12523', 'Kitui', 'Mwingi West', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.09545', '38.01926', '2025-07-13 05:15:02'),
+(1557, 'Mivukoni Health Centre', '12539', 'Kitui', 'Mwingi North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.40875', '38.24192', '2025-07-13 05:15:02'),
+(1558, 'Mulango (AIC) Health Centre', '12566', 'Kitui', 'Kitui Central', 'Christian Health Association of Kenya', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.4284', '38.01184', '2025-07-13 05:15:02'),
+(1559, 'Mulangoni Dispensary', '12567', 'Kitui', 'Mwingi North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.35217', '38.34173', '2025-07-13 05:15:02'),
+(1560, 'Mulutu Mission Dispensary', '12569', 'Kitui', 'Kitui Central', 'Other Faith Based', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.35222', '37.95024', '2025-07-13 05:15:02'),
+(1561, 'Mutha Health Centre', '12586', 'Kitui', 'Kitui South', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.4782', '38.25696', '2025-07-13 05:15:02'),
+(1562, 'Muthale Mission Hospital', '12587', 'Kitui', 'Kitui West', 'Kenya Episcopal Conference-Catholic Secretariat', 'Tujimudu', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.19241', '38.00028', '2025-07-13 05:15:02'),
+(1563, 'Mutito Catholic Dispensary', '12599', 'Kitui', 'Kitui East', 'Other Faith Based', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.23078', '38.19958', '2025-07-13 05:15:02'),
+(1564, 'Mutitu Sub-District Hospital', '12601', 'Kitui', 'Kitui East', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.22724', '38.17377', '2025-07-13 05:15:02'),
+(1565, 'Mutomo Sub county Hospital', '12603', 'Kitui', 'Kitui South', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1566, 'Our Lady of Lourdes Mutomo Hospital', '12604', 'Kitui', 'Kitui South', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1567, 'Mutyangome Dispensary', '12611', 'Kitui', 'Mwingi Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.95812', '38.33304', '2025-07-13 05:15:02'),
+(1568, 'Mwingi Hospital', '12626', 'Kitui', 'Mwingi Central', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1569, 'Mwitika Health Centre', '12628', 'Kitui', 'Kitui East', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1570, 'Ndiuni Health Centre', '12638', 'Kitui', 'Kitui West', 'Ministry of Health', 'Tujimudu', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1571, 'Neema Hospital', '12641', 'Kitui', 'Kitui Central', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.36759', '38.00477', '2025-07-13 05:15:02'),
+(1572, 'Ngomeni Health Centre', '12654', 'Kitui', 'Mwingi North', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.64276', '38.40848', '2025-07-13 05:15:02'),
+(1573, 'Ngongoni Dispensary-Mwingi West', '12655', 'Kitui', 'Mwingi West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1574, 'Nguni Health Centre', '12658', 'Kitui', 'Mwingi Central', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.80311', '38.31501', '2025-07-13 05:15:02'),
+(1575, 'Nguungani Dispensary', '12662', 'Kitui', 'Mwingi North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.62653', '37.96015', '2025-07-13 05:15:02'),
+(1576, 'Nthongoni Health Centre (Kitui Rural)', '12677', 'Kitui', 'Kitui Rural', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1577, 'Nuu Hospital', '12681', 'Kitui', 'Mwingi Central', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1578, 'Nzatani Dispensary', '12689', 'Kitui', 'Mwingi West', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1579, 'Nzawa Health Centre', '12690', 'Kitui', 'Mwingi West', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.12169', '37.92889', '2025-07-13 05:15:02'),
+(1580, 'Nzeluni Health Centre', '12691', 'Kitui', 'Mwingi West', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.07916', '38.10021', '2025-07-13 05:15:02'),
+(1581, 'Tei Wa Yesu', '12789', 'Kitui', 'Mwingi North', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1582, 'Thaana Nzau Dispensary', '12792', 'Kitui', 'Mwingi West', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.82247', '37.862', '2025-07-13 05:15:02'),
+(1583, 'Tharaka Health Centre', '12794', 'Kitui', 'Mwingi North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.31016', '38.025225', '2025-07-13 05:15:02'),
+(1584, 'Thitani Health Centre', '12797', 'Kitui', 'Mwingi West', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.0386', '37.91423', '2025-07-13 05:15:02'),
+(1585, 'Thitha Dispensary', '12798', 'Kitui', 'Mwingi Central', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.90745', '38.17837', '2025-07-13 05:15:02'),
+(1586, 'Tii Dispensary', '12800', 'Kitui', 'Mwingi North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.65685', '38.17075', '2025-07-13 05:15:02'),
+(1587, 'Tiva Dispensary', '12803', 'Kitui', 'Kitui Central', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.38513', '37.93872', '2025-07-13 05:15:02'),
+(1588, 'Tseikuru Sub-District Hospital', '12805', 'Kitui', 'Mwingi North', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.31866', '38.22111', '2025-07-13 05:15:02'),
+(1589, 'Tulia Health Centre', '12806', 'Kitui', 'Kitui West', 'Ministry of Health', 'Tujimudu', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1590, 'Tungutu Health Centre', '12812', 'Kitui', 'Kitui Central', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1591, 'Tyaa Kamuthale Health Centre', '12819', 'Kitui', 'Mwingi North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1592, 'Voo Health Center', '12836', 'Kitui', 'Kitui East', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1593, 'Waita Health Centre', '12839', 'Kitui', 'Mwingi Central', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.78026', '38.09442', '2025-07-13 05:15:02'),
+(1594, 'Wanzua Dispensary', '12842', 'Kitui', 'Kitui Central', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1595, 'Wingemi Health Centre', '12848', 'Kitui', 'Mwingi Central', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1596, 'Winzyeei Health Centre', '12849', 'Kitui', 'Mwingi West', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1597, 'Yanzuu Health Centre', '12852', 'Kitui', 'Kitui East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1598, 'Yatta Health Center', '12853', 'Kitui', 'Kitui Rural', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1599, 'Yongela Dispensary', '12856', 'Kitui', 'Kitui South', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1600, 'AIC Zombe  Health Centre', '12860', 'Kitui', 'Kitui East', 'Christian Health Association of Kenya', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1601, 'Mbondoni Health Centre', '16246', 'Kitui', 'Mwingi West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1602, 'Kilawa Dispensary', '16648', 'Kitui', 'Kitui South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-2.08113', '38.05106', '2025-07-13 05:15:02'),
+(1603, 'Kalanga Dispensary', '16654', 'Kitui', 'Mwingi Central', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.82149', '38.39148', '2025-07-13 05:15:02'),
+(1604, 'Kiomo Dispensary', '16655', 'Kitui', 'Mwingi West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.9331', '37.99815', '2025-07-13 05:15:02'),
+(1605, 'Katulani Sub District Hospital (Kitui)', '16991', 'Kitui', 'Kitui Central', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.49523', '37.94375', '2025-07-13 05:15:02'),
+(1606, 'Nzangathi Health Center', '16992', 'Kitui', 'Kitui East', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1607, 'Syathani (Kyathani) Dispensary', '16993', 'Kitui', 'Kitui West', 'Ministry of Health', 'Tujimudu', 'CDC', '', '', 'On Premises', '-1.21022', '38.02157', '2025-07-13 05:15:02'),
+(1608, 'Kanzau Dispensary (Mbitini)', '16994', 'Kitui', 'Kitui Rural', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1609, 'St Joseph Kavisuni Health Centre', '16995', 'Kitui', 'Kitui Rural', 'Other Faith Based', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1610, 'Kalambani Dispensary', '17602', 'Kitui', 'Kitui South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.3988', '38.30103', '2025-07-13 05:15:02'),
+(1611, 'Blueturtle', '17609', 'Kitui', 'Kitui South', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.42026', '38.03823', '2025-07-13 05:15:02'),
+(1612, 'Ndakani Dispensary', '17817', 'Kitui', 'Kitui South', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.53362', '38.25108', '2025-07-13 05:15:02'),
+(1613, 'Ukasi Model Health Centre', '18090', 'Kitui', 'Mwingi Central', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.48134', '38.32101', '2025-07-13 05:15:02'),
+(1614, 'Nyumbani Village Catholic Dispensary', '18199', 'Kitui', 'Kitui Rural', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.19136', '37.48273', '2025-07-13 05:15:02'),
+(1615, 'Kalulini Health Centre', '18516', 'Kitui', 'Kitui Rural', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1616, 'Kivani Dispensary', '18529', 'Kitui', 'Kitui West', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.72171', '37.37571', '2025-07-13 05:15:02'),
+(1617, 'Maseki Dispensary-Kitui West', '18550', 'Kitui', 'Kitui West', 'Ministry of Health', 'Tujimudu', 'CDC', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1618, 'Kanzui Dispensary', '18567', 'Kitui', 'Mwingi Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.98316', '38.16449', '2025-07-13 05:15:02'),
+(1619, 'Makongo Dispensary', '18681', 'Kitui', 'Kitui East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.4075', '38.39342', '2025-07-13 05:15:02'),
+(1620, 'Kenyatta University Kitui Campus Health Unit', '18879', 'Kitui', 'Kitui Rural', 'Academic (if registered)', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.36368', '37.82497', '2025-07-13 05:15:02'),
+(1621, 'University of Nairobi-MARPS Project- Mwingi', '20203', 'Kitui', 'Mwingi Central', 'Public Institution - Parastatal', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1622, 'AP Kanyonyo Dispensary', '20425', 'Kitui', 'Kitui Rural', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1623, 'University Of Nairobi Kitui Drop In Centre', '20448', 'Kitui', 'Kitui Central', 'Private Practice - General Practitioner', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.37113', '38.01263', '2025-07-13 05:15:02'),
+(1624, 'Kaliani Dispensary-Kitui', '20579', 'Kitui', 'Kitui South', 'Ministry of Health', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1625, 'Athi Mission Clinic', '22085', 'Kitui', 'Kitui South', 'Faith Based', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1626, 'Zombe Sub County Hospital', '23030', 'Kitui', 'Kitui East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1627, 'Bofu Dispensary', '11253', 'Kwale', 'Kinango', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.98008', '39.43351', '2025-07-13 05:15:02'),
+(1628, 'Diani Health Centre', '11304', 'Kwale', 'Msambweni', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.27434', '39.5677', '2025-07-13 05:15:02'),
+(1629, 'Eshu Dispensary', '11368', 'Kwale', 'Msambweni', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.41492', '39.3469', '2025-07-13 05:15:02'),
+(1630, 'Godo Dispensary', '11400', 'Kwale', 'Lunga Lunga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.52498', '39.02958', '2025-07-13 05:15:02'),
+(1631, 'Kafuduni Dispensary', '11448', 'Kwale', 'Kinango', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.90842', '39.4982', '2025-07-13 05:15:02'),
+(1632, 'Kibandaongo Dispensary', '11464', 'Kwale', 'Kinango', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.04451', '39.39798', '2025-07-13 05:15:02'),
+(1633, 'Kibuyuni Dispensary', '11466', 'Kwale', 'Matuga', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.395965', '39.309955', '2025-07-13 05:15:02'),
+(1634, 'Kichaka Simba Dispensary', '11467', 'Kwale', 'Matuga', 'Other Faith Based', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.34917', '39.35684', '2025-07-13 05:15:02'),
+(1635, 'Kikoneni Health Centre', '11472', 'Kwale', 'Lunga Lunga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.44607', '39.3135', '2025-07-13 05:15:02'),
+(1636, 'Kilibasi Dispensary', '11473', 'Kwale', 'Kinango', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.97151', '39.36605', '2025-07-13 05:15:02'),
+(1637, 'Kilimangodo Dispensary', '11476', 'Kwale', 'Lunga Lunga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.35192', '39.0764', '2025-07-13 05:15:02'),
+(1638, 'Kinagoni Dispensary', '11479', 'Kwale', 'Kinango', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.86981', '39.2324', '2025-07-13 05:15:02'),
+(1639, 'Kinango Sub County Hospital', '11480', 'Kwale', 'Kinango', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1640, 'Kizibe Dispensary', '11495', 'Kwale', 'Matuga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.25582', '39.301332', '2025-07-13 05:15:02'),
+(1641, 'Kwale District Hospital', '11507', 'Kwale', 'Matuga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.1753', '39.45515', '2025-07-13 05:15:02'),
+(1642, 'Lukore Dispensary', '11525', 'Kwale', 'Matuga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.356033', '39.315585', '2025-07-13 05:15:02'),
+(1643, 'Lungalunga Subcounty Hospital', '11526', 'Kwale', 'Lunga Lunga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1644, 'Lutsangani Dispensary', '11527', 'Kwale', 'Kinango', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.06412', '39.51361', '2025-07-13 05:15:02'),
+(1645, 'Mackinnon Road Dispensary', '11531', 'Kwale', 'Kinango', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1646, 'Mafisini Dispensary', '11536', 'Kwale', 'Msambweni', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.44518', '39.375', '2025-07-13 05:15:02'),
+(1647, 'Magodzoni Dispensary', '11537', 'Kwale', 'Matuga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.21216', '39.5569', '2025-07-13 05:15:02'),
+(1648, 'Majimoto Dispensary', '11543', 'Kwale', 'Lunga Lunga', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.40447', '39.2944', '2025-07-13 05:15:02'),
+(1649, 'Majoreni Dispensary', '11544', 'Kwale', 'Lunga Lunga', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.57561', '39.2762', '2025-07-13 05:15:02'),
+(1650, 'Makamini Dispensary', '11545', 'Kwale', 'Kinango', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.98457', '39.2454', '2025-07-13 05:15:02'),
+(1651, 'Mamba Dispensary', '11558', 'Kwale', 'Lunga Lunga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', '', '', 'On Premises', '-4.45926', '39.2438', '2025-07-13 05:15:02'),
+(1652, 'Matuga Dispensary', '11581', 'Kwale', 'Matuga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.1771', '39.56773', '2025-07-13 05:15:02'),
+(1653, 'Mazeras Health centre', '11585', 'Kwale', 'Kinango', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1654, 'Mazumalume Dispensary', '11587', 'Kwale', 'Matuga', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.24513', '39.48973', '2025-07-13 05:15:02'),
+(1655, 'Mbuguni Dispensary', '11590', 'Kwale', 'Matuga', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.10839', '39.55489', '2025-07-13 05:15:02'),
+(1656, 'Mbuwani Dispensary', '11593', 'Kwale', 'Msambweni', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.29503', '39.53', '2025-07-13 05:15:02'),
+(1657, 'Mivumoni (Catholic) Dispensary', '11624', 'Kwale', 'Msambweni', 'Kenya Episcopal Conference - Catholic Secretariat', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.42514', '39.39711', '2025-07-13 05:15:02'),
+(1658, 'Mkangombe Dispensary', '11627', 'Kwale', 'Kinango', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1659, 'Mkongani Health Centre', '11629', 'Kwale', 'Matuga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1660, 'Mkundi Dispensary', '11630', 'Kwale', 'Matuga', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.366375', '39.248137', '2025-07-13 05:15:02'),
+(1661, 'Mnyenzeni Health Centre', '11638', 'Kwale', 'Kinango', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1662, 'Mrima (Catholic) Dispensary', '11651', 'Kwale', 'Lunga Lunga', 'Kenya Episcopal Conference - Catholic Secretariat', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.49113', '39.24639', '2025-07-13 05:15:02'),
+(1663, 'Msambweni County Referral Hospital', '11655', 'Kwale', 'Msambweni', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1664, 'Mtaa Dispensary', '11662', 'Kwale', 'Kinango', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.00308', '39.3411', '2025-07-13 05:15:02'),
+(1665, 'Muhaka Dispensary', '11676', 'Kwale', 'Msambweni', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.34114', '39.5141', '2025-07-13 05:15:02'),
+(1666, 'Mwabila Dispensary', '11681', 'Kwale', 'Kinango', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.85645', '39.39173', '2025-07-13 05:15:02'),
+(1667, 'Mwachinga Dispensary', '11682', 'Kwale', 'Kinango', 'Community', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.12867', '39.42356', '2025-07-13 05:15:02'),
+(1668, 'Mwaluphamba Dispensary', '11684', 'Kwale', 'Matuga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.22579', '39.3663', '2025-07-13 05:15:02'),
+(1669, 'Mwaluvanga Dispensary', '11685', 'Kwale', 'Matuga', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.37916', '39.3639', '2025-07-13 05:15:02'),
+(1670, 'Mwanda Dispensary', '11687', 'Kwale', 'Kinango', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.88865', '39.4334', '2025-07-13 05:15:02'),
+(1671, 'Mwangulu Dispensary', '11691', 'Kwale', 'Lunga Lunga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.40954', '39.0134', '2025-07-13 05:15:02'),
+(1672, 'Mwapala Dispensary', '11693', 'Kwale', 'Matuga', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.34027', '39.4527', '2025-07-13 05:15:02'),
+(1673, 'Ndavaya Health Centre', '11701', 'Kwale', 'Kinango', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1674, 'Ngathini Dispensary', '11712', 'Kwale', 'Lunga Lunga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.61782', '39.13672', '2025-07-13 05:15:02'),
+(1675, 'Ngombeni Dispensary', '11714', 'Kwale', 'Matuga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1676, 'Samburu Health Centre', '11768', 'Kwale', 'Kinango', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.79018', '39.2698', '2025-07-13 05:15:02'),
+(1677, 'Shimba Hills Health Centre', '11787', 'Kwale', 'Matuga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.35774', '39.4179', '2025-07-13 05:15:02'),
+(1678, 'Shimoni Dispensary', '11789', 'Kwale', 'Lunga Lunga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.64508', '39.37883', '2025-07-13 05:15:02'),
+(1679, 'Silaloni Dispensary', '11794', 'Kwale', 'Kinango', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.62041', '39.2822', '2025-07-13 05:15:02'),
+(1680, 'Star of Good Hope Medical Clinic', '11830', 'Kwale', 'Matuga', 'Private Practice - Clinical Officer', 'USAID Stawisha Pwani', 'USAID', '', '', 'On Premises', '-4.24133', '39.57503', '2025-07-13 05:15:02'),
+(1681, 'Taru Health Centre', '11838', 'Kwale', 'Kinango', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1682, 'Tiwi RHTC', '11853', 'Kwale', 'Matuga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.24935', '39.5869', '2025-07-13 05:15:02'),
+(1683, 'Ukunda Diani Catholic Dispensary', '11867', 'Kwale', 'Msambweni', 'Kenya Episcopal Conference- Catholic Secretariat', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.28795', '39.57617', '2025-07-13 05:15:02'),
+(1684, 'Vanga Health Centre', '11879', 'Kwale', 'Lunga Lunga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.66097', '39.2174', '2025-07-13 05:15:02'),
+(1685, 'Vigurungani Dispensary', '11880', 'Kwale', 'Kinango', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.04152', '39.16313', '2025-07-13 05:15:02'),
+(1686, 'Vitsangalaweni Dispensary', '11884', 'Kwale', 'Lunga Lunga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.48469', '39.2142', '2025-07-13 05:15:02'),
+(1687, 'Vyongwani Dispensary', '11887', 'Kwale', 'Matuga', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.15284', '39.4883', '2025-07-13 05:15:02'),
+(1688, 'Waa Dispensary', '11888', 'Kwale', 'Matuga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1689, 'Gombato', '16546', 'Kwale', 'Msambweni', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1690, 'Kinondo Kwetu Dispensary', '16547', 'Kwale', 'Msambweni', 'Community', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1691, 'Mwananyamala (CDF) Dispensary', '16549', 'Kwale', 'Lunga Lunga', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.43605', '39.26573', '2025-07-13 05:15:02'),
+(1692, 'Ukunda Medical Clinic', '16552', 'Kwale', 'Msambweni', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.28475', '39.56565', '2025-07-13 05:15:02'),
+(1693, 'Kiteje Dispensary', '17469', 'Kwale', 'Matuga', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.11782', '39.35132', '2025-07-13 05:15:02'),
+(1694, 'Nyango Dispensary', '17646', 'Kwale', 'Kinango', 'Non-Governmental Organizations', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.05769', '38.9078', '2025-07-13 05:15:02'),
+(1695, 'J A Comenius Medical Clinic', '17826', 'Kwale', 'Matuga', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.23358', '39.58078', '2025-07-13 05:15:02'),
+(1696, 'Mzizima (CDF) Dispensary', '17893', 'Kwale', 'Lunga Lunga', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.60703', '39.3496', '2025-07-13 05:15:02'),
+(1697, 'Bwiti (Tiomin) Dispensary', '17894', 'Kwale', 'Lunga Lunga', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1698, 'Perani clinic', '17928', 'Kwale', 'Lunga Lunga', 'Private Practice - Nurse /Midwifery', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1699, 'Matumbi Dispensary', '18095', 'Kwale', 'Kinango', 'Non-Governmental Organizations', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.96778', '39.38053', '2025-07-13 05:15:02'),
+(1700, 'Pendo Medical Clinic', '18496', 'Kwale', 'Msambweni', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.28058', '39.56725', '2025-07-13 05:15:02'),
+(1701, 'Royal Run Medical Clinic', '18572', 'Kwale', 'Matuga', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.17602', '39.45031', '2025-07-13 05:15:02'),
+(1702, 'Mwanguda Dispensary', '20335', 'Kwale', 'Lunga Lunga', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.5234', '39.4234', '2025-07-13 05:15:02'),
+(1703, 'Magaoni Health Centre', '20453', 'Kwale', 'Msambweni', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.36865', '39.3465', '2025-07-13 05:15:02'),
+(1704, 'Mbita Dispensary', '21258', 'Kwale', 'Kinango', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.63741', '37.59395', '2025-07-13 05:15:02'),
+(1705, 'Teens Watch Centre', '21404', 'Kwale', 'Msambweni', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1706, 'Kombani Dispensary', '21694', 'Kwale', 'Matuga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1707, 'Alwalidayn Dispensary', '22059', 'Kwale', 'Msambweni', 'Other Faith Based', 'Mkomani Clinic society', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1708, 'Mwena Dispensary', '23128', 'Kwale', 'Lunga Lunga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1709, 'Sisters of St. Joseph Catholic Dispensary', '23131', 'Kwale', 'Lunga Lunga', 'Kenya Episcopal Conference - Catholic Secretariat', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1710, 'Pongwe/Kidimu Dispensary', '23132', 'Kwale', 'Lunga Lunga', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1711, 'Mtumwa Dispensary', '23134', 'Kwale', 'Lunga Lunga', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1712, 'Mvindeni Dispensary', '23323', 'Kwale', 'Msambweni', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1713, 'Kombani Mat Clinic', '23368', 'Kwale', 'Matuga', 'Private Enterprise (Institution)', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1714, 'Bethany Dispensary', '23695', 'Kwale', 'Matuga', 'Other Faith Based', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.1123', '39.3347', '2025-07-13 05:15:02'),
+(1715, 'Bennedict XVI Dispensary', '10056', 'Laikipia', 'Laikipia West', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.03948', '36.33457', '2025-07-13 05:15:02'),
+(1716, 'Charity Medical Centre', '10089', 'Laikipia', 'Laikipia West', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '0.03023', '36.35774', '2025-07-13 05:15:02'),
+(1717, 'GK Prison Dispensary Laikipia', '10189', 'Laikipia', 'Nyahururu', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1718, 'Maina Village Dispensary', '10672', 'Laikipia', 'Laikipia West', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.06065', '36.35762', '2025-07-13 05:15:02'),
+(1719, 'Nyahururu District Hospital', '10890', 'Laikipia', 'Laikipia West', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.03783', '36.36194', '2025-07-13 05:15:02'),
+(1720, 'Nyahururu Private Hospital', '10891', 'Laikipia', 'Laikipia West', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.02929', '36.36546', '2025-07-13 05:15:02'),
+(1721, 'Arjijo Dispensary', '14197', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.30935', '37.24632', '2025-07-13 05:15:02'),
+(1722, 'Base Medical Centre', '14244', 'Laikipia', 'Laikipia East', 'Armed Forces', 'HJF-Nairobi', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1723, 'Chumvi Dispensary', '14391', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.16869', '37.2475', '2025-07-13 05:15:02'),
+(1724, 'Doldol Sub District Hospital', '14404', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.39166', '37.16561', '2025-07-13 05:15:02'),
+(1725, 'Ethi Dispensary', '14480', 'Laikipia', 'Laikipia North', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', '0.02148', '37.07114', '2025-07-13 05:15:02'),
+(1726, 'Ewaso Dispensary', '14483', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.56029', '36.90231', '2025-07-13 05:15:02'),
+(1727, 'GK Prisons Dispensary (Laikipia East)', '14522', 'Laikipia', 'Nanyuki', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.01278', '37.02752', '2025-07-13 05:15:02'),
+(1728, 'Mother Angela Huruma Hospital', '14553', 'Laikipia', 'Laikipia East', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1729, 'Ilpolei Dispensary', '14561', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.35968', '37.07226', '2025-07-13 05:15:02'),
+(1730, 'Kalalu Dispensary', '14659', 'Laikipia', 'Laikipia East', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.08227', '37.16625', '2025-07-13 05:15:02'),
+(1731, 'Kimanjo Dispensary', '14869', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.47444', '37.01297', '2025-07-13 05:15:02');
+INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(1732, 'Lamuria Dispensary (Laikipia East)', '15007', 'Laikipia', 'Laikipia East', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.13434', '36.86165', '2025-07-13 05:15:02'),
+(1733, 'Likii Dispensary', '15035', 'Laikipia', 'Laikipia East', 'Other Public Institution', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.02416', '37.07758', '2025-07-13 05:15:02'),
+(1734, 'Lokusero Dispensary', '15065', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.30832', '37.29749', '2025-07-13 05:15:02'),
+(1735, 'Losogwa Dispensary', '15093', 'Laikipia', 'Laikipia West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.04376', '36.29938', '2025-07-13 05:15:02'),
+(1736, 'Luoniek Dispensary', '15102', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.7146', '36.54421', '2025-07-13 05:15:02'),
+(1737, 'Marura Dispensary', '15145', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.00452', '36.94614', '2025-07-13 05:15:02'),
+(1738, 'Matanya Dispensary', '15152', 'Laikipia', 'Laikipia East', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.05046', '36.9402', '2025-07-13 05:15:02'),
+(1739, '4th Brigade', '15166', 'Laikipia', 'Laikipia East', 'Armed Forces', 'HJF-Nairobi', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1740, 'Melwa Health Centre', '15170', 'Laikipia', 'Laikipia West', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.23419', '36.43895', '2025-07-13 05:15:02'),
+(1741, 'Minjore Dispensary', '15187', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.43966', '36.4569', '2025-07-13 05:15:02'),
+(1742, 'Muramati Dispensary', '15253', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.06971', '37.15996', '2025-07-13 05:15:02'),
+(1743, 'Mutara Dispensary', '15261', 'Laikipia', 'Laikipia West', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.08959', '36.65773', '2025-07-13 05:15:02'),
+(1744, 'Muthegera Dispensary', '15263', 'Laikipia', 'Laikipia West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.21304', '36.32398', '2025-07-13 05:15:02'),
+(1745, 'Mwenje Dispensary', '15266', 'Laikipia', 'Laikipia West', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.44229', '36.29176', '2025-07-13 05:15:02'),
+(1746, 'Nanyuki Cottage Hospital', '15304', 'Laikipia', 'Laikipia East', 'Private Enterprise (Institution)', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.001332', '37.094', '2025-07-13 05:15:02'),
+(1747, 'Nanyuki District Hospital', '15305', 'Laikipia', 'Laikipia East', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.0212', '37.07181', '2025-07-13 05:15:02'),
+(1748, 'Ndindika Health Centre', '15325', 'Laikipia', 'Laikipia West', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.41551', '36.31975', '2025-07-13 05:15:02'),
+(1749, 'Ngarua Health Centre', '15339', 'Laikipia', 'Laikipia West', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.27811', '36.31641', '2025-07-13 05:15:02'),
+(1750, 'Ngobit Dispensary', '15349', 'Laikipia', 'Laikipia East', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.08813', '36.57541', '2025-07-13 05:15:02'),
+(1751, 'Nturukuma Dispensary', '15368', 'Laikipia', 'Laikipia East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.04384', '37.09034', '2025-07-13 05:15:02'),
+(1752, 'Oljabet Health Centre', '15404', 'Laikipia', 'Laikipia West', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.17297', '36.37788', '2025-07-13 05:15:02'),
+(1753, 'Olmoran Health Centre', '15417', 'Laikipia', 'Laikipia West', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.53766', '36.49132', '2025-07-13 05:15:02'),
+(1754, 'Pesi Dispensary (Laikipia West)', '15461', 'Laikipia', 'Laikipia West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.08596', '36.57845', '2025-07-13 05:15:02'),
+(1755, 'Rumuruti District Hospital', '15502', 'Laikipia', 'Laikipia West', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.27151', '36.53315', '2025-07-13 05:15:02'),
+(1756, 'Salama Health Centre (Laikipia West)', '15520', 'Laikipia', 'Laikipia West', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.12182', '36.49105', '2025-07-13 05:15:02'),
+(1757, 'Sipili Health Centre', '15589', 'Laikipia', 'Laikipia West', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.40426', '36.3797', '2025-07-13 05:15:02'),
+(1758, 'Sosian Dispensary', '15614', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.43175', '36.68142', '2025-07-13 05:15:02'),
+(1759, 'St Joseph Catholic Dispensary (Laikipia East)', '15646', 'Laikipia', 'Laikipia East', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.06497', '36.79982', '2025-07-13 05:15:02'),
+(1760, 'Survey Dispensary', '15690', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.58255', '36.55362', '2025-07-13 05:15:02'),
+(1761, 'Sweet Waters Dispensary', '15694', 'Laikipia', 'Laikipia East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.02799', '37.00347', '2025-07-13 05:15:02'),
+(1762, 'Wiyumiririe Dispensary', '15784', 'Laikipia', 'Laikipia East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1763, 'GOK Rumuruti Prisons Dispensary', '16676', 'Laikipia', 'Laikipia West', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.26702', '36.54144', '2025-07-13 05:15:02'),
+(1764, 'Segera Mission Dispensary', '17029', 'Laikipia', 'Laikipia North', 'Christian Health Association of Kenya', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.15182', '36.88787', '2025-07-13 05:15:02'),
+(1765, 'Sipili Maternity and Nursing Home (Ol-Moran)', '17148', 'Laikipia', 'Laikipia West', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1766, 'Solio Dispensary', '17575', 'Laikipia', 'Laikipia East', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.24643', '36.94881', '2025-07-13 05:15:02'),
+(1767, 'Withare Dispensary', '17889', 'Laikipia', 'Laikipia East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1768, 'Ngenia Dispensary', '18604', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.06629', '37.20187', '2025-07-13 05:15:02'),
+(1769, 'Huhoini Dispensary', '18675', 'Laikipia', 'Laikipia West', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.0359', '36.28753', '2025-07-13 05:15:02'),
+(1770, 'Kurum Dispensary', '20191', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.39168', '37.16563', '2025-07-13 05:15:02'),
+(1771, 'East Laikipia Dispensary', '21122', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.10678', '37.21163', '2025-07-13 05:15:02'),
+(1772, 'Naibor Dispensary', '21248', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.16548', '37.02107', '2025-07-13 05:15:02'),
+(1773, 'Powys Dispensary', '22950', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1774, 'Thome Disp.', '23140', 'Laikipia', 'Laikipia West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1775, 'Mukima Dispensary', '23969', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1776, 'Mowarak Dispensary', '23970', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1777, 'Island', '23972', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1778, 'Faza Hospital', '11373', 'Lamu', 'Lamu East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-2.05792', '41.11122', '2025-07-13 05:15:02'),
+(1779, 'Hindi Magogoni Dispensary', '11409', 'Lamu', 'Lamu West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-2.1736', '40.81062', '2025-07-13 05:15:02'),
+(1780, 'Hongwe Catholic Dispensary', '11412', 'Lamu', 'Lamu West', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', '-2.34712', '40.66515', '2025-07-13 05:15:02'),
+(1781, 'Kiunga Health Centre', '11492', 'Lamu', 'Lamu East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.74409', '41.48832', '2025-07-13 05:15:02'),
+(1782, 'Kizingitini Dispensary', '11496', 'Lamu', 'Lamu East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-2.07302', '41.1464', '2025-07-13 05:15:02'),
+(1783, 'Lamu County Referral Hospital', '11512', 'Lamu', 'Lamu West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1784, 'Maria Teressa Nuzzo Health Centre', '11565', 'Lamu', 'Lamu West', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-2.4288', '40.72228', '2025-07-13 05:15:02'),
+(1785, 'Mkunumbi Dispensary', '11631', 'Lamu', 'Lamu West', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-2.29477', '40.6761', '2025-07-13 05:15:02'),
+(1786, 'Mokowe Health Centre', '11642', 'Lamu', 'Lamu West', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-2.22691', '40.83062', '2025-07-13 05:15:02'),
+(1787, 'Mpeketoni Sub-County Hospital', '11649', 'Lamu', 'Lamu West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1788, 'Pablo Hortsman Health Centre', '11729', 'Lamu', 'Lamu West', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-2.27312', '40.90326', '2025-07-13 05:15:02'),
+(1789, 'Shella Dispensary', '11784', 'Lamu', 'Lamu West', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-2.27788', '40.9492', '2025-07-13 05:15:02'),
+(1790, 'Witu Health Centre', '11907', 'Lamu', 'Lamu West', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1791, 'Mapenya Dispensary', '17692', 'Lamu', 'Lamu West', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-2.21384', '40.42532', '2025-07-13 05:15:02'),
+(1792, 'Muhamarani Dispensary', '18788', 'Lamu', 'Lamu West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-2.33345', '40.3333', '2025-07-13 05:15:02'),
+(1793, 'Sinambio Disp', '22803', 'Lamu', 'Lamu West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1794, 'Tewe Dispensary', '22804', 'Lamu', 'Lamu West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1795, 'Apdk Dispensary (Machakos)', '11931', 'Machakos', 'Machakos', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.5195', '37.26185', '2025-07-13 05:15:02'),
+(1796, 'Approved School Dispensary (Machakos)', '11932', 'Machakos', 'Machakos', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.58672', '37.25784', '2025-07-13 05:15:02'),
+(1797, 'Athi River Health Centre', '11936', 'Machakos', 'Athi River', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.44961', '36.98334', '2025-07-13 05:15:02'),
+(1798, 'Athi River Medical Services', '11937', 'Machakos', 'Athi River', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.45772', '36.97749', '2025-07-13 05:15:02'),
+(1799, 'Bishop Kioko Catholic Hospital', '11955', 'Machakos', 'Machakos', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.52639', '37.26279', '2025-07-13 05:15:02'),
+(1800, 'D Comboni Mission', '11981', 'Machakos', 'Masinga', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.93544', '37.33202', '2025-07-13 05:15:02'),
+(1801, 'Ekalakala Health Centre', '11995', 'Machakos', 'Masinga', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.97269', '37.47285', '2025-07-13 05:15:02'),
+(1802, 'GK Prison Dispensary (Machakos)', '12048', 'Machakos', 'Machakos', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.52037', '37.26114', '2025-07-13 05:15:02'),
+(1803, 'Ikombe Disp', '12078', 'Machakos', 'Yatta', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1804, 'Ithaeni Dispensary', '12096', 'Machakos', 'Kathiani', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', '', '', 'On Premises', '-1.46582', '37.35181', '2025-07-13 05:15:02'),
+(1805, 'Iuuma Dispensary', '12103', 'Machakos', 'Masinga', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.90371', '37.79938', '2025-07-13 05:15:02'),
+(1806, 'Kalama Dispensary', '12144', 'Machakos', 'Kalama', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.63472', '37.3027', '2025-07-13 05:15:02'),
+(1807, 'Kalandini Health Centre', '12146', 'Machakos', 'Matungulu', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.22208', '37.29583', '2025-07-13 05:15:02'),
+(1808, 'Kamuthanga Dispensary', '12167', 'Machakos', 'Machakos', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.40434', '37.22468', '2025-07-13 05:15:02'),
+(1809, 'Kangundo District Hospital', '12177', 'Machakos', 'Kangundo', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.2992', '37.34618', '2025-07-13 05:15:02'),
+(1810, 'Kaseve Medical Clinic', '12206', 'Machakos', 'Machakos', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.52214', '37.3365', '2025-07-13 05:15:02'),
+(1811, 'Katangi Health Centre', '12215', 'Machakos', 'Yatta', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.41143', '37.69853', '2025-07-13 05:15:02'),
+(1812, 'Katani Dispensary', '12217', 'Machakos', 'Athi River', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.33774', '37.00549', '2025-07-13 05:15:02'),
+(1813, 'Kathiani  District Hospital', '12230', 'Machakos', 'Kathiani', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1814, 'Kathukini Dispensary', '12237', 'Machakos', 'Masinga', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', '', '', 'On Premises', '-0.99081', '37.41151', '2025-07-13 05:15:02'),
+(1815, 'Katulani Health Centre', '12244', 'Machakos', 'Mwala', 'Ministry of Health', 'Machakos County Twaweza Project', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.51453', '37.64794', '2025-07-13 05:15:02'),
+(1816, 'Kaviani Health Centre', '12257', 'Machakos', 'Kathiani', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.47227', '37.30887', '2025-07-13 05:15:02'),
+(1817, 'Kiitini Dispensary', '12304', 'Machakos', 'Kalama', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.59888', '37.31228', '2025-07-13 05:15:02'),
+(1818, 'Kikesa Dispensary', '12305', 'Machakos', 'Yatta', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.27182', '37.54683', '2025-07-13 05:15:02'),
+(1819, 'Kimutwa Dispensary', '12317', 'Machakos', 'Kalama', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.5496', '37.25543', '2025-07-13 05:15:02'),
+(1820, 'Kinanie Dispensary', '12321', 'Machakos', 'Athi River', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.41213', '37.06124', '2025-07-13 05:15:02'),
+(1821, 'Kiseuni Dispensary ', '12345', 'Machakos', 'Masinga', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1822, 'Kisiiki Dispensary', '12347', 'Machakos', 'Yatta', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.08669', '37.44266', '2025-07-13 05:15:02'),
+(1823, 'Kithimani Dispensary', '12357', 'Machakos', 'Yatta', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.13942', '37.44677', '2025-07-13 05:15:02'),
+(1824, 'Kithyoko Health Centre', '12362', 'Machakos', 'Masinga', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.04619', '37.83971', '2025-07-13 05:15:02'),
+(1825, 'Kivaa Health Centre', '12375', 'Machakos', 'Masinga', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.85341', '37.69649', '2025-07-13 05:15:02'),
+(1826, 'Kivaani Health Centre', '12376', 'Machakos', 'Kangundo', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.36355', '37.39486', '2025-07-13 05:15:02'),
+(1827, 'Kola Health Centre', '12381', 'Machakos', 'Kalama', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.7068', '37.35082', '2025-07-13 05:15:02'),
+(1828, 'Kwa Nguu Dispensary', '12395', 'Machakos', 'Matungulu', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.17523', '37.28544', '2025-07-13 05:15:02'),
+(1829, 'Kyasila (AIC) Dispensary', '12409', 'Machakos', 'Machakos', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.43788', '37.2061', '2025-07-13 05:15:02'),
+(1830, 'Kyawalia Dispensary', '12411', 'Machakos', 'Kalama', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.63124', '37.25539', '2025-07-13 05:15:02'),
+(1831, 'Kyawango Dispensary', '12412', 'Machakos', 'Mwala', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.30981', '37.4961', '2025-07-13 05:15:02'),
+(1832, 'Machakos Level 5 Hospital', '12438', 'Machakos', 'Machakos', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.52321', '37.25619', '2025-07-13 05:15:02'),
+(1833, 'Machakos Medical Clinic', '12440', 'Machakos', 'Machakos', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.52024', '37.26932', '2025-07-13 05:15:02'),
+(1834, 'Makadara Health Care', '12450', 'Machakos', 'Athi River', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.46156', '36.9838', '2025-07-13 05:15:02'),
+(1835, 'Mananja Health Centre', '12466', 'Machakos', 'Masinga', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.8326', '37.3061', '2025-07-13 05:15:02'),
+(1836, 'Masii Health Centre', '12475', 'Machakos', 'Mwala', 'Ministry of Health', 'Machakos County Twaweza Project', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.45799', '37.43915', '2025-07-13 05:15:02'),
+(1837, 'Masinga Sub County Hospital', '12476', 'Machakos', 'Masinga', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.97736', '37.60568', '2025-07-13 05:15:02'),
+(1838, 'Matuu Cottage Clinic', '12487', 'Machakos', 'Yatta', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.14632', '37.53775', '2025-07-13 05:15:02'),
+(1839, 'Matuu District Hospital', '12488', 'Machakos', 'Yatta', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.15193', '37.53718', '2025-07-13 05:15:02'),
+(1840, 'Matuu Mission Health Centre', '12489', 'Machakos', 'Yatta', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.14885', '37.54889', '2025-07-13 05:15:02'),
+(1841, 'Maweli Dispensary', '12496', 'Machakos', 'Mwala', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.37', '37.45', '2025-07-13 05:15:02'),
+(1842, 'Mbiuni Health Centre', '12503', 'Machakos', 'Mwala', 'Ministry of Health', 'Machakos County Twaweza Project', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.24029', '37.3933', '2025-07-13 05:15:02'),
+(1843, 'Mitaboni Health Centre', '12530', 'Machakos', 'Kathiani', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.37272', '37.24834', '2025-07-13 05:15:02'),
+(1844, 'Miu Sub-Health Centre', '12537', 'Machakos', 'Mwala', 'Ministry of Health', 'Machakos County Twaweza Project', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.52102', '37.57704', '2025-07-13 05:15:02'),
+(1845, 'Miumbuni Dispensary', '12538', 'Machakos', 'Kathiani', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.2639', '37.28913', '2025-07-13 05:15:02'),
+(1846, 'Mua Hills Dispensary', '12548', 'Machakos', 'Machakos', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.46351', '37.19162', '2025-07-13 05:15:02'),
+(1847, 'Mukusu Dispensary', '12562', 'Machakos', 'Masinga', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.91223', '37.64037', '2025-07-13 05:15:02'),
+(1848, 'Muthetheni Health Centre', '12593', 'Machakos', 'Mwala', 'Ministry of Health', 'Machakos County Twaweza Project', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.50218', '37.52159', '2025-07-13 05:15:02'),
+(1849, 'Mutituni Health Centre', '12602', 'Machakos', 'Machakos', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1850, 'Muumandu Dispensary', '12612', 'Machakos', 'Kalama', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.65999', '37.28495', '2025-07-13 05:15:02'),
+(1851, 'Muusini Dispensary', '12613', 'Machakos', 'Mwala', 'Ministry of Health', 'Machakos County Twaweza Project', 'CDC', '', '', 'On Premises', '-1.42559', '37.37117', '2025-07-13 05:15:02'),
+(1852, 'Mwala Subcounty Hospital', '12618', 'Machakos', 'Mwala', 'Ministry of Health', 'Machakos County Twaweza Project', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.34894', '37.45228', '2025-07-13 05:15:02'),
+(1853, 'Nguluni Health Centre', '12657', 'Machakos', 'Matungulu', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.27998', '37.2792', '2025-07-13 05:15:02'),
+(1854, 'NYS Dispensary (Mavoloni)', '12686', 'Machakos', 'Yatta', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.11812', '37.42459', '2025-07-13 05:15:02'),
+(1855, 'Shalom Community Hospital (Machakos)', '12730', 'Machakos', 'Machakos', 'Private Practice - General Practitioner', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.5246', '37.2663', '2025-07-13 05:15:02'),
+(1856, 'Mitaboni Mission Dispensary', '12732', 'Machakos', 'Kathiani', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.37856', '37.24962', '2025-07-13 05:15:02'),
+(1857, 'St Assisi Sisters of Mary Immaculate Nursing Home', '12745', 'Machakos', 'Athi River', 'Christian Health Association of Kenya', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.36434', '36.9351', '2025-07-13 05:15:02'),
+(1858, 'St Immaculate Clinic', '12750', 'Machakos', 'Athi River', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.32541', '37.0161', '2025-07-13 05:15:02'),
+(1859, 'Thinu Health Centre', '12796', 'Machakos', 'Kathiani', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.42327', '37.27411', '2025-07-13 05:15:02'),
+(1860, 'Tumaini Rh Clinic', '12809', 'Machakos', 'Matungulu', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.27047', '37.32281', '2025-07-13 05:15:02'),
+(1861, 'Vyulya Dispensary', '12837', 'Machakos', 'Mwala', 'Ministry of Health', 'Machakos County Twaweza Project', 'CDC', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', '-1.39798', '37.41991', '2025-07-13 05:15:02'),
+(1862, 'Wamunyu Health Centre', '12841', 'Machakos', 'Mwala', 'Ministry of Health', 'Machakos County Twaweza Project', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1863, 'Donyo Sabuk Dispensary', '16432', 'Machakos', 'Matungulu', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.08458', '37.25309', '2025-07-13 05:15:02'),
+(1864, 'Kakuyuni Health Centre', '16433', 'Machakos', 'Kangundo', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.36413', '37.346', '2025-07-13 05:15:02'),
+(1865, 'Mukunike Dispensary', '16435', 'Machakos', 'Kangundo', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.33605', '37.31628', '2025-07-13 05:15:02'),
+(1866, 'Kimiti Level 4 Hospital', '16436', 'Machakos', 'Matungulu', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1867, 'Matungulu Health Centre', '16439', 'Machakos', 'Matungulu', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.23407', '37.33097', '2025-07-13 05:15:02'),
+(1868, 'Sengani Dispensary', '16440', 'Machakos', 'Matungulu', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.25014', '37.32333', '2025-07-13 05:15:02'),
+(1869, 'St Mark Medical Clinic - Tala', '16742', 'Machakos', 'Matungulu', 'Private Enterprise (Institution)', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1870, 'Ndunduni Dispensary', '16922', 'Machakos', 'Kangundo', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.26437', '37.35234', '2025-07-13 05:15:02'),
+(1871, 'Kaonyweni Dispensary', '17105', 'Machakos', 'Masinga', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.97269', '37.74889', '2025-07-13 05:15:02'),
+(1872, 'Kangonde Health Centre', '17106', 'Machakos', 'Masinga', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.07664', '37.67995', '2025-07-13 05:15:02'),
+(1873, 'Kyasioni Dispensary', '17161', 'Machakos', 'Yatta', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.18274', '37.60152', '2025-07-13 05:15:02'),
+(1874, 'Musingini Dispensary', '17162', 'Machakos', 'Masinga', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.02319', '37.59995', '2025-07-13 05:15:02'),
+(1875, 'Kititu Dispensary', '17643', 'Machakos', 'Kalama', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.68267', '37.37198', '2025-07-13 05:15:02'),
+(1876, 'Masingu Health Services', '17652', 'Machakos', 'Machakos', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.51876', '37.26807', '2025-07-13 05:15:02'),
+(1877, 'Mlolongo Wellness Centre', '17844', 'Machakos', 'Athi River', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.39668', '36.94169', '2025-07-13 05:15:02'),
+(1878, 'Shalom Community Hospital (Athi River)', '17979', 'Machakos', 'Athi River', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.43588', '36.96594', '2025-07-13 05:15:02'),
+(1879, 'Mlolongo Health Centre', '18581', 'Machakos', 'Athi River', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.38842', '36.94895', '2025-07-13 05:15:02'),
+(1880, 'Kikule Dispensary', '18689', 'Machakos', 'Masinga', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', '', '', 'On Premises', '-0.93933', '37.40169', '2025-07-13 05:15:02'),
+(1881, 'Mariakani Cottage Clinic', '18838', 'Machakos', 'Athi River', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.38964', '36.94073', '2025-07-13 05:15:02'),
+(1882, 'Nguluni Medical Clinic', '20933', 'Machakos', 'Matungulu', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1883, 'Kyumbi Health Centre', '21027', 'Machakos', 'Athi River', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.5313', '37.1211', '2025-07-13 05:15:02'),
+(1884, 'MARPS Project Machakos Dice', '21144', 'Machakos', 'Machakos', 'Public Institution - Academic', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1885, 'Jirani Diagnostic Centre Machakos', '21805', 'Machakos', 'Machakos', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1886, 'Machakos Doctors Plaza', '22080', 'Machakos', 'Machakos', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1887, 'G.K Prison Dispensary yatta', '23625', 'Machakos', 'Yatta', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1888, 'CHS Mlolongo Dice', '25229', 'Machakos', 'Athi River', 'Non Governmental organisation', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1889, 'Kyumbi CHS Dice', '26816', 'Machakos', 'Athi River', 'Non Governmental organisation', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1890, 'Athi Kamunyuni Health Centre', '11934', 'Makueni', 'Kibwezi East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1891, 'Kambu Catholic Dispensary', '11962', 'Makueni', 'Kibwezi East', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-2.5967', '38.07592', '2025-07-13 05:15:02'),
+(1892, 'Dwa Health Centre', '11991', 'Makueni', 'Kibwezi East', 'Company Medical Service', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-2.39765', '38.01388', '2025-07-13 05:15:02'),
+(1893, 'Iiani/Kiatineni Dispensary', '12074', 'Makueni', 'Mbooni', 'Ministry of Health', 'Uzinduzi', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.55041', '37.3583', '2025-07-13 05:15:02'),
+(1894, 'Kambu Integrated Health Clinic', '12090', 'Makueni', 'Kibwezi East', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-2.59388', '38.07531', '2025-07-13 05:15:02'),
+(1895, 'Iuani Health Centre', '12102', 'Makueni', 'Kaiti', 'Ministry of Health', 'Uzinduzi', 'CDC', '', '', 'On Premises', '-1.72986', '37.52299', '2025-07-13 05:15:02'),
+(1896, 'Kako Health Centre', '12135', 'Makueni', 'Mbooni', 'Ministry of Health', 'Uzinduzi', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1897, 'Kalawa Model Health Centre', '12147', 'Makueni', 'Mbooni', 'Ministry of Health', 'Uzinduzi', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1898, 'Kali Dispensary', '12149', 'Makueni', 'Mbooni', 'Ministry of Health', 'Uzinduzi', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.63348', '37.3863', '2025-07-13 05:15:02'),
+(1899, 'Kaliani Dispensary-Makueni', '12150', 'Makueni', 'Mbooni', 'Ministry of Health', 'Uzinduzi', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1900, 'Kalulini Health Centre (Kibwezi)', '12156', 'Makueni', 'Kibwezi West', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1901, 'Kanzokea Health Centre', '12191', 'Makueni', 'Makueni', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.92718', '37.79707', '2025-07-13 05:15:02'),
+(1902, 'PCEA Kasasule Dispensary', '12205', 'Makueni', 'Kibwezi East', 'Christian Health Association of Kenya', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-2.53789', '37.95338', '2025-07-13 05:15:02'),
+(1903, 'Kasikeu Dispensary', '12208', 'Makueni', 'Kilome', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1904, 'Kathonzweni Catholic Dispensary', '12235', 'Makueni', 'Makueni', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.91371', '37.73276', '2025-07-13 05:15:02'),
+(1905, 'Kathonzweni Health Centre', '12236', 'Makueni', 'Makueni', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.91533', '37.72972', '2025-07-13 05:15:02'),
+(1906, 'Kathulumbi Health Centre', '12238', 'Makueni', 'Mbooni', 'Ministry of Health', 'Uzinduzi', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1907, 'Kathyaka Dispensary', '12240', 'Makueni', 'Kibwezi West', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-2.26501', '37.99044', '2025-07-13 05:15:02'),
+(1908, 'Kavata Nzou Dispensary', '12256', 'Makueni', 'Kaiti', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.79139', '37.43367', '2025-07-13 05:15:02'),
+(1909, 'Kavuthu H/Centre', '12263', 'Makueni', 'Makueni', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.99738', '37.41496', '2025-07-13 05:15:02'),
+(1910, 'Kiangini Dispensary', '12276', 'Makueni', 'Makueni', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-2.07231', '37.76967', '2025-07-13 05:15:02'),
+(1911, 'Kiaoni Dispensary (Kibwezi)', '12281', 'Makueni', 'Kibwezi West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-2.20358', '38.05542', '2025-07-13 05:15:02'),
+(1912, 'Kiboko Dispensary (Makindu)', '12286', 'Makueni', 'Kibwezi West', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-2.20999', '37.72367', '2025-07-13 05:15:02'),
+(1913, 'Kibwezi Sub County Hospital', '12291', 'Makueni', 'Kibwezi East', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-2.41203', '37.96728', '2025-07-13 05:15:02'),
+(1914, 'Kikoko Mission Hospital', '12306', 'Makueni', 'Kaiti', 'Other Faith Based', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.80639', '37.39615', '2025-07-13 05:15:02'),
+(1915, 'Kikumini Health Centre', '12308', 'Makueni', 'Kibwezi West', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-2.04569', '37.5747', '2025-07-13 05:15:02'),
+(1916, 'Kilala Health Centre', '12309', 'Makueni', 'Kaiti', 'Ministry of Health', 'Uzinduzi', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.76626', '37.55628', '2025-07-13 05:15:02'),
+(1917, 'Kilili Health Center', '12312', 'Makueni', 'Kilome', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1918, 'Kilungu Sub County Hospital', '12314', 'Makueni', 'Kaiti', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1919, 'Kisau Sub County Hospital', '12341', 'Makueni', 'Mbooni', 'Ministry of Health', 'Uzinduzi', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1920, 'kithuki health centre', '12360', 'Makueni', 'Makueni', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.99199', '37.85613', '2025-07-13 05:15:02'),
+(1921, 'Kitise Health Centre', '12365', 'Makueni', 'Makueni', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-2.05866', '37.87776', '2025-07-13 05:15:02'),
+(1922, 'Kitundu (GOK) Dispensary', '12369', 'Makueni', 'Mbooni', 'Ministry of Health', 'Uzinduzi', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.68968', '37.47366', '2025-07-13 05:15:02'),
+(1923, 'Kiu (AIC) Dispensary', '12374', 'Makueni', 'Kilome', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.89923', '37.16335', '2025-07-13 05:15:02'),
+(1924, 'Kivani Health Centre', '12377', 'Makueni', 'Kaiti', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1925, 'kwakavisi dispensary', '12398', 'Makueni', 'Makueni', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.98399', '37.69768', '2025-07-13 05:15:02'),
+(1926, 'Kyaani Health Centre', '12402', 'Makueni', 'Kibwezi East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1927, 'Kyambeke Health Centre', '12404', 'Makueni', 'Kaiti', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1928, 'Makindu Sub County Hospital', '12455', 'Makueni', 'Kibwezi West', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1929, 'Makueni Catholic Dispensary', '12456', 'Makueni', 'Makueni', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1930, 'Makueni County Referral Hospital', '12457', 'Makueni', 'Makueni', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1931, 'Mangala Dispensary', '12468', 'Makueni', 'Kaiti', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.74554', '37.31665', '2025-07-13 05:15:02'),
+(1932, 'Masongaleni Health Centre', '12477', 'Makueni', 'Kibwezi East', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-2.36966', '38.12883', '2025-07-13 05:15:02'),
+(1933, 'Matiliku Sub County Hospital', '12485', 'Makueni', 'Makueni', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1934, 'Mavindini Health Centre', '12493', 'Makueni', 'Makueni', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.82044', '37.78624', '2025-07-13 05:15:02'),
+(1935, 'Mbenuu H Centre', '12499', 'Makueni', 'Makueni', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.96432', '37.47728', '2025-07-13 05:15:02'),
+(1936, 'Mbitini Catholic Dispensary', '12502', 'Makueni', 'Kibwezi West', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-2.017', '37.48195', '2025-07-13 05:15:02'),
+(1937, 'Mbooni Sub County Hospital', '12508', 'Makueni', 'Mbooni', 'Ministry of Health', 'Uzinduzi', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1938, 'Mtito Andei Sub County Hospital', '12547', 'Makueni', 'Kibwezi East', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1939, 'Mukuyuni Health Centre', '12565', 'Makueni', 'Kaiti', 'Ministry of Health', 'Uzinduzi', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.74837', '37.45943', '2025-07-13 05:15:02'),
+(1940, 'Mumbuni Health Centre (Makueni)', '12571', 'Makueni', 'Makueni', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1941, 'Musalala Dispensary', '12582', 'Makueni', 'Kilome', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.77567', '37.40665', '2025-07-13 05:15:02'),
+(1942, 'Mutembuku Dispensary', '12584', 'Makueni', 'Mbooni', 'Ministry of Health', 'Uzinduzi', 'CDC', '', '', 'On Premises', '-1.69906', '37.81183', '2025-07-13 05:15:02'),
+(1943, 'Mutyambua hospital', '12610', 'Makueni', 'Makueni', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1944, 'Mwanyani Health Centre', '12622', 'Makueni', 'Kibwezi West', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1945, 'Ngwata Health Centre', '12663', 'Makueni', 'Kibwezi East', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-2.52946', '38.04965', '2025-07-13 05:15:02'),
+(1946, 'Nthongoni Health Centre (Kibwezi)', '12676', 'Makueni', 'Kibwezi East', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1947, 'Nzeveni Health Centre', '12692', 'Makueni', 'Kibwezi East', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1948, 'Nziu Health Centre', '12693', 'Makueni', 'Makueni', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.81609', '37.53742', '2025-07-13 05:15:02'),
+(1949, 'Sultan Hamud Sub County Hospital', '12777', 'Makueni', 'Kilome', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1950, 'Syumile Health Centre', '12782', 'Makueni', 'Kibwezi West', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1951, 'Tawa Sub County Hospial', '12787', 'Makueni', 'Mbooni', 'Ministry of Health', 'Uzinduzi', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1952, 'Tulimani Dispensary', '12808', 'Makueni', 'Mbooni', 'Ministry of Health', 'Uzinduzi', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.58133', '37.41003', '2025-07-13 05:15:02'),
+(1953, 'Ukia Dispensary', '12822', 'Makueni', 'Kaiti', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.76103', '37.49841', '2025-07-13 05:15:02'),
+(1954, 'Kyuasini Health Centre', '16254', 'Makueni', 'Kaiti', 'Ministry of Health', 'Uzinduzi', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.79028', '37.47074', '2025-07-13 05:15:02'),
+(1955, 'Kambimawe Dispensary', '16962', 'Makueni', 'Makueni', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.85218', '37.66094', '2025-07-13 05:15:02'),
+(1956, 'Kyau Dispensary', '16965', 'Makueni', 'Kaiti', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.79238', '37.5228', '2025-07-13 05:15:02'),
+(1957, 'Mbuini Dispensary', '16968', 'Makueni', 'Kaiti', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.82251', '37.38099', '2025-07-13 05:15:02'),
+(1958, 'Kikumini Dispensary (Makueni)', '17147', 'Makueni', 'Makueni', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.78687', '37.70638', '2025-07-13 05:15:02'),
+(1959, 'Mavivye Model Health Centre', '17256', 'Makueni', 'Kilome', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.79044', '37.28143', '2025-07-13 05:15:02'),
+(1960, 'AIC Kalamba Dispensary', '17431', 'Makueni', 'Makueni', 'Other Faith Based', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.86649', '37.51275', '2025-07-13 05:15:02'),
+(1961, 'Katulye Dispensary-Nzaui', '17433', 'Makueni', 'Makueni', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.85238', '37.49655', '2025-07-13 05:15:02'),
+(1962, 'Uvete Health centre', '17441', 'Makueni', 'Kilome', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1963, 'AHF EMALI  Clinic', '17445', 'Makueni', 'Kibwezi West', 'Other Faith Based', 'No Partner', 'No Agency', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1964, 'North Star Alliance Clinic', '17511', 'Makueni', 'Kibwezi West', 'Non-Governmental Organizations', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-2.08018', '37.47385', '2025-07-13 05:15:02'),
+(1965, 'Kitise Rural Development VCT', '17538', 'Makueni', 'Makueni', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', '-2.05336', '37.88399', '2025-07-13 05:15:02'),
+(1966, 'sa/AHF Kithituni Clinic', '17549', 'Makueni', 'Kilome', 'Other Faith Based', 'Aids Healthcare Foundation Kenya', 'AHF', 'KenyaEMR', 'Discontinued', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1967, 'Utangwa Dispensary', '17838', 'Makueni', 'Mbooni', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.70735', '37.44757', '2025-07-13 05:15:02'),
+(1968, 'Uviluni Dispensary', '17845', 'Makueni', 'Mbooni', 'Ministry of Health', 'Uzinduzi', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.74953', '37.67374', '2025-07-13 05:15:02'),
+(1969, 'Tumaini Maternity and Nursing Home (Kibwezi)', '17917', 'Makueni', 'Kibwezi West', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-2.41888', '37.96664', '2025-07-13 05:15:02'),
+(1970, 'Administration Police Senior Staff College Dispensary', '18171', 'Makueni', 'Kilome', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1971, 'Emali Model Health Centre', '18260', 'Makueni', 'Kibwezi West', 'Ministry of Health', 'Aids Healthcare Foundation Kenya', 'AHF', 'KenyaEMR', 'Active', 'On Premises', '-2.07437', '37.46138', '2025-07-13 05:15:02'),
+(1972, 'Kaunguni Dispensary', '18316', 'Makueni', 'Kibwezi West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-2.40076', '37.86735', '2025-07-13 05:15:02'),
+(1973, 'Mavindu Dispensary', '18330', 'Makueni', 'Mbooni', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.61731', '37.41486', '2025-07-13 05:15:02'),
+(1974, 'Kambu Model Health Centre', '18596', 'Makueni', 'Kibwezi East', 'Ministry of Health', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-2.5976', '38.07714', '2025-07-13 05:15:02'),
+(1975, 'Kitundu Dispensary', '19145', 'Makueni', 'Mbooni', 'Ministry of Health', 'No Partner', 'No Agency', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1976, 'Makindu Centre of Hope (DICE)', '19890', 'Makueni', 'Kibwezi West', 'Non-Governmental Organizations', 'CIHEB PACT IMARA', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1977, 'Ilatu Health Centre (Makindu)', '19976', 'Makueni', 'Kibwezi West', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1978, 'Kimeeni Dispensary', '20130', 'Makueni', 'Mbooni', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.6939', '37.7391', '2025-07-13 05:15:02'),
+(1979, 'Mbuvo Health Centre', '20271', 'Makueni', 'Makueni', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-2.07199', '37.76967', '2025-07-13 05:15:02'),
+(1980, 'GK Makueni', '20722', 'Makueni', 'Makueni', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02');
+INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(1981, 'Haifa Med Clinic', '20974', 'Makueni', 'Mbooni', 'Private Practice - Nurse / Midwifery', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.6594', '37.44871', '2025-07-13 05:15:02'),
+(1982, 'Banisa Sub County Hospital', '13300', 'Mandera', 'Banissa', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1983, 'Mandera Central Sub county Hospital', '13335', 'Mandera', 'Mandera South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1984, 'Lafey Sub-County Hospital', '13392', 'Mandera', 'Lafey', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1985, 'Mandera County Refferal Hospital', '13402', 'Mandera', 'Mandera East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1986, 'Mandera North Sub county Hospital', '13423', 'Mandera', 'Mandera North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1987, 'Mandera West Sub County Hospital', '13445', 'Mandera', 'Mandera West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1988, 'Wargadud Health Centre', '13455', 'Mandera', 'Mandera South', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1989, 'BEYOND ZERO MOBILE CLINIC', '21926', 'Mandera', 'Mandera East', 'Unknown', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1990, 'Badassa Dispensary', '11940', 'Marsabit', 'Saku', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '2.26571', '38.02626', '2025-07-13 05:15:02'),
+(1991, 'Dabel Health Centre', '11982', 'Marsabit', 'Moyale', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(1992, 'Dakabaricha Dispensary', '11983', 'Marsabit', 'Saku', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '2.34008', '38.00329', '2025-07-13 05:15:02'),
+(1993, 'Dirib Gombo Dispensary', '11986', 'Marsabit', 'Saku', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', '2.28624', '38.06136', '2025-07-13 05:15:02'),
+(1994, 'Dukana Health Centre (North Horr)', '11990', 'Marsabit', 'North Horr', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '3.99819', '37.27031', '2025-07-13 05:15:02'),
+(1995, 'El-Molo Bay Dispensary', '12001', 'Marsabit', 'Laisamis', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '2.85621', '36.7001', '2025-07-13 05:15:02'),
+(1996, 'Gatab Health Centre', '12030', 'Marsabit', 'Laisamis', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '2.3559', '37.04915', '2025-07-13 05:15:02'),
+(1997, 'Gus Dispensary', '12054', 'Marsabit', 'North Horr', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '3.06787', '36.82846', '2025-07-13 05:15:02'),
+(1998, 'Illeret Health Centre (North Horr)', '12087', 'Marsabit', 'North Horr', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '4.31339', '36.22702', '2025-07-13 05:15:02'),
+(1999, 'Kalacha Sub County Referral Hospital (Chalbi)', '12142', 'Marsabit', 'North Horr', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2000, 'Karare Dispensary', '12197', 'Marsabit', 'Saku', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', '2.21177', '37.8937', '2025-07-13 05:15:02'),
+(2001, 'Kituruni Dispensary', '12373', 'Marsabit', 'Saku', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '2.21687', '37.98013', '2025-07-13 05:15:02'),
+(2002, 'Loiyangalani Gok  Health centre', '12432', 'Marsabit', 'Laisamis', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2003, 'Marsabit County Referral Hospital', '12472', 'Marsabit', 'Saku', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2004, 'Moyale Sub county Referral  Hospital', '12544', 'Marsabit', 'Moyale', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2005, 'North Horr Health Centre', '12668', 'Marsabit', 'North Horr', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', '3.32403', '37.07172', '2025-07-13 05:15:02'),
+(2006, 'Ramata Health Centre', '12708', 'Marsabit', 'Moyale', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '3.56284', '38.63739', '2025-07-13 05:15:02'),
+(2007, 'Sagante Dispensary', '12723', 'Marsabit', 'Saku', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '2.33375', '38.02284', '2025-07-13 05:15:02'),
+(2008, 'Sololo Mission Hospital', '12739', 'Marsabit', 'Moyale', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '3.55549', '38.64136', '2025-07-13 05:15:02'),
+(2009, 'Songa Health Centre', '12741', 'Marsabit', 'Saku', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '2.24362', '38.00373', '2025-07-13 05:15:02'),
+(2010, 'Turbi Dispensary (Marsabit North)', '12815', 'Marsabit', 'North Horr', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '3.18237', '38.22754', '2025-07-13 05:15:02'),
+(2011, 'Uran Health Centre', '12828', 'Marsabit', 'Moyale', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '3.60163', '38.52375', '2025-07-13 05:15:02'),
+(2012, 'Tumaini Medical Clinic (Marsabit)', '16204', 'Marsabit', 'Saku', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', '2.33042', '37.99158', '2025-07-13 05:15:02'),
+(2013, 'Catholic Hospital Laisamis', '16215', 'Marsabit', 'Laisamis', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '1.70101', '38.0251', '2025-07-13 05:15:02'),
+(2014, 'Jirime Dispensary', '18854', 'Marsabit', 'Saku', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '2.34761', '37.98771', '2025-07-13 05:15:02'),
+(2015, 'Laisamis Sub county Referral Hospital(Marsabit South)', '18856', 'Marsabit', 'Laisamis', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2016, 'Maikona Health Centre', '20522', 'Marsabit', 'North Horr', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2017, 'Parkishon Dispensary', '20608', 'Marsabit', 'Saku', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '2.26688', '37.88302', '2025-07-13 05:15:02'),
+(2018, 'Karare Health Centre', '25224', 'Marsabit', 'Saku', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2019, 'Akachiu Health Centre', '11923', 'Meru', 'Igembe South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.18318', '37.95661', '2025-07-13 05:15:02'),
+(2020, 'Chugu Dispensary', '11971', 'Meru', 'Imenti North', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.06882', '37.67907', '2025-07-13 05:15:02'),
+(2021, 'Consolata Mission  Hospital Nkubu', '11976', 'Meru', 'Imenti South', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2022, 'Cottolengo Mission Hospital', '11977', 'Meru', 'Imenti Central', 'Kenya Episcopal Conference-Catholic Secretariat', 'DREAM Kenya Trust', 'German cooperation and Community of SantEgidio', 'KenyaEMR', 'Active', 'On Premises', '-0.00245', '37.76659', '2025-07-13 05:15:02'),
+(2023, 'Family Care Medical Centre(Meru)', '12015', 'Meru', 'Imenti North', 'Private Practice', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2024, 'Gakoromone Dispensary', '12027', 'Meru', 'Imenti North', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.04863', '37.66587', '2025-07-13 05:15:02'),
+(2025, 'Gatimbi Health Centre', '12031', 'Meru', 'Imenti Central', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.01057', '37.66027', '2025-07-13 05:15:02'),
+(2026, 'Giaki Sub-District Hospital', '12036', 'Meru', 'Imenti North', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.03021', '37.76489', '2025-07-13 05:15:02'),
+(2027, 'Githongo District Hospital', '12041', 'Meru', 'Imenti Central', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.00569', '37.5926', '2025-07-13 05:15:02'),
+(2028, 'Consolata Hospital Gitoro', '12044', 'Meru', 'Imenti North', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2029, 'GK Prison Dispensary (Meru)', '12049', 'Meru', 'Imenti North', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.0529', '37.64474', '2025-07-13 05:15:02'),
+(2030, 'Igoki Dispensary', '12071', 'Meru', 'Imenti North', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.02791', '37.67846', '2025-07-13 05:15:02'),
+(2031, 'Kangeta Health Centre', '12174', 'Meru', 'Igembe Central', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.27644', '37.88962', '2025-07-13 05:15:02'),
+(2032, 'Kanyakine District Hospital', '12181', 'Meru', 'Imenti South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.12923', '37.67557', '2025-07-13 05:15:02'),
+(2033, 'Kaongo Health Centre', '12192', 'Meru', 'Imenti Central', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.04146', '37.72116', '2025-07-13 05:15:02'),
+(2034, 'Kathigu Health Centre', '12232', 'Meru', 'Imenti South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', '-0.15809', '37.68631', '2025-07-13 05:15:02'),
+(2035, 'Kathithi Dispensary', '12234', 'Meru', 'Imenti North', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.06099', '37.70182', '2025-07-13 05:15:02'),
+(2036, 'Kibaranyaki Dispensary', '12280', 'Meru', 'Imenti Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.00213', '37.59032', '2025-07-13 05:15:02'),
+(2037, 'Kibirichia Sub-District Hospital', '12282', 'Meru', 'Buuri', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.11012', '37.51362', '2025-07-13 05:15:02'),
+(2038, 'Kiarago Health Centre', '12283', 'Meru', 'Imenti South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2039, 'Kiburine Dispensary', '12290', 'Meru', 'Imenti North', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.01648', '37.83896', '2025-07-13 05:15:02'),
+(2040, 'Kieni Kia Ndege Dispensary', '12296', 'Meru', 'Imenti South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.1904', '37.68144', '2025-07-13 05:15:02'),
+(2041, 'Kiirua Dispensary', '12302', 'Meru', 'Buuri', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.11928', '37.55493', '2025-07-13 05:15:02'),
+(2042, 'St Theresa Kiirua Hospital (Kiirua)', '12303', 'Meru', 'Buuri', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.12577', '37.56725', '2025-07-13 05:15:02'),
+(2043, 'Kina Dispensary', '12319', 'Meru', 'Igembe Central', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.26177', '38.12311', '2025-07-13 05:15:02'),
+(2044, 'Kinoro Sub-District Hospital', '12325', 'Meru', 'Imenti South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.17948', '37.62503', '2025-07-13 05:15:02'),
+(2045, 'Kinoru Dispensary', '12326', 'Meru', 'Imenti North', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.05346', '37.63777', '2025-07-13 05:15:02'),
+(2046, 'Kionyo Dispensary (Imenti South)', '12328', 'Meru', 'Imenti South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.12619', '37.5761', '2025-07-13 05:15:02'),
+(2047, 'Kirogine Dispensary', '12337', 'Meru', 'Imenti South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.09438', '37.69298', '2025-07-13 05:15:02'),
+(2048, 'Kunati Health Centre', '12390', 'Meru', 'Tigania East', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', '', '', 'On Premises', '0.0929', '37.91834', '2025-07-13 05:15:02'),
+(2049, 'Kunene Health Centre', '12391', 'Meru', 'Tigania West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2050, 'Laare Health Centre', '12422', 'Meru', 'Igembe North', 'Ministry of Health', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.33468', '37.93759', '2025-07-13 05:15:02'),
+(2051, 'Lewa Downs Dispensary', '12426', 'Meru', 'Buuri', 'Private Enterprise (Institution)', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.18852', '37.46417', '2025-07-13 05:15:02'),
+(2052, 'Maua Methodist Hospital', '12492', 'Meru', 'Igembe South', 'Christian Health Association of Kenya', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.231', '37.94188', '2025-07-13 05:15:02'),
+(2053, 'Mbeu Sub-District Hospital', '12500', 'Meru', 'Tigania West', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.05874', '37.81668', '2025-07-13 05:15:02'),
+(2054, 'Meru District Hospital', '12516', 'Meru', 'Imenti North', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.05063', '37.65441', '2025-07-13 05:15:02'),
+(2055, 'Mikinduri Health Centre', '12524', 'Meru', 'Tigania East', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', '0.12999', '37.85091', '2025-07-13 05:15:02'),
+(2056, 'Mikinduri Sub-District Hospial', '12525', 'Meru', 'Tigania East', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.12386', '37.83748', '2025-07-13 05:15:02'),
+(2057, 'Mikumbune Sub-District Hospital', '12526', 'Meru', 'Imenti South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.07809', '37.61783', '2025-07-13 05:15:02'),
+(2058, 'Mitunguu Dispensary', '12534', 'Meru', 'Imenti South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.10572', '37.78144', '2025-07-13 05:15:02'),
+(2059, 'Mitunguu Medical Services', '12535', 'Meru', 'Imenti South', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.11138', '37.78402', '2025-07-13 05:15:02'),
+(2060, 'Mituntu Health Centre', '12536', 'Meru', 'Tigania West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.17353', '37.67673', '2025-07-13 05:15:02'),
+(2061, 'Muthara Sub-District Hospital', '12591', 'Meru', 'Tigania East', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.2276', '37.7975', '2025-07-13 05:15:02'),
+(2062, 'Mutuati Sub-District Hospital', '12605', 'Meru', 'Igembe North', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.38287', '37.98086', '2025-07-13 05:15:02'),
+(2063, 'Muutiokiama Health Centre', '12615', 'Meru', 'Imenti South', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.12312', '37.72661', '2025-07-13 05:15:02'),
+(2064, 'Naari Health Centre', '12631', 'Meru', 'Buuri', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.08119', '37.58169', '2025-07-13 05:15:02'),
+(2065, 'Nkubu Dispensary', '12666', 'Meru', 'Imenti South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.06787', '37.66202', '2025-07-13 05:15:02'),
+(2066, 'Nthambiro Dispensary', '12675', 'Meru', 'Igembe Central', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.24956', '38.02821', '2025-07-13 05:15:02'),
+(2067, 'Nyambene District Hospital', '12684', 'Meru', 'Igembe South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.23382', '37.94524', '2025-07-13 05:15:02'),
+(2068, 'Ruiri Rural Health Demonstration Centre', '12717', 'Meru', 'Buuri', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.15852', '37.40898', '2025-07-13 05:15:02'),
+(2069, 'St Ann Hospital', '12743', 'Meru', 'Imenti South', 'Christian Health Association of Kenya', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.19313', '37.66709', '2025-07-13 05:15:02'),
+(2070, 'Tigania Hospital', '12799', 'Meru', 'Tigania East', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2071, 'Timau Sub-District Hospital', '12802', 'Meru', 'Buuri', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.09212', '37.24762', '2025-07-13 05:15:02'),
+(2072, 'Uringu Health Centre', '12829', 'Meru', 'Tigania West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.1385', '37.74737', '2025-07-13 05:15:02'),
+(2073, 'GK Uruku', '12830', 'Meru', 'Imenti South', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2074, 'Uruku Health Centre', '12831', 'Meru', 'Imenti South', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.04503', '37.60521', '2025-07-13 05:15:02'),
+(2075, 'Miathene District Hospital', '16234', 'Meru', 'Tigania West', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.15046', '37.79109', '2025-07-13 05:15:02'),
+(2076, 'Kiguchwa Dispensary', '16235', 'Meru', 'Tigania East', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.14758', '37.8572', '2025-07-13 05:15:02'),
+(2077, 'Theere Health Centre', '16555', 'Meru', 'Igembe North', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.33632', '37.99082', '2025-07-13 05:15:02'),
+(2078, 'New Avenue Medical Clinic', '16620', 'Meru', 'Imenti North', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.04538', '37.65884', '2025-07-13 05:15:02'),
+(2079, 'Kiraone Dispensary', '17003', 'Meru', 'Igembe South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.20044', '37.98043', '2025-07-13 05:15:02'),
+(2080, 'GK Kangeta', '17065', 'Meru', 'Igembe Central', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2081, 'Kalamene Dispensary', '17089', 'Meru', 'Igembe South', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.21127', '37.92697', '2025-07-13 05:15:02'),
+(2082, 'Mitunguu Catholic Dispensary', '17129', 'Meru', 'Buuri', 'Unknown', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.10637', '37.78561', '2025-07-13 05:15:02'),
+(2083, 'Chabuene Dispensary', '17223', 'Meru', 'Imenti North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.1131', '37.67195', '2025-07-13 05:15:02'),
+(2084, 'Mboroga Dispensary', '17287', 'Meru', 'Buuri', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.14149', '37.53389', '2025-07-13 05:15:02'),
+(2085, 'Mutiokiama Health Centre', '17379', 'Meru', 'Igembe South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.16288', '37.93124', '2025-07-13 05:15:02'),
+(2086, 'Kibirichia Health & Laboratory Services', '19134', 'Meru', 'Imenti North', 'Unknown', 'No Partner', 'No Agency', '', '', 'On Premises', '0.09266', '37.5212', '2025-07-13 05:15:02'),
+(2087, 'Imenti North Dice (Meru)', '19879', 'Meru', 'Imenti North', 'Non - Governmental Organizations', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2088, 'Matercare Maternity Hospital', '19912', 'Meru', 'Isiolo', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', '0.32728', '37.56402', '2025-07-13 05:15:02'),
+(2089, 'Aina Dispensary', '20030', 'Meru', 'Tigania West', 'Other Faith Based', 'DREAM Kenya Trust', 'German cooperation and Community of SantEgidio', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2090, 'Kirimachuma APLSC Dispensara', '23276', 'Meru', 'Tigania East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2091, 'HWWK Maua Dice', '24622', 'Meru', 'Igembe South', 'Non - Governmental Organizations', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2092, 'Agenga Dispensary', '13467', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.91877', '34.23407', '2025-07-13 05:15:02'),
+(2093, 'Aneko Dispensary', '13478', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.98', '34.15', '2025-07-13 05:15:02'),
+(2094, 'Anjego Dispensary', '13480', 'Migori', 'Suna East', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.01652', '34.44287', '2025-07-13 05:15:02'),
+(2095, 'Arombe Dispensary', '13486', 'Migori', 'Suna West', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.03484', '34.35083', '2025-07-13 05:15:02'),
+(2096, 'Awendo Sub-County Hospital', '13492', 'Migori', 'Awendo', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2097, 'Bande Dispensary', '13494', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.03519', '34.19766', '2025-07-13 05:15:02'),
+(2098, 'Bugumbe Health Centre', '13517', 'Migori', 'Kuria West', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.17283', '34.43824', '2025-07-13 05:15:02'),
+(2099, 'Bware Health Center', '13519', 'Migori', 'Uriri', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2100, 'Chinato Health Centre', '13526', 'Migori', 'Kuria East', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.28787', '34.61433', '2025-07-13 05:15:02'),
+(2101, 'Dede Health Centre', '13532', 'Migori', 'Awendo', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2102, 'Getambwega Dispensary', '13565', 'Migori', 'Kuria East', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.27715', '34.58601', '2025-07-13 05:15:02'),
+(2103, 'Getongoroma Dispensary', '13569', 'Migori', 'Kuria West', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.18309', '34.41133', '2025-07-13 05:15:02'),
+(2104, 'Getongoroma Health Centre', '13570', 'Migori', 'Kuria East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.29771', '34.6558', '2025-07-13 05:15:02'),
+(2105, 'Giribe Dispensary', '13576', 'Migori', 'Suna West', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.10221', '34.28944', '2025-07-13 05:15:02'),
+(2106, 'God Jope Dispensary', '13582', 'Migori', 'Suna East', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.049', '34.52851', '2025-07-13 05:15:02'),
+(2107, 'God Kwer Dispensary', '13583', 'Migori', 'Suna West', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.05855', '34.32138', '2025-07-13 05:15:02'),
+(2108, 'Gwitembe Health Centre', '13597', 'Migori', 'Kuria East', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.37063', '34.71086', '2025-07-13 05:15:02'),
+(2109, 'Iraha Dispensary', '13619', 'Migori', 'Kuria West', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.15724', '34.41549', '2025-07-13 05:15:02'),
+(2110, 'Isibania Mission Health Centre', '13624', 'Migori', 'Kuria West', 'Kenya Episcopal Conference-Catholic Secretariat', 'CIHEB Entrench', 'CDC', '', '', 'On Premises', '-1.22439', '34.47823', '2025-07-13 05:15:02'),
+(2111, 'Isibania Sub-District Hospital', '13625', 'Migori', 'Kuria West', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.23602', '34.48137', '2025-07-13 05:15:02'),
+(2112, 'Jevros Clinic', '13635', 'Migori', 'Awendo', 'Private Practice - Nurse / Midwifery', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.86167', '34.56822', '2025-07-13 05:15:02'),
+(2113, 'Kabuto Dispensary', '13639', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.9241', '34.1703', '2025-07-13 05:15:02'),
+(2114, 'Kadem Tb & Leprosy Dispensary', '13640', 'Migori', 'Nyatike', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.00538', '34.24691', '2025-07-13 05:15:02'),
+(2115, 'Karungu Sub-County Hospital', '13656', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2116, 'Kegonga Sub County Hospital', '13663', 'Migori', 'Kuria East', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2117, 'Kehancha Nursing and Maternity Home', '13665', 'Migori', 'Kuria West', 'Private Enterprise (Institution)', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', '', '', 'On Premises', '-1.18202', '34.62389', '2025-07-13 05:15:02'),
+(2118, 'Kituka Dispensary', '13706', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.96724', '34.22604', '2025-07-13 05:15:02'),
+(2119, 'Kombe Dispensary', '13713', 'Migori', 'Kuria West', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', '', 'Stalled/Inactive', 'On Premises', '-1.10441', '34.58', '2025-07-13 05:15:02'),
+(2120, 'Kopanga Dispensary (CHAK)', '13718', 'Migori', 'Suna West', 'Christian Health Association of Kenya', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2121, 'Kugitimo Health Centre', '13723', 'Migori', 'Kuria East', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.23461', '34.68991', '2025-07-13 05:15:02'),
+(2122, 'Kuja Dispensary', '13724', 'Migori', 'Awendo', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.81305', '34.56903', '2025-07-13 05:15:02'),
+(2123, 'KDH', '13726', 'Migori', 'Kuria West', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2124, 'Kwoyo Kodalo Dispensary', '13729', 'Migori', 'Awendo', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.7673', '34.55948', '2025-07-13 05:15:02'),
+(2125, 'Lwala Community Hospital', '13740', 'Migori', 'Rongo', 'Community', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2126, 'Lwanda Dispensary', '13741', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.872471', '34.196711', '2025-07-13 05:15:02'),
+(2127, 'Macalder Sub-County Hospital', '13745', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2128, 'Mariwa Health Centre', '13778', 'Migori', 'Awendo', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.9721', '34.5744', '2025-07-13 05:15:02'),
+(2129, 'Masaba Health Centre', '13779', 'Migori', 'Kuria West', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.11711', '34.53263', '2025-07-13 05:15:02'),
+(2130, 'Matare SDA Dispensary', '13788', 'Migori', 'Kuria East', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2131, 'Matoso Health Clinic', '13793', 'Migori', 'Nyatike', 'Non-Governmental Organizations', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.97685', '34.13299', '2025-07-13 05:15:02'),
+(2132, 'Midoti Dispensary', '13804', 'Migori', 'Suna East', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.06012', '34.49284', '2025-07-13 05:15:02'),
+(2133, 'Migori County Referral Hospital', '13805', 'Migori', 'Suna East', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2134, 'Minyenya Health Centre', '13809', 'Migori', 'Rongo', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2135, 'Motemorabu Dispensary', '13824', 'Migori', 'Kuria West', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', '', 'Stalled/Inactive', 'On Premises', '-1.18309', '34.41133', '2025-07-13 05:15:02'),
+(2136, 'Muchebe Dispensary', '13830', 'Migori', 'Kuria West', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', '', 'Stalled/Inactive', 'On Premises', '-1.19747', '34.49484', '2025-07-13 05:15:02'),
+(2137, 'Muhuru Sub-County Hospital', '13833', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2138, 'Ndiwa Dispensary', '13844', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.88761', '34.2798', '2025-07-13 05:15:02'),
+(2139, 'Ngere Health Centre', '13850', 'Migori', 'Rongo', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2140, 'Ngodhe Dispensary', '13853', 'Migori', 'Rongo', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.71103', '34.54157', '2025-07-13 05:15:02'),
+(2141, 'Ntimaru Sub County Hospital', '13858', 'Migori', 'Kuria East', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2142, 'Nyabokarange Dispensary', '13862', 'Migori', 'Kuria West', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.17217', '34.53995', '2025-07-13 05:15:02'),
+(2143, 'Nyaburi Clinic', '13865', 'Migori', 'Suna West', 'Private Enterprise (Institution)', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.09447', '34.45287', '2025-07-13 05:15:02'),
+(2144, 'Nyakuru Dispensary', '13885', 'Migori', 'Awendo', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.78542', '34.50906', '2025-07-13 05:15:02'),
+(2145, 'Nyamanga Dispensary', '13896', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', '', '', 'On Premises', '-1.050664', '34.423934', '2025-07-13 05:15:02'),
+(2146, 'Nyamaraga Sub County Hospital', '13897', 'Migori', 'Suna West', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2147, 'Nyamasare Dispensary', '13900', 'Migori', 'Uriri', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.86059', '34.44596', '2025-07-13 05:15:02'),
+(2148, 'Nyamekongoroto Health Centre', '13907', 'Migori', 'Kuria West', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.148174', '34.496752', '2025-07-13 05:15:02'),
+(2149, 'Nyametaburo Health Centre', '13909', 'Migori', 'Kuria West', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.2533', '34.51853', '2025-07-13 05:15:02'),
+(2150, 'Nyandago Koweru Dispensary', '13919', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.03669', '34.25485', '2025-07-13 05:15:02'),
+(2151, 'Nyangoge Health Centre', '13927', 'Migori', 'Kuria West', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.17244', '34.47696', '2025-07-13 05:15:02'),
+(2152, 'Nyarongi Dispensary', '13940', 'Migori', 'Suna East', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.99536', '34.36982', '2025-07-13 05:15:02'),
+(2153, 'Ogada Health Centre', '13960', 'Migori', 'Suna West', 'Christian Health Association of Kenya', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2154, 'Ogwedhi Health Centre', '13969', 'Migori', 'Suna East', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.11358', '34.62118', '2025-07-13 05:15:02'),
+(2155, 'Olasi Dispensary', '13975', 'Migori', 'Nyatike', 'Ministry of Health', 'No Partner', 'No Agency', 'KenyaEMR', 'Active', 'On Premises', '-1.0761', '34.2091', '2025-07-13 05:15:02'),
+(2156, 'Ongito Dispensary', '13988', 'Migori', 'Uriri', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.9324', '34.3223', '2025-07-13 05:15:02'),
+(2157, 'Ongo Health Centre', '13989', 'Migori', 'Rongo', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.6623', '34.5712', '2025-07-13 05:15:02'),
+(2158, 'Oruba Nursing and Maternity Home', '13993', 'Migori', 'Suna West', 'Private Enterprise (Institution)', 'CIHEB Entrench', 'CDC', '', '', 'On Premises', '-1.06785', '34.46486', '2025-07-13 05:15:02'),
+(2159, 'Osingo Dispensary', '13996', 'Migori', 'Suna East', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.88863', '34.49253', '2025-07-13 05:15:02'),
+(2160, 'Osogo Dispensary', '13997', 'Migori', 'Uriri', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.97774', '34.4206', '2025-07-13 05:15:02'),
+(2161, 'Otacho Dispensary', '13998', 'Migori', 'Awendo', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.84804', '34.55513', '2025-07-13 05:15:02'),
+(2162, 'Otati Dispensary', '13999', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.76766', '34.20473', '2025-07-13 05:15:02'),
+(2163, 'Othoch Rakuom Dispensary', '14001', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.00658', '34.17344', '2025-07-13 05:15:02'),
+(2164, 'Othoro Sub County Hospital', '14003', 'Migori', 'Uriri', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2165, 'Oyani (SDA) Dispensary', '14008', 'Migori', 'Uriri', 'Christian Health Association of Kenya', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.92839', '34.3699', '2025-07-13 05:15:02'),
+(2166, 'Oyani Sub County Hospital', '14009', 'Migori', 'Uriri', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2167, 'Rabondo Dispensary', '14019', 'Migori', 'Awendo', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.84674', '34.4848', '2025-07-13 05:15:02'),
+(2168, 'Ranen (SDA) Dispensary', '14032', 'Migori', 'Awendo', 'Christian Health Association of Kenya', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.85845', '34.56562', '2025-07-13 05:15:02'),
+(2169, 'Rapcom Nursing and Maternity Home', '14037', 'Migori', 'Bondo', 'Private Enterprise (Institution)', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.81296', '34.56866', '2025-07-13 05:15:02'),
+(2170, 'Riat Dispensary (Migori)', '14047', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.8362', '34.22965', '2025-07-13 05:15:02'),
+(2171, 'Rongo Sub County Hospital', '14058', 'Migori', 'Rongo', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2172, 'Royal Medical Hospital and Maternity Home Limited', '14061', 'Migori', 'Rongo', 'Private Enterprise (Institution)', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2173, 'Saro Dispensary', '14069', 'Migori', 'Suna East', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.05872', '34.41015', '2025-07-13 05:15:02'),
+(2174, 'Sibuoche Dispensary', '14082', 'Migori', 'Uriri', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.96494', '34.37522', '2025-07-13 05:15:02'),
+(2175, 'Sony Medical Centre', '14097', 'Migori', 'Awendo', 'Company Medical Service', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.89366', '34.53335', '2025-07-13 05:15:02'),
+(2176, 'Sori Lakeside Nursing and Maternity Home', '14098', 'Migori', 'Nyatike', 'Christian Health Association of Kenya', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.84103', '34.15471', '2025-07-13 05:15:02'),
+(2177, 'St Akidiva Memorial Hospital', '14101', 'Migori', 'Awendo', 'Private Practice - Nurse / Midwife', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.16889', '34.451', '2025-07-13 05:15:02'),
+(2178, 'St Barnabas Dispensary', '14102', 'Migori', 'Suna West', 'Christian Health Association of Kenya', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.06209', '34.457', '2025-07-13 05:15:02'),
+(2179, 'St Camillus Mission Hospital', '14103', 'Migori', 'Nyatike', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.8123', '34.1983', '2025-07-13 05:15:02'),
+(2180, 'St Joseph Mission Hospital', '14110', 'Migori', 'Suna East', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.070833', '34.474722', '2025-07-13 05:15:02'),
+(2181, 'St Monica Rapogi Hospital', '14121', 'Migori', 'Uriri', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2182, 'Suna Nursing and Maternity Home', '14134', 'Migori', 'Suna West', 'Private Enterprise (Institution)', 'CIHEB Entrench', 'CDC', '', '', 'On Premises', '-1.07079', '34.46621', '2025-07-13 05:15:02'),
+(2183, 'Suna Rabuor Dispensary', '14135', 'Migori', 'Suna East', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.086', '34.58545', '2025-07-13 05:15:02'),
+(2184, 'Suna Ragana Dispensary', '14136', 'Migori', 'Suna West', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.10536', '34.47174', '2025-07-13 05:15:02'),
+(2185, 'Taranganya Dispensary', '14144', 'Migori', 'Kuria West', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.23817', '34.60087', '2025-07-13 05:15:02'),
+(2186, 'Tisinye Health Centre', '14149', 'Migori', 'Kuria East', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2187, 'Ulanda Dispensary', '14157', 'Migori', 'Awendo', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.00703', '34.58561', '2025-07-13 05:15:02'),
+(2188, 'Uriri Sub County Hospital', '14161', 'Migori', 'Uriri', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2189, 'Verna Health Centre', '14166', 'Migori', 'Rongo', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.79494', '34.58272', '2025-07-13 05:15:02'),
+(2190, 'Wath Onger Dispensary', '14170', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2191, 'Winjo Dispensary', '14173', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2192, 'Kipingi Dispensary', '16269', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', '', '', 'On Premises', '-0.850218', '34.1449', '2025-07-13 05:15:02'),
+(2193, 'Kombato Dispensary', '16270', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.97484', '34.33921', '2025-07-13 05:15:02'),
+(2194, 'Mugabo Dispensary', '16272', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', '', '', 'On Cloud', '-1.14826', '34.3461', '2025-07-13 05:15:02'),
+(2195, 'Namba Kodero Dispensary', '16273', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.00793', '34.27794', '2025-07-13 05:15:02'),
+(2196, 'Ondong Dispensary', '16277', 'Migori', 'Suna East', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.09443', '34.52534', '2025-07-13 05:15:02'),
+(2197, 'Thim Lich Dispensary', '16278', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.89145', '34.32067', '2025-07-13 05:15:02'),
+(2198, 'Mogori-Komasimo Health Centre', '16721', 'Migori', 'Kuria West', 'Ministry of Health', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.14276', '34.5752', '2025-07-13 05:15:02'),
+(2199, 'Koloo Dispensary', '17038', 'Migori', 'Uriri', 'Community Development Fund', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.89747', '34.44764', '2025-07-13 05:15:02'),
+(2200, 'Ombo Kowiti Dispensary', '17039', 'Migori', 'Uriri', 'Community Development Fund', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.91493', '34.41411', '2025-07-13 05:15:02'),
+(2201, 'Angaga Dispensary', '17050', 'Migori', 'Awendo', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.98123', '34.61518', '2025-07-13 05:15:02'),
+(2202, 'Siruti Dispensary', '17051', 'Migori', 'Awendo', 'Community Development Fund', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.87812', '34.50121', '2025-07-13 05:15:02'),
+(2203, 'Ngonga Dispensary', '17052', 'Migori', 'Awendo', 'Community Development Fund', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2204, 'Kitere  Dispensary', '17341', 'Migori', 'Rongo', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2205, 'Midida Dispensary', '17342', 'Migori', 'Uriri', 'Community Development Fund', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.92791', '34.36881', '2025-07-13 05:15:02'),
+(2206, 'Piny Owacho Dispensary', '17343', 'Migori', 'Uriri', 'Community Development Fund', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.92619', '34.45989', '2025-07-13 05:15:02'),
+(2207, 'Kolwal Dispensary', '17344', 'Migori', 'Uriri', 'Community Development Fund', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.9873', '34.50659', '2025-07-13 05:15:02'),
+(2208, 'Ombo Bita Dispensary', '17607', 'Migori', 'Awendo', 'Community Development Fund', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.87681', '34.51954', '2025-07-13 05:15:02'),
+(2209, 'Migori GK Prison Dispensary', '17728', 'Migori', 'Migori', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2210, 'Bahati Medical Clinic Migori', '17733', 'Migori', 'Suna West', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.0682', '34.46918', '2025-07-13 05:15:02'),
+(2211, 'Impact Rdo Clinic', '17736', 'Migori', 'Migori', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.06252', '34.47072', '2025-07-13 05:15:02'),
+(2212, 'Tuungane Centre Awendo', '18503', 'Migori', 'Awendo', 'Non-Governmental Organizations', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.91639', '34.52895', '2025-07-13 05:15:02'),
+(2213, 'LVCT Dice Clinic Migori', '18897', 'Migori', 'Suna East', 'Non-Governmental Organizations', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2214, 'Got Kachola Dispensary', '19928', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.91777', '34.4361', '2025-07-13 05:15:02'),
+(2215, 'LVCT DICE Clinic Karungu', '19929', 'Migori', 'Nyatike', 'Non-Governmental Organizations', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2216, 'LVCT DICE Clinic Muhuru', '19930', 'Migori', 'Nyatike', 'Non-Governmental Organizations', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2217, 'Isbania Prevention Centre', '20019', 'Migori', 'Kuria West', 'Non-Governmental Organizations', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2218, 'St Akidiva Mindira Hospital - Mabera', '20020', 'Migori', 'Kuria West', 'Private Enterprise (Institution)', 'MIGORI COUNTY HEALTH MANAGEMENT TEAM', 'CDC', '', '', 'On Premises', '-1.15184', '34.44747', '2025-07-13 05:15:02'),
+(2219, 'Oasis Doctors Plaza Medical Centre', '20051', 'Migori', 'Suna West', 'Private Practice - Medical Specialist', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.06437', '34.47373', '2025-07-13 05:15:02'),
+(2220, 'Obware Dispensary', '20568', 'Migori', 'Nyatike', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2221, 'Oruba Dispensary', '22093', 'Migori', 'Suna West', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2222, 'Taragwiti Dispensary', '22981', 'Migori', 'Kuria West', 'Ministry of Health', 'CIHEB Entrench', 'CDC', '', '', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2223, 'Aga Khan Hospital (Mombasa)', '11203', 'Mombasa', 'Mvita', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.07012', '39.67003', '2025-07-13 05:15:02'),
+(2224, 'Al Farooq Hospital', '11208', 'Mombasa', 'Mvita', 'Private Practice - Private Institution Academic', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.04899', '39.66513', '2025-07-13 05:15:02'),
+(2225, 'Amurt Health Centre (Likoni)', '11221', 'Mombasa', 'Likoni', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.07765', '39.65362', '2025-07-13 05:15:02'),
+(2226, 'Bamburi Dispensary', '11239', 'Mombasa', 'Nyali', 'Local Authority', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.00435', '39.69335', '2025-07-13 05:15:02');
+INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(2227, 'Bamburi Medicare', '11240', 'Mombasa', 'Nyali', 'Private Enterprise (Institution)', 'USAID Stawisha Pwani', 'USAID', '', '', 'On Premises', '-4.00329', '39.6986', '2025-07-13 05:15:02'),
+(2228, 'Baobab Clinic - Bamburi Cement', '11243', 'Mombasa', 'Nyali', 'Private Enterprise (Institution)', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.96975', '39.7061', '2025-07-13 05:15:02'),
+(2229, 'Bokole CDF Dispensary', '11254', 'Mombasa', 'Changamwe', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.01724', '39.60873', '2025-07-13 05:15:02'),
+(2230, 'Bomu Medical Hospital (Changamwe)', '11258', 'Mombasa', 'Changamwe', 'Non-Governmental Organizations', 'Mkomani Clinic society', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-4.02745', '39.61751', '2025-07-13 05:15:02'),
+(2231, 'Bomu Medical Centre (Likoni)', '11259', 'Mombasa', 'Likoni', 'Private Enterprise (Institution)', 'Mkomani Clinic society', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-4.0936', '39.64965', '2025-07-13 05:15:02'),
+(2232, 'Borabu Medical Clinic', '11260', 'Mombasa', 'Kisauni', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.96966', '39.73333', '2025-07-13 05:15:02'),
+(2233, 'Cdc Ganjoni Dispensary', '11273', 'Mombasa', 'Mvita', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.06398', '39.66609', '2025-07-13 05:15:02'),
+(2234, 'Coast General Teaching and Referral Hospital (Chaani Outreach Centre)', '11274', 'Mombasa', 'Changamwe', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2235, 'Coast General Teaching and Referral Hospital', '11289', 'Mombasa', 'Mvita', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2236, 'Kingorani Prison Dispensary', '11303', 'Mombasa', 'Mvita', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2237, 'Family Medical Centre (Kisauni)', '11370', 'Mombasa', 'Nyali', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.02509', '39.68749', '2025-07-13 05:15:02'),
+(2238, 'Geca Medical Clinic', '11386', 'Mombasa', 'Likoni', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.08982', '39.65065', '2025-07-13 05:15:02'),
+(2239, 'Shimo La Tewa Annex Dispensary (GK Prison)', '11393', 'Mombasa', 'Mvita', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-3.96256', '39.72619', '2025-07-13 05:15:02'),
+(2240, 'Shimo-La Tewa Health Centre (GK Prison)', '11395', 'Mombasa', 'Kisauni', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-3.9562', '39.73845', '2025-07-13 05:15:02'),
+(2241, 'Shimo Borstal Dispensary (GK Prison)', '11397', 'Mombasa', 'Mombasa', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-3.96818', '39.73365', '2025-07-13 05:15:02'),
+(2242, 'Jaffery Medical Clinic', '11423', 'Mombasa', 'Mvita', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.05929', '39.67626', '2025-07-13 05:15:02'),
+(2243, 'Jambo Healthcare Limited', '11425', 'Mombasa', 'Nyali', 'Private Enterprise (Institution)', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2244, 'Jericho Medical Clinic', '11431', 'Mombasa', 'Nyali', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.04284', '39.68553', '2025-07-13 05:15:02'),
+(2245, 'Jocham Hospital', '11434', 'Mombasa', 'Kisauni', 'Private Enterprise (Institution)', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.03672', '39.68148', '2025-07-13 05:15:02'),
+(2246, 'Jomvu Model Health Centre', '11436', 'Mombasa', 'Jomvu', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.00449', '39.59929', '2025-07-13 05:15:02'),
+(2247, 'Jordan Medical Clinic', '11439', 'Mombasa', 'Kisauni', 'Private Enterprise (Institution)', 'USAID Stawisha Pwani', 'USAID', '', '', 'On Premises', '-4.01138', '39.69408', '2025-07-13 05:15:02'),
+(2248, 'Joy Medical Clinic (Jomvu)', '11440', 'Mombasa', 'Jomvu', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2249, 'Judy Medical Clinic', '11442', 'Mombasa', 'Jomvu', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.01022', '39.60388', '2025-07-13 05:15:02'),
+(2250, 'Kaderboy Medical Clinic (Old Town)', '11446', 'Mombasa', 'Mvita', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.06217', '39.67344', '2025-07-13 05:15:02'),
+(2251, 'Kahada Medical Clinic', '11450', 'Mombasa', 'Jomvu', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.00502', '39.5794', '2025-07-13 05:15:02'),
+(2252, 'Kenya Navy (Mir) Hospital', '11459', 'Mombasa', 'Likoni', 'Armed Forces', 'HJF-Nairobi', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2253, 'Kisimani Health Services', '11489', 'Mombasa', 'Nyali', 'Private Enterprise (Institution)', 'USAID Stawisha Pwani', 'USAID', '', '', 'On Premises', '-4.02609', '39.6956', '2025-07-13 05:15:02'),
+(2254, 'Kongowea Health Centre', '11499', 'Mombasa', 'Nyali', 'Local Authority', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.04135', '39.68408', '2025-07-13 05:15:02'),
+(2255, 'Likoni Catholic Dispensary', '11520', 'Mombasa', 'Likoni', 'Non- Governmental Organizations', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.0992', '39.64575', '2025-07-13 05:15:02'),
+(2256, 'Likoni District Hospital', '11522', 'Mombasa', 'Likoni', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.03626', '39.62066', '2025-07-13 05:15:02'),
+(2257, 'Magongo (MCM) Dispensary', '11538', 'Mombasa', 'Changamwe', 'Local Authority', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.0246', '39.62493', '2025-07-13 05:15:02'),
+(2258, 'Majengo Dispensary (Mombasa)', '11541', 'Mombasa', 'Mvita', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.04839', '39.66051', '2025-07-13 05:15:02'),
+(2259, 'Mary Immaculate Cottage Hospital (Mombasa)', '11573', 'Mombasa', 'Mvita', 'Other Faith Based', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.0461', '39.66333', '2025-07-13 05:15:02'),
+(2260, 'Maunguja Dispensary', '11582', 'Mombasa', 'Kisauni', 'Local Authority', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.97219', '39.65101', '2025-07-13 05:15:02'),
+(2261, 'Mbuta Model Health Centre', '11592', 'Mombasa', 'Likoni', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.05077', '39.66123', '2025-07-13 05:15:02'),
+(2262, 'Mewa Hospital', '11600', 'Mombasa', 'Mvita', 'Other Faith Based', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.05305', '39.66154', '2025-07-13 05:15:02'),
+(2263, 'Mikindani (MCM) Dispensary', '11613', 'Mombasa', 'Jomvu', 'Local Authority', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.00509', '39.62816', '2025-07-13 05:15:02'),
+(2264, 'Mikindani Catholic Dispensary', '11614', 'Mombasa', 'Jomvu', 'Kenya Episcopal Conference-Catholic Secretariat', 'Mkomani Clinic society', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-4.00193', '39.62971', '2025-07-13 05:15:02'),
+(2265, 'Mikindani Medical Clinic', '11615', 'Mombasa', 'Jomvu', 'Private Enterprise (Institution)', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.00356', '39.62987', '2025-07-13 05:15:02'),
+(2266, 'Miritini CDF Dispensary', '11620', 'Mombasa', 'Jomvu', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.00184', '39.58399', '2025-07-13 05:15:02'),
+(2267, 'Mlaleo Medical Clinic', '11634', 'Mombasa', 'Kisauni', 'Private Practice - Private Institution Academic', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2268, 'Mombasa Hospital', '11643', 'Mombasa', 'Mvita', 'Private Practice - Private Institution Academic', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.06495', '39.68049', '2025-07-13 05:15:02'),
+(2269, 'Mother Amadea Health Centre', '11645', 'Mombasa', 'Jomvu', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.00434', '39.62743', '2025-07-13 05:15:02'),
+(2270, 'Msikiti Noor Medical Clinic', '11657', 'Mombasa', 'Changamwe', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.02597', '39.62859', '2025-07-13 05:15:02'),
+(2271, 'Mtongwe (MCM) Dispensary', '11669', 'Mombasa', 'Likoni', 'Local Authority', 'HJF-Nairobi', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-4.08108', '39.60914', '2025-07-13 05:15:02'),
+(2272, 'Mvita Dispensary', '11679', 'Mombasa', 'Mvita', 'Local Authority', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.05132', '39.65843', '2025-07-13 05:15:02'),
+(2273, 'Mwakirunge Dispensary', '11683', 'Mombasa', 'Kisauni', 'Local Authority', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.03355', '39.66053', '2025-07-13 05:15:02'),
+(2274, 'Mwembe Tayari Dispensary', '11697', 'Mombasa', 'Mvita', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2275, 'Nguuni Health Centre', '11716', 'Mombasa', 'Kisauni', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.99343', '39.69584', '2025-07-13 05:15:02'),
+(2276, 'Nyali Health Care Limited', '11721', 'Mombasa', 'Nyali', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.02797', '39.71669', '2025-07-13 05:15:02'),
+(2277, 'Port Reitz Sub County Hospital', '11740', 'Mombasa', 'Changamwe', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2278, 'Santa Maria Medical Clinic', '11770', 'Mombasa', 'Likoni', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.09207', '39.65824', '2025-07-13 05:15:02'),
+(2279, 'Sau Health Services', '11771', 'Mombasa', 'Likoni', 'Private Enterprise (Institution)', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.09794', '39.64541', '2025-07-13 05:15:02'),
+(2280, 'Sayyida Fatimah Hospital', '11774', 'Mombasa', 'Nyali', 'Other Faith Based', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.02832', '39.68701', '2025-07-13 05:15:02'),
+(2281, 'Skans Health Care Centre', '11775', 'Mombasa', 'Kisauni', 'Private Practice - Unspecified', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.01782', '39.68419', '2025-07-13 05:15:02'),
+(2282, 'Shika Adabu (MCM) Dispensary', '11785', 'Mombasa', 'Likoni', 'Local Authority', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.11271', '39.63764', '2025-07-13 05:15:02'),
+(2283, 'St Elizabeth Medical Clinic Bakarani', '11813', 'Mombasa', 'Kisauni', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.01516', '39.69247', '2025-07-13 05:15:02'),
+(2284, 'St Hillarias Medical Clinic', '11816', 'Mombasa', 'Changamwe', 'Private Enterprise (Institution)', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Discontinued', 'On Premises', '-4.03523', '39.62078', '2025-07-13 05:15:02'),
+(2285, 'St Valeria Medical Clinic', '11828', 'Mombasa', 'Changamwe', 'Private Enterprise (Institution)', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.0219', '39.62451', '2025-07-13 05:15:02'),
+(2286, 'Statehouse Dispensary', '11831', 'Mombasa', 'Mvita', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2287, 'Stella Maris Medical Clinic', '11832', 'Mombasa', 'Likoni', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.02951', '39.62411', '2025-07-13 05:15:02'),
+(2288, 'Tononoka AP Dispensary', '11854', 'Mombasa', 'Mvita', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2289, 'Tudor District Hospital (Mombasa)', '11861', 'Mombasa', 'Mvita', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.03993', '39.664', '2025-07-13 05:15:02'),
+(2290, 'Tudor Health Care', '11862', 'Mombasa', 'Mvita', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.03712', '39.66124', '2025-07-13 05:15:02'),
+(2291, 'Wema Centre Medical Clinic', '11902', 'Mombasa', 'Kisauni', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2292, 'Westlands Health Care Services', '11905', 'Mombasa', 'Jomvu', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2293, 'Bakarani Community Clinic', '16532', 'Mombasa', 'Nyali', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.01513', '39.69491', '2025-07-13 05:15:02'),
+(2294, 'Maweni CDF Dispensary (Kongowea)', '17233', 'Mombasa', 'Nyali', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.03833', '39.69512', '2025-07-13 05:15:02'),
+(2295, 'Makande Healthcare Services', '17346', 'Mombasa', 'Mvita', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.04075', '39.65629', '2025-07-13 05:15:02'),
+(2296, 'Kisauni Drop In VCT_ICRH', '17623', 'Mombasa', 'Kisauni', 'Non-Governmental Organizations', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2297, 'Seaside Nursing Home', '17630', 'Mombasa', 'Mvita', 'Private Practice - Unspecified', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.06465', '39.66483', '2025-07-13 05:15:02'),
+(2298, 'California Medical Clinic', '17763', 'Mombasa', 'Likoni', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.06605', '39.60321', '2025-07-13 05:15:02'),
+(2299, 'Singawa Medical Centre', '17765', 'Mombasa', 'Likoni', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.0835', '39.6546', '2025-07-13 05:15:02'),
+(2300, 'Akemo Medical Clinic', '17770', 'Mombasa', 'Likoni', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.08743', '39.65945', '2025-07-13 05:15:02'),
+(2301, 'Kisauni Health Centre', '17911', 'Mombasa', 'Nyali', 'Local Authority', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2302, 'Meditrust Health Care Services', '18040', 'Mombasa', 'Nyali', 'Private Practice - General Practitioner', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.02278', '39.705', '2025-07-13 05:15:02'),
+(2303, 'Mbungoni Catholic Dispensary  (CBHC)', '18043', 'Mombasa', 'Nyali', 'Kenya Episcopal Conference-Catholic Secretariat', 'Mkomani Clinic society', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2304, 'Barsheba Medical Clinic', '18071', 'Mombasa', 'Kisauni', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.00313', '39.71214', '2025-07-13 05:15:02'),
+(2305, 'Mombasa Roadside Wellness Centre', '18121', 'Mombasa', 'Changamwe', 'Non - Governmental Organizations', 'Mkomani Clinic society', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-4.0401', '39.6331', '2025-07-13 05:15:02'),
+(2306, 'Mlaleo Health Centre (MOH)', '18210', 'Mombasa', 'Nyali', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.02796', '39.68619', '2025-07-13 05:15:02'),
+(2307, 'Railway Dispensary (Kilindini)', '18211', 'Mombasa', 'Mvita', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2308, 'Kenya Ports Authority Staff Clinic', '18212', 'Mombasa', 'Mvita', 'Parastatal', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.05002', '39.65028', '2025-07-13 05:15:02'),
+(2309, 'Marimani CDF Dispensary', '18431', 'Mombasa', 'Kisauni', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2310, 'Likoni HIV Resource Centre', '18454', 'Mombasa', 'Likoni', 'Private Practice - Unspecified', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.09783', '39.63924', '2025-07-13 05:15:02'),
+(2311, 'AHF Soko Clinic', '18804', 'Mombasa', 'Nyali', 'Non-Governmental Organizations', 'Aids Healthcare Foundation Kenya', 'AHF', 'KenyaEMR', 'Discontinued', 'On Premises', '-4.04153', '39.68325', '2025-07-13 05:15:02'),
+(2312, 'Optimum Care Medical', '18870', 'Mombasa', 'Mvita', 'Private Practice - General Practitioner', 'USAID Stawisha Pwani', 'USAID', '', '', 'On Premises', '-4.06535', '39.67165', '2025-07-13 05:15:02'),
+(2313, 'Health Source Medical Centre', '19597', 'Mombasa', 'Nyali', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.03215', '39.7118', '2025-07-13 05:15:02'),
+(2314, 'Mrima Maternity Hospital', '19606', 'Mombasa', 'Likoni', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2315, 'Al-Firdaus Health Care', '19629', 'Mombasa', 'Mvita', 'Private Practice - General Practitioner', 'USAID Stawisha Pwani', 'USAID', '', '', 'On Premises', '-4.04535', '39.66511', '2025-07-13 05:15:02'),
+(2316, 'Drop In Service Centre', '20059', 'Mombasa', 'Mvita', 'Non-Governmental Organizations', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.06221', '39.66703', '2025-07-13 05:15:02'),
+(2317, 'Junda Dispensary', '20491', 'Mombasa', 'Kisauni', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.04025', '39.67095', '2025-07-13 05:15:02'),
+(2318, 'Roadside Wellness (Jomvu)', '21076', 'Mombasa', 'Jomvu', 'Non - Governmental Organizations', 'Mkomani Clinic society', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2319, 'Ziwa la ngombe Health centre', '22086', 'Mombasa', 'Nyali', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2320, 'Chaani Catholic', '23285', 'Mombasa', 'Changamwe', 'Kenya Episcopal Conference-Catholic Secretariat', 'Mkomani Clinic society', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2321, 'Coast General Teaching and Referral Hospital Vikwatani Outreach Centre', '25221', 'Mombasa', 'Kisauni', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2322, 'Bomu Medical Centre - Old Town', '27408', 'Mombasa', 'Mvita', 'Non- Governmental Organizations', 'Mkomani Clinic society', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2323, 'CGTRH Mtongwe Outreach Centre', '28689', 'Mombasa', 'Likoni', 'Ministry of Health', 'HJF-Nairobi', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2324, 'Bomu Hospital Bombolulu Medical Centre', '33426', 'Mombasa', 'Nyali', 'Faith Based Organization', 'Mkomani Clinic society', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2325, 'Don Bosco Catholic Dispensary', '10112', 'Muranga', 'Muranga south', 'Kenya Episcopal Conference-Catholic Secretariat', 'Aids Healthcare Foundation Kenya', 'AHF', 'KenyaEMR', 'Active', 'On Premises', '-0.90836', '37.1974', '2025-07-13 05:15:02'),
+(2326, 'Gaichanjiru Hospital', '10199', 'Muranga', 'Kandara', 'Ministry of Health', 'Tujitegemee', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.88479', '37.05184', '2025-07-13 05:15:02'),
+(2327, 'Gatara Health Centre', '10209', 'Muranga', 'Kiharu', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.72', '36.86', '2025-07-13 05:15:02'),
+(2328, 'Gatunyu Dispensary', '10234', 'Muranga', 'Gatanga', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.96056', '36.9915', '2025-07-13 05:15:02'),
+(2329, 'Gatura HC', '10236', 'Muranga', 'Gatanga', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2330, 'Giathanini Dispensary', '10248', 'Muranga', 'Gatanga', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.02545', '37.1911', '2025-07-13 05:15:02'),
+(2331, 'Gikoe Dispensary', '10253', 'Muranga', 'Muranga south', 'Ministry of Health', 'Tujitegemee', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.76188', '36.90619', '2025-07-13 05:15:02'),
+(2332, 'Gikui Health Centre', '10256', 'Muranga', 'Muranga West', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.67659', '37.014', '2025-07-13 05:15:02'),
+(2333, 'Githumu Hospital', '10267', 'Muranga', 'Kandara', 'Christian Health Association of Kenya', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.82686', '36.91338', '2025-07-13 05:15:02'),
+(2334, 'Gitugi Dispensary (Muranga North)', '10279', 'Muranga', 'Muranga south', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.65597', '37.0255', '2025-07-13 05:15:02'),
+(2335, 'GK Prison Dispensary (Muranga)', '10287', 'Muranga', 'Kiharu', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2336, 'Ithanga Health Centre', '10357', 'Muranga', 'Gatanga', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2337, 'Kamahuha Dispensary', '10441', 'Muranga', 'Mathioya', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.84556', '37.17897', '2025-07-13 05:15:02'),
+(2338, 'Kambirwa Health Centre', '10443', 'Muranga', 'Kiharu', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.74124', '37.1921', '2025-07-13 05:15:02'),
+(2339, 'Kambiti Health Centre', '10445', 'Muranga', 'Muranga south', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.83128', '37.2348', '2025-07-13 05:15:02'),
+(2340, 'Kandara sub district hospital', '10459', 'Muranga', 'Kandara', 'Ministry of Health', 'Tujitegemee', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2341, 'Kangari Health Centre', '10465', 'Muranga', 'Kigumo', 'Ministry of Health', 'Tujitegemee', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.78477', '36.86789', '2025-07-13 05:15:02'),
+(2342, 'Kangema Sub District Hopispital', '10470', 'Muranga', 'Muranga West', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2343, 'Kanyenyaini Health Centre', '10474', 'Muranga', 'Muranga West', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.68602', '36.8829', '2025-07-13 05:15:02'),
+(2344, 'Kanyenyaini Medical Clinic', '10475', 'Muranga', 'Kangema', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.688393', '36.8943', '2025-07-13 05:15:02'),
+(2345, 'Kenol Hospital', '10512', 'Muranga', 'Muranga south', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.9372', '37.12638', '2025-07-13 05:15:02'),
+(2346, 'Kigoro Health Centre', '10586', 'Muranga', 'Gatanga', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2347, 'Kigumo Sub County Hospital (Muranga South)', '10588', 'Muranga', 'Kigumo', 'Ministry of Health', 'Tujitegemee', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2348, 'Kihoya Health Center', '10594', 'Muranga', 'Gatanga', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2349, 'Kihoya Medical Centre', '10595', 'Muranga', 'Kangema', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.647721', '36.9012', '2025-07-13 05:15:02'),
+(2351, 'Kiria Health Centre', '10624', 'Muranga', 'Kahuro', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.76781', '37.0672', '2025-07-13 05:15:02'),
+(2352, 'Kiria-Ini Mission Hospital', '10627', 'Muranga', 'Mathioya', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.60248', '36.95297', '2025-07-13 05:15:02'),
+(2353, 'Kirogo Health Centre', '10636', 'Muranga', 'Kahuro', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.71178', '37.02947', '2025-07-13 05:15:02'),
+(2354, 'Kirwara Sub District Hospital', '10639', 'Muranga', 'Gatanga', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2355, 'Kiunyu Dispensary', '10642', 'Muranga', 'Muranga West', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.94456', '37.0107', '2025-07-13 05:15:02'),
+(2356, 'Makuyu Health Centre', '10674', 'Muranga', 'Muranga south', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.89672', '37.18753', '2025-07-13 05:15:02'),
+(2357, 'Maragua District Hospital', '10686', 'Muranga', 'Muranga south', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.78914', '37.12754', '2025-07-13 05:15:02'),
+(2358, 'Maragua Ridge Health Centre', '10687', 'Muranga', 'Muranga south', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.77765', '37.20875', '2025-07-13 05:15:02'),
+(2359, 'Maranjau Dispensary', '10688', 'Muranga', 'Muranga south', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.80195', '37.22395', '2025-07-13 05:15:02'),
+(2360, 'Mitubiri HC', '10733', 'Muranga', 'Gatanga', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2361, 'Mugeka Dispensary', '10744', 'Muranga', 'Kiharu', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.63969', '37.09145', '2025-07-13 05:15:02'),
+(2362, 'Muranga District Hospital', '10777', 'Muranga', 'Kiharu', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2363, 'Muriranjas Sub District Hospital', '10782', 'Muranga', 'Kahuro', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2364, 'Muthithi Dispensary', '10793', 'Muranga', 'Kigumo', 'Ministry of Health', 'Tujitegemee', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.81699', '37.03767', '2025-07-13 05:15:02'),
+(2365, 'Ndakaini Dispensary', '10828', 'Muranga', 'Gatanga', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.82651', '36.83651', '2025-07-13 05:15:02'),
+(2366, 'Ngelelya Health Center', '10863', 'Muranga', 'Gatanga', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2367, 'Nguthuru Dispensary', '10875', 'Muranga', 'Kandara', 'Other Faith Based', 'Tujitegemee', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.96422', '37.09954', '2025-07-13 05:15:02'),
+(2368, 'Nyakianga Health Centre', '10893', 'Muranga', 'Mathioya', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.63943', '36.95746', '2025-07-13 05:15:02'),
+(2369, 'Obeys Medical Clinic', '10908', 'Muranga', 'Mathioya', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.60019', '36.95401', '2025-07-13 05:15:02'),
+(2370, 'Sabasaba Health Centre', '10987', 'Muranga', 'Kigumo', 'Ministry of Health', 'Tujitegemee', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.87786', '37.13685', '2025-07-13 05:15:02'),
+(2371, 'Kihumbu-Ini Community Dispensary', '11658', 'Muranga', 'Gatanga', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.9292', '36.98856', '2025-07-13 05:15:02'),
+(2372, 'Gikono Dispensary', '16171', 'Muranga', 'Kigumo', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.99298', '37.16057', '2025-07-13 05:15:02'),
+(2373, 'KAGUNDUINI HEALTH CENTRE', '16971', 'Muranga', 'Kandara', 'Ministry of Health', 'Tujitegemee', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2375, 'Mugeka Health Clinic', '21881', 'Muranga', 'Kiharu', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2376, 'Muranga DICE', '24339', 'Muranga', 'Muranga south', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2377, 'Afwani Medical Centre', '12865', 'Nairobi', 'Kamukunji', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2378, 'Aga Khan Hospital', '12867', 'Nairobi', 'Westlands', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.262231', '36.817897', '2025-07-13 05:15:02'),
+(2379, 'Amurt Health Centre', '12870', 'Nairobi', 'Westlands', 'Non-Governmental Organizations', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.2658', '36.73778', '2025-07-13 05:15:02'),
+(2380, 'APTC Health Center', '12871', 'Nairobi', 'Embakasi East', 'Armed Forces', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2381, 'Avenue Hospital', '12874', 'Nairobi', 'Westlands', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.264508', '36.817897', '2025-07-13 05:15:02'),
+(2382, 'Babadogo (EDARP)', '12875', 'Nairobi', 'Ruaraka', 'Kenya Episcopal Conference-Catholic Secretariat', 'Coptic Orthodox Church', 'CDC', 'ECare', 'Active', 'On Premises', '-1.23916', '36.8864', '2025-07-13 05:15:02'),
+(2383, 'Babadogo Health Centre', '12876', 'Nairobi', 'Ruaraka', 'Local Authority', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.2441', '36.88416', '2025-07-13 05:15:02'),
+(2384, 'Bahati Health Centre', '12879', 'Nairobi', 'Makadara', 'Local Authority', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.28891', '36.86299', '2025-07-13 05:15:02'),
+(2385, 'Baraka Dispensary (Nairobi)', '12881', 'Nairobi', 'Ruaraka', 'Private Enterprise (Institution)', 'Coptic Orthodox Church', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.25756', '36.858', '2025-07-13 05:15:02'),
+(2386, 'Biafra Lions Clinic', '12883', 'Nairobi', 'Kamukunji', 'Private Practice - General Practitioner', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.28234', '36.8485', '2025-07-13 05:15:02'),
+(2387, 'Biafra Medical Clinic', '12884', 'Nairobi', 'Kamukunji', 'Private Practice - General Practitioner', 'USAID Fahari ya Jamii', 'USAID', '', '', 'On Premises', '-1.286837', '36.849544', '2025-07-13 05:15:02'),
+(2388, 'AHF Mathare Blue House Clinic', '12885', 'Nairobi', 'Kamukunji', 'Non-Governmental Organizations', 'Aids Healthcare Foundation Kenya', 'AHF', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2389, 'Brother Andre Medial Centre', '12887', 'Nairobi', 'Embakasi North', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2390, 'Cana Family Life Clinic', '12889', 'Nairobi', 'Makadara', 'Non-Governmental Organizations', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.30907', '36.88053', '2025-07-13 05:15:02'),
+(2391, 'Chandaria Health Centre', '12893', 'Nairobi', 'Dagoretti South', 'Community', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.27396', '36.69119', '2025-07-13 05:15:02'),
+(2392, 'Clinitec Medical Services', '12898', 'Nairobi', 'Kibra', 'Company Medical Service', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.295947', '36.803218', '2025-07-13 05:15:02'),
+(2393, 'Coptic Medical Clinic', '12904', 'Nairobi', 'Makadara', 'Coptic Orthodox Church', 'Coptic Orthodox Church', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.30837', '36.86298', '2025-07-13 05:15:02'),
+(2394, 'Coptic Hospital (Ngong Road)', '12905', 'Nairobi', 'Dagoretti North', 'Coptic Orthodox Church', 'Coptic Orthodox Church', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.30096', '36.79893', '2025-07-13 05:15:02'),
+(2395, 'Cotolengo Centre', '12907', 'Nairobi', 'Langata', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.33712', '36.72622', '2025-07-13 05:15:02'),
+(2396, 'Dandora (EDARP) Clinic', '12911', 'Nairobi', 'Embakasi West', 'Kenya Episcopal Conference-Catholic Secretariat', 'Coptic Orthodox Church', 'CDC', 'ECare', 'Active', 'On Premises', '-1.25734', '36.89614', '2025-07-13 05:15:02'),
+(2397, 'Dandora II Health Centre', '12912', 'Nairobi', 'Embakasi North', 'Local Authority', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.25761', '36.88775', '2025-07-13 05:15:02'),
+(2398, 'Dandora I Health Centre', '12913', 'Nairobi', 'Embakasi North', 'Local Authority', 'SHINE-Sustainable HIV Programming in Nairobi for Epidemic Control', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.26013', '36.88843', '2025-07-13 05:15:02'),
+(2399, 'Diwopa Health Centre', '12917', 'Nairobi', 'Embakasi Central', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.26945', '36.91425', '2025-07-13 05:15:02'),
+(2400, 'Dog Unit Dispensary (O P Kenya Police)', '12919', 'Nairobi', 'Langata', 'Other Public Institution', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.32213', '36.77173', '2025-07-13 05:15:02'),
+(2401, 'Dreams Centre Dispensary (Langata)', '12929', 'Nairobi', 'Langata', 'Kenya Episcopal Conference-Catholic Secretariat', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.34111', '36.75437', '2025-07-13 05:15:02'),
+(2402, 'Eastleigh Health Centre', '12930', 'Nairobi', 'Kamukunji', 'Local Authority', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.27175', '36.85087', '2025-07-13 05:15:02'),
+(2403, 'Embakasi Health Centre', '12935', 'Nairobi', 'Embakasi East', 'Local Authority', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.30618', '36.91472', '2025-07-13 05:15:02'),
+(2404, 'Family Life Promotions', '12941', 'Nairobi', 'Makadara', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2405, 'Family Care Medical Centre & Maternity', '12942', 'Nairobi', 'Langata', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.31313', '36.81687', '2025-07-13 05:15:02'),
+(2406, 'Garrison Health Centre', '12947', 'Nairobi', 'Embakasi East', 'Armed Forces', 'HJF-Nairobi', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2407, 'Gertrudes Childrens Hospital', '12950', 'Nairobi', 'Westlands', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.25546', '36.831973', '2025-07-13 05:15:02'),
+(2408, 'Getrude Donholm Clinic', '12952', 'Nairobi', 'Embakasi East', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.29524', '36.88777', '2025-07-13 05:15:02'),
+(2409, 'Good Shepherd Dispensary', '12960', 'Nairobi', 'Dagoretti South', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.28837', '36.6873', '2025-07-13 05:15:02'),
+(2410, 'Gsu Dispensary (Nairobi West)', '12961', 'Nairobi', 'Kibra', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.306156', '36.789928', '2025-07-13 05:15:02'),
+(2411, 'GSUTraining School', '12962', 'Nairobi', 'Embakasi East', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.29032', '36.95309', '2025-07-13 05:15:02'),
+(2412, 'GSU HQ Dispensary (Ruaraka)', '12963', 'Nairobi', 'Ruaraka', 'Local Authority', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.24461', '36.86636', '2025-07-13 05:15:02'),
+(2413, 'Guru Nanak Hospital', '12965', 'Nairobi', 'Starehe', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.26985', '36.8212', '2025-07-13 05:15:02'),
+(2414, 'Jumuia Hospital Huruma', '12972', 'Nairobi', 'Mathare', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2415, 'Huruma (EDARP)', '12973', 'Nairobi', 'Starehe', 'Kenya Episcopal Conference-Catholic Secretariat', 'Coptic Orthodox Church', 'CDC', 'ECare', 'Active', 'On Premises', '-1.27097', '36.86882', '2025-07-13 05:15:02'),
+(2416, 'Huruma Lions Dispensary', '12974', 'Nairobi', 'Mathare', 'Local Authority', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.26085', '36.86703', '2025-07-13 05:15:02'),
+(2417, 'Huruma Nursing Home & Maternity', '12976', 'Nairobi', 'Starehe', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.2581', '36.87538', '2025-07-13 05:15:02'),
+(2418, 'Patanisho Maternity and Nursing Home', '12977', 'Nairobi', 'Embakasi East', 'Private Enterprise (Institution)', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.27926', '36.90937', '2025-07-13 05:15:02'),
+(2419, 'Pipeline Nursing Home', '12978', 'Nairobi', 'Embakasi South', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.31699', '36.8865', '2025-07-13 05:15:02'),
+(2420, 'Imara Medical', '12981', 'Nairobi', 'Embakasi South', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2421, 'Mary Immaculate Clinic Mukuru', '12982', 'Nairobi', 'Langata', 'Other Faith Based', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.3662', '36.83306', '2025-07-13 05:15:02'),
+(2422, 'Jamaa Mission Hospital', '12984', 'Nairobi', 'Makadara', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.28186', '36.87333', '2025-07-13 05:15:02'),
+(2423, 'Jericho Health Centre', '12988', 'Nairobi', 'Makadara', 'Local Authority', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.2622', '36.88836', '2025-07-13 05:15:02'),
+(2424, 'Jerusalem Clinic', '12989', 'Nairobi', 'Embakasi West', 'Local Authority', 'SHINE-Sustainable HIV Programming in Nairobi for Epidemic Control', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.28515', '36.86641', '2025-07-13 05:15:02'),
+(2425, 'Kahawa Garrison Health Centre', '12996', 'Nairobi', 'Roysambu', 'Ministry of Health', 'HJF-Nairobi', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-1.18048', '36.89748', '2025-07-13 05:15:02'),
+(2426, 'Kahawa West Health Centre', '12997', 'Nairobi', 'Roysambu', 'Local Authority', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.18716', '36.91278', '2025-07-13 05:15:02'),
+(2427, 'Kaloleni Dispensary', '12998', 'Nairobi', 'Makadara', 'Local Authority', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.29553', '36.84623', '2025-07-13 05:15:02'),
+(2428, 'Kamiti Prison Hospital', '13000', 'Nairobi', 'Roysambu', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.17611', '36.89343', '2025-07-13 05:15:02'),
+(2429, 'Kangemi Health Centre', '13001', 'Nairobi', 'Westlands', 'Local Authority', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.2671', '36.7492', '2025-07-13 05:15:02'),
+(2430, 'Karen Health Centre', '13003', 'Nairobi', 'Langata', 'Local Authority', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.32092', '36.70595', '2025-07-13 05:15:02'),
+(2431, 'The Karen Hospital', '13004', 'Nairobi', 'Langata', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.33687', '36.72589', '2025-07-13 05:15:02'),
+(2432, 'Kariobangi Health Centre', '13006', 'Nairobi', 'Embakasi North', 'Local Authority', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.25174', '36.87978', '2025-07-13 05:15:02'),
+(2433, 'Kariokor Clinic', '13007', 'Nairobi', 'Starehe', 'Local Authority', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.2789', '36.83661', '2025-07-13 05:15:02'),
+(2434, 'Karura Health Centre (Kiambu Rd)', '13009', 'Nairobi', 'Westlands', 'Local Authority', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.256241', '36.842936', '2025-07-13 05:15:02'),
+(2435, 'Kasarani Health Centre', '13010', 'Nairobi', 'Kasarani', 'Local Authority', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.21821', '36.90139', '2025-07-13 05:15:02'),
+(2436, 'Kasarani Maternity', '13011', 'Nairobi', 'Kasarani', 'Private Practice - Nurse / Midwife', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.22429', '36.9046', '2025-07-13 05:15:02'),
+(2437, 'Kayole Hospital', '13014', 'Nairobi', 'Embakasi Central', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.27015', '36.91825', '2025-07-13 05:15:02'),
+(2438, 'Kayole Health Centre', '13015', 'Nairobi', 'Embakasi Central', 'Local Authority', 'SHINE-Sustainable HIV Programming in Nairobi for Epidemic Control', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2439, 'Kayole II Sub-District Hospital', '13016', 'Nairobi', 'Embakasi Central', 'Local Authority', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.26649', '36.91668', '2025-07-13 05:15:02'),
+(2440, 'Soweto Kayole PHC Health Centre', '13017', 'Nairobi', 'Embakasi East', 'Non-Governmental Organizations', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.26843', '36.9211', '2025-07-13 05:15:02'),
+(2441, 'KEMRI VCT(CRDR)', '13019', 'Nairobi', 'Kibra', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2442, 'Kenyatta National Hospital', '13023', 'Nairobi', 'Kibra', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.30088', '36.80734', '2025-07-13 05:15:02'),
+(2443, 'Kenyatta University Dispensary', '13024', 'Nairobi', 'Roysambu', 'Other Public Institution', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.1784', '36.93497', '2025-07-13 05:15:02'),
+(2444, 'Kibera Community Health Centre - Amref', '13028', 'Nairobi', 'Kibra', 'Non-Governmental Organizations', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.31131', '36.79573', '2025-07-13 05:15:02'),
+(2445, 'Kibera D O Dispensary', '13029', 'Nairobi', 'Kibra', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.30593', '36.78788', '2025-07-13 05:15:02'),
+(2446, 'Kibera South Health Centre', '13030', 'Nairobi', 'Langata', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2447, 'Kikoshep Kenya (Mugumoini)', '13033', 'Nairobi', 'Langata', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.31645', '36.8171', '2025-07-13 05:15:02'),
+(2448, 'Kivuli Dispensary', '13036', 'Nairobi', 'Dagoretti South', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.29052', '36.72736', '2025-07-13 05:15:02'),
+(2449, 'Komarock Medical Clinic', '13038', 'Nairobi', 'Embakasi Central', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.2695', '36.90634', '2025-07-13 05:15:02'),
+(2450, 'Lagos Road Dispensary', '13039', 'Nairobi', 'Starehe', 'Local Authority', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.28198', '36.82443', '2025-07-13 05:15:02'),
+(2451, 'Langata Health Centre', '13041', 'Nairobi', 'Langata', 'Local Authority', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.32054', '36.77983', '2025-07-13 05:15:02'),
+(2452, 'Langata Hospital', '13042', 'Nairobi', 'Langata', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.32785', '36.78919', '2025-07-13 05:15:02'),
+(2453, 'Langata Women Prison Dispensary', '13044', 'Nairobi', 'Langata', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.32279', '36.77658', '2025-07-13 05:15:02'),
+(2454, 'Lea Toto Kariobangi', '13045', 'Nairobi', 'Embakasi North', 'Non-Governmental Organizations', 'COGRI', 'USAID', 'KenyaEMR', 'Discontinued', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2455, 'Lea Toto Dagoretti', '13046', 'Nairobi', 'Dagoretti South', 'Non-Governmental Organizations', 'COGRI', 'USAID', 'KenyaEMR', 'Discontinued', 'On Premises', '-1.2887', '36.7359', '2025-07-13 05:15:02'),
+(2456, 'Lea Toto Dandora', '13047', 'Nairobi', 'Embakasi West', 'Non-Governmental Organizations', 'COGRI', 'USAID', 'KenyaEMR', 'Discontinued', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2457, 'Lea Toto Kibera', '13048', 'Nairobi', 'Kibra', 'Non-Governmental Organizations', 'COGRI', 'USAID', 'KenyaEMR', 'Discontinued', 'On Premises', '-1.31434', '36.77979', '2025-07-13 05:15:02'),
+(2458, 'Liverpool VCT', '13050', 'Nairobi', 'Dagoretti North', 'Non-Governmental Organizations', 'No Partner', 'No Agency', 'KenyaEMR', 'Active', 'On Premises', '-1.29435', '36.79262', '2025-07-13 05:15:02'),
+(2459, 'Loco Dispensary', '13051', 'Nairobi', 'Mathare', 'Other Public Institution', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.27967', '36.87781', '2025-07-13 05:15:02'),
+(2460, 'Lower Kabete Dispensary', '13052', 'Nairobi', 'Westlands', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2461, 'Lunga Lunga Health Centre', '13053', 'Nairobi', 'Makadara', 'Local Authority', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.31039', '36.086219', '2025-07-13 05:15:02'),
+(2462, 'Makadara Health Centre', '13056', 'Nairobi', 'Makadara', 'Local Authority', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.29665', '36.87281', '2025-07-13 05:15:02'),
+(2463, 'Makadara Mercy Sisters Dispensary', '13057', 'Nairobi', 'Makadara', 'Kenya Episcopal Conference-Catholic Secretariat', 'Coptic Orthodox Church', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.29105', '36.861', '2025-07-13 05:15:02'),
+(2464, 'Maria Immaculata Health Centre', '13062', 'Nairobi', 'Dagoretti North', 'Kenya Episcopal Conference-Catholic Secretariat', 'Aids Healthcare Foundation Kenya', 'AHF', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2465, 'Mariakani Cottage Hospital Ltd', '13064', 'Nairobi', 'Makadara', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.28324', '36.87', '2025-07-13 05:15:02'),
+(2466, 'Marura Nursing Home', '13070', 'Nairobi', 'Ruaraka', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.24875', '36.871', '2025-07-13 05:15:02'),
+(2467, 'Marurui Dispensary', '13071', 'Nairobi', 'Roysambu', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.20244', '36.9038', '2025-07-13 05:15:02'),
+(2468, 'Mary Immaculate Sisters Dispensary', '13072', 'Nairobi', 'Makadara', 'Other Faith Based', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.29206', '36.8574', '2025-07-13 05:15:02'),
+(2469, 'The Mater Misericordiae Hospital', '13074', 'Nairobi', 'Starehe', 'Kenya Episcopal Conference-Catholic Secretariat', 'Coptic Orthodox Church', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02');
+INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(2470, 'Mathare 3A (EDARP)', '13075', 'Nairobi', 'Mathare', 'Kenya Episcopal Conference-Catholic Secretariat', 'Coptic Orthodox Church', 'CDC', 'ECare', 'Active', 'On Premises', '-1.26038', '36.8476', '2025-07-13 05:15:02'),
+(2471, 'Mathari Hospital', '13076', 'Nairobi', 'Mathare', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.26097', '36.84912', '2025-07-13 05:15:02'),
+(2472, 'Mathare North Health Centre', '13077', 'Nairobi', 'Ruaraka', 'Local Authority', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.25323', '36.86485', '2025-07-13 05:15:02'),
+(2473, 'Mathare Police Deport', '13078', 'Nairobi', 'Mathare', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2474, 'Mbagathi District Hospital', '13080', 'Nairobi', 'Kibra', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.30793', '36.80317', '2025-07-13 05:15:02'),
+(2475, 'Melchezedek Hospital', '13086', 'Nairobi', 'Dagoretti North', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.27974', '36.7554', '2025-07-13 05:15:02'),
+(2476, 'Memorial Hospital', '13087', 'Nairobi', 'Kibra', 'Armed Forces', 'HJF-Nairobi', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2477, 'Mercy Mission Health Centre', '13089', 'Nairobi', 'Dagoretti North', 'Other Faith Based', 'No Partner', 'No Agency', 'KenyaEMR', 'Active', 'On Premises', '-1.2824', '36.75028', '2025-07-13 05:15:02'),
+(2478, 'Metropolitan Hospital Nairobi', '13090', 'Nairobi', 'Makadara', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.28791', '36.87493', '2025-07-13 05:15:02'),
+(2479, 'Mid Hill Medical Clinic', '13091', 'Nairobi', 'Dagoretti South', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.29159', '36.74813', '2025-07-13 05:15:02'),
+(2480, 'Mji Wa Huruma Dispensary ', '13093', 'Nairobi', 'Westlands', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2481, 'Moi Airbase Hospital', '13095', 'Nairobi', 'Kamukunji', 'Armed Forces', 'HJF-Nairobi', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2482, 'Mukuru Mmm Clinic', '13101', 'Nairobi', 'Embakasi South', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.30472', '36.885', '2025-07-13 05:15:02'),
+(2483, 'Mutuini Sub-District Hospital', '13105', 'Nairobi', 'Dagoretti South', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.3', '36.7', '2025-07-13 05:15:02'),
+(2484, 'Nairobi Deaf (Liverpool)', '13108', 'Nairobi', 'Starehe', 'Non-Governmental Organizations', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.2852', '36.821', '2025-07-13 05:15:02'),
+(2485, 'Meridian Equator Hospital', '13109', 'Nairobi', 'Langata', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.30801', '36.82421', '2025-07-13 05:15:02'),
+(2486, 'Nairobi Hospital', '13110', 'Nairobi', 'Dagoretti North', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.296139', '36.803995', '2025-07-13 05:15:02'),
+(2487, 'Nairobi South Clinic', '13113', 'Nairobi', 'Starehe', 'Local Authority', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.31688', '36.84255', '2025-07-13 05:15:02'),
+(2488, 'Nairobi West Hospital', '13115', 'Nairobi', 'Langata', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.30684', '36.82576', '2025-07-13 05:15:02'),
+(2489, 'Nairobi West Mens Prison Dispensary', '13116', 'Nairobi', 'Langata', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2490, 'Nairobi Womens Hospital (Hurlingham)', '13117', 'Nairobi', 'Dagoretti North', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.29391', '36.79631', '2025-07-13 05:15:02'),
+(2491, 'Ngaira Rhodes Dispensary', '13121', 'Nairobi', 'Starehe', 'Local Authority', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.29216', '36.82377', '2025-07-13 05:15:02'),
+(2492, 'Ngara Health Centre (City Council of Nairobi)', '13122', 'Nairobi', 'Starehe', 'Local Authority', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.27346', '36.83134', '2025-07-13 05:15:02'),
+(2493, 'Ngong Road Dispensary', '13123', 'Nairobi', 'Kibra', 'Local Authority', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.29896', '36.7587', '2025-07-13 05:15:02'),
+(2494, 'Nimoli Medical Centre', '13125', 'Nairobi', 'Kasarani', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.22429', '36.9046', '2025-07-13 05:15:02'),
+(2495, 'Njiru Dispensary', '13126', 'Nairobi', 'Kasarani', 'Local Authority', 'SHINE-Sustainable HIV Programming in Nairobi for Epidemic Control', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.24703', '36.9391', '2025-07-13 05:15:02'),
+(2496, 'National Youth Service Hq Dispensary (Ruaraka)', '13130', 'Nairobi', 'Ruaraka', 'Local Authority', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.25128', '36.86927', '2025-07-13 05:15:02'),
+(2497, 'Nyumbani Diagnostic Laboratory and Medical Clinic', '13131', 'Nairobi', 'Langata', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.31251', '36.69909', '2025-07-13 05:15:02'),
+(2498, 'Pangani Dispensary', '13138', 'Nairobi', 'Starehe', 'Local Authority', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.26741', '36.83815', '2025-07-13 05:15:02'),
+(2499, 'South B Police Band Dispensary', '13144', 'Nairobi', 'Starehe', 'Other Public Institution', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.31512', '36.83465', '2025-07-13 05:15:02'),
+(2500, 'Pstc Health Centre', '13153', 'Nairobi', 'Kasarani', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.2812', '36.82605', '2025-07-13 05:15:02'),
+(2501, 'PUMWANI MAJENGO DISPENSARY-Majengo CCC', '13155', 'Nairobi', 'Kamukunji', 'Local Authority', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2502, 'Pumwani Maternity Hospital', '13156', 'Nairobi', 'Kamukunji', 'Local Authority', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.28028', '36.84552', '2025-07-13 05:15:02'),
+(2503, 'Radiant Pangani Hospital', '13158', 'Nairobi', 'Starehe', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.26979', '36.8393', '2025-07-13 05:15:02'),
+(2504, 'Redemeed Health Centre', '13160', 'Nairobi', 'Ruaraka', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.24425', '36.88508', '2025-07-13 05:15:02'),
+(2505, 'Nairobi Remand Prison Health Centre', '13161', 'Nairobi', 'Starehe', 'Other Public Institution', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.30359', '36.8373', '2025-07-13 05:15:02'),
+(2506, 'Riruta Health Centre', '13165', 'Nairobi', 'Dagoretti North', 'Local Authority', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.28405', '36.74052', '2025-07-13 05:15:02'),
+(2507, 'EDARP Ruai Clinic', '13169', 'Nairobi', 'Kasarani', 'Kenya Episcopal Conference-Catholic Secretariat', 'Coptic Orthodox Church', 'CDC', 'ECare', 'Active', 'On Premises', '-1.26068', '36.9999', '2025-07-13 05:15:02'),
+(2508, 'Ruai Health Centre', '13171', 'Nairobi', 'Kasarani', 'Local Authority', 'SHINE-Sustainable HIV Programming in Nairobi for Epidemic Control', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.22377', '36.78137', '2025-07-13 05:15:02'),
+(2509, 'Ruaraka Clinic', '13172', 'Nairobi', 'Kasarani', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.23212', '36.88174', '2025-07-13 05:15:02'),
+(2510, 'Reuben Mukuru Health Centre', '13173', 'Nairobi', 'Embakasi South', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.31601', '36.86947', '2025-07-13 05:15:02'),
+(2511, 'Samaritan Medical Services (Dandora)', '13176', 'Nairobi', 'Embakasi North', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.24241', '36.912', '2025-07-13 05:15:02'),
+(2512, 'SWOP-City', '13180', 'Nairobi', 'Starehe', 'Non-Governmental Organizations', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2513, 'Shauri Moyo Clinic', '13184', 'Nairobi', 'Kamukunji', 'Local Authority', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.29047', '36.84841', '2025-07-13 05:15:02'),
+(2514, 'Silanga (MSF Belgium) Dispensary', '13186', 'Nairobi', 'Langata', 'Non-Governmental Organizations', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.31738', '36.79603', '2025-07-13 05:15:02'),
+(2515, 'Sokoni Arcade VCT', '13188', 'Nairobi', 'Dagoretti North', 'Non-Governmental Organizations', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.27974', '36.7414', '2025-07-13 05:15:02'),
+(2516, 'SOS Childrens Village', '13189', 'Nairobi', 'Embakasi West', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2517, 'EDARP Soweto Health Centre', '13191', 'Nairobi', 'Embakasi East', 'Kenya Episcopal Conference-Catholic Secretariat', 'Coptic Orthodox Church', 'CDC', 'ECare', 'Active', 'On Premises', '-1.27951', '36.9097', '2025-07-13 05:15:02'),
+(2518, 'Special Treatment Clinic', '13193', 'Nairobi', 'Starehe', 'Local Authority', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.27457', '36.83137', '2025-07-13 05:15:02'),
+(2519, 'St Francis Community Hospital', '13202', 'Nairobi', 'Kasarani', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2520, 'St John Hospital', '13205', 'Nairobi', 'Roysambu', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.20244', '36.9038', '2025-07-13 05:15:02'),
+(2521, 'St Joseph (EDARP) Clinic', '13207', 'Nairobi', 'Kamukunji', 'Kenya Episcopal Conference-Catholic Secretariat', 'Coptic Orthodox Church', 'CDC', 'ECare', 'Active', 'On Premises', '-1.29048', '36.84683', '2025-07-13 05:15:02'),
+(2522, 'St Joseph Mukasa Dispensary', '13208', 'Nairobi', 'Roysambu', 'Other Faith Based', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.1784', '36.90694', '2025-07-13 05:15:02'),
+(2523, 'St Joseph W Dispensary (Westlands)', '13209', 'Nairobi', 'Westlands', 'Kenya Episcopal Conference-Catholic Secretariat', 'Coptic Orthodox Church', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.27104', '36.7391', '2025-07-13 05:15:02'),
+(2524, 'St Josephs Dispensary (Dagoretti)', '13210', 'Nairobi', 'Dagoretti South', 'Kenya Episcopal Conference-Catholic Secretariat', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2525, 'St Marys Mission Hospital', '13218', 'Nairobi', 'Langata', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2526, 'EDARP Donholm Clinic', '13220', 'Nairobi', 'Embakasi East', 'Kenya Episcopal Conference-Catholic Secretariat', 'Coptic Orthodox Church', 'CDC', 'ECare', 'Active', 'On Premises', '-1.30169', '36.88849', '2025-07-13 05:15:02'),
+(2527, 'St. Odilias Dispensary', '13221', 'Nairobi', 'Langata', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2528, 'St Patrick Health Care Centre', '13222', 'Nairobi', 'Embakasi Central', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.26742', '36.91829', '2025-07-13 05:15:02'),
+(2529, 'St Vincent Catholic Clinic', '13230', 'Nairobi', 'Kamukunji', 'Other Faith Based', 'Coptic Orthodox Church', 'CDC', 'ECare', 'Active', 'On Premises', '-1.26696', '36.84884', '2025-07-13 05:15:02'),
+(2530, 'Tabitha Medical Clinic', '13234', 'Nairobi', 'Kibra', 'Non-Governmental Organizations', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.31611', '36.7802', '2025-07-13 05:15:02'),
+(2531, 'Uhuru Camp Dispensary (O P Admin Police)', '13239', 'Nairobi', 'Langata', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2532, 'Umoja Health Centre', '13240', 'Nairobi', 'Embakasi West', 'Local Authority', 'SHINE-Sustainable HIV Programming in Nairobi for Epidemic Control', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.32023', '36.88918', '2025-07-13 05:15:02'),
+(2533, 'University of Nairobi Dispensary', '13242', 'Nairobi', 'Dagoretti North', 'Parastatal', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.279181', '36.80948', '2025-07-13 05:15:02'),
+(2534, 'Upendo Dispensary', '13243', 'Nairobi', 'Mathare', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.26038', '36.8476', '2025-07-13 05:15:02'),
+(2535, 'Ushirika Medical Clinic', '13245', 'Nairobi', 'Kibra', 'Community', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.30777', '36.77276', '2025-07-13 05:15:02'),
+(2536, 'Uzima Dispensary', '13246', 'Nairobi', 'Ruaraka', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.2553', '36.85572', '2025-07-13 05:15:02'),
+(2537, 'Waithaka Health Centre', '13249', 'Nairobi', 'Dagoretti South', 'Local Authority', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.27885', '36.71516', '2025-07-13 05:15:02'),
+(2538, 'Westlands Health Centre', '13258', 'Nairobi', 'Westlands', 'Local Authority', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2539, 'Woodley Clinic', '13259', 'Nairobi', 'Kibra', 'Local Authority', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2540, ' South B Police Band', '13444', 'Nairobi', 'Starehe', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2541, 'Revival Home Based Care Clinic', '16168', 'Nairobi', 'Langata', 'Other Faith Based', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.31562', '36.7754', '2025-07-13 05:15:02'),
+(2542, 'Nairobi Womens Hospital Adams', '16795', 'Nairobi', 'Dagoretti North', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.29904', '36.78198', '2025-07-13 05:15:02'),
+(2543, 'AAR Clinic Sarit Centre (Westlands)', '16796', 'Nairobi', 'Westlands', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.2617', '36.80211', '2025-07-13 05:15:02'),
+(2544, 'Lea Toto Kangemi', '16800', 'Nairobi', 'Westlands', 'Non-Governmental Organizations', 'COGRI', 'USAID', 'KenyaEMR', 'Discontinued', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2545, 'Clinix Health Care (Sarangombe', '17388', 'Nairobi', 'Langata', 'Private Practice - Unspecified', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2546, 'Wema Medical Clinic', '17394', 'Nairobi', 'Kibra', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2547, 'Mama Lucy Kibaki Hospital - Embakasi', '17411', 'Nairobi', 'Embakasi West', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.27416', '36.89843', '2025-07-13 05:15:02'),
+(2548, 'Kariobangi South Clinic', '17434', 'Nairobi', 'Embakasi West', 'Local Authority', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.26826', '36.88294', '2025-07-13 05:15:02'),
+(2549, 'EDARP Njiru Clinic', '17548', 'Nairobi', 'Kasarani', 'Kenya Episcopal Conference-Catholic Secretariat', 'Coptic Orthodox Church', 'CDC', 'ECare', 'Active', 'On Premises', '-1.25178', '36.93799', '2025-07-13 05:15:02'),
+(2550, 'SHOFCO Medical Clinic (Kibera)', '17650', 'Nairobi', 'Kibra', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2551, 'St Raphaels Clinic', '17683', 'Nairobi', 'Embakasi East', 'Kenya Episcopal Conference-Catholic Secretariat', 'Coptic Orthodox Church', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2552, 'HOPE Worldwide kenya Mkuru Clinic', '17684', 'Nairobi', 'Kibra', 'Non Governmental organisation', 'CIHEB CONNECT', 'CDC', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2553, 'Imara Health Centre', '17685', 'Nairobi', 'Embakasi South', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.32023', '36.88918', '2025-07-13 05:15:02'),
+(2554, 'Susamed Medical Clinic', '17686', 'Nairobi', 'Embakasi Central', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.26349', '36.924', '2025-07-13 05:15:02'),
+(2555, 'Komarock Morden Medical Care', '17717', 'Nairobi', 'Embakasi Central', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.26622', '36.91062', '2025-07-13 05:15:02'),
+(2556, 'EDARP Komarock Health Centre', '17719', 'Nairobi', 'Embakasi Central', 'Kenya Episcopal Conference-Catholic Secretariat', 'Coptic Orthodox Church', 'CDC', 'ECare', 'Active', 'On Premises', '-1.26329', '36.91206', '2025-07-13 05:15:02'),
+(2557, 'Lea Toto Mukuru', '17720', 'Nairobi', 'Embakasi South', 'Other Faith Based', 'COGRI', 'USAID', 'KenyaEMR', 'Discontinued', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2558, 'St Barkita Dispensary Utawala', '17723', 'Nairobi', 'Embakasi East', 'Kenya Episcopal Conference-Catholic Secretariat', 'Coptic Orthodox Church', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.2776', '36.97533', '2025-07-13 05:15:02'),
+(2559, 'Gertrude Komarock Clinic', '17725', 'Nairobi', 'Embakasi Central', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.26715', '36.91082', '2025-07-13 05:15:02'),
+(2560, 'Meridian Medical Donholm Clinic', '17727', 'Nairobi', 'Embakasi East', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.30175', '36.888', '2025-07-13 05:15:02'),
+(2561, 'Githurai Liverpool VCT', '17942', 'Nairobi', 'Roysambu', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2562, 'St Francis Community Hospital (Kasarani)', '17943', 'Nairobi', 'Kasarani', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2563, 'Thika Road Health Services Ltd (Kasarani)', '17950', 'Nairobi', 'Kasarani', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2564, 'Prudent Medical Clinic Kariobangi', '18001', 'Nairobi', 'Embakasi Central', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.25736', '36.91174', '2025-07-13 05:15:02'),
+(2565, 'Sex Workers Outreach Program (Kibra)', '18176', 'Nairobi', 'Dagoretti South', 'Non Governmental organisation', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2566, 'St Alice (EDARP) Dandora', '18219', 'Nairobi', 'Kasarani', 'Kenya Episcopal Conference-Catholic Secretariat', 'Coptic Orthodox Church', 'CDC', 'ECare', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2567, 'Viva Afya Medical Clinic (Matopeni)', '18368', 'Nairobi', 'Kasarani', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2568, 'Getrude Embakasi Clinic', '18395', 'Nairobi', 'Embakasi East', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.3301', '36.8894', '2025-07-13 05:15:02'),
+(2569, 'St Veronica EDARP Clinic', '18409', 'Nairobi', 'Kamukunji', 'Other Faith Based', 'Coptic Orthodox Church', 'CDC', 'ECare', 'Active', 'On Premises', '-1.28387', '36.8552', '2025-07-13 05:15:02'),
+(2570, 'Mukuru Health Centre', '18463', 'Nairobi', 'Embakasi South', 'Local Authority', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.32496', '36.88762', '2025-07-13 05:15:02'),
+(2571, 'Ruaraka Uhai Neema Hospital', '18485', 'Nairobi', 'Ruaraka', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.2274', '36.88579', '2025-07-13 05:15:02'),
+(2572, 'Adventist Centre for Care and Support (Kilimani)', '18535', 'Nairobi', 'Dagoretti North', 'Other Faith Based', 'No Partner', 'No Agency', '', '', 'On Cloud', '-1.28899', '36.80751', '2025-07-13 05:15:02'),
+(2573, 'Hope Worldwide Kenya VCT (Makadara)', '18543', 'Nairobi', 'Makadara', 'Non-Governmental Organizations', 'CIHEB CONNECT', 'CDC', '', '', 'On Premises', '-1.29293', '36.86483', '2025-07-13 05:15:02'),
+(2574, 'Meridian Medical Centre (Capital Centre)', '18591', 'Nairobi', 'Langata', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.31671', '36.83438', '2025-07-13 05:15:02'),
+(2575, 'Joy Nursing Home and Maternity', '18594', 'Nairobi', 'Kamukunji', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.26667', '36.85523', '2025-07-13 05:15:02'),
+(2576, 'Fremo Medical Centre', '18612', 'Nairobi', 'Dagoretti South', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.28993', '36.74428', '2025-07-13 05:15:02'),
+(2577, 'Uthiru Muthua Dispensary', '18628', 'Nairobi', 'Dagoretti South', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.2687', '36.71831', '2025-07-13 05:15:02'),
+(2578, 'Reinha Rosary MEdical Clinic(Githunguri)', '18668', 'Nairobi', 'Embakasi East', 'Other Faith Based', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2579, 'Kariobangi EDARP', '18743', 'Nairobi', 'Embakasi North', 'Kenya Episcopal Conference-Catholic Secretariat', 'Coptic Orthodox Church', 'CDC', 'ECare', 'Active', 'On Premises', '-1.259226', '36.87954', '2025-07-13 05:15:02'),
+(2580, 'Premium Health services', '18744', 'Nairobi', 'Embakasi North', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.25852', '36.87917', '2025-07-13 05:15:02'),
+(2581, 'Comboni Missionary Sisters Health Programm', '18745', 'Nairobi', 'Embakasi North', 'Kenya Episcopal Conference-Catholic Secretariat', 'Coptic Orthodox Church', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.25854', '36.87917', '2025-07-13 05:15:02'),
+(2582, 'Bodaki Medical Clinic', '18805', 'Nairobi', 'Dagoretti North', 'Private Practice - Nurse / Midwife', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.27617', '36.7558', '2025-07-13 05:15:02'),
+(2583, 'Lea Toto Zimmerman', '18828', 'Nairobi', 'Roysambu', 'Non-Governmental Organizations', 'COGRI', 'USAID', 'KenyaEMR', 'Discontinued', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2584, 'Githogoro Runda Baptist Clinic (Getrudes Nairobi)', '18887', 'Nairobi', 'Westlands', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.21602', '36.82214', '2025-07-13 05:15:02'),
+(2585, 'Korogocho Health Centre', '18895', 'Nairobi', 'Ruaraka', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.23404', '36.87222', '2025-07-13 05:15:02'),
+(2586, 'Swop Thika Road', '18896', 'Nairobi', 'Roysambu', 'Non-Governmental Organizations', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.23409', '36.87224', '2025-07-13 05:15:02'),
+(2587, 'Swop Korogocho', '19271', 'Nairobi', 'Embakasi North', 'Non-Governmental Organizations', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.25629', '36.88245', '2025-07-13 05:15:02'),
+(2588, 'Hope Medical', '19278', 'Nairobi', 'Roysambu', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2589, 'Maisha House-NOSET', '19308', 'Nairobi', 'Starehe', 'Non-Governmental Organizations', 'No Partner', 'No Agency', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2590, 'Ishtar MSM', '19311', 'Nairobi', 'Starehe', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2591, 'St Michael Community Nursing Home', '19332', 'Nairobi', 'Roysambu', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.18332', '36.90372', '2025-07-13 05:15:02'),
+(2592, 'Bridging Outpatient', '19405', 'Nairobi', 'Roysambu', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2593, 'SWOP Donholm', '19429', 'Nairobi', 'Embakasi East', 'Non-Governmental Organizations', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Discontinued', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2594, 'Jamii Medical Clinic Mukuru', '19446', 'Nairobi', 'Embakasi South', 'Private Practice - Unspecified', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.32614', '36.89086', '2025-07-13 05:15:02'),
+(2595, 'Iom Wellness Clinic', '19471', 'Nairobi', 'Kamukunji', 'Non-Governmental Organizations', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.27681', '36.85287', '2025-07-13 05:15:02'),
+(2596, 'Child Doctor Medical Clinic', '19504', 'Nairobi', 'Kibra', 'Private Enterprise (Institution)', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2597, 'Medanta Africare Ltd', '19505', 'Nairobi', 'Dagoretti North', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2598, 'Afya Bora Health Care', '19515', 'Nairobi', 'Westlands', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.26779', '36.75751', '2025-07-13 05:15:02'),
+(2599, 'Meridian Medical Centre (Kileleshwa)', '19546', 'Nairobi', 'Dagoretti North', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2600, 'Dandora Medical and Laboratory Services (Kojwang)', '19617', 'Nairobi', 'Embakasi North', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.24586', '36.90709', '2025-07-13 05:15:02'),
+(2601, 'Swop Kawangware', '19719', 'Nairobi', 'Dagoretti South', 'Non-Governmental Organizations', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.2918', '36.735', '2025-07-13 05:15:02'),
+(2602, 'Lea Toto Kawangware', '19914', 'Nairobi', 'Dagoretti South', 'Non-Governmental Organizations', 'COGRI', 'USAID', 'KenyaEMR', 'Discontinued', 'On Premises', '-1.28811', '36.7388', '2025-07-13 05:15:02'),
+(2603, 'AAR Gwh Health Care Ltd', '19958', 'Nairobi', 'Kibra', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.29467', '36.80897', '2025-07-13 05:15:02'),
+(2604, 'Mundika Maternity & Nursing Home', '20062', 'Nairobi', 'Kamukunji', 'Private Practice - Unspecified', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.26093', '36.8671', '2025-07-13 05:15:02'),
+(2605, 'Hoymas VCT (Nairobi)', '20063', 'Nairobi', 'Starehe', 'Non-Governmental Organizations', 'No Partner', 'No Agency', 'KenyaEMR', 'Active', 'On Premises', '-1.26498', '36.83671', '2025-07-13 05:15:02'),
+(2606, 'Melchizedek Hospital Karen', '20072', 'Nairobi', 'Langata', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.32751', '36.71723', '2025-07-13 05:15:02'),
+(2607, 'Farmers choice wellness centre clinic', '20078', 'Nairobi', 'Roysambu', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.18628', '36.9101', '2025-07-13 05:15:02'),
+(2608, 'Marist International University College Medical Clinic', '20089', 'Nairobi', 'Langata', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.34268', '36.72812', '2025-07-13 05:15:02'),
+(2609, 'MYSA VCT', '20096', 'Nairobi', 'Embakasi Central', 'Non-Governmental Organizations', 'Aids Healthcare Foundation Kenya', 'AHF', 'KenyaEMR', 'Active', 'On Premises', '-1.25746', '36.91164', '2025-07-13 05:15:02'),
+(2610, 'Dr Maina Ruga Medical Clinic', '20106', 'Nairobi', 'Starehe', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.27461', '36.83143', '2025-07-13 05:15:02'),
+(2611, 'Bar Hostess Empowerment and Support Programme (Makadara)', '20206', 'Nairobi', 'Makadara', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.29381', '36.84889', '2025-07-13 05:15:02'),
+(2612, 'Dr. Charles J.R. Opondo', '20393', 'Nairobi', 'Dagoretti North', 'Private Practice - General Practitioner', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2613, 'Dr.P.W.Kamau&Associates(Upper Hill Medical Centre)', '20396', 'Nairobi', 'Dagoretti North', 'Private Practice - General Practitioner', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.29472', '36.80651', '2025-07-13 05:15:02'),
+(2614, 'Dr. K.Gicheru Upperhill Centre', '20397', 'Nairobi', 'Dagoretti North', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', '', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2615, 'Support For Addiction Prevention & Treatment In Africa', '20402', 'Nairobi', 'Starehe', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.26984', '36.84183', '2025-07-13 05:15:02'),
+(2616, 'National Virology Reference Lab', '20580', 'Nairobi', 'Kibra', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2617, 'Kianda42 Hospital', '20621', 'Nairobi', 'Kibra', 'Private Practice - General Practitioner', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2618, 'AHF Parklands Clinic', '20736', 'Nairobi', 'Westlands', 'Private', 'Aids Healthcare Foundation Kenya', 'AHF', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2619, 'Eagle Health Care Solution', '21146', 'Nairobi', 'Westlands', 'Private Practice - Nurse / Midwifery', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.26663', '36.74867', '2025-07-13 05:15:02'),
+(2620, 'Emerging Infectious Disease Center', '21215', 'Nairobi', 'Westlands', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.26343', '36.811814', '2025-07-13 05:15:02'),
+(2621, 'Refuge Point International', '21287', 'Nairobi', 'Dagoretti North', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2622, 'Kenya Airways Pride Clinic', '22018', 'Nairobi', 'Embakasi East', 'Public Institution - Parastatal', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2623, 'Equity Afia Buruburu', '22084', 'Nairobi', 'Makadara', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2624, 'SWOP Donholm Clinic', '22349', 'Nairobi', 'Embakasi', 'Non-Governmental Organizations', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2625, 'Euraka Medical Centre', '22351', 'Nairobi', 'Embakasi East', 'Private Practice - Private Institution Academic', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2626, 'BHESP', '22863', 'Nairobi', 'Embakasi North', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2627, 'Africare Ltd NHIF clinic', '22866', 'Nairobi', 'Kibra', 'Private Practice - Private Company', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2628, 'BHESP--Roysambu', '23200', 'Nairobi', 'Roysambu', 'Non-Governmental Organizations', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2629, 'Mihango Community Dispensary', '23373', 'Nairobi', 'Embakasi East', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2630, 'Better Living Hospital', '23385', 'Nairobi', 'Dagoretti North', 'Seventh Day Adventist', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2631, 'Kware Dispensary', '23414', 'Nairobi', 'Embakasi South', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2632, 'HOPE Worldwide kenya Tassia', '23415', 'Nairobi', 'Embakasi East', 'Non Governmental organisation', 'CIHEB CONNECT', 'CDC', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2633, 'LVCT Health (Kibagare)', '23491', 'Nairobi', 'Westlands', 'Non-Governmental Organizations', 'CIHEB CONNECT', 'CDC', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2634, 'SAPTA KAYOLE', '24251', 'Nairobi', 'Embakasi Central', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2635, 'Mowlem Health Center', '24272', 'Nairobi', 'Embakasi West', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2636, 'Santuary Rains Medical Centre-Kangemi', '24308', 'Nairobi', 'Westlands', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2637, 'HOPE Worldwide kenya Kiambiu site', '24552', 'Nairobi', 'Embakasi Central', 'Non Governmental organisation', 'CIHEB CONNECT', 'CDC', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2638, 'Nairobi Adventist Hospital', '24563', 'Nairobi', 'Westlands', 'Seventh Day Adventist', 'Coptic Orthodox Church', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2639, 'HOPE Worldwide kenya(Mathare-Utalii)', '24698', 'Nairobi', 'Ruaraka', 'Non-Governmental Organizations', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2640, 'Kenyatta University Teaching Refferal And Research Hospital', '24979', 'Nairobi', 'Roysambu', 'Public Institution - Parastatal', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2641, 'LVCT Korogocho', '25575', 'Nairobi', 'Ruaraka', 'Non Governmental organisation', 'CIHEB CONNECT', 'CDC', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2642, 'Maji Mazuri Dispensary (Clay City) ', '26018', 'Nairobi', 'Kasarani', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2643, 'HOPE Worldwide Mkuru Centre', '26737', 'Nairobi', 'Starehe', 'Non Governmental organisation', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2644, 'Maisha Noset Kawangware', '26911', 'Nairobi', 'Dagoretti South', 'Ministry of Health', 'No Partner', 'No Agency', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2645, 'Ushirika Dispensary (Dandora)', '26913', 'Nairobi', 'Embakasi North', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2646, 'Kiamaiko Dispensary', '26914', 'Nairobi', 'Mathare', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2647, 'Gichagi Dispensary', '27186', 'Nairobi', 'Westlands', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2648, 'Gatina Dispensary (Dagoretti)', '27196', 'Nairobi', 'Dagoretti North', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2649, 'Soweto Kayole health center', '27276', 'Nairobi', 'Embakasi East', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2650, 'BHESP Mowlem Dice Clinic', '27424', 'Nairobi', 'Embakasi West', 'Non-Governmental Organizations', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2651, 'HOPE Worldwide  Savannah', '27527', 'Nairobi', 'Embakasi East', 'Non Governmental organisation', 'CIHEB CONNECT', 'CDC', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2652, 'Ngundu Health Center', '27675', 'Nairobi', 'Kasarani', 'Ministry of Health', 'SHINE-Sustainable HIV Programming in Nairobi for Epidemic Control', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2653, 'Tassia Kwa Ndege Hospital', '27815', 'Nairobi', 'Embakasi East', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2654, 'HOPE Worldwide kenya Kayole', '28237', 'Nairobi', 'Embakasi Central', 'Non Governmental organisation', 'CIHEB CONNECT', 'CDC', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2655, 'LVCT Health Dreams Kibra', '28284', 'Nairobi', 'Kibra', 'Non Governmental organisation', 'CIHEB CONNECT', 'CDC', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2656, 'Njenga Hospital', '28373', 'Nairobi', 'Embakasi South', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2657, 'Reuben Health Centre (GOK) ', '28432', 'Nairobi', 'Embakasi South', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2658, ' Zimmerman Pickens Dispensary', '28537', 'Nairobi', 'Roysambu', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2659, 'Ngomongo Dispensary', '28552', 'Nairobi', 'Ruaraka', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2660, 'LVCT Health (Ngando Dreams Site)', '28592', 'Nairobi', 'Dagoretti South', 'Non Governmental organisation', 'CIHEB CONNECT', 'CDC', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2661, 'Swop Majengo', '28742', 'Nairobi', 'Kamukunji', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2662, 'Sokoni Dreams-Kawangware', '28880', 'Nairobi', 'Dagoretti North', 'Non-Governmental Organizations', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Stalled/Inactive', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2663, 'Mama Margaret Uhuru Hospital', '28885', 'Nairobi', 'Ruaraka', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2664, 'Mwiki Health Centre ', '29101', 'Nairobi', 'Kasarani', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2665, 'Githurai 44 Health Center', '29630', 'Nairobi', 'Roysambu', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2666, 'Family Healthoptions Kenya (Nakuru)', '14177', 'Nakuru', 'Nakuru East', 'Non-Governmental Organizations', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.28742', '36.07682', '2025-07-13 05:15:02'),
+(2667, '3KR Health Centre', '14181', 'Nakuru', 'Nakuru East', 'Armed Forces', 'HJF-Nairobi', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2668, 'AAR Nakuru Clinic', '14183', 'Nakuru', 'Nakuru West', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.23285', '36.04388', '2025-07-13 05:15:02'),
+(2669, 'Annex Hospital (Nakuru)', '14207', 'Nakuru', 'Nakuru West', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.16938', '36.04868', '2025-07-13 05:15:02'),
+(2670, 'Arimi Dispensary', '14213', 'Nakuru', 'Molo', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.28251', '35.85133', '2025-07-13 05:15:02'),
+(2671, 'Bahati Rural Health Centre', '14223', 'Nakuru', 'Nakuru North', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2672, 'Bahati District Hospital', '14224', 'Nakuru', 'Nakuru North', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.17031', '36.12368', '2025-07-13 05:15:02'),
+(2673, 'Banita Dispensary', '14226', 'Nakuru', 'Rongai', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.07525', '36.07665', '2025-07-13 05:15:02'),
+(2674, 'Benmac Clinic', '14247', 'Nakuru', 'Njoro', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.37458', '35.9445', '2025-07-13 05:15:02'),
+(2675, 'Bondeni Dispensary (Nakuru Central)', '14263', 'Nakuru', 'Nakuru East', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.29061', '36.08127', '2025-07-13 05:15:02'),
+(2676, 'Bondeni Sub County Hospital', '14265', 'Nakuru', 'Nakuru East', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2677, 'Dundori Health Centre', '14424', 'Nakuru', 'Nakuru North', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.25061', '36.23326', '2025-07-13 05:15:02'),
+(2678, 'Eburru Dispensary', '14425', 'Nakuru', 'Gilgil', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.64815', '36.27082', '2025-07-13 05:15:02'),
+(2679, 'Egerton University', '14426', 'Nakuru', 'Njoro', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.37295', '35.93072', '2025-07-13 05:15:02'),
+(2680, 'Elburgon Sub-District Hospital', '14431', 'Nakuru', 'Molo', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.30606', '35.80782', '2025-07-13 05:15:02'),
+(2681, 'Engashura Health Centre', '14458', 'Nakuru', 'Nakuru North', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.25958', '36.13405', '2025-07-13 05:15:02'),
+(2682, 'Esther Memorial Nursing Home', '14478', 'Nakuru', 'Nakuru North', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.23076', '36.11773', '2025-07-13 05:15:02'),
+(2683, 'Fitc Dispensary', '14498', 'Nakuru', 'Nakuru West', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.16941', '36.03225', '2025-07-13 05:15:02'),
+(2684, 'Gilgil Astu Dispensary', '14508', 'Nakuru', 'Gilgil', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.47204', '36.33459', '2025-07-13 05:15:02'),
+(2685, 'Gilgil Sub County Hospital', '14510', 'Nakuru', 'Gilgil', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2686, 'Gilgil Military Regional Hospital', '14511', 'Nakuru', 'Gilgil', 'Armed Forces', 'HJF-Nairobi', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2687, 'GOK Farm (Nahrc) Dispensary', '14513', 'Nakuru', 'Gilgil', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.66492', '36.41933', '2025-07-13 05:15:02'),
+(2688, 'GK Prison Annex Dispensary (Naivasha)', '14516', 'Nakuru', 'Naivasha', 'Other Public Institution', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.70279', '36.35972', '2025-07-13 05:15:02'),
+(2689, 'Gsu Dispensary (Kabarak)', '14539', 'Nakuru', 'Rongai', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.20293', '35.96116', '2025-07-13 05:15:02'),
+(2690, 'Hekima Dispensary', '14545', 'Nakuru', 'Nakuru East', 'Faith Based Organization', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.30357', '36.08456', '2025-07-13 05:15:02'),
+(2691, 'Holy Spirit Health Centre', '14549', 'Nakuru', 'Gilgil', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.50161', '36.31971', '2025-07-13 05:15:02'),
+(2692, 'Holy Trinity Health Centre (Mai Mahiu)', '14550', 'Nakuru', 'Naivasha', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.88309', '36.49163', '2025-07-13 05:15:02'),
+(2693, 'Flamingo Medical Centre', '14551', 'Nakuru', 'Naivasha', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2694, 'Huruma Dispensary', '14552', 'Nakuru', 'Njoro', 'Other Faith Based', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.33553', '35.93939', '2025-07-13 05:15:02'),
+(2695, 'Ikumbi Health Centre', '14559', 'Nakuru', 'Kuresoi North', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.41322', '35.57793', '2025-07-13 05:15:02'),
+(2696, 'Industrial Area Dispensary', '14575', 'Nakuru', 'Nakuru West', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.28027', '36.04289', '2025-07-13 05:15:02'),
+(2697, 'Kabarak Health Centre', '14606', 'Nakuru', 'Rongai', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.16875', '35.96547', '2025-07-13 05:15:02'),
+(2698, 'Kabatini Health Centre', '14610', 'Nakuru', 'Nakuru North', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.21116', '36.16205', '2025-07-13 05:15:02'),
+(2699, 'Kabazi Sub County Hospital', '14611', 'Nakuru', 'Subukia', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2700, 'Kamara Dispensary', '14668', 'Nakuru', 'Kuresoi North', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.0965', '35.67934', '2025-07-13 05:15:02'),
+(2701, 'Kapkures Health Centre (Nakuru West)', '14733', 'Nakuru', 'Nakuru West', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2702, 'Karagita Health Centre', '14801', 'Nakuru', 'Naivasha', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2703, 'Karati Dispensary', '14802', 'Nakuru', 'Gilgil', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.69032', '36.47886', '2025-07-13 05:15:02');
+INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(2704, 'Karunga Dispensary', '14805', 'Nakuru', 'Gilgil', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.40633', '36.35059', '2025-07-13 05:15:02'),
+(2705, 'Keringet  Sub County Hospital', '14836', 'Nakuru', 'Kuresoi South', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2706, 'Kiambogo Dispensary (Gilgil)', '14845', 'Nakuru', 'Gilgil', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2707, 'Kimsaw Medical Clinic', '14880', 'Nakuru', 'Nakuru West', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.31623', '36.06048', '2025-07-13 05:15:02'),
+(2708, 'Kiptagich Model Health centre', '14924', 'Nakuru', 'Kuresoi South', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.57055', '35.61256', '2025-07-13 05:15:02'),
+(2709, 'Kiptangwanyi H/C', '14926', 'Nakuru', 'Gilgil', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2710, 'Kiwamu Dispensary', '14954', 'Nakuru', 'Nakuru North', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.23643', '36.16713', '2025-07-13 05:15:02'),
+(2711, 'Lalwet Dispensary', '15006', 'Nakuru', 'Nakuru West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2712, 'Lanet Health Centre', '15008', 'Nakuru', 'Nakuru East', 'Local Authority', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.29885', '36.1385', '2025-07-13 05:15:02'),
+(2713, 'Langa Langa Hospital', '15009', 'Nakuru', 'Nakuru East', 'Local Authority', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2714, 'Lare Health Centre', '15013', 'Nakuru', 'Njoro', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.39356', '36.02481', '2025-07-13 05:15:02'),
+(2715, 'Longonot Dispensary', '15078', 'Nakuru', 'Naivasha', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.88223', '36.49667', '2025-07-13 05:15:02'),
+(2716, 'Lower Solai Dispensary', '15097', 'Nakuru', 'Rongai', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.17884', '36.16967', '2025-07-13 05:15:02'),
+(2717, 'Maiela Health Centre', '15106', 'Nakuru', 'Naivasha', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.88864', '36.19908', '2025-07-13 05:15:02'),
+(2718, 'Mai Mahiu Health Centre', '15108', 'Nakuru', 'Naivasha', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.97728', '36.58386', '2025-07-13 05:15:02'),
+(2719, 'Maraigushu Dispensary', '15124', 'Nakuru', 'Naivasha', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.74156', '36.53064', '2025-07-13 05:15:02'),
+(2720, 'Marioshoni Dispensary', '15129', 'Nakuru', 'Molo', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.41212', '35.90215', '2025-07-13 05:15:02'),
+(2721, 'Mau Narok Health Centre', '15156', 'Nakuru', 'Njoro', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.60151', '36.00661', '2025-07-13 05:15:02'),
+(2722, 'Mbogoini Dispensary', '15165', 'Nakuru', 'Subukia', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.19443', '36.2149', '2025-07-13 05:15:02'),
+(2723, 'Mercy Mobile Clinic (Molo)', '15176', 'Nakuru', 'Kuresoi South', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.580581', '35.6115', '2025-07-13 05:15:02'),
+(2724, 'Mirugi Kariuki Sub County Hospital', '15188', 'Nakuru', 'Nakuru East', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2725, 'Miti-Mingi Dispensary', '15190', 'Nakuru', 'Gilgil', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.52844', '36.07573', '2025-07-13 05:15:02'),
+(2726, 'Soin sub county hospital', '15200', 'Nakuru', 'Rongai', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2727, 'Moi Ndabi Dispensary', '15203', 'Nakuru', 'Naivasha', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.80483', '36.2461', '2025-07-13 05:15:02'),
+(2728, 'Molo District Hospital', '15212', 'Nakuru', 'Molo', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.24724', '35.73717', '2025-07-13 05:15:02'),
+(2729, 'Molo South Dispensary', '15214', 'Nakuru', 'Kuresoi North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.34499', '35.66171', '2025-07-13 05:15:02'),
+(2730, 'Mother Kevin Hospital (Catholic)', '15232', 'Nakuru', 'Nakuru West', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2731, 'Mt Longonot Hospital', '15241', 'Nakuru', 'Naivasha', 'Private Practice - Medical Specialist', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.72134', '36.44102', '2025-07-13 05:15:02'),
+(2732, 'Nacoharg Medical Centre', '15272', 'Nakuru', 'Naivasha', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.77839', '36.42829', '2025-07-13 05:15:02'),
+(2733, 'Naivasha District Hospital', '15280', 'Nakuru', 'Naivasha', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.71909', '36.43823', '2025-07-13 05:15:02'),
+(2734, 'Naivasha Max Prison Health Centre', '15281', 'Nakuru', 'Naivasha', 'Other Public Institution', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.69999', '36.44763', '2025-07-13 05:15:02'),
+(2735, 'Naivasha (AIC) Medical Centre', '15282', 'Nakuru', 'Naivasha', 'Christian Health Association of Kenya', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.76587', '36.44504', '2025-07-13 05:15:02'),
+(2736, 'Nakuru Nursing Home', '15287', 'Nakuru', 'Nakuru East', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.17439', '36.04761', '2025-07-13 05:15:02'),
+(2737, 'Nakuru Provincial General Hospital', '15288', 'Nakuru', 'Nakuru West', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2738, 'Nakuru War Memorial Hospital', '15289', 'Nakuru', 'Nakuru West', 'Private Practice', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.28205', '36.08036', '2025-07-13 05:15:02'),
+(2739, 'Nakuru West (PCEA) Health Centre', '15290', 'Nakuru', 'Nakuru West', 'Christian Health Association of Kenya', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.17513', '36.033081', '2025-07-13 05:15:02'),
+(2740, 'Ndabibi Dispensary', '15318', 'Nakuru', 'Naivasha', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.71139', '36.21851', '2025-07-13 05:15:02'),
+(2741, 'Neissuit Dispensary', '15331', 'Nakuru', 'Njoro', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.39445', '35.89907', '2025-07-13 05:15:02'),
+(2742, 'Njoro Subcounty Hospital', '15358', 'Nakuru', 'Njoro', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2743, 'Nakuru West Health Centre', '15365', 'Nakuru', 'Nakuru West', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2744, 'Nyakiambi Dispensary', '15370', 'Nakuru', 'Molo', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.30123', '35.85166', '2025-07-13 05:15:02'),
+(2745, 'Nyamamithi Dispensary', '15372', 'Nakuru', 'Rongai', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.06754', '36.13309', '2025-07-13 05:15:02'),
+(2746, 'Nyamathi Dispensary', '15373', 'Nakuru', 'Naivasha', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.78064', '36.51243', '2025-07-13 05:15:02'),
+(2747, 'Nys Dispensary (Gilgil)', '15377', 'Nakuru', 'Gilgil', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.47809', '36.31682', '2025-07-13 05:15:02'),
+(2748, 'Nys Karate Dispensary', '15380', 'Nakuru', 'Naivasha', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.64876', '36.48932', '2025-07-13 05:15:02'),
+(2749, 'Okilgei Dispensary', '15385', 'Nakuru', 'Rongai', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.29746', '35.95856', '2025-07-13 05:15:02'),
+(2750, 'Olenguruone Sub-District Hospital', '15398', 'Nakuru', 'Kuresoi South', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.591', '35.6856', '2025-07-13 05:15:02'),
+(2751, 'Ol-Jorai H/C', '15406', 'Nakuru', 'Gilgil', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2752, 'Ol-Rongai Dispensary (Rongai)', '15432', 'Nakuru', 'Rongai', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.14043', '36.0177', '2025-07-13 05:15:02'),
+(2753, 'Oserian Health Centre', '15447', 'Nakuru', 'Naivasha', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.82552', '36.29867', '2025-07-13 05:15:02'),
+(2754, 'Panda Flowers Medical Clinic', '15456', 'Nakuru', 'Naivasha', 'Company Medical Service', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.67466', '36.43281', '2025-07-13 05:15:02'),
+(2755, 'Piave Dispensary', '15462', 'Nakuru', 'Njoro', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.34129', '35.99251', '2025-07-13 05:15:02'),
+(2756, 'Nakuru Prison dispensary', '15470', 'Nakuru', 'Nakuru West', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2757, 'Pwani (GOK) Dispensary', '15474', 'Nakuru', 'Njoro', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.39356', '36.02481', '2025-07-13 05:15:02'),
+(2758, 'Rocco Dispensary', '15489', 'Nakuru', 'Gilgil', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.72326', '36.28215', '2025-07-13 05:15:02'),
+(2759, 'Rongai Health Centre', '15495', 'Nakuru', 'Rongai', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.17332', '35.8598', '2025-07-13 05:15:02'),
+(2760, 'Sachangwan Dispensary', '15509', 'Nakuru', 'Molo', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2761, 'St Antony Health Centre', '15628', 'Nakuru', 'Nakuru North', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.24857', '36.14477', '2025-07-13 05:15:02'),
+(2762, 'St Clare Health Centre', '15635', 'Nakuru', 'Molo', 'Faith Based Organization', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2763, 'St Elizabeth Nursing Home', '15637', 'Nakuru', 'Nakuru East', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.30091', '36.07377', '2025-07-13 05:15:02'),
+(2764, 'St Martin De Porres (Static)', '15651', 'Nakuru', 'Kuresoi North', 'Faith Based Organization', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.20174', '35.69617', '2025-07-13 05:15:02'),
+(2765, 'St Marys Hospital', '15654', 'Nakuru', 'Gilgil', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2766, 'St Monica Medical Clinic (Dundori)', '15659', 'Nakuru', 'Nakuru North', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.28159', '36.1655', '2025-07-13 05:15:02'),
+(2767, 'Subukia Sub County Hospital', '15678', 'Nakuru', 'Subukia', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2768, 'Sunrise Evans Hospital', '15686', 'Nakuru', 'Nakuru West', 'Private Practice - Medical Specialist', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.17478', '36.03846', '2025-07-13 05:15:02'),
+(2769, 'ASN Upendo Village Dispensary', '15762', 'Nakuru', 'Naivasha', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.75748', '36.47571', '2025-07-13 05:15:02'),
+(2770, 'Upper Solai Health Centre', '15763', 'Nakuru', 'Subukia', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.10255', '36.12739', '2025-07-13 05:15:02'),
+(2771, 'Valley Hospital', '15764', 'Nakuru', 'Nakuru East', 'Private Practice - Medical Specialist', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.28829', '36.06366', '2025-07-13 05:15:02'),
+(2772, 'Wangu Community Dispensary', '15772', 'Nakuru', 'Naivasha', 'Private Practice - Nurse / Midwife', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2773, 'Wa-Sammy Medical Clinic', '15773', 'Nakuru', 'Subukia', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2774, 'Wei Dispensary', '15776', 'Nakuru', 'Subukia', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2775, 'Wesley Health Centre', '15778', 'Nakuru', 'Nakuru North', 'Faith Based Organization', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2776, 'Namocha Olepolos Dispensary', '16380', 'Nakuru', 'Naivasha', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2777, 'Sisioni (Kiambogo) Dispensary', '16381', 'Nakuru', 'Naivasha', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2778, 'Ngondi Dispensary', '16382', 'Nakuru', 'Naivasha', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2779, 'Kihingo Dispensary (CDF)', '16390', 'Nakuru', 'Njoro', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.44003', '35.97483', '2025-07-13 05:15:02'),
+(2780, 'Korao Dispensary', '16391', 'Nakuru', 'Kuresoi South', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.47666', '35.58496', '2025-07-13 05:15:02'),
+(2781, 'Total Dispensary', '16403', 'Nakuru', 'Kuresoi North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.16958', '35.68896', '2025-07-13 05:15:02'),
+(2782, 'Kiambiriria Dispensary (CDF)', '16408', 'Nakuru', 'Molo', 'Community Development Fund', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2783, 'St Joseph Nursing Home', '16409', 'Nakuru', 'Kuresoi North', 'Private Practice', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.24752', '35.72708', '2025-07-13 05:15:02'),
+(2784, 'Gsu Dispensary', '16413', 'Nakuru', 'Molo', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.22454', '35.76576', '2025-07-13 05:15:02'),
+(2785, 'Kewamoi Dispensary', '16415', 'Nakuru', 'Kuresoi North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.4254', '35.62959', '2025-07-13 05:15:02'),
+(2786, 'Tonymed Medical Clinic', '16682', 'Nakuru', 'Kuresoi South', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.57171', '35.61511', '2025-07-13 05:15:02'),
+(2787, 'Kuresoi Health Centre', '16683', 'Nakuru', 'Kuresoi North', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.3019', '35.53214', '2025-07-13 05:15:02'),
+(2788, 'Hope Medical Clinic (Nakuru)', '16686', 'Nakuru', 'Nakuru North', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.225', '36.11283', '2025-07-13 05:15:02'),
+(2789, 'Turi (PCEA) Dispensary', '16820', 'Nakuru', 'Molo', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.23559', '35.75626', '2025-07-13 05:15:02'),
+(2790, 'Murindoku Dispensary', '17191', 'Nakuru', 'Kuresoi North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.30935', '35.57813', '2025-07-13 05:15:02'),
+(2791, 'Bararget Dispensary', '17302', 'Nakuru', 'Kuresoi South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.41505', '35.73243', '2025-07-13 05:15:02'),
+(2792, 'Bethania Clinic', '17542', 'Nakuru', 'Gilgil', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.56696', '36.11691', '2025-07-13 05:15:02'),
+(2793, 'Kentalya Farm Cilinic', '17544', 'Nakuru', 'Naivasha', 'Company Medical Service', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.82049', '36.33024', '2025-07-13 05:15:02'),
+(2794, 'Kiti Dispensary', '17742', 'Nakuru', 'Nakuru East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.26994', '36.10709', '2025-07-13 05:15:02'),
+(2795, 'Fountain Medical Clinic', '17787', 'Nakuru', 'Nakuru East', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.3233', '36.14907', '2025-07-13 05:15:02'),
+(2796, 'Miloreni Dispensary', '17792', 'Nakuru', 'Subukia', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2797, 'Barut Dispensary', '17793', 'Nakuru', 'Nakuru West', 'Local Authority', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.19625', '36.03383', '2025-07-13 05:15:02'),
+(2798, 'Kijani (Mirera) Dispensary', '17821', 'Nakuru', 'Naivasha', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.7836', '36.44527', '2025-07-13 05:15:02'),
+(2799, 'Simboiyon Dispensary', '17988', 'Nakuru', 'Subukia', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.07971', '36.24398', '2025-07-13 05:15:02'),
+(2800, 'Algadir Medical Centre', '18009', 'Nakuru', 'Nakuru East', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2801, 'Sisto Mazoldi Dispensary', '18011', 'Nakuru', 'Rongai', 'Faith Based Organization', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2802, 'Afraha Maternity and Nursing Home', '18382', 'Nakuru', 'Nakuru East', 'Private Practice', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.29746', '36.07421', '2025-07-13 05:15:02'),
+(2803, 'North Star Alliance VCT', '18599', 'Nakuru', 'Rongai', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.20546', '35.84903', '2025-07-13 05:15:02'),
+(2804, 'Mbaruk Dispensary', '18824', 'Nakuru', 'Gilgil', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.34838', '36.22425', '2025-07-13 05:15:02'),
+(2805, 'Hope World Wide Nakuru', '18875', 'Nakuru', 'Nakuru East', 'Other Faith Based', 'HOPE Worldwide Kenya', 'Global Fund', 'KenyaEMR', 'Active', 'On Premises', '-0.30012', '36.07516', '2025-07-13 05:15:02'),
+(2806, 'Northstar Alliance Wellness Centre (Mai Mahiu)', '19123', 'Nakuru', 'Naivasha', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.98133', '36.58461', '2025-07-13 05:15:02'),
+(2807, 'New Canaan Idp Dispensary', '19592', 'Nakuru', 'Gilgil', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.34115', '36.15659', '2025-07-13 05:15:02'),
+(2808, 'Kasarani Dispensary (Malewa West)', '19740', 'Nakuru', 'Gilgil', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2809, 'Nairobi Womens Hospital', '20061', 'Nakuru', 'Nakuru East', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2810, 'Rhonda Health centre', '20137', 'Nakuru', 'Nakuru West', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2811, 'Menengai Dispensary', '20138', 'Nakuru', 'Nakuru East', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2812, 'Neema Medical Home Limited', '20147', 'Nakuru', 'Kuresoi North', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2813, 'Kimeswon Health Centre', '20299', 'Nakuru', 'Kuresoi North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.41587', '35.53701', '2025-07-13 05:15:02'),
+(2814, 'Nakuru Heart Centre', '20343', 'Nakuru', 'Nakuru West', 'Private Practice', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.29019', '36.06264', '2025-07-13 05:15:02'),
+(2815, 'Shabab Intergrated Medical Clinic', '20545', 'Nakuru', 'Nakuru West', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.29536', '36.05888', '2025-07-13 05:15:02'),
+(2816, 'DR. B.K.Kariuki', '20552', 'Nakuru', 'Nakuru East', 'Private Practice - Medical Specialist', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2817, 'Dr. Babu Bora Clinic', '20553', 'Nakuru', 'Nakuru East', 'Private Practice - Medical Specialist', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2818, 'Dr Mwangi', '20554', 'Nakuru', 'Nakuru East', 'Private Practice - General Practitioner', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.028353', '36.07529', '2025-07-13 05:15:02'),
+(2819, 'Olkaria Community Health Centre(Naivasha)', '20565', 'Nakuru', 'Naivasha', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.93655', '36.37006', '2025-07-13 05:15:02'),
+(2820, 'Ndege Dispensary', '20607', 'Nakuru', 'Nakuru North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.303', '36.17194', '2025-07-13 05:15:02'),
+(2821, 'Mungetho Dispensary', '20618', 'Nakuru', 'Kuresoi North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.345', '35.662', '2025-07-13 05:15:02'),
+(2822, 'Gilgil Center of Hope (Hope world Wide Kenya)', '20683', 'Nakuru', 'Gilgil', 'Private Practice - Private Institution Academic', 'HOPE Worldwide Kenya', 'Global Fund', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2823, 'Impact Health Care', '20839', 'Nakuru', 'Nakuru North', 'Faith Based Organization', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.27041', '36.11279', '2025-07-13 05:15:02'),
+(2824, 'Seguton Dispensary', '21600', 'Nakuru', 'Kuresoi North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.04755', '35.56373', '2025-07-13 05:15:02'),
+(2825, 'Masaita dispensary', '21604', 'Nakuru', 'Kuresoi North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2826, 'Kikopey Dispensary', '22760', 'Nakuru', 'Gilgil', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.34832', '36.123', '2025-07-13 05:15:02'),
+(2827, 'Mercy Mission Hospital - Annex Nakuru', '22859', 'Nakuru', 'Nakuru East', 'Faith Based Organization', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2828, 'Rajuera Dispensary', '23069', 'Nakuru', 'Rongai', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2829, 'Mona Dispensary', '23182', 'Nakuru', 'Molo', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2830, 'Dandelion Medica Center', '23952', 'Nakuru', 'Rongai', 'Private Practice - Private Institution Academic', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2831, 'St Joseph RiftValley Hospital', '25155', 'Nakuru', 'Gilgil', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2832, 'Nandi Hills District Hospital', '14179', 'Nandi', 'Nandi Hills', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.10404', '35.18361', '2025-07-13 05:15:02'),
+(2833, 'Chemase Health Centre', '14315', 'Nandi', 'Tinderet', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.01376', '35.06395', '2025-07-13 05:15:02'),
+(2834, 'Chemundu Dispensary (Nandi Central)', '14324', 'Nandi', 'Chesumei', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.23963', '35.09212', '2025-07-13 05:15:02'),
+(2835, 'Chemuswo Dispensary', '14326', 'Nandi', 'Chesumei', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.34377', '35.1173', '2025-07-13 05:15:02'),
+(2836, 'Chepkemel Health Centre (Mosop)', '14339', 'Nandi', 'Mosop', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.52831', '35.03248', '2025-07-13 05:15:02'),
+(2837, 'Chepkumia Dispensary', '14348', 'Nandi', 'Emgwen', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.11004', '34.96157', '2025-07-13 05:15:02'),
+(2838, 'Chepkunyuk Dispensary', '14351', 'Nandi', 'Nandi Hills', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.12376', '35.238', '2025-07-13 05:15:02'),
+(2839, 'Chepterwai Sub-District Hospital', '14369', 'Nandi', 'Mosop', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.52288', '34.92726', '2025-07-13 05:15:02'),
+(2840, 'Diguna Dispensary', '14403', 'Nandi', 'Tinderet', 'Other Faith Based', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.07142', '35.33921', '2025-07-13 05:15:02'),
+(2841, 'GK Prison Dispensary (Nandi Central)', '14518', 'Nandi', 'Nandi Central', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.19649', '35.09854', '2025-07-13 05:15:02'),
+(2842, 'Kabiemit Health Centre (Mosop)', '14618', 'Nandi', 'Mosop', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2843, 'Kabiyet Sub County Hospital', '14623', 'Nandi', 'Mosop', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2844, 'Kabirirsang Dispensary', '14630', 'Nandi', 'Emgwen', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.17472', '35.16954', '2025-07-13 05:15:02'),
+(2845, 'Kabunyeria Health Centre', '14632', 'Nandi', 'Tinderet', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.03786', '35.27241', '2025-07-13 05:15:02'),
+(2846, 'Kaiboi Mission Health Centre', '14640', 'Nandi', 'Mosop', 'Other Faith Based', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.4102', '35.01878', '2025-07-13 05:15:02'),
+(2847, 'Kapkangani Health Centre', '14704', 'Nandi', 'Emgwen', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.18648', '34.97835', '2025-07-13 05:15:02'),
+(2848, 'Kapkeben Dispensary', '14707', 'Nandi', 'Aldai', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.10992', '34.92343', '2025-07-13 05:15:02'),
+(2849, 'Kapsabet County Referral Hospital', '14749', 'Nandi', 'Emgwen', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2850, 'Kapsisiywo Dispensary', '14761', 'Nandi', 'Chesumei', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.31276', '35.0625', '2025-07-13 05:15:02'),
+(2851, 'Kaptumo Sub-County Hospital', '14792', 'Nandi', 'Aldai', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2852, 'Kemeloi Health Centre', '14825', 'Nandi', 'Aldai', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.04335', '34.91531', '2025-07-13 05:15:02'),
+(2853, 'Kibwareng Health Centre', '14857', 'Nandi', 'Aldai', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.01107', '34.95367', '2025-07-13 05:15:02'),
+(2854, 'Kilibwoni Health Centre', '14866', 'Nandi', 'Emgwen', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.20895', '35.22976', '2025-07-13 05:15:02'),
+(2855, 'Kimondi Forest Dispensary', '14876', 'Nandi', 'Chesumei', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.19365', '35.03811', '2025-07-13 05:15:02'),
+(2856, 'Kingwal Dispensary', '14887', 'Nandi', 'Chesumei', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2857, 'Kobujoi Mission Health Centre', '14960', 'Nandi', 'Aldai', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.05668', '34.97592', '2025-07-13 05:15:02'),
+(2858, 'Koilot Health Centre', '14965', 'Nandi', 'Nandi Hills', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.14452', '35.28614', '2025-07-13 05:15:02'),
+(2859, 'Kombe Dispensary (Nandi Central)', '14982', 'Nandi', 'Chesumei', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.26641', '35.03828', '2025-07-13 05:15:02'),
+(2860, 'Koyo Health Centre', '14997', 'Nandi', 'Aldai', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '0.03869', '35.05547', '2025-07-13 05:15:02'),
+(2861, 'Lessos Community Dispensary', '15030', 'Nandi', 'Nandi Hills', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.15538', '35.27787', '2025-07-13 05:15:02'),
+(2862, 'Meteitei Sub-District Hospital', '15181', 'Nandi', 'Tinderet', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.00568', '35.30777', '2025-07-13 05:15:02'),
+(2863, 'Mosoriot Sub County Hospital', '15229', 'Nandi', 'Chesumei', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2864, 'Mother Franciscan Mission Health Centre', '15231', 'Nandi', 'Chesumei', 'Kenya Episcopal Conference-Catholic Secretariat', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.20208', '35.08431', '2025-07-13 05:15:02'),
+(2865, 'Serem Health Centre (Nandi South)', '15545', 'Nandi', 'Aldai', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.06678', '34.85958', '2025-07-13 05:15:02'),
+(2866, 'Setek Dispensary', '15556', 'Nandi', 'Tinderet', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.00228', '35.39269', '2025-07-13 05:15:02'),
+(2867, 'Siwo Dispensary', '15598', 'Nandi', 'Nandi Hills', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '0.14379', '35.23542', '2025-07-13 05:15:02'),
+(2868, 'Soba River Health Centre', '15601', 'Nandi', 'Tinderet', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.07379', '35.26395', '2025-07-13 05:15:02'),
+(2869, 'St Boniface Dispensary', '15630', 'Nandi', 'Emgwen', 'Kenya Episcopal Conference-Catholic Secretariat', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.18331', '34.94443', '2025-07-13 05:15:02'),
+(2870, 'Cheptingwich Dispensary', '17024', 'Nandi', 'Aldai', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.09873', '34.87329', '2025-07-13 05:15:02'),
+(2871, 'Chebilat Dispensary (Nandi South)', '17131', 'Nandi', 'Aldai', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.05341', '34.95704', '2025-07-13 05:15:02'),
+(2872, 'cheplengu dispensary', '17629', 'Nandi', 'Chesumei', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.21476', '35.08712', '2025-07-13 05:15:02'),
+(2873, 'kapkibimbir dispensary', '17642', 'Nandi', 'Chesumei', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '0.23539', '35.16725', '2025-07-13 05:15:02'),
+(2874, 'Kibisem Dispensary', '19366', 'Nandi', 'Tinderet', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '0.04111', '35.02625', '2025-07-13 05:15:02'),
+(2875, 'LESSOS MEDICAL CLINIC', '23202', 'Nandi', 'Nandi Hills', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2876, 'Akemo Nursing Home', '14194', 'Narok', 'Transmara West', 'Private Enterprise (Institution)', 'HJF-South Rift Valley', 'DOD', '', 'Stalled/Inactive', 'On Premises', '-0.93404', '34.84508', '2025-07-13 05:15:02'),
+(2877, 'Angata Health Centre', '14205', 'Narok', 'Transmara West', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-1.37645', '34.77567', '2025-07-13 05:15:02'),
+(2878, 'Cmf Aitong Health Centre', '14394', 'Narok', 'Narok West', 'Other Faith Based', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.13315', '35.25075', '2025-07-13 05:15:02'),
+(2879, 'Elangata Enterit Dispensary', '14427', 'Narok', 'Narok South', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', 'Stalled/Inactive', 'On Premises', '-1.47849', '35.9195', '2025-07-13 05:15:02'),
+(2880, 'Emarti Health Centre', '14442', 'Narok', 'Transmara West', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-1.04563', '35.22125', '2025-07-13 05:15:02'),
+(2881, 'Emurua Dikirr  Health centre', '14452', 'Narok', 'Transmara East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2882, 'Enabelbel Health Centre', '14453', 'Narok', 'Narok North', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.79673', '35.89382', '2025-07-13 05:15:02'),
+(2883, 'Enaibor Ajijik Dispensary', '14454', 'Narok', 'Narok North', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.77156', '36.16754', '2025-07-13 05:15:02'),
+(2884, 'Enoosaen Health Centre', '14465', 'Narok', 'Transmara West', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-1.0223', '34.73355', '2025-07-13 05:15:02'),
+(2885, 'Entontol Dispensary', '14471', 'Narok', 'Narok North', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', 'Stalled/Inactive', 'On Premises', '-0.86997', '36.03315', '2025-07-13 05:15:02'),
+(2886, 'Entasekera Health Centre', '14479', 'Narok', 'Narok South', 'Other Faith Based', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-1.85142', '35.85272', '2025-07-13 05:15:02'),
+(2887, 'Ewaso Ngiro Dispensary', '14484', 'Narok', 'Narok North', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-1.10613', '35.8072', '2025-07-13 05:15:02'),
+(2888, 'Ewaso Ngiro Health Centre', '14485', 'Narok', 'Narok South', 'Other Faith Based', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.15086', '35.76178', '2025-07-13 05:15:02'),
+(2889, 'GK Prisons Dispensary', '14523', 'Narok', 'Narok North', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.07772', '35.8397', '2025-07-13 05:15:02'),
+(2890, 'Ilaiser Dispensary', '14562', 'Narok', 'Narok East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.88928', '36.10432', '2025-07-13 05:15:02'),
+(2891, 'Kabolecho Dispensary', '14626', 'Narok', 'Transmara East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', 'Stalled/Inactive', 'On Premises', '-0.99162', '35.13925', '2025-07-13 05:15:02'),
+(2892, 'Kapsasian Dispensary', '14754', 'Narok', 'Transmara East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', 'Stalled/Inactive', 'On Premises', '-0.96376', '35.13376', '2025-07-13 05:15:02'),
+(2893, 'Kojonga Dispensary', '14973', 'Narok', 'Narok East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.96615', '36.13057', '2025-07-13 05:15:02'),
+(2894, 'Kurangurik Health centre', '15002', 'Narok', 'Transmara East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2895, 'Lolgorian Sub District Hosp', '15068', 'Narok', 'Transmara West', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-1.23384', '34.79975', '2025-07-13 05:15:02'),
+(2896, 'Mararianta Dispensary', '15128', 'Narok', 'Narok West', 'Other Faith Based', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.23758', '35.12215', '2025-07-13 05:15:02'),
+(2897, 'Masurura Dispensary', '15151', 'Narok', 'Transmara West', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-1.19815', '34.69979', '2025-07-13 05:15:02'),
+(2898, 'Megwara Dispensary', '15168', 'Narok', 'Narok West', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-1.51594', '35.4804', '2025-07-13 05:15:02'),
+(2899, 'Morijo Loita Health Centre', '15222', 'Narok', 'Narok South', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2900, 'Mosiro Dispensary', '15227', 'Narok', 'Narok East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-1.39141', '36.11648', '2025-07-13 05:15:02'),
+(2901, 'Mulot Catholic Dispensary', '15251', 'Narok', 'Narok West', 'Kenya Episcopal Conference-Catholic Secretariat', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.93986', '35.43277', '2025-07-13 05:15:02'),
+(2902, 'Naikara Health Centre', '15276', 'Narok', 'Narok West', 'Other Faith Based', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2903, 'Nairagie-Enkare Health Centre', '15277', 'Narok', 'Narok East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-1.0466', '36.16286', '2025-07-13 05:15:02'),
+(2904, 'Naisoya Dispensary', '15279', 'Narok', 'Narok North', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.95893', '35.8569', '2025-07-13 05:15:02'),
+(2905, 'Narok County Referral Hospital', '15311', 'Narok', 'Narok North', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2906, 'Naroosura Health Centre', '15312', 'Narok', 'Narok South', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-1.54047', '35.86447', '2025-07-13 05:15:02'),
+(2907, 'Ngito Dispensary', '15348', 'Narok', 'Narok West', 'Other Faith Based', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.92085', '35.48407', '2025-07-13 05:15:02'),
+(2908, 'Njipiship Dispensary', '15356', 'Narok', 'Transmara East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.93576', '35.00576', '2025-07-13 05:15:02'),
+(2909, 'Nkararo Health Centre', '15362', 'Narok', 'Transmara West', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-1.07383', '34.75763', '2025-07-13 05:15:02'),
+(2910, 'Nkareta Dispensary', '15363', 'Narok', 'Narok North', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', 'Stalled/Inactive', 'On Premises', '-0.96611', '35.74446', '2025-07-13 05:15:02'),
+(2911, 'Nkorinkori Dispensary', '15364', 'Narok', 'Narok West', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', 'Stalled/Inactive', 'On Premises', '-1.14444', '35.302203', '2025-07-13 05:15:02'),
+(2912, 'Ntulele Health centre', '15367', 'Narok', 'Narok East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2913, 'Olchorro Health Centre', '15389', 'Narok', 'Narok North', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.82943', '35.99792', '2025-07-13 05:15:02'),
+(2914, 'Oldanyati Health Centre', '15390', 'Narok', 'Transmara West', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', 'Stalled/Inactive', 'On Premises', '-1.07465', '34.69501', '2025-07-13 05:15:02'),
+(2915, 'Olkoroi Dispensary', '15411', 'Narok', 'Narok West', 'Ministry of Health', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.6978', '35.55714', '2025-07-13 05:15:02'),
+(2916, 'Olmekenyu Health Centre', '15414', 'Narok', 'Narok South', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2917, 'Olokurto Health Centre', '15420', 'Narok', 'Narok North', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-1.59523', '35.33392', '2025-07-13 05:15:02'),
+(2918, 'Ololulunga District Hospital', '15423', 'Narok', 'Narok South', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-1.00872', '35.6611', '2025-07-13 05:15:02'),
+(2919, 'Olposimoru Dispensary', '15431', 'Narok', 'Narok North', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-0.56168', '35.76278', '2025-07-13 05:15:02'),
+(2920, 'Romosha Health centre', '15491', 'Narok', 'Transmara West', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2921, 'Sakutiek Health Centre', '15516', 'Narok', 'Narok North', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.84756', '36.14842', '2025-07-13 05:15:02'),
+(2922, 'Sekenani Health Centre', '15541', 'Narok', 'Narok West', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-1.44312', '35.393', '2025-07-13 05:15:02'),
+(2923, 'Sogoo Health Centre', '15605', 'Narok', 'Narok South', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.81931', '35.5809', '2025-07-13 05:15:02'),
+(2924, 'St Anthony Lemek Dispensary', '15626', 'Narok', 'Narok West', 'Faith Based Organization', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-1.61104', '35.23889', '2025-07-13 05:15:02'),
+(2925, 'St Antonys Abossi Health Centre', '15627', 'Narok', 'Transmara East', 'Kenya Episcopal Conference-Catholic Secretariat', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2926, 'St Elizabeth Health Centre', '15636', 'Narok', 'Narok South', 'Other Faith Based', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.58868', '35.8338', '2025-07-13 05:15:02'),
+(2927, 'St Joseph Hospital', '15647', 'Narok', 'Transmara West', 'Kenya Episcopal Conference-Catholic Secretariat', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-1.00421', '34.87382', '2025-07-13 05:15:02'),
+(2928, 'Takitech Dispensary', '15700', 'Narok', 'Transmara East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.96053', '35.05436', '2025-07-13 05:15:02'),
+(2929, 'Talek Health Centre', '15702', 'Narok', 'Narok West', 'Other Faith Based', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.35782', '35.2244', '2025-07-13 05:15:02'),
+(2930, 'Transmara West Sub County Hospital', '15739', 'Narok', 'Transmara West', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2931, 'Inkoirienito Dispensary', '16329', 'Narok', 'Narok East', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', '', '', 'On Premises', '-0.94207', '36.24375', '2025-07-13 05:15:02'),
+(2932, 'Mulot Health Centre', '17740', 'Narok', 'Narok West', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.93986', '35.43277', '2025-07-13 05:15:02'),
+(2933, 'Baraka Hospital', '17757', 'Narok', 'Narok West', 'Non-Governmental Organizations', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2934, 'Leshuta Dispensary', '17783', 'Narok', 'Narok West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.68992', '35.7411', '2025-07-13 05:15:02'),
+(2935, 'Engos Health Centre Africa Mission Services', '17910', 'Narok', 'Transmara West', 'Christian Health Association of Kenya', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2936, 'Marps Drop In Medical Centre', '18767', 'Narok', 'Narok North', 'Non-Governmental Organizations', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-1.09118', '35.87267', '2025-07-13 05:15:02'),
+(2937, 'Kishon Health centre', '19736', 'Narok', 'Narok South', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2938, 'Enaramatishoreki Health Centre', '20915', 'Narok', 'Narok East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.35246', '35.96964', '2025-07-13 05:15:02'),
+(2939, 'Nkoilale Health Centre', '21127', 'Narok', 'Narok West', 'Ministry of Health', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-1.40349', '35.43281', '2025-07-13 05:15:02'),
+(2940, 'KYC Transmara', '21206', 'Narok', 'Transmara West', 'Non-Governmental Organizations', 'HJF-South Rift Valley', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-1.00472', '34.87947', '2025-07-13 05:15:02'),
+(2941, 'STETHOCARE MEDICAL CLINIC', '33400', 'Narok', 'Narok North', 'Private Practice', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2942, 'Amatierio Health Centre', '13475', 'Nyamira', 'Borabu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2943, 'Bogwendo Health Centre(Manga)', '13504', 'Nyamira', 'Manga', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '-0.64391', '34.89357', '2025-07-13 05:15:02'),
+(2944, 'Bosiango Health Centre', '13514', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.63996', '34.95055', '2025-07-13 05:15:02'),
+(2945, 'Chepngombe Health Centre', '13523', 'Nyamira', 'Borabu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.83926', '35.00363', '2025-07-13 05:15:02'),
+(2946, 'Chaina Dispensary', '13525', 'Nyamira', 'Nyamira North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02');
+INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(2947, 'Ekerenyo Sub-District Hospital', '13540', 'Nyamira', 'Nyamira North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.52815', '34.98799', '2025-07-13 05:15:02'),
+(2948, 'Embonga Health Centre', '13543', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '-0.54319', '34.88419', '2025-07-13 05:15:02'),
+(2949, 'Endiba Health Centre', '13544', 'Nyamira', 'Borabu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.55994', '34.96206', '2025-07-13 05:15:02'),
+(2950, 'Esani Sub-District Hospital', '13548', 'Nyamira', 'Masaba North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.695329', '34.9435', '2025-07-13 05:15:02'),
+(2951, 'Esianyi Dispensary', '13549', 'Nyamira', 'Nyamira North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.47118', '34.94123', '2025-07-13 05:15:02'),
+(2952, 'Etono Health Centre', '13551', 'Nyamira', 'Nyamira North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.51132', '34.9543', '2025-07-13 05:15:02'),
+(2953, 'Gekano Health Centre (Manga)', '13557', 'Nyamira', 'Manga', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '-0.67859', '34.9098', '2025-07-13 05:15:02'),
+(2954, 'Gesima Health Centre', '13559', 'Nyamira', 'Masaba North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.691942', '34.9921', '2025-07-13 05:15:02'),
+(2955, 'Gesure Health Centre (Manga)', '13562', 'Nyamira', 'Manga', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.63587', '34.86736', '2025-07-13 05:15:02'),
+(2956, 'Getare Health Centre(Manga)', '13566', 'Nyamira', 'Manga', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.6679', '34.8046', '2025-07-13 05:15:02'),
+(2957, 'Gianchore Health Centre', '13572', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.58', '34.88', '2025-07-13 05:15:02'),
+(2958, 'Gietai (AIC) Dispensary', '13574', 'Nyamira', 'Nyamira North', 'Christian Health Association of Kenya', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.5981', '35.03352', '2025-07-13 05:15:02'),
+(2959, 'Girango Dispensary', '13575', 'Nyamira', 'Masaba North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '-0.720127', '34.8673', '2025-07-13 05:15:02'),
+(2960, 'Gisage Dispensary', '13577', 'Nyamira', 'Nyamira North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.45545', '35.03101', '2025-07-13 05:15:02'),
+(2961, 'Igena-Itambe Dispensary', '13614', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.63707', '34.91642', '2025-07-13 05:15:02'),
+(2962, 'Ikobe Health Centre(Manga)', '13616', 'Nyamira', 'Manga', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.63417', '34.83924', '2025-07-13 05:15:02'),
+(2963, 'Ikonge Dispensary', '13617', 'Nyamira', 'Nyamira North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.53604', '35.02118', '2025-07-13 05:15:02'),
+(2964, 'Isoge Health Centre', '13626', 'Nyamira', 'Borabu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.74484', '35.05856', '2025-07-13 05:15:02'),
+(2965, 'Itibo Mission Health Centre', '13628', 'Nyamira', 'Nyamira North', 'Christian Health Association of Kenya', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.55842', '35.0036', '2025-07-13 05:15:02'),
+(2966, 'Kemera Dispensary (Manga)', '13666', 'Nyamira', 'Manga', 'Christian Health Association of Kenya', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.66495', '34.8334', '2025-07-13 05:15:02'),
+(2967, 'Kenyoro Health Centre', '13676', 'Nyamira', 'Nyamira North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.5812', '35.01191', '2025-07-13 05:15:02'),
+(2968, 'Masaba District Hospital', '13678', 'Nyamira', 'Masaba North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.763271', '34.9482', '2025-07-13 05:15:02'),
+(2969, 'Kiangoso  Health Centre', '13684', 'Nyamira', 'Manga', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2970, 'Kijauri Sub County Hospital', '13692', 'Nyamira', 'Borabu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2971, 'Kineni Dispensary', '13695', 'Nyamira', 'Borabu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.80903', '35.04953', '2025-07-13 05:15:02'),
+(2972, 'Kipkebe Health Centre', '13698', 'Nyamira', 'Borabu', 'Company Medical Service', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '-0.64894', '35.04792', '2025-07-13 05:15:02'),
+(2973, 'Machururiati Dispensary', '13746', 'Nyamira', 'Masaba North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.70034', '34.93203', '2025-07-13 05:15:02'),
+(2974, 'Magombo Health Centre', '13752', 'Nyamira', 'Masaba North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.681396', '34.9535', '2025-07-13 05:15:02'),
+(2975, 'Magwagwa (SDA) Dispensary', '13755', 'Nyamira', 'Nyamira North', 'Christian Health Association of Kenya', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.47202', '35.0226', '2025-07-13 05:15:02'),
+(2976, 'Magwagwa Health Centre', '13756', 'Nyamira', 'Nyamira North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.49025', '35.01385', '2025-07-13 05:15:02'),
+(2977, 'Manga District Hospital', '13766', 'Nyamira', 'Manga', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.66674', '34.80643', '2025-07-13 05:15:02'),
+(2978, 'Matongo Health Centre', '13791', 'Nyamira', 'Nyamira North', 'Christian Health Association of Kenya', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.44082', '35.021141', '2025-07-13 05:15:02'),
+(2979, 'Mecheo Dispensary', '13800', 'Nyamira', 'Borabu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.81798', '34.98372', '2025-07-13 05:15:02'),
+(2980, 'Medicare Medical Clinic (Manga)', '13801', 'Nyamira', 'Manga', 'Private Enterprise (Institution)', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.65539', '34.87804', '2025-07-13 05:15:02'),
+(2981, 'Miriri Dispensary', '13811', 'Nyamira', 'Masaba North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.670638', '34.8816', '2025-07-13 05:15:02'),
+(2982, 'Mochenwa Dispensary', '13818', 'Nyamira', 'Masaba North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.721077', '34.9737', '2025-07-13 05:15:02'),
+(2983, 'Mokomoni Health Centre', '13820', 'Nyamira', 'Borabu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.61615', '35.02502', '2025-07-13 05:15:02'),
+(2984, 'Motontera Dispensary', '13826', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.497', '34.87824', '2025-07-13 05:15:02'),
+(2985, 'Mwongori Dispensary', '13836', 'Nyamira', 'Borabu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.68654', '35.05121', '2025-07-13 05:15:02'),
+(2986, 'Nyamaiya Health Centre', '13894', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.48712', '34.9084', '2025-07-13 05:15:02'),
+(2987, 'Nyamakoroto Dispensary', '13895', 'Nyamira', 'Masaba North', 'Christian Health Association of Kenya', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '-0.695329', '34.9435', '2025-07-13 05:15:02'),
+(2988, 'Nyambari Geke Dispensary', '13905', 'Nyamira', 'Manga', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.66787', '34.9121', '2025-07-13 05:15:02'),
+(2989, 'Nyamira Adventist Health Centre', '13911', 'Nyamira', 'Nyamira', 'Christian Health Association of Kenya', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.57212', '34.93415', '2025-07-13 05:15:02'),
+(2990, 'Nyamira County Refferal Hospital', '13912', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2991, 'Kinara Hospital', '13913', 'Nyamira', 'Nyamira', 'Private Enterprise (Institution)', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2992, 'Nyamusi Sub-District Hospital', '13916', 'Nyamira', 'Nyamira North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.47317', '34.97081', '2025-07-13 05:15:02'),
+(2993, 'Nyanchonori Dispensary', '13917', 'Nyamira', 'Masaba North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.744175', '34.9085', '2025-07-13 05:15:02'),
+(2994, 'Nyandoche Ibere Dispensary', '13922', 'Nyamira', 'Borabu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.72559', '35.01195', '2025-07-13 05:15:02'),
+(2995, 'Nyangena Sub District Hospital (Manga)', '13924', 'Nyamira', 'Manga', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.57549', '34.891', '2025-07-13 05:15:02'),
+(2996, 'Nyankono Dispensary', '13932', 'Nyamira', 'Borabu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.55552', '35.01195', '2025-07-13 05:15:02'),
+(2997, 'Nyansangio Dispensary', '13935', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.49882', '34.88063', '2025-07-13 05:15:02'),
+(2998, 'St Josephs Nyansiongo Health Centre', '13936', 'Nyamira', 'Borabu', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(2999, 'Ogango Dispensary', '13963', 'Nyamira', 'Manga', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.61772', '34.87514', '2025-07-13 05:15:02'),
+(3000, 'Ogango Health Centre', '13964', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.532532', '34.8808', '2025-07-13 05:15:02'),
+(3001, 'Orwaki Dispensary', '13994', 'Nyamira', 'Nyamira North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.48126', '34.95081', '2025-07-13 05:15:02'),
+(3002, 'Rangenyo Health Centre', '14034', 'Nyamira', 'Nyamira', 'Christian Health Association of Kenya', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.51523', '34.883', '2025-07-13 05:15:02'),
+(3003, 'Riakworo Dispensary', '14044', 'Nyamira', 'Masaba North', 'Christian Health Association of Kenya', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.691942', '34.9921', '2025-07-13 05:15:02'),
+(3004, 'Riechieri Health Centre', '14048', 'Nyamira', 'Nyamira North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.51133', '34.99915', '2025-07-13 05:15:02'),
+(3005, 'Raitigo Dispensary', '14049', 'Nyamira', 'Borabu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3006, 'Rigoko Dispensary', '14050', 'Nyamira', 'Borabu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.80516', '34.99954', '2025-07-13 05:15:02'),
+(3007, 'Rigoma Dispensary', '14051', 'Nyamira', 'Masaba North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.681396', '34.9535', '2025-07-13 05:15:02'),
+(3008, 'Riongige Dispensary', '14053', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3009, 'Samora Medical centre', '14065', 'Nyamira', 'Nyamira North', 'Private Enterprise (Institution)', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3010, 'Sotik Highlands Dispensary', '14100', 'Nyamira', 'Borabu', 'Private Enterprise (Institution)', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '-0.58546', '35.05137', '2025-07-13 05:15:02'),
+(3011, 'Tindereti Dispensary', '14145', 'Nyamira', 'Borabu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.78646', '34.9809', '2025-07-13 05:15:02'),
+(3012, 'Tinga Health Centre', '14146', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.60608', '34.89112', '2025-07-13 05:15:02'),
+(3013, 'Tombe Health Centre (Manga)', '14151', 'Nyamira', 'Manga', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.65035', '34.87068', '2025-07-13 05:15:02'),
+(3014, 'Nyagancha Dispensary', '16266', 'Nyamira', 'Masaba North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.707634', '34.8937', '2025-07-13 05:15:02'),
+(3015, 'Kenyerere Health Centre (Nyamira)', '16280', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.62097', '34.97172', '2025-07-13 05:15:02'),
+(3016, 'Kerumbe Dispensary', '16868', 'Nyamira', 'Borabu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '-0.50845', '35.0398', '2025-07-13 05:15:02'),
+(3017, 'Kenyambi Health Centre (Nyamira)', '16980', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.57094', '34.91408', '2025-07-13 05:15:02'),
+(3018, 'Riakinaro Health Centre', '16981', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.60655', '34.95719', '2025-07-13 05:15:02'),
+(3019, 'Mongorisi Health Centre', '16982', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.66108', '35.00445', '2025-07-13 05:15:02'),
+(3020, 'Nyangweta Health Centre', '16988', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.65574', '34.95844', '2025-07-13 05:15:02'),
+(3021, 'Kianginda Health Centre', '16989', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3022, 'Nyansabakwa Health Centre', '16990', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.51506', '34.89191', '2025-07-13 05:15:02'),
+(3023, 'Magombo Community Dispensary (Manga)', '17134', 'Nyamira', 'Manga', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.67134', '34.91361', '2025-07-13 05:15:02'),
+(3024, 'Kerobo Health Centre', '17232', 'Nyamira', 'Nyamira North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.49604', '34.94223', '2025-07-13 05:15:02'),
+(3025, 'Rikenye Dispensary (Masaba)', '17678', 'Nyamira', 'Masaba North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.74649', '34.94432', '2025-07-13 05:15:02'),
+(3026, 'Nyamira Royal Clinic', '18342', 'Nyamira', 'Nyamira', 'Private Practice - Nurse / Midwife', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.52837', '34.98761', '2025-07-13 05:15:02'),
+(3027, 'Nyanturago Health Centre', '18446', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '-0.65065', '34.94147', '2025-07-13 05:15:02'),
+(3028, 'Mongoni', '18576', 'Nyamira', 'Masaba North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3029, 'Kenyenya Health Centre (Nyamira)', '20141', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3030, 'Amaiga Dispensary (Manga)', '20684', 'Nyamira', 'Manga', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.4638', '34.92974', '2025-07-13 05:15:02'),
+(3031, 'Baari Health Centre', '10043', 'Nyandarua', 'Ndaragwa', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.01049', '36.4143', '2025-07-13 05:15:02'),
+(3032, 'Bamboo Health Centre', '10044', 'Nyandarua', 'Kinangop', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.86276', '36.56636', '2025-07-13 05:15:02'),
+(3033, 'Engineer District Hospital', '10171', 'Nyandarua', 'Kinangop', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.61053', '36.5919', '2025-07-13 05:15:02'),
+(3034, 'Geta Bush Health centre', '10244', 'Nyandarua', 'Kipipiri', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.41361', '36.58391', '2025-07-13 05:15:02'),
+(3035, 'Heni Health Centre', '10312', 'Nyandarua', 'Kinangop', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.78389', '36.55767', '2025-07-13 05:15:02'),
+(3036, 'Kahembe Health Centre', '10419', 'Nyandarua', 'Ndaragwa', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.02463', '36.45391', '2025-07-13 05:15:02'),
+(3037, 'Kaimbaga Dispensary', '10429', 'Nyandarua', 'Olkalou', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.3864', '36.38465', '2025-07-13 05:15:02'),
+(3038, 'Karangatha Health Centre', '10481', 'Nyandarua', 'Kinangop', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.77085', '36.64669', '2025-07-13 05:15:02'),
+(3039, 'Kasuku Health Centre', '10509', 'Nyandarua', 'Oljororok', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.13497', '36.37804', '2025-07-13 05:15:02'),
+(3040, 'Kirima Dispensary', '10630', 'Nyandarua', 'Ndaragwa', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.19402', '36.48484', '2025-07-13 05:15:02'),
+(3041, 'Kiriogo Dispensary', '10634', 'Nyandarua', 'Ndaragwa', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.12733', '36.61527', '2025-07-13 05:15:02'),
+(3042, 'Leshau Pondo Health Centre', '10657', 'Nyandarua', 'Ndaragwa', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.06932', '36.44371', '2025-07-13 05:15:02'),
+(3043, 'Manunga Health Centre', '10681', 'Nyandarua', 'Kipipiri', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.39977', '36.49485', '2025-07-13 05:15:02'),
+(3044, 'Mirangine Health Centre', '10732', 'Nyandarua', 'Olkalou', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.177', '36.24414', '2025-07-13 05:15:02'),
+(3045, 'Mukindu Dispensary', '10756', 'Nyandarua', 'Olkalou', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.20411', '36.4253', '2025-07-13 05:15:02'),
+(3046, 'Mukungi Dispensary', '10758', 'Nyandarua', 'Kinangop', 'Other Public Institution', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.52646', '36.54909', '2025-07-13 05:15:02'),
+(3047, 'Murungaru Health Centre', '10786', 'Nyandarua', 'Kinangop', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.5848', '36.49115', '2025-07-13 05:15:02'),
+(3048, 'Nandarasi Dispensary', '10820', 'Nyandarua', 'Kinangop', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.51181', '36.58497', '2025-07-13 05:15:02'),
+(3049, 'Ndaragwa Health Centre', '10829', 'Nyandarua', 'Ndaragwa', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.05701', '36.53134', '2025-07-13 05:15:02'),
+(3050, 'Ndemi Health Centre', '10832', 'Nyandarua', 'Kipipiri', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.32863', '36.41833', '2025-07-13 05:15:02'),
+(3051, 'Ndunyu Njeru Dispensary', '10840', 'Nyandarua', 'Kinangop', 'Other Public Institution', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.54696', '36.56373', '2025-07-13 05:15:02'),
+(3052, 'New Mawingu Health Centre', '10851', 'Nyandarua', 'Olkalou', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.33922', '36.32301', '2025-07-13 05:15:02'),
+(3053, 'New Tumaini Health Centre', '10852', 'Nyandarua', 'Olkalou', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3054, 'Ngano Health Centre', '10856', 'Nyandarua', 'Oljororok', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.10927', '36.27064', '2025-07-13 05:15:02'),
+(3055, 'Ngorika Health Centre', '10871', 'Nyandarua', 'Olkalou', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3056, 'Njabini Health Centre', '10878', 'Nyandarua', 'Kinangop', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.72492', '36.66101', '2025-07-13 05:15:02'),
+(3057, 'North Kinangop Catholic Hospital', '10887', 'Nyandarua', 'Kinangop', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.55535', '36.55346', '2025-07-13 05:15:02'),
+(3058, 'Olborosat Dispensary', '10911', 'Nyandarua', 'Oljororok', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.03916', '36.3286', '2025-07-13 05:15:02'),
+(3059, 'Old Mawingu Health Centre', '10912', 'Nyandarua', 'Kipipiri', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.47136', '36.50622', '2025-07-13 05:15:02'),
+(3060, 'Oljororok Catholic Dispensary', '10914', 'Nyandarua', 'Oljororok', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.08009', '36.27064', '2025-07-13 05:15:02'),
+(3061, 'Olkalou Sub-District Hospital', '10916', 'Nyandarua', 'Olkalou', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.25627', '36.37512', '2025-07-13 05:15:02'),
+(3062, 'Pesi Dispensary', '10931', 'Nyandarua', 'Ndaragwa', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.12227', '36.53641', '2025-07-13 05:15:02'),
+(3063, 'Shamata Health Centre', '11004', 'Nyandarua', 'Ndaragwa', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.19639', '36.50559', '2025-07-13 05:15:02'),
+(3064, 'Silibwet Health Centre (Nyandaruawest)', '11009', 'Nyandarua', 'Oljororok', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.03864', '36.29032', '2025-07-13 05:15:02'),
+(3065, 'St Mathews and Sarah Dispensary', '11059', 'Nyandarua', 'Olkalou', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.18437', '36.24555', '2025-07-13 05:15:02'),
+(3066, 'Subuku Dispensary (Nyandarua North)', '11076', 'Nyandarua', 'Ndaragwa', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.11506', '36.45559', '2025-07-13 05:15:02'),
+(3067, 'Tumaini National Youth Service Dispensary', '11122', 'Nyandarua', 'Olkalou', 'Ministry of Health', 'No Partner', 'No Agency', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', '-0.28371', '36.269', '2025-07-13 05:15:02'),
+(3068, 'Turasha Dispensary', '11126', 'Nyandarua', 'Kipipiri', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.49969', '36.45238', '2025-07-13 05:15:02'),
+(3069, 'Uruku Dispensary', '11139', 'Nyandarua', 'Ndaragwa', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.03374', '36.5814', '2025-07-13 05:15:02'),
+(3070, 'Wanjohi Health Centre', '11173', 'Nyandarua', 'Kipipiri', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3071, 'Weru Health Centre (Nyandarua South)', '11183', 'Nyandarua', 'Kinangop', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3072, 'Our Lady of Mercy (Magumu)', '16384', 'Nyandarua', 'Kinangop', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.85503', '36.5764', '2025-07-13 05:15:02'),
+(3073, 'Lereshwa Dispensary (Kipipiri)', '16806', 'Nyandarua', 'Kipipiri', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3074, 'Njabini Catholic Dispensary', '17560', 'Nyandarua', 'Kinangop', 'Christian Health Association of Kenya', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3075, 'Mbuyu Dispensary', '18480', 'Nyandarua', 'Ndaragwa', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.02476', '36.52629', '2025-07-13 05:15:02'),
+(3076, 'Mastoo Dispensary', '18676', 'Nyandarua', 'Ndaragwa', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.16804', '36.51869', '2025-07-13 05:15:02'),
+(3077, 'Gatimu Health Centre', '18781', 'Nyandarua', 'Oljororok', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.01853', '36.37357', '2025-07-13 05:15:02'),
+(3078, 'Chamuka (CDF) Dispensary', '18782', 'Nyandarua', 'Oljororok', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.07599', '36.36284', '2025-07-13 05:15:02'),
+(3079, 'Bellevue Health Centre', '10055', 'Nyeri', 'Kieni West', 'Ministry of Health', 'NYERI COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.22811', '36.73023', '2025-07-13 05:15:02'),
+(3080, 'Bethsaida (PCEA) Dispensary (Nyeri)', '10063', 'Nyeri', 'Tetu', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.491107', '36.8937', '2025-07-13 05:15:02'),
+(3081, 'Consolata Mission Hospital (Mathari)', '10100', 'Nyeri', 'Nyeri Central', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.41383', '36.9197', '2025-07-13 05:15:02'),
+(3082, 'Endarasha Rural Health Centre', '10170', 'Nyeri', 'Kieni West', 'Ministry of Health', 'NYERI COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.30678', '36.79406', '2025-07-13 05:15:02'),
+(3083, 'Gakawa Dispensary', '10200', 'Nyeri', 'Kieni East', 'Ministry of Health', 'NYERI COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.01878', '37.06419', '2025-07-13 05:15:02'),
+(3084, 'Gatei Dispensary', '10210', 'Nyeri', 'Mathira East', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.40193', '37.15155', '2025-07-13 05:15:02'),
+(3085, 'Gatina Dispensary', '10220', 'Nyeri', 'Mathira East', 'Ministry of Health', 'No Partner', 'No Agency', 'KenyaEMR', 'Active', 'On Premises', '-0.54653', '37.14537', '2025-07-13 05:15:02'),
+(3086, 'Gichiche Health Center', '10249', 'Nyeri', 'Nyeri South', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3087, 'Gichira Health Center', '10251', 'Nyeri', 'Tetu', 'Ministry of Health', 'NYERI COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3088, 'GK Prison Dispensary (Kingongo)', '10286', 'Nyeri', 'Nyeri Central', 'Other Public Institution', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.41686', '36.95922', '2025-07-13 05:15:02'),
+(3089, 'Ihururu Health Centre', '10340', 'Nyeri', 'Tetu', 'Ministry of Health', 'NYERI COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.41203', '36.89071', '2025-07-13 05:15:02'),
+(3090, 'Island Farms Dispensary', '10355', 'Nyeri', 'Kieni East', 'Ministry of Health', 'NYERI COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.17421', '37.06254', '2025-07-13 05:15:02'),
+(3091, 'Itiati Dispensary', '10360', 'Nyeri', 'Mathira West', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.41369', '37.10903', '2025-07-13 05:15:02'),
+(3092, 'Jamii Hospital', '10368', 'Nyeri', 'Mathira East', 'Private Enterprise (Institution)', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.47896', '37.1311', '2025-07-13 05:15:02'),
+(3093, 'Kaiyaba Dispensary', '10435', 'Nyeri', 'Mathira West', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.28465', '37.05196', '2025-07-13 05:15:02'),
+(3094, 'Kamoko Health Centre', '10450', 'Nyeri', 'Nyeri South', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.51503', '36.91206', '2025-07-13 05:15:02'),
+(3095, 'Karaba Health Center', '10476', 'Nyeri', 'Mukurweini', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3096, 'Karatina District Hospital', '10485', 'Nyeri', 'Mathira East', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.47585', '37.1301', '2025-07-13 05:15:02'),
+(3097, 'Karatina Home Based Care Dispensary', '10486', 'Nyeri', 'Mathira East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3098, 'Karatina Nursing Home', '10488', 'Nyeri', 'Mathira East', 'Private Enterprise (Institution)', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.45282', '37.12997', '2025-07-13 05:15:02'),
+(3099, 'Karemeno Health Centre', '10490', 'Nyeri', 'Kieni West', 'Ministry of Health', 'NYERI COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3100, 'Kiamabara Dispensary', '10530', 'Nyeri', 'Mathira East', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.51775', '37.11374', '2025-07-13 05:15:02'),
+(3101, 'Kiganjo Health Centre', '10582', 'Nyeri', 'Nyeri Central', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.38119', '37.00277', '2025-07-13 05:15:02'),
+(3102, 'Kinunga Health Center', '10615', 'Nyeri', 'Nyeri Central', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3103, 'Mary Immaculate Hospital(Nyeri North)', '10700', 'Nyeri', 'Kieni West', 'Kenya Episcopal Conference-Catholic Secretariat', 'NYERI COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3104, 'Mayos Medical Clinic', '10710', 'Nyeri', 'Nyeri South', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.54992', '36.94552', '2025-07-13 05:15:02'),
+(3105, 'Mere Dispensary', '10722', 'Nyeri', 'Kieni East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.23905', '37.12575', '2025-07-13 05:15:02'),
+(3106, 'Mt. Kenya Sub District Hospital', '10739', 'Nyeri', 'Nyeri Central', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3107, 'Mt Kenya Narumoru Medical Clinic', '10741', 'Nyeri', 'Kieni East', 'Private Practice - Nurse / Midwife', 'NYERI COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', '', '', 'On Premises', '-0.11282', '37.03427', '2025-07-13 05:15:02'),
+(3108, 'Mugunda Dispensary', '10749', 'Nyeri', 'Kieni West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.16381', '36.70158', '2025-07-13 05:15:02'),
+(3109, 'Mugunda Mission Dispensary', '10750', 'Nyeri', 'Kieni West', 'Kenya Episcopal Conference-Catholic Secretariat', 'NYERI COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.13863', '36.71383', '2025-07-13 05:15:02'),
+(3110, 'Mukurweini Sub District Hospital', '10763', 'Nyeri', 'Mukurweini', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3111, 'Mweiga Health Centre', '10809', 'Nyeri', 'Kieni West', 'Community', 'NYERI COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.33025', '36.90299', '2025-07-13 05:15:02'),
+(3112, 'Naromoru Health Center', '10822', 'Nyeri', 'Kieni West', 'Ministry of Health', 'NYERI COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3113, 'Ngorano Health Centre', '10870', 'Nyeri', 'Mathira West', 'Kenya Episcopal Conference-Catholic Secretariat', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.41278', '37.06437', '2025-07-13 05:15:02'),
+(3114, 'Njoki Dispensary', '10884', 'Nyeri', 'Mukurweini', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.56563', '37.00016', '2025-07-13 05:15:02'),
+(3115, 'Nyeri Provincial Hospital', '10903', 'Nyeri', 'Nyeri Central', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3116, 'Nyeri Town Health Centre', '10905', 'Nyeri', 'Nyeri Central', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.25383', '36.56996', '2025-07-13 05:15:02'),
+(3117, 'Othaya Catholic Dispensary', '10919', 'Nyeri', 'Nyeri South', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.55045', '36.94479', '2025-07-13 05:15:02'),
+(3118, 'Othaya Sub County Hospital', '10922', 'Nyeri', 'Nyeri South', 'Private Enterprise (Institution)', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3119, 'Outspan Hospital', '10924', 'Nyeri', 'Nyeri Central', 'Private Enterprise (Institution)', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.43606', '36.88594', '2025-07-13 05:15:02'),
+(3120, 'Thangathi Health Center', '11090', 'Nyeri', 'Mukurweini', 'Private Enterprise (Institution)', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3121, 'Tumutumu (PCEA) Hospital', '11124', 'Nyeri', 'Mathira West', 'Christian Health Association of Kenya', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.48549', '37.07946', '2025-07-13 05:15:02'),
+(3122, 'Wamagana Health Center', '11161', 'Nyeri', 'Tetu', 'Ministry of Health', 'NYERI COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3123, 'Warazo Health Center', '11176', 'Nyeri', 'Kieni East', 'Ministry of Health', 'NYERI COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3124, 'Narumoru Catholic Dispensary', '16816', 'Nyeri', 'Kieni East', 'Ministry of Health', 'NYERI COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.18596', '37.05784', '2025-07-13 05:15:02'),
+(3125, 'St Joseph Brothers', '17576', 'Nyeri', 'Kieni West', 'Kenya Episcopal Conference-Catholic Secretariat', 'NYERI COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.31765', '36.91315', '2025-07-13 05:15:02'),
+(3126, 'Ruguru Health Centre', '18013', 'Nyeri', 'Mathira West', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3127, 'Nyeri MARPS Project DICE', '18518', 'Nyeri', 'Nyeri Central', 'Ministry of Health', 'No Partner', 'No Agency', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3128, 'Nyeri Technical Dispensary', '19763', 'Nyeri', 'Nyeri Central', 'Academic (if registered)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.42687', '36.94542', '2025-07-13 05:15:02'),
+(3129, 'Narumoru Medical Clinic', '21420', 'Nyeri', 'Kieni East', 'Private Practice - Nurse / Midwifery', 'NYERI COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3130, 'Hoymas medical clinic', '23993', 'Nyeri', 'Nyeri Central', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3131, 'Archers Post Health Centre', '14212', 'Samburu', 'Samburu East', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.65141', '37.5921', '2025-07-13 05:15:02'),
+(3132, 'Arsim Lutheran Health Center', '14217', 'Samburu', 'Samburu North', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3133, 'Baragoi Sub-County Hospital', '14228', 'Samburu', 'Samburu North', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3134, 'Barsaloi GK Dispensary', '14237', 'Samburu', 'Samburu North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '1.4362', '36.8419', '2025-07-13 05:15:02'),
+(3135, 'Ngilai Dispensary', '14459', 'Samburu', 'Samburu East', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', '1.31702', '37.3544', '2025-07-13 05:15:02'),
+(3136, 'Kisima Health Centre', '14943', 'Samburu', 'Samburu Central', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.94261', '36.76375', '2025-07-13 05:15:02'),
+(3137, 'Latakweny Health Centre', '15014', 'Samburu', 'Samburu North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3138, 'Ledero Dispensary', '15017', 'Samburu', 'Samburu Central', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '1.03558', '36.73992', '2025-07-13 05:15:02'),
+(3139, 'Lesirikan Health Centre', '15029', 'Samburu', 'Samburu North', 'Non-Governmental Organizations', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.76869', '37.0774', '2025-07-13 05:15:02'),
+(3140, 'Lodungokwe Health Centre', '15048', 'Samburu', 'Samburu East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.87017', '37.00815', '2025-07-13 05:15:02'),
+(3141, 'Longewan Dispensary', '15076', 'Samburu', 'Samburu Central', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.85988', '36.54532', '2025-07-13 05:15:02'),
+(3142, 'Loosuk  Health Centre', '15079', 'Samburu', 'Samburu Central', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3143, 'Maralal Catholic Dispensary', '15125', 'Samburu', 'Samburu Central', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '1.09089', '36.70748', '2025-07-13 05:15:02'),
+(3144, 'Maralal District Hospital', '15126', 'Samburu', 'Samburu Central', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.09773', '36.69646', '2025-07-13 05:15:02'),
+(3145, 'Marti Dispensary', '15144', 'Samburu', 'Samburu North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '1.54775', '36.7446', '2025-07-13 05:15:02'),
+(3146, 'Ndonyo Wasin Dispensary', '15327', 'Samburu', 'Samburu East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '1.3481', '37.43701', '2025-07-13 05:15:02'),
+(3147, 'Opiroi Dispensary', '15442', 'Samburu', 'Samburu North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '1.15492', '36.81433', '2025-07-13 05:15:02'),
+(3148, 'Seketet Dispensary', '15543', 'Samburu', 'Samburu Central', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '1.13407', '36.59742', '2025-07-13 05:15:02'),
+(3149, 'Sereolipi Health Centre', '15547', 'Samburu', 'Samburu East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '1.1244', '37.6199', '2025-07-13 05:15:02'),
+(3150, 'South Horr health Centre', '15621', 'Samburu', 'Samburu North', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3151, 'Suguta Marmar Health Centre', '15682', 'Samburu', 'Samburu Central', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.82855', '36.69306', '2025-07-13 05:15:02'),
+(3152, 'Swari Model Health Centre', '15693', 'Samburu', 'Samburu East', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.09738', '37.007168', '2025-07-13 05:15:02'),
+(3153, 'Tuum Dispensary', '15757', 'Samburu', 'Samburu North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '2.14619', '36.77517', '2025-07-13 05:15:02'),
+(3154, 'Wamba Health Centre', '15768', 'Samburu', 'Samburu East', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3155, 'Catholic Hospital Wamba', '15769', 'Samburu', 'Samburu East', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.97786', '37.32013', '2025-07-13 05:15:02'),
+(3156, 'West Gate Dispensary', '15780', 'Samburu', 'Samburu East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3157, 'Waso Rongai Dispensary', '16953', 'Samburu', 'Samburu North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3158, 'Loikumkum Dispensary', '17278', 'Samburu', 'Samburu North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '1.65009', '37.1096', '2025-07-13 05:15:02'),
+(3159, 'Nkutuk Elmuget Dispensary', '18030', 'Samburu', 'Samburu East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.80571', '37.1074', '2025-07-13 05:15:02'),
+(3160, 'Kiltamany Dispensary', '19945', 'Samburu', 'Samburu East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.64411', '37.47515', '2025-07-13 05:15:02'),
+(3161, 'Lolkuniyani  Dispensary', '20743', 'Samburu', 'Samburu East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '1.5816', '37.2664', '2025-07-13 05:15:02'),
+(3162, 'Lmarmaroi Dispensary', '20744', 'Samburu', 'Samburu East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '1.5816', '37.2664', '2025-07-13 05:15:02'),
+(3163, 'Marte  Elepareu  Dispensary', '20747', 'Samburu', 'Samburu East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3164, 'Lengusaka Dispensary', '23345', 'Samburu', 'Samburu East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3165, 'Waso Sub-County Hospital', '24233', 'Samburu', 'Samburu East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3166, 'Abidha Health Centre', '13461', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.15902', '34.41064', '2025-07-13 05:15:02'),
+(3167, 'Akala Health Centre', '13471', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.05961', '34.42139', '2025-07-13 05:15:02'),
+(3168, 'Aluor Mission Health Centre', '13473', 'Siaya', 'Gem', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.01047', '34.465', '2025-07-13 05:15:02'),
+(3169, 'Ambira Sub-County Hospital', '13476', 'Siaya', 'Ugunja', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3170, 'Anyuongi Dispensary', '13482', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.17618', '34.27613', '2025-07-13 05:15:02'),
+(3171, 'Bama Hospital', '13493', 'Siaya', 'Alego Usonga', 'Private Enterprise (Institution)', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.05668', '34.29407', '2025-07-13 05:15:02'),
+(3172, 'Bar Achuth Dispensary', '13495', 'Siaya', 'Ugenya', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.28968', '34.17204', '2025-07-13 05:15:02'),
+(3173, 'Bar Agulu Dispensary', '13496', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.04205', '34.3338', '2025-07-13 05:15:02'),
+(3174, 'Bar Aluru Dispensary (Rarieda)', '13497', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.119978', '34.3383', '2025-07-13 05:15:02'),
+(3175, 'Bar Olengo Dispensary', '13499', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.015152', '34.21078', '2025-07-13 05:15:02'),
+(3176, 'Bondo County Referral  Hospital', '13507', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3177, 'Boro Dispensary', '13513', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.08843', '34.23423', '2025-07-13 05:15:02'),
+(3178, 'Dienya Health Centre', '13533', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.00154', '34.40699', '2025-07-13 05:15:02'),
+(3179, 'Dolphil Nursing & Maternity Home', '13535', 'Siaya', 'Gem', 'Christian Health Association of Kenya', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.04515', '34.5611', '2025-07-13 05:15:02'),
+(3180, 'Gobei  Health Centre', '13581', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.09021', '34.2905', '2025-07-13 05:15:02'),
+(3181, 'Got Agulu Sub-District Hospital', '13588', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.0341', '34.0248', '2025-07-13 05:15:02'),
+(3182, 'Got Matar Health Center', '13590', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3183, 'Hawinga Health Centre', '13600', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.0876', '34.16046', '2025-07-13 05:15:02'),
+(3184, 'Inuka Hospital & Maternity Home', '13618', 'Siaya', 'Gem', 'Private Enterprise (Institution)', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.14441', '34.3982', '2025-07-13 05:15:02'),
+(3185, 'Jera Dispensary', '13634', 'Siaya', 'Ugenya', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.2862', '34.26382', '2025-07-13 05:15:02'),
+(3186, 'Kadenge Ratuoro Health Centre', '13641', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.02373', '34.17477', '2025-07-13 05:15:02'),
+(3187, 'Kagwa Health Centre', '13644', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.22851', '34.25665', '2025-07-13 05:15:02'),
+(3188, 'Kaluo Health Centre', '13648', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3189, 'Kambajo Dispensary', '13651', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.078944', '34.21136', '2025-07-13 05:15:02');
+INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(3190, 'Kapiyo Health Centre', '13655', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3191, 'Kogelo Dispensary', '13710', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.00716', '34.3448', '2025-07-13 05:15:02'),
+(3192, 'Kunya Dispensary', '13725', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.28581', '34.39937', '2025-07-13 05:15:02'),
+(3193, 'Ligega Health Centre', '13735', 'Siaya', 'Ugunja', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.2119', '34.244', '2025-07-13 05:15:02'),
+(3194, 'St Elizabeth Lwak Mission Health Centre', '13739', 'Siaya', 'Rarieda', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.13', '34.35', '2025-07-13 05:15:02'),
+(3195, 'Mabinju Dispensary', '13743', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.13472', '34.24136', '2025-07-13 05:15:02'),
+(3196, 'Madiany Sub County  Hospital', '13747', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.28396', '34.32304', '2025-07-13 05:15:02'),
+(3197, 'Mageta Health Center', '13750', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3198, 'Mahaya Health Centre (Rarieda)', '13757', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.16223', '34.34066', '2025-07-13 05:15:02'),
+(3199, 'Malanga Health Centre', '13760', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.11703', '34.44843', '2025-07-13 05:15:02'),
+(3200, 'Manyuanda Health Centre (Rarieda)', '13771', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.25252', '34.27609', '2025-07-13 05:15:02'),
+(3201, 'Marenyo Health Centre', '13773', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.07641', '34.55194', '2025-07-13 05:15:02'),
+(3202, 'Masala Dispensary', '13780', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.20811', '34.29273', '2025-07-13 05:15:02'),
+(3203, 'Matangwe Community Health Centre', '13787', 'Siaya', 'Bondo', 'Private Enterprise (Institution)', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.153782', '34.289877', '2025-07-13 05:15:02'),
+(3204, 'Mawere Dispensary', '13796', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.04655', '34.3443', '2025-07-13 05:15:02'),
+(3205, 'Mbaga Health Centre', '13797', 'Siaya', 'Alego Usonga', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.08298', '34.27626', '2025-07-13 05:15:02'),
+(3206, 'Uluthe Dispensary', '13799', 'Siaya', 'Ugunja', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.296224', '34.3196', '2025-07-13 05:15:02'),
+(3207, 'Mindhine Dispensary', '13803', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3208, 'Misori Dispensary', '13815', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.31856', '34.278', '2025-07-13 05:15:02'),
+(3209, 'Mulaha Dispensary', '13834', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.02967', '34.15618', '2025-07-13 05:15:02'),
+(3210, 'Naya Health Centre', '13837', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.36255', '34.3121', '2025-07-13 05:15:02'),
+(3211, 'Ndeda Dispensary', '13839', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.218546', '34.118499', '2025-07-13 05:15:02'),
+(3212, 'Ndere Health Centre', '13840', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.13766', '34.38299', '2025-07-13 05:15:02'),
+(3213, 'Ndori Health Centre', '13845', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.06975', '34.37752', '2025-07-13 05:15:02'),
+(3214, 'Ngiya Health Centre', '13852', 'Siaya', 'Alego Usonga', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3215, 'Nyagoko Dispensary', '13874', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.17535', '34.29557', '2025-07-13 05:15:02'),
+(3216, 'Nyaguda  Health Center', '13877', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3217, 'Nyambare Health Centre', '13904', 'Siaya', 'Alego Usonga', 'Christian Health Association of Kenya', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.13342', '34.10204', '2025-07-13 05:15:02'),
+(3218, 'Nyamonye Mission Dispensary', '13914', 'Siaya', 'Bondo', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.05125', '34.13787', '2025-07-13 05:15:02'),
+(3219, 'Nyangoma Mission Health Centre', '13929', 'Siaya', 'Bondo', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3220, 'Nyangu Dispensary', '13930', 'Siaya', 'Ugenya', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.22488', '34.13531', '2025-07-13 05:15:02'),
+(3221, 'Nyathengo Dispensary', '13944', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.05181', '34.36196', '2025-07-13 05:15:02'),
+(3222, 'Nyawara Health Centre', '13947', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.09451', '34.4888', '2025-07-13 05:15:02'),
+(3223, 'Nyenye Misori Dispensary', '13948', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.10144', '34.06874', '2025-07-13 05:15:02'),
+(3224, 'Ogam Dispensary', '13961', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.02632', '34.12472', '2025-07-13 05:15:02'),
+(3225, 'Ogero Dispensary', '13966', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.00552', '34.4828', '2025-07-13 05:15:02'),
+(3226, 'Ongielo Health Centre', '13987', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3227, 'Othach Dispensary', '14000', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.050586', '34.20696', '2025-07-13 05:15:02'),
+(3228, 'Ouya Dispensary', '14005', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.18844', '34.24527', '2025-07-13 05:15:02'),
+(3229, 'Oyamo Dispensary', '14007', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.190999', '34.2387', '2025-07-13 05:15:02'),
+(3230, 'Pap Kodero Health Centre', '14013', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.24657', '34.32236', '2025-07-13 05:15:02'),
+(3231, 'Rabar Health Centre', '14018', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3232, 'Radier Dispensary', '14023', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.02495', '34.07347', '2025-07-13 05:15:02'),
+(3233, 'Ragengni Dispensary', '14026', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3234, 'Ramula Health Centre', '14030', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.00116', '34.52851', '2025-07-13 05:15:02'),
+(3235, 'OUR LADY F LOURDES RANGALA MISSION HOPSPITAL', '14033', 'Siaya', 'Ugunja', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3236, 'Rera Health Centre', '14042', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3237, 'Rwambwa Sub-county Hospital', '14063', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3238, 'Sagam Community Hospital', '14064', 'Siaya', 'Gem', 'Private Enterprise (Institution)', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.05607', '34.54176', '2025-07-13 05:15:02'),
+(3239, 'Saradidi Dispensary', '14068', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.11288', '34.39692', '2025-07-13 05:15:02'),
+(3240, 'Sega Cottage Hospital', '14071', 'Siaya', 'Ugenya', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.25934', '34.22549', '2025-07-13 05:15:02'),
+(3241, 'Sega Dispensary', '14072', 'Siaya', 'Ugenya', 'Kenya Episcopal Conference-Catholic Secretariat', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.26353', '34.2271', '2025-07-13 05:15:02'),
+(3242, 'Sega Mission Hospital', '14073', 'Siaya', 'Ugenya', 'Private Enterprise (Institution)', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3243, 'Serawongo Dispensary', '14077', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.15221', '34.13437', '2025-07-13 05:15:02'),
+(3244, 'Siaya County Referral Hospital', '14080', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3245, 'Sifuyo Health centre', '14084', 'Siaya', 'Ugenya', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3246, 'Sigomere Subcounty Hospital', '14085', 'Siaya', 'Ugunja', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3247, 'Sikalame Dispensary', '14087', 'Siaya', 'Ugunja', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.16876', '34.4051', '2025-07-13 05:15:02'),
+(3248, 'Simenya Health Centre', '14091', 'Siaya', 'Ugunja', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3249, 'Sirembe Dispensary', '14093', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.09503', '34.4', '2025-07-13 05:15:02'),
+(3250, 'Uhuyi Dispensary', '14107', 'Siaya', 'Ugunja', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.092553', '34.3911', '2025-07-13 05:15:02'),
+(3251, 'St Josephs Obaga Dispensary', '14111', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3252, 'St Paul Dispensary', '14123', 'Siaya', 'Ugunja', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.16325', '34.29315', '2025-07-13 05:15:02'),
+(3253, 'Sumba Community Dispensary', '14133', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.0856', '34.09344', '2025-07-13 05:15:02'),
+(3254, 'Tingare Dispensary', '14147', 'Siaya', 'Ugunja', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.2588', '34.3857', '2025-07-13 05:15:02'),
+(3255, 'Tingwangi Health Centre', '14148', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3256, 'Ukwala Sub County Hospital', '14156', 'Siaya', 'Ugenya', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.1931', '34.18806', '2025-07-13 05:15:02'),
+(3257, 'Ulungo Dispensary', '14158', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.01815', '34.10807', '2025-07-13 05:15:02'),
+(3258, 'Urenga Health Centre', '14159', 'Siaya', 'Ugenya', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3259, 'Uriri Dispensary', '14160', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.02944', '34.4546', '2025-07-13 05:15:02'),
+(3260, 'Usenge Dispensary', '14163', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.066475', '34.055226', '2025-07-13 05:15:02'),
+(3261, 'Usigu Health Centre', '14164', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3262, 'Uyawi Sub County Hospital', '14165', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3263, 'Yala Sub County Hospital', '14175', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3264, 'St Marys Yala Dispensary', '16418', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3265, 'Asayi Dispensary', '16783', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.1176', '34.37246', '2025-07-13 05:15:02'),
+(3266, 'Bar Ndege Dispensary', '16784', 'Siaya', 'Ugenya', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.29962', '34.34579', '2025-07-13 05:15:02'),
+(3267, 'Bar Sauri Health Centre', '16785', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3268, 'Benga  Dispensary', '16786', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3269, 'Nduru Dispensary', '16787', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3270, 'Mwer Dispensary', '16788', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.10804', '34.1864', '2025-07-13 05:15:02'),
+(3271, 'Rambula Dispensary', '16789', 'Siaya', 'Ugunja', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.20667', '34.3044', '2025-07-13 05:15:02'),
+(3272, 'Segere Dispensary', '16790', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.11233', '34.24462', '2025-07-13 05:15:02'),
+(3273, 'Umala Dispensary', '16791', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.03286', '34.3424', '2025-07-13 05:15:02'),
+(3274, 'Wagai Health Centre', '16792', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3275, 'Uradi Health Centre', '17183', 'Siaya', 'Alego Usonga', 'Kenya Episcopal Conference-Catholic Secretariat', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.12156', '34.15762', '2025-07-13 05:15:02'),
+(3276, 'Rambugu Dispensary (Rarieda)', '17437', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.09399', '34.35616', '2025-07-13 05:15:02'),
+(3277, 'Wagoro Dispensary (Rarieda)', '17438', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.26793', '34.28912', '2025-07-13 05:15:02'),
+(3278, 'Lieta Health Centre (Rarieda)', '17439', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.28374', '34.32313', '2025-07-13 05:15:02'),
+(3279, 'Lihanda Health Centre', '17512', 'Siaya', 'Gem', 'Non-Governmental Organizations', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.0404', '34.50559', '2025-07-13 05:15:02'),
+(3280, 'Oding Dispensary', '17515', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.02241', '34.49949', '2025-07-13 05:15:02'),
+(3281, 'Gongo Health Centre', '17516', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.05877', '34.47773', '2025-07-13 05:15:02'),
+(3282, 'Masogo Dispensary (Gem)', '17518', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3283, 'Got Regea Dispensary', '17520', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.13501', '34.46762', '2025-07-13 05:15:02'),
+(3284, 'Randago Dispensary', '17521', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.01429', '34.29287', '2025-07-13 05:15:02'),
+(3285, 'Future Life Dispensary', '17522', 'Siaya', 'Alego Usonga', 'Other Faith Based', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.03721', '34.287', '2025-07-13 05:15:02'),
+(3286, 'Mur Malanga Dispensary', '17523', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.00248', '34.25229', '2025-07-13 05:15:02'),
+(3287, 'Ashburn Ohuru Nursing Home', '17524', 'Siaya', 'Alego Usonga', 'Other Faith Based', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3288, 'Lidha Dispensary', '17525', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3289, 'Kambare Dispensary', '17527', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.03225', '34.4665', '2025-07-13 05:15:02'),
+(3290, 'Matibabu Ukwala Clinic', '17529', 'Siaya', 'Ugenya', 'Private Practice - General Practitioner', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.20658', '34.17871', '2025-07-13 05:15:02'),
+(3291, 'Umer Dispensary', '17530', 'Siaya', 'Ugenya', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3292, 'Kabura  Uhuyi Dispensary', '17531', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3293, 'Uhembo Dispensary', '17532', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.08326', '34.11391', '2025-07-13 05:15:02'),
+(3294, 'Karuoth Dispensary', '17533', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.10758', '34.28015', '2025-07-13 05:15:02'),
+(3295, 'Nyadhi Dispensary', '17535', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.08238', '34.18002', '2025-07-13 05:15:02'),
+(3296, 'Tuungane', '18109', 'Siaya', 'Bondo', 'Non-Governmental Organizations', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3297, 'GOK Prison Siaya', '18264', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.05147', '34.28706', '2025-07-13 05:15:02'),
+(3298, 'Ligala Dispensary', '18320', 'Siaya', 'Ugenya', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3299, 'Got Osimbo Dispensary', '18321', 'Siaya', 'Ugunja', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3300, 'Barding Dispensary', '18396', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.01281', '34.32742', '2025-07-13 05:15:02'),
+(3301, 'Siala Kaduol', '18426', 'Siaya', 'Gem', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.0122', '34.46104', '2025-07-13 05:15:02'),
+(3302, 'Tumaini DICE -  Asembo Bay (Rarieda)', '18557', 'Siaya', 'Rarieda', 'Non-Governmental Organizations', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3303, 'Chianda Dispensary (Rarieda)', '18564', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.25589', '34.35278', '2025-07-13 05:15:02'),
+(3304, 'Mama Anns Odede Community Health Centre', '18912', 'Siaya', 'Rarieda', 'Other Public Institution', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '0.2474', '34.35437', '2025-07-13 05:15:02'),
+(3305, 'Maliera SDA Dispensary', '20013', 'Siaya', 'Gem', 'Other Faith Based', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3306, 'Pap Oriang Dispensary', '21840', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3307, 'TUMAINI DISC-SIAYA', '22173', 'Siaya', 'Alego Usonga', 'Non-Governmental Organizations', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3308, 'Matibabu Ugunja Clinic', '22383', 'Siaya', 'Ugunja', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3309, 'Tumaini DISC Clinic', '22392', 'Siaya', 'Ugunja', 'Non-Governmental Organizations', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3310, 'Bondo Youth Wellness Centre', '31463', 'Siaya', 'Bondo', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3311, 'Acode Medical Clinic Maungu', '11195', 'Taita Taveta', 'Voi', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.55733', '38.75037', '2025-07-13 05:15:02'),
+(3312, 'Bughuta Health Centre', '11262', 'Taita Taveta', 'Voi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.68821', '38.66798', '2025-07-13 05:15:02'),
+(3313, 'Bura Mission Clinic', '11265', 'Taita Taveta', 'Mwatate', 'Other Faith Based', 'Mkomani Clinic society', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-3.45336', '38.31328', '2025-07-13 05:15:02'),
+(3314, 'Chala Dispensary', '11278', 'Taita Taveta', 'Taveta', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3315, 'Dawida Maternity Nursing Home', '11299', 'Taita Taveta', 'Wundanyi', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.24258', '38.22012', '2025-07-13 05:15:02'),
+(3316, 'Dawson Mwanyumba Dispensary', '11300', 'Taita Taveta', 'Mwatate', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.43376', '38.37417', '2025-07-13 05:15:02'),
+(3317, 'Dembwa Dispensary', '11302', 'Taita Taveta', 'Mwatate', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.44819', '38.36394', '2025-07-13 05:15:02'),
+(3318, 'Divine Mercy Eldoro Catholic Dispensary', '11365', 'Taita Taveta', 'Taveta', 'Kenya Episcopal Conference- Catholic Secretariat', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3319, 'Ghazi Dispensary', '11390', 'Taita Taveta', 'Voi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.28937', '38.44621', '2025-07-13 05:15:02'),
+(3320, 'Horesha Medicalicare', '11415', 'Taita Taveta', 'Mwatate', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.50941', '38.37919', '2025-07-13 05:15:02'),
+(3321, 'Joy Medical Clinic (Mwatate)', '11441', 'Taita Taveta', 'Mwatate', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.5037', '38.37843', '2025-07-13 05:15:02'),
+(3322, 'Kajire Dispensary', '11451', 'Taita Taveta', 'Voi', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.5172', '38.6079', '2025-07-13 05:15:02'),
+(3323, 'Kasigau Rdch', '11455', 'Taita Taveta', 'Voi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.81351', '38.63989', '2025-07-13 05:15:02'),
+(3324, 'David Kayanda Dispensary', '11457', 'Taita Taveta', 'Voi', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.37007', '38.47518', '2025-07-13 05:15:02'),
+(3325, 'Kiangachinyi Dispensary', '11463', 'Taita Taveta', 'Mwatate', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.46339', '38.33865', '2025-07-13 05:15:02'),
+(3326, 'Kighombo Dispensary', '11469', 'Taita Taveta', 'Mwatate', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.39391', '38.45036', '2025-07-13 05:15:02'),
+(3327, 'Kimorigho Dispensary', '11477', 'Taita Taveta', 'Taveta', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.46054', '37.69187', '2025-07-13 05:15:02'),
+(3328, 'Kishushe Dispensary', '11488', 'Taita Taveta', 'Wundanyi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.2783', '38.3238', '2025-07-13 05:15:02'),
+(3329, 'Kitobo Dispensary', '11491', 'Taita Taveta', 'Taveta', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3330, 'Kwa-Mnegwa Dispensary', '11508', 'Taita Taveta', 'Mwatate', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.4336', '38.24283', '2025-07-13 05:15:02'),
+(3331, 'Maktau Health Centre', '11549', 'Taita Taveta', 'Maktau', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.24483', '38.08182', '2025-07-13 05:15:02'),
+(3332, 'Makwasinyi Dispensary', '11552', 'Taita Taveta', 'Voi', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.81318', '38.68151', '2025-07-13 05:15:02'),
+(3333, 'Manyani Dispensary', '11561', 'Taita Taveta', 'Voi', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-3.09496', '38.48972', '2025-07-13 05:15:02'),
+(3334, 'Marungu Health Centre', '11572', 'Taita Taveta', 'Voi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.61121', '38.7293', '2025-07-13 05:15:02'),
+(3335, 'Mata Dispensary (Taveta)', '11577', 'Taita Taveta', 'Taveta', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.47486', '37.75595', '2025-07-13 05:15:02'),
+(3336, 'Mbale Health Centre', '11589', 'Taita Taveta', 'Wundanyi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.37928', '38.38292', '2025-07-13 05:15:02'),
+(3337, 'Mbulia Dispensary', '11591', 'Taita Taveta', 'Voi', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.25388', '38.43901', '2025-07-13 05:15:02'),
+(3338, 'Mgange Dawida Dispensary', '11602', 'Taita Taveta', 'Wundanyi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.40138', '38.31392', '2025-07-13 05:15:02'),
+(3339, 'Mgange Nyika Health Centre', '11603', 'Taita Taveta', 'Wundanyi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.41821', '38.31012', '2025-07-13 05:15:02'),
+(3340, 'Miasenyi Dispensary', '11605', 'Taita Taveta', 'Voi', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.40573', '38.56846', '2025-07-13 05:15:02'),
+(3341, 'Moi District Hospital Voi', '11641', 'Taita Taveta', 'Voi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.38928', '38.56007', '2025-07-13 05:15:02'),
+(3342, 'Mpinzinyi Health Centre', '11650', 'Taita Taveta', 'Mwatate', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.45754', '38.37885', '2025-07-13 05:15:02'),
+(3343, 'Mrughua Dispensary', '11652', 'Taita Taveta', 'Mwatate', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.43489', '38.29089', '2025-07-13 05:15:02'),
+(3344, 'Msau Dispensary', '11656', 'Taita Taveta', 'Mwatate', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.41394', '38.40845', '2025-07-13 05:15:02'),
+(3345, 'Mvono Clinic', '11680', 'Taita Taveta', 'Wundanyi', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.40367', '38.36592', '2025-07-13 05:15:02'),
+(3346, 'Mwambirwa Dispensary', '11686', 'Taita Taveta', 'Mwatate', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.35282', '38.4313', '2025-07-13 05:15:02'),
+(3347, 'Mwanda Health Centre (Taita Taveta)', '11688', 'Taita Taveta', 'Wundanyi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.40177', '38.28576', '2025-07-13 05:15:02'),
+(3348, 'Mwatate Sub-District Hospital', '11695', 'Taita Taveta', 'Mwatate', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.50732', '38.36864', '2025-07-13 05:15:02'),
+(3349, 'Ndilidau Dispensary (Jipe)', '11702', 'Taita Taveta', 'Taveta', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.38735', '37.73654', '2025-07-13 05:15:02'),
+(3350, 'Ndome Dispensary (Taita)', '11704', 'Taita Taveta', 'Voi', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.30278', '38.47813', '2025-07-13 05:15:02'),
+(3351, 'Ndovu Health Centre', '11705', 'Taita Taveta', 'Voi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.39267', '38.58444', '2025-07-13 05:15:02'),
+(3352, 'Njukini Health Centre', '11718', 'Taita Taveta', 'Taveta', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.18934', '37.72483', '2025-07-13 05:15:02'),
+(3353, 'Nyache Health Centre', '11720', 'Taita Taveta', 'Wundanyi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.33853', '38.38084', '2025-07-13 05:15:02'),
+(3354, 'Ndongo Purple Clinic', '11745', 'Taita Taveta', 'Taveta', 'Private Practice - Nurse / Midwife', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.39249', '37.67502', '2025-07-13 05:15:02'),
+(3355, 'Rumangao Dispensary', '11760', 'Taita Taveta', 'Voi', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.49341', '38.58219', '2025-07-13 05:15:02'),
+(3356, 'Sagaighu Dispensary', '11763', 'Taita Taveta', 'Mwatate', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.43289', '38.33356', '2025-07-13 05:15:02'),
+(3357, 'Sagala Health Centre', '11764', 'Taita Taveta', 'Voi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.49349', '38.58214', '2025-07-13 05:15:02'),
+(3358, 'Sangekoro Dispensary', '11769', 'Taita Taveta', 'Wundanyi', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.34259', '38.30337', '2025-07-13 05:15:02'),
+(3359, 'St Josephs Shelter of Hope', '11817', 'Taita Taveta', 'Voi', 'Christian Health Association of Kenya', 'Mkomani Clinic society', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3360, 'Tausa Health Centre', '11839', 'Taita Taveta', 'Voi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.34155', '38.50154', '2025-07-13 05:15:02'),
+(3361, 'Taveta District Hospital', '11840', 'Taita Taveta', 'Taveta', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.39373', '37.67772', '2025-07-13 05:15:02'),
+(3362, 'Werugha Health Centre', '11904', 'Taita Taveta', 'Wundanyi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3363, 'Wesu District Hospital', '11906', 'Taita Taveta', 'Wundanyi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3364, 'Wundanyi Sub-District Hospital', '11908', 'Taita Taveta', 'Wundanyi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3365, 'Kiwalwa Dispensary', '16203', 'Taita Taveta', 'Taveta', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.4269', '37.6886', '2025-07-13 05:15:02'),
+(3366, 'Mwashuma Dispensary (CDF)', '16554', 'Taita Taveta', 'Mwatate', 'Community Development Fund', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.4912', '38.27077', '2025-07-13 05:15:02'),
+(3367, 'Rekeke Model Health Centre', '17114', 'Taita Taveta', 'Taveta', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.42811', '37.73319', '2025-07-13 05:15:02'),
+(3368, 'Shelemba', '17120', 'Taita Taveta', 'Mwatate', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.43143', '38.46534', '2025-07-13 05:15:02'),
+(3369, 'Modambogho Dispensary', '17126', 'Taita Taveta', 'Mwatate', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.48746', '37.71496', '2025-07-13 05:15:02'),
+(3370, 'Manoa Dispensary', '17127', 'Taita Taveta', 'Mwatate', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.59492', '38.33253', '2025-07-13 05:15:02'),
+(3371, 'Mbaga Dispensary', '17672', 'Taita Taveta', 'Mwatate', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-3.44355', '38.31014', '2025-07-13 05:15:02'),
+(3372, 'Mahandakini Dispensary', '18187', 'Taita Taveta', 'Taveta', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.24697', '37.72795', '2025-07-13 05:15:02'),
+(3373, 'Bura Health Centre', '18312', 'Taita Taveta', 'Mwatate', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.18281', '39.83883', '2025-07-13 05:15:02'),
+(3374, 'St Joseph Mission Dispensary Chumvini', '18601', 'Taita Taveta', 'Taveta', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', '-3.20944', '37.71416', '2025-07-13 05:15:02'),
+(3375, 'Maungu Model Health Centre', '18858', 'Taita Taveta', 'Voi', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.56177', '38.75418', '2025-07-13 05:15:02'),
+(3376, 'Wundanyi GK Prisons', '19735', 'Taita Taveta', 'Wundanyi', 'Other Public Institution', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3377, 'Mwangea Dispensary', '22464', 'Taita Taveta', 'Voi', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3378, 'St. Joseph Catholic dipensary Maungu', '22771', 'Taita Taveta', 'Voi', 'Kenya Episcopal Conference-Catholic Secretariat', 'Mkomani Clinic society', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3379, 'Joscare Medical Clinic', '23309', 'Taita Taveta', 'Taveta', 'Private Practice - Clinical Officer', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3380, 'Mleghwa Dispensary', '23752', 'Taita Taveta', 'Voi', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3381, 'Voi Prison', '30464', 'Taita Taveta', 'Voi', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3382, 'Bangali Dispensary', '11242', 'Tana River', 'Bura', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.72541', '39.01666', '2025-07-13 05:15:02'),
+(3383, 'Bura  Sub county Hospital', '11264', 'Tana River', 'Bura', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3384, 'Chewani Dispensary', '11283', 'Tana River', 'Galole', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.43728', '40.02169', '2025-07-13 05:15:02'),
+(3385, 'Chewele Dispensary', '11284', 'Tana River', 'Bura', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.158', '39.95162', '2025-07-13 05:15:02'),
+(3386, 'St Raphael Health Centre', '11366', 'Tana River', 'Galole', 'Other Faith Based', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.49901', '40.02795', '2025-07-13 05:15:02'),
+(3387, 'Garsen Health Centre', '11385', 'Tana River', 'Garsen', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-2.27086', '40.10759', '2025-07-13 05:15:02'),
+(3388, 'GK Prisons Dispensary (Tana River)', '11398', 'Tana River', 'Galole', 'Ministry of Health', 'No Partner', 'No Agency', 'IQCare-KeHMIS', 'Stalled/Inactive', 'On Premises', '-1.49866', '40.03417', '2025-07-13 05:15:02'),
+(3389, 'Hola District Hospital', '11411', 'Tana River', 'Galole', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.4988', '40.03025', '2025-07-13 05:15:02'),
+(3390, 'Idsowe Dispensary', '11418', 'Tana River', 'Garsen', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-2.29629', '40.12269', '2025-07-13 05:15:02'),
+(3391, 'Kipini Health Centre', '11484', 'Tana River', 'Garsen', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-2.523', '40.52787', '2025-07-13 05:15:02'),
+(3392, 'Madogo Health Centre', '11533', 'Tana River', 'Bura', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.47267', '39.60731', '2025-07-13 05:15:02'),
+(3393, 'Makere Dispensary', '11548', 'Tana River', 'Galole', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.3372', '40.00067', '2025-07-13 05:15:02'),
+(3394, 'Maziwa Dispensary', '11586', 'Tana River', 'Garsen', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-2.18442', '40.13482', '2025-07-13 05:15:02'),
+(3395, 'Mlanjo Dispensary', '11635', 'Tana River', 'Bura', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.31863', '39.51712', '2025-07-13 05:15:02'),
+(3396, 'Ngao Sub County Hospital', '11711', 'Tana River', 'Garsen', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3397, 'Oda Dispensary', '11725', 'Tana River', 'Garsen', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-2.46871', '40.19368', '2025-07-13 05:15:02'),
+(3398, 'Pumwani Dispensary', '11744', 'Tana River', 'Galole', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.6107', '40.06827', '2025-07-13 05:15:02'),
+(3399, 'Semikaro Dispensary', '11778', 'Tana River', 'Garsen', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-2.50869', '40.28561', '2025-07-13 05:15:02'),
+(3400, 'Sombo Dispensary', '11804', 'Tana River', 'Bura', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.59172', '39.69671', '2025-07-13 05:15:02'),
+(3401, 'Wenje Dispensary', '11903', 'Tana River', 'Galole', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3402, 'Mwina Dispensary', '16194', 'Tana River', 'Garsen', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-2.06178', '40.17506', '2025-07-13 05:15:02'),
+(3403, 'Kulesa Dispensary', '16195', 'Tana River', 'Garsen', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-2.18831', '40.0867', '2025-07-13 05:15:02'),
+(3404, 'Shirikisho Medical Dispensary', '16200', 'Tana River', 'Garsen', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-2.41364', '40.0899', '2025-07-13 05:15:02'),
+(3405, 'Roka', '17077', 'Tana River', 'Bura', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.2329', '39.96781', '2025-07-13 05:15:02'),
+(3406, 'Baragu Health Centre', '11942', 'Tharaka-Nithi', 'Mwimbi', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.24794', '37.67972', '2025-07-13 05:15:02'),
+(3407, 'Cheera Health Center', '11968', 'Tharaka-Nithi', 'Chuka', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3408, 'Chiakariga Health Centre', '11969', 'Tharaka-Nithi', 'Tharaka South', 'Ministry of Health', 'DREAM Kenya Trust', 'German cooperation and Community of SantEgidio', 'KenyaEMR', 'Active', 'On Premises', '-0.2801', '37.92109', '2025-07-13 05:15:02'),
+(3409, 'Chogoria (PCEA) Hospital', '11970', 'Tharaka-Nithi', 'Mwimbi', 'Christian Health Association of Kenya', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.23033', '37.62818', '2025-07-13 05:15:02'),
+(3410, 'Chuka Cottage Hospital', '11972', 'Tharaka-Nithi', 'Chuka', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.33657', '37.64737', '2025-07-13 05:15:02'),
+(3411, 'Chuka District Hospital', '11973', 'Tharaka-Nithi', 'Chuka', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.32954', '37.65537', '2025-07-13 05:15:02'),
+(3412, 'Gaciongo Dispensary', '12024', 'Tharaka-Nithi', 'Tharaka North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.01172', '38.01706', '2025-07-13 05:15:02'),
+(3413, 'Gatunga Health Centre', '12034', 'Tharaka-Nithi', 'Tharaka South', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.29656', '37.9423', '2025-07-13 05:15:02'),
+(3414, 'Gianchuku Dispensary', '12037', 'Tharaka-Nithi', 'Mwimbi', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.21151', '37.60263', '2025-07-13 05:15:02'),
+(3415, 'Ikuu Dispensary', '12081', 'Tharaka-Nithi', 'Chuka', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.3704', '37.64686', '2025-07-13 05:15:02'),
+(3416, 'Kaanwa Dispensary', '12119', 'Tharaka-Nithi', 'Igambangombe', 'Christian Health Association of Kenya', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.32152', '37.72414', '2025-07-13 05:15:02'),
+(3417, 'Kajuki Health Centre', '12132', 'Tharaka-Nithi', 'Igambangombe', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.33542', '37.83123', '2025-07-13 05:15:02'),
+(3418, 'Kalewa Dispensary', '12148', 'Tharaka-Nithi', 'Mwimbi', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.26455', '37.60916', '2025-07-13 05:15:02'),
+(3419, 'Kamaindi Dispensary', '12159', 'Tharaka-Nithi', 'Igambangombe', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.38057', '37.83906', '2025-07-13 05:15:02'),
+(3420, 'Kambandi Dispensary', '12162', 'Tharaka-Nithi', 'Chuka', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.35005', '37.67238', '2025-07-13 05:15:02'),
+(3421, 'Kamwathu Dispensary', '12170', 'Tharaka-Nithi', 'Tharaka North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.22042', '38.05772', '2025-07-13 05:15:02'),
+(3422, 'Kathangacini Dispensary', '12222', 'Tharaka-Nithi', 'Tharaka North', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.09756', '38.14709', '2025-07-13 05:15:02'),
+(3423, 'Kiamuchairu Health Centre', '12272', 'Tharaka-Nithi', 'Mwimbi', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.22133', '37.66586', '2025-07-13 05:15:02'),
+(3424, 'Kiamuchii Dispensary', '12273', 'Tharaka-Nithi', 'Chuka', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.38966', '37.70472', '2025-07-13 05:15:02'),
+(3425, 'Kiangondu Dispensary', '12277', 'Tharaka-Nithi', 'Chuka', 'Christian Health Association of Kenya', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.32099', '37.6219', '2025-07-13 05:15:02'),
+(3426, 'Kibugua Health Centre', '12288', 'Tharaka-Nithi', 'Chuka', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.36733', '37.61481', '2025-07-13 05:15:02'),
+(3427, 'Kieni Model Health Centre', '12295', 'Tharaka-Nithi', 'Mwimbi', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.21262', '37.70554', '2025-07-13 05:15:02'),
+(3428, 'Kiereni Dispensary', '12297', 'Tharaka-Nithi', 'Chuka', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.3513', '37.64953', '2025-07-13 05:15:02'),
+(3429, 'Kiini Health Centre', '12301', 'Tharaka-Nithi', 'Muthambi', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.29169', '37.66626', '2025-07-13 05:15:02'),
+(3430, 'Magenka Dispensary', '12443', 'Tharaka-Nithi', 'Chuka', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.42056', '37.66579', '2025-07-13 05:15:02'),
+(3431, 'Magutuni District Hospital', '12445', 'Tharaka-Nithi', 'Mwimbi', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.22513', '37.73651', '2025-07-13 05:15:02'),
+(3432, 'Minugu Dispensary', '12528', 'Tharaka-Nithi', 'Muthambi', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.30537', '37.62907', '2025-07-13 05:15:02'),
+(3433, 'Mpukoni Health Centre', '12546', 'Tharaka-Nithi', 'Chuka', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.38228', '37.66304', '2025-07-13 05:15:02'),
+(3434, 'Mukothima Health Centre', '12560', 'Tharaka-Nithi', 'Tharaka North', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.01939', '37.94181', '2025-07-13 05:15:02'),
+(3435, 'Mukui Health Centre', '12561', 'Tharaka-Nithi', 'Mwimbi', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.28584', '37.72149', '2025-07-13 05:15:02'),
+(3436, 'Mukuuni Dispensary', '12563', 'Tharaka-Nithi', 'Chuka', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.39157', '37.65198', '2025-07-13 05:15:02'),
+(3437, 'Muthambi Health Centre', '12589', 'Tharaka-Nithi', 'Muthambi', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.27457', '37.66054', '2025-07-13 05:15:02'),
+(3438, 'Mutindwa Dispensary', '12597', 'Tharaka-Nithi', 'Mwimbi', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.24269', '37.60172', '2025-07-13 05:15:02'),
+(3439, 'Nguruki-Iruma Dispensary', '12659', 'Tharaka-Nithi', 'Mwimbi', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.22126', '37.689', '2025-07-13 05:15:02'),
+(3440, 'Nkondi Health centre', '12665', 'Tharaka-Nithi', 'Tharaka South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02');
+INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(3441, 'St Orsola Mission Hospital', '12769', 'Tharaka-Nithi', 'Tharaka South', 'Christian Health Association of Kenya', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.31621', '37.90028', '2025-07-13 05:15:02'),
+(3442, 'Thanantu Faith Hospital', '12793', 'Tharaka-Nithi', 'Tharaka North', 'Private Enterprise (Institution)', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3443, 'Tharaka District Hospital', '12795', 'Tharaka-Nithi', 'Tharaka South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.15802', '37.97501', '2025-07-13 05:15:02'),
+(3444, 'Tunyai Health centre', '12813', 'Tharaka-Nithi', 'Tharaka South', 'Ministry of Health', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3445, 'Presbyterian Ttc Rubate Health Centre', '16233', 'Tharaka-Nithi', 'Chuka', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.39741', '37.6815', '2025-07-13 05:15:02'),
+(3446, 'Majira Dispensary', '17891', 'Tharaka-Nithi', 'Mwimbi', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.21229', '37.62527', '2025-07-13 05:15:02'),
+(3447, 'Gatunga Model Health Centre', '18080', 'Tharaka-Nithi', 'Tharaka North', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.10257', '38.01565', '2025-07-13 05:15:02'),
+(3448, 'Redeemed Gospel Church VCT', '18822', 'Tharaka-Nithi', 'Chuka', 'Other Faith Based', 'No Partner', 'No Agency', 'KenyaEMR', 'Active', 'On Premises', '-0.33059', '37.65416', '2025-07-13 05:15:02'),
+(3449, 'Ushirika Medical Clinic Maara', '18949', 'Tharaka-Nithi', 'Mwimbi', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.22929', '37.6281', '2025-07-13 05:15:02'),
+(3450, 'Chuka Dice', '19882', 'Tharaka-Nithi', 'Meru South', 'Non-Governmental Organizations', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3451, 'Kibunga Sub-District Hospital', '23887', 'Tharaka-Nithi', 'Tharaka South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.0765', '37.90707', '2025-07-13 05:15:02'),
+(3452, 'Andersen Medical Centre', '14203', 'Trans Nzoia', 'Endebess', 'Private Enterprise (Institution)', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.20451', '34.78798', '2025-07-13 05:15:02'),
+(3453, 'Bondeni Health Centre (Trans Nzoia - Saboti)', '14264', 'Trans Nzoia', 'Saboti', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3454, 'Chepchoina Dispensary', '14332', 'Trans Nzoia', 'Endebess', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.20285', '34.81041', '2025-07-13 05:15:02'),
+(3455, 'Chepsiro Health Centre', '14363', 'Trans Nzoia', 'Cherangany', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3456, 'Cherangany Sub County Hospital', '14379', 'Trans Nzoia', 'Cherangany', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3457, 'Cherangany Nursing Home', '14380', 'Trans Nzoia', 'Saboti', 'Private Enterprise (Institution)', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.99026', '35.00599', '2025-07-13 05:15:02'),
+(3458, 'Crystal Medical Clinic', '14399', 'Trans Nzoia', 'Saboti', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3459, 'Endebess Sub-County Hospital', '14455', 'Trans Nzoia', 'Endebess', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3460, 'Gitwamba Health Centre', '14512', 'Trans Nzoia', 'Saboti', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.93479', '34.76932', '2025-07-13 05:15:02'),
+(3461, 'GK Farm Prisons Health Centre', '14514', 'Trans Nzoia', 'Saboti', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3462, 'GK Remand Prison Dispensary Transnzoia', '14528', 'Trans Nzoia', 'Kitale', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3463, 'Goseta Dispensary', '14532', 'Trans Nzoia', 'Kwanza', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.0479', '35.03893', '2025-07-13 05:15:02'),
+(3464, 'Kaibei Dispensary', '14639', 'Trans Nzoia', 'Kwanza', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.08089', '34.80747', '2025-07-13 05:15:02'),
+(3465, 'Kaisagat Health Centre', '14646', 'Trans Nzoia', 'Kwanza', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.07622', '35.0449', '2025-07-13 05:15:02'),
+(3466, 'Kapkoi Health Centre (Kwanza)', '14720', 'Trans Nzoia', 'Kwanza', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.13017', '34.64278', '2025-07-13 05:15:02'),
+(3467, 'Kaplamai Health Centre', '14734', 'Trans Nzoia', 'Cherangany', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.9877', '35.12369', '2025-07-13 05:15:02'),
+(3468, 'Kapsara Sub County Hospital', '14753', 'Trans Nzoia', 'Cherangany', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3469, 'Kapsitwet Dispensary', '14762', 'Trans Nzoia', 'Kwanza', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.05803', '34.67999', '2025-07-13 05:15:02'),
+(3470, 'Kiminini Cottage Hospital', '14872', 'Trans Nzoia', 'Kiminini', 'Other Faith Based', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.89313', '34.92408', '2025-07-13 05:15:02'),
+(3471, 'Kimondo Dispensary', '14877', 'Trans Nzoia', 'Endebess', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', 'Stalled/Inactive', 'On Premises', '1.06903', '34.6748', '2025-07-13 05:15:02'),
+(3472, 'Kipkeikei Dispensary', '14895', 'Trans Nzoia', 'Cherangany', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.01374', '35.2093', '2025-07-13 05:15:02'),
+(3473, 'Kitalale Dispensary', '14946', 'Trans Nzoia', 'Saboti', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.984', '34.91626', '2025-07-13 05:15:02'),
+(3474, 'Kitale County Hospital', '14947', 'Trans Nzoia', 'Kiminini', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3475, 'Kobos Health Centre', '14958', 'Trans Nzoia', 'Kwanza', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.0856', '34.67853', '2025-07-13 05:15:02'),
+(3476, 'Kwanza Sub County Hospital', '15003', 'Trans Nzoia', 'Kwanza', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.09779', '34.69957', '2025-07-13 05:15:02'),
+(3477, 'Lukhome Health Centre', '15101', 'Trans Nzoia', 'Saboti', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3478, 'Motosiet Health Centre', '15234', 'Trans Nzoia', 'Cherangany', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3479, 'Mt Elgon National Park Dispensary', '15240', 'Trans Nzoia', 'Endebess', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.02393', '34.77484', '2025-07-13 05:15:02'),
+(3480, 'Neema Tunza Medical Clinic', '15329', 'Trans Nzoia', 'Kwanza', 'Private Enterprise (Institution)', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3481, 'Nzoia Health centre', '15381', 'Trans Nzoia', 'Cherangany', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3482, 'Saboti Sub County Hospital', '15508', 'Trans Nzoia', 'Saboti', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3483, 'Sikhendu Medical Clinic', '15569', 'Trans Nzoia', 'Kiminini', 'Private Enterprise (Institution)', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', '0.83565', '34.86581', '2025-07-13 05:15:02'),
+(3484, 'St Fredas Cottage Hospital', '15641', 'Trans Nzoia', 'Kiminini', 'Private Enterprise (Institution)', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3485, 'St Ursula Dispensary', '15669', 'Trans Nzoia', 'Kiminini', 'Other Faith Based', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '1.02161', '35.02685', '2025-07-13 05:15:02'),
+(3486, 'Suwerwa Health Centre', '15692', 'Trans Nzoia', 'Cherangany', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.05204', '35.22288', '2025-07-13 05:15:02'),
+(3487, 'Tom Mboya Health Centre', '15732', 'Trans Nzoia', 'Saboti', 'Local Authority', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3488, 'Top Station Dispensary', '15734', 'Trans Nzoia', 'Saboti', 'Local Authority', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.9841', '35.01288', '2025-07-13 05:15:02'),
+(3489, 'Tulwet Health Centre', '15747', 'Trans Nzoia', 'Kiminini', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.91937', '35.01247', '2025-07-13 05:15:02'),
+(3490, 'Weonia Health Centre', '15777', 'Trans Nzoia', 'Kiminini', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3491, 'Wiyeta Dispensary', '15783', 'Trans Nzoia', 'Cherangany', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3492, 'Bikeke Health Centre', '16361', 'Trans Nzoia', 'Kiminini', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3493, 'Kiminini Health Centre', '16362', 'Trans Nzoia', 'Kiminini', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.88156', '34.92952', '2025-07-13 05:15:02'),
+(3494, 'Matunda  Sub County Hospital', '16364', 'Trans Nzoia', 'Kiminini', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3495, 'Sitatunga Dispensary', '17027', 'Trans Nzoia', 'Cherangany', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.10395', '35.09968', '2025-07-13 05:15:02'),
+(3496, 'Namanjalala Dispensary', '17994', 'Trans Nzoia', 'Kwanza', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.04427', '34.6972', '2025-07-13 05:15:02'),
+(3497, 'Kitum Dispensary', '18216', 'Trans Nzoia', 'Endebess', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', '1.03417', '34.78163', '2025-07-13 05:15:02'),
+(3498, 'St Raphael Dispensary', '18515', 'Trans Nzoia', 'Saboti', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.03879', '34.98111', '2025-07-13 05:15:02'),
+(3499, 'Bidii Health Centre', '18532', 'Trans Nzoia', 'Kwanza', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.05023', '35.01692', '2025-07-13 05:15:02'),
+(3500, 'Mitume Dispensary', '18752', 'Trans Nzoia', 'Saboti', 'Local Authority', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.02954', '34.98474', '2025-07-13 05:15:02'),
+(3501, 'Mitume Dispensary Kitale', '19260', 'Trans Nzoia', 'Saboti', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', '1.02955', '34.98472', '2025-07-13 05:15:02'),
+(3502, 'St Josephs Boys National School Disp', '19683', 'Trans Nzoia', 'Kiminini', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3503, 'Keiyo Dispensary', '19752', 'Trans Nzoia', 'Kwanza', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.1378', '35.00891', '2025-07-13 05:15:02'),
+(3504, 'Bwayi Dispensary', '19756', 'Trans Nzoia', 'Kwanza', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.07757', '35.02807', '2025-07-13 05:15:02'),
+(3505, 'Maili Saba Dispensary', '20002', 'Trans Nzoia', 'Kiminini', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.95137', '35.06837', '2025-07-13 05:15:02'),
+(3506, 'Sikhendu Dispensary', '20162', 'Trans Nzoia', 'Kiminini', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3507, 'Holy Rosary Health Centre', '21965', 'Trans Nzoia', 'Cherangany', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3508, 'The Galilee Medical Center Milimani Kitale limited', '22065', 'Trans Nzoia', 'Kiminini', 'Private Practice - Medical Specialist', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3509, 'Kibormos Dispensary', '22340', 'Trans Nzoia', 'Kiminini', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3510, 'Nyakoigwana Dispensary', '22571', 'Trans Nzoia', 'Endebess', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3511, 'Rafiki Health Centre', '22624', 'Trans Nzoia', 'Saboti', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3512, 'Kolongolo Mission Dispensary', '25007', 'Trans Nzoia', 'Kwanza', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3513, 'Wamalwa Kijana Teaching and Referral Hospital', '27376', 'Trans Nzoia', 'Saboti', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3514, 'Elelea Health Centre', '14436', 'Turkana', 'Turkana East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '2.141', '36.372', '2025-07-13 05:15:02'),
+(3515, 'Eliye Springs (AIC) Dispensary', '14440', 'Turkana', 'Turkana Central', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', '3.242802', '36.039565', '2025-07-13 05:15:02'),
+(3516, 'GK Prisons Dispensary (Turkana Central)', '14527', 'Turkana', 'Turkana Central', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '3.10735', '35.60491', '2025-07-13 05:15:02'),
+(3517, 'Kapooka Health Centre', '14579', 'Turkana', 'Turkana West', 'Non-Governmental Organizations', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3518, 'Kainuk Health Centre', '14645', 'Turkana', 'Turkana South', 'Ministry of Health', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.84694', '35.6562', '2025-07-13 05:15:02'),
+(3519, 'Kakuma Mission Hospital', '14655', 'Turkana', 'Turkana West', 'Kenya Episcopal Conference of Catholic Bishops', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '3.70756', '34.86506', '2025-07-13 05:15:02'),
+(3520, 'Kakwanyang Dispensary', '14656', 'Turkana', 'Turkana Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '3.15338', '35.67634', '2025-07-13 05:15:02'),
+(3521, 'Kalemungorok Dispensary', '14660', 'Turkana', 'Turkana South', 'Ministry of Health', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '2.137649', '35.49764', '2025-07-13 05:15:02'),
+(3522, 'St. Bridgit Kalemuyang Dispensary', '14661', 'Turkana', 'Loima', 'Kenya Episcopal Conference of Catholic Bishops', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3523, 'Kalokol (AIC) Health Centre', '14663', 'Turkana', 'Turkana Central', 'Christian Health Association of Kenya', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '3.5297', '35.86744', '2025-07-13 05:15:02'),
+(3524, 'Kanawoi Dispensary', '14683', 'Turkana', 'Turkana Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '3.1057', '35.6145', '2025-07-13 05:15:02'),
+(3525, 'Kangagetei Dispensary', '14685', 'Turkana', 'Turkana Central', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', '3.1551', '35.86313', '2025-07-13 05:15:02'),
+(3526, 'Kangatosa Dispensary', '14687', 'Turkana', 'Turkana Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '3.127', '35.96475', '2025-07-13 05:15:02'),
+(3527, 'Kapedo Sub County Hospital', '14699', 'Turkana', 'Turkana East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3528, 'Kataboi dispensary', '14814', 'Turkana', 'Turkana North', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '3.90511', '35.7514', '2025-07-13 05:15:02'),
+(3529, 'Katilu Sub County Hospital', '14818', 'Turkana', 'Turkana South', 'Ministry of Health', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3530, 'Kokiselei Dispensary', '14974', 'Turkana', 'Turkana North', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '4.0556', '35.7033', '2025-07-13 05:15:02'),
+(3531, 'Kokuro Health Centre', '14975', 'Turkana', 'Kibish', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3532, 'Letea Dispensary', '15031', 'Turkana', 'Turkana West', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', '3.56138', '34.8001', '2025-07-13 05:15:02'),
+(3533, 'Lochoraikeny Dispensary', '15044', 'Turkana', 'Turkana Central', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '3.34332', '35.87386', '2025-07-13 05:15:02'),
+(3534, 'Lodwar County Referral Hospital', '15049', 'Turkana', 'Turkana Central', 'Ministry of Health', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3535, 'Lokamarinyang Dispensary', '15054', 'Turkana', 'Kibish', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '5.30728', '35.6544', '2025-07-13 05:15:02'),
+(3536, 'Lokangae Health Centre', '15055', 'Turkana', 'Turkana West', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '4.107202', '34.890223', '2025-07-13 05:15:02'),
+(3537, 'Lokichar (RCEA) Health Centre', '15057', 'Turkana', 'Turkana South', 'Christian Health Association of Kenya', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '2.41696', '35.7151', '2025-07-13 05:15:02'),
+(3538, 'Lokichogio (AIC) Health Centre', '15059', 'Turkana', 'Turkana West', 'Christian Health Association of Kenya', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '4.21267', '34.2429', '2025-07-13 05:15:02'),
+(3539, 'Lokiriama Dispensary', '15061', 'Turkana', 'Loima', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '2.75586', '34.87965', '2025-07-13 05:15:02'),
+(3540, 'Lokitaung Sub County Hospital', '15062', 'Turkana', 'Turkana North', 'Ministry of Health', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '4.26233', '35.75434', '2025-07-13 05:15:02'),
+(3541, 'Lokwii Health Center', '15067', 'Turkana', 'Turkana East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '2.02338', '36.3584', '2025-07-13 05:15:02'),
+(3542, 'Lomil Dispensary', '15072', 'Turkana', 'Loima', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '3.34238', '35.23822', '2025-07-13 05:15:02'),
+(3543, 'Lopiding Sub County Hospital', '15081', 'Turkana', 'Turkana West', 'Ministry of Health', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3544, 'Lorengelup Dispensary', '15084', 'Turkana', 'Turkana Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '3.03066', '35.56076', '2025-07-13 05:15:02'),
+(3545, 'St Elizabeth Lorugum Health Centre', '15089', 'Turkana', 'Loima', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '2.90477', '35.2055', '2025-07-13 05:15:02'),
+(3546, 'Lowarengak Health Center', '15096', 'Turkana', 'Turkana North', 'Ministry of Health', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3547, 'Makutano Health Centre (Turkana West)', '15117', 'Turkana', 'Turkana West', 'Ministry of Health', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '3.66088', '35.4116', '2025-07-13 05:15:02'),
+(3548, 'Milima Tatu Dispensary', '15186', 'Turkana', 'Turkana North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '4.28663', '35.4202', '2025-07-13 05:15:02'),
+(3549, 'Nadapal Dispensay', '15273', 'Turkana', 'Loima', 'Ministry of Health', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3550, 'Nadoto Dispensary', '15275', 'Turkana', 'Turkana Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '3.08572', '36.09294', '2025-07-13 05:15:02'),
+(3551, 'Nakalei Dispensary', '15284', 'Turkana', 'Turkana South', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3552, 'Nakwamoru Health Centre', '15292', 'Turkana', 'Turkana South', 'Ministry of Health', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Stalled/Inactive', 'On Premises', '2.06372', '35.42058', '2025-07-13 05:15:02'),
+(3553, 'Namoruputh (PAG) Health Centre', '15299', 'Turkana', 'Loima', 'Christian Health Association of Kenya', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '2.84401', '35.04051', '2025-07-13 05:15:02'),
+(3554, 'Nanam Dispensary', '15303', 'Turkana', 'Turkana West', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '4.23528', '34.6506', '2025-07-13 05:15:02'),
+(3555, 'Nariokotome Dispensary', '15310', 'Turkana', 'Turkana North', 'Ministry of Health', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '4.1442', '35.91058', '2025-07-13 05:15:02'),
+(3556, 'Oropoi Dispensary', '15445', 'Turkana', 'Turkana West', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', '', 'On Premises', '3.81982', '34.3801', '2025-07-13 05:15:02'),
+(3557, 'St. Catherines Napetet Dispensary', '15634', 'Turkana', 'Turkana Central', 'Kenya Episcopal Conference of Catholic Bishops', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3558, 'St Marys Kalokol PHC', '15656', 'Turkana', 'Turkana Central', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3559, 'St Monica Nakwamekwi Dispensary', '15661', 'Turkana', 'Turkana Central', 'Kenya Episcopal Conference- Catholic Secretariat', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3560, 'St Patricks Kanamkemer Dispensary', '15662', 'Turkana', 'Turkana Central', 'Kenya Episcopal Conference- Catholic Secretariat', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3561, 'Turkwel Health Centre (Loima)', '15754', 'Turkana', 'Loima', 'Ministry of Health', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3562, 'Lokori Primary Health Care Programme', '16324', 'Turkana', 'Turkana East', 'Kenya Episcopal Conference- Catholic Secretariat', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.83281', '36.2282', '2025-07-13 05:15:02'),
+(3563, 'Lomelo Dispensary', '16698', 'Turkana', 'Turkana East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '1.45028', '36.1929', '2025-07-13 05:15:02'),
+(3564, 'Nakukulas Dispensary', '16700', 'Turkana', 'Turkana East', 'Community', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '1.90476', '35.9253', '2025-07-13 05:15:02'),
+(3565, 'Kalimapus Dispensary', '17231', 'Turkana', 'Turkana Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '3.55141', '35.91854', '2025-07-13 05:15:02'),
+(3566, 'Kaitese Dispensary', '17477', 'Turkana', 'Loima', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '3.00493', '35.43402', '2025-07-13 05:15:02'),
+(3567, 'Nadunga Dispensary', '18099', 'Turkana', 'Turkana North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3568, 'Nakechichok Dispensary', '18354', 'Turkana', 'Turkana Central', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '3.08043', '35.51226', '2025-07-13 05:15:02'),
+(3569, 'Nasiger Dispensary', '18355', 'Turkana', 'Loima', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '3.36157', '35.43788', '2025-07-13 05:15:02'),
+(3570, 'Lomekwi Dispensary', '18370', 'Turkana', 'Turkana North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '3.92428', '35.83682', '2025-07-13 05:15:02'),
+(3571, 'Lolupe Dispensary (Turkana Central)', '20000', 'Turkana', 'Turkana Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3572, 'Kaakongu Dispensary', '20222', 'Turkana', 'Turkana South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3573, 'Lotubae (AIC) Dispensary', '20592', 'Turkana', 'Turkana East', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3574, 'Katilia Dispensary', '20593', 'Turkana', 'Turkana East', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '2.132', '36.11586', '2025-07-13 05:15:02'),
+(3575, 'Napak Dispensary', '20638', 'Turkana', 'Kibish', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '4.675', '35.283', '2025-07-13 05:15:02'),
+(3576, 'Kalokol Dispensary', '20773', 'Turkana', 'Turkana Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '2.0744', '35.44936', '2025-07-13 05:15:02'),
+(3577, 'Lorugum Sub County hospital', '20826', 'Turkana', 'Loima', 'Ministry of Health', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '2.876', '35.2565', '2025-07-13 05:15:02'),
+(3578, 'Lokori Health Centre', '21316', 'Turkana', 'Turkana East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3579, 'Kakuma Health Centre', '21335', 'Turkana', 'Turkana West', 'Ministry of Health', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3580, 'Lokichar Health Centre', '21345', 'Turkana', 'Turkana South', 'Ministry of Health', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3581, 'Kaesogoletom dispensary', '21350', 'Turkana', 'Loima', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3582, 'Nakiria Dispensary', '21366', 'Turkana', 'Turkana Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3583, 'Kapokor Dispensary', '21369', 'Turkana', 'Turkana Central', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3584, 'Teremkus Dispensary', '21375', 'Turkana', 'Turkana West', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3585, 'Natukobenyo Health Centre', '22215', 'Turkana', 'Turkana West', 'Non-Governmental Organizations', 'USAID Imarisha Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3586, 'Kawalase Dispensary', '22409', 'Turkana', 'Turkana Central', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3587, 'Sasame Dispensary', '22852', 'Turkana', 'Kibish', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3588, 'Nabulon Dispensary', '23530', 'Turkana', 'Turkana Central', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3589, 'Barsombe Dispensary', '14239', 'Uasin Gishu', 'Soy', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', '0.89253', '35.3301', '2025-07-13 05:15:02'),
+(3590, 'Cedar Associate Clinic', '14280', 'Uasin Gishu', 'Ainabkoi', 'Private Practice - General Practitioner', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.51474', '35.27871', '2025-07-13 05:15:02'),
+(3591, 'Chepkanga Health Centre', '14335', 'Uasin Gishu', 'Moiben', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.8838', '35.38779', '2025-07-13 05:15:02'),
+(3592, 'Chepkemel Dispensary', '14337', 'Uasin Gishu', 'Turbo', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.591733', '34.9757', '2025-07-13 05:15:02'),
+(3593, 'Chepkigen Dispensary', '14341', 'Uasin Gishu', 'Kesses', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.39066', '35.3297', '2025-07-13 05:15:02'),
+(3594, 'Chepsaita Dispensary', '14358', 'Uasin Gishu', 'Turbo', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.57165', '34.8947', '2025-07-13 05:15:02'),
+(3595, 'Cheramei Dispensary', '14377', 'Uasin Gishu', 'Turbo', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.60768', '35.14578', '2025-07-13 05:15:02'),
+(3596, 'Elgeyo Boader Dispensary', '14437', 'Uasin Gishu', 'Moiben', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.50468', '35.42991', '2025-07-13 05:15:02'),
+(3597, 'GK Prisons Dispensary (Eldoret East)', '14519', 'Uasin Gishu', 'Moiben', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.52636', '35.28638', '2025-07-13 05:15:02'),
+(3598, 'GK Prisons Dispensary (Ngeria)', '14524', 'Uasin Gishu', 'Kapseret', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.36829', '35.28437', '2025-07-13 05:15:02'),
+(3599, 'Huruma District Hospital', '14555', 'Uasin Gishu', 'Turbo', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.52949', '35.24714', '2025-07-13 05:15:02'),
+(3600, 'Tingwa Dispensary', '14570', 'Uasin Gishu', 'Ainabkoi', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', 'IQCare-KeHMIS', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3601, 'Kapsoya Health Centre', '14769', 'Uasin Gishu', 'Ainabkoi', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.51462', '35.3007', '2025-07-13 05:15:02'),
+(3602, 'Kapteldon Health Centre', '14779', 'Uasin Gishu', 'Kapseret', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.43008', '35.20838', '2025-07-13 05:15:02'),
+(3603, 'Kapyemit Dispensary', '14799', 'Uasin Gishu', 'Turbo', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.58449', '35.22473', '2025-07-13 05:15:02'),
+(3604, 'Kesses Health Centre', '14841', 'Uasin Gishu', 'Kesses', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.29186', '35.32171', '2025-07-13 05:15:02'),
+(3605, 'Kipkabus Health Centre', '14893', 'Uasin Gishu', 'Ainabkoi', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.29196', '35.4978', '2025-07-13 05:15:02'),
+(3606, 'Kisor Dispensary', '14945', 'Uasin Gishu', 'Kapseret', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', '0.51965', '35.20554', '2025-07-13 05:15:02'),
+(3607, 'Kuinet Dispensary', '14999', 'Uasin Gishu', 'Soy', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', '0.62662', '35.31076', '2025-07-13 05:15:02'),
+(3608, 'Langas RCEA', '15011', 'Uasin Gishu', 'Kapseret', 'Other Faith Based', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.47862', '35.26149', '2025-07-13 05:15:02'),
+(3609, 'Mary Immaculate Dispensary (Eldoret East)', '15147', 'Uasin Gishu', 'Ainabkoi', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.43334', '35.46053', '2025-07-13 05:15:02'),
+(3610, 'Mediheal Hospital', '15167', 'Uasin Gishu', 'Ainabkoi', 'Private Enterprise (Institution)', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.50764', '35.29529', '2025-07-13 05:15:02'),
+(3611, 'Meibeki Dispensary', '15169', 'Uasin Gishu', 'Moiben', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', '0.88301', '35.38779', '2025-07-13 05:15:02'),
+(3612, 'Merewet Dispensary', '15177', 'Uasin Gishu', 'Soy', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.72661', '35.32004', '2025-07-13 05:15:02'),
+(3613, 'Moi Teaching Refferal Hospital', '15204', 'Uasin Gishu', 'Ainabkoi', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.51464', '35.27916', '2025-07-13 05:15:02'),
+(3614, 'Moi University Health Centre', '15205', 'Uasin Gishu', 'Kesses', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.28372', '35.28756', '2025-07-13 05:15:02'),
+(3615, 'Moiben Health Centre', '15206', 'Uasin Gishu', 'Moiben', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.81893', '35.38611', '2025-07-13 05:15:02'),
+(3616, 'Mois Bridge Health Centre', '15209', 'Uasin Gishu', 'Soy', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3617, 'Muyengwet Dispensary', '15264', 'Uasin Gishu', 'Moiben', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', '0.519983', '35.36415', '2025-07-13 05:15:02'),
+(3618, 'Osorongai Dispensary', '15449', 'Uasin Gishu', 'Turbo', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.596167', '34.973978', '2025-07-13 05:15:02'),
+(3619, 'Pioneer Health Centre', '15463', 'Uasin Gishu', 'Kapseret', 'Local Authority', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.50895', '35.26819', '2025-07-13 05:15:02'),
+(3620, 'Plateau Hospital', '15464', 'Uasin Gishu', 'Ainabkoi', 'Other Faith Based', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.42511', '35.39032', '2025-07-13 05:15:02'),
+(3621, 'Railways Dispensary', '15478', 'Uasin Gishu', 'Soy', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', '0.51596', '35.27757', '2025-07-13 05:15:02'),
+(3622, 'Soy Health Centre', '15623', 'Uasin Gishu', 'Soy', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.67699', '35.17256', '2025-07-13 05:15:02'),
+(3623, 'St Marys Kapsoya Dispensary', '15655', 'Uasin Gishu', 'Ainabkoi', 'Other Faith Based', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3624, 'Turbo Sub County Hospital', '15753', 'Uasin Gishu', 'Turbo', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3625, 'Uasin Gishu District Hospital', '15758', 'Uasin Gishu', 'Moiben', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.51799', '35.27707', '2025-07-13 05:15:02'),
+(3626, 'Uhuru Dispensary', '15759', 'Uasin Gishu', 'Ainabkoi', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', '0.49078', '35.41968', '2025-07-13 05:15:02'),
+(3627, 'West Health Centre', '15779', 'Uasin Gishu', 'Turbo', 'Private Enterprise (Institution)', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3628, 'Ziwa Sub County Hospital', '15788', 'Uasin Gishu', 'Soy', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3629, 'Burnt Forest Sub County Hospital', '16347', 'Uasin Gishu', 'Ainabkoi', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3630, 'Emc Kimumu Dispensary', '16349', 'Uasin Gishu', 'Moiben', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.55489', '35.32465', '2025-07-13 05:15:02'),
+(3631, 'Reale Hospital Eldoret', '17243', 'Uasin Gishu', 'Kesses', 'Other Faith Based', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3632, 'Moi Barracks', '17485', 'Uasin Gishu', 'Turbo', 'Armed Forces', 'HJF-Nairobi', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3633, 'St Lukes Orthopaedic and Trauma Hospital', '18776', 'Uasin Gishu', 'Ainabkoi', 'Private Practice - Medical Specialist', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.5103', '35.28429', '2025-07-13 05:15:02'),
+(3634, 'Reale Medical Clinic', '18983', 'Uasin Gishu', 'Kesses', 'Private Enterprise (Institution)', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Stalled/Inactive', 'On Premises', '0.51781', '35.27517', '2025-07-13 05:15:02'),
+(3635, 'Fountain Healthcare', '19173', 'Uasin Gishu', 'Ainabkoi', 'Private Practice - Medical Specialist', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '0.50927', '35.28773', '2025-07-13 05:15:02'),
+(3636, 'North Star Alliance Wellness Centre', '19206', 'Uasin Gishu', 'Ainabkoi', 'Non-Governmental Organizations', 'No Partner', 'No Agency', '', '', 'On Premises', '0.21609', '35.4326', '2025-07-13 05:15:02'),
+(3637, 'LeseruTrinity Mission Hospital', '20164', 'Uasin Gishu', 'Turbo', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3638, 'Alphima Medical Clinic', '23646', 'Uasin Gishu', 'Moiben', 'Private Practice - Clinical Officer', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3639, 'Banja Health Centre', '15805', 'Vihiga', 'Hamisi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.04438', '34.8298', '2025-07-13 05:15:02'),
+(3640, 'Boyani Dispensary', '15809', 'Vihiga', 'Hamisi', 'Other Faith Based', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '-0.01333', '34.73471', '2025-07-13 05:15:02'),
+(3641, 'Bugamangi Dispensary', '15814', 'Vihiga', 'Vihiga', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.06011', '34.71465', '2025-07-13 05:15:02'),
+(3642, 'Bugina Health Centre', '15815', 'Vihiga', 'Sabatia', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.149', '34.76777', '2025-07-13 05:15:02'),
+(3643, 'Buyangu Health Centre', '15839', 'Vihiga', 'Hamisi', 'Other Faith Based', 'No Partner', 'No Agency', '', '', 'On Premises', '0.03923', '34.74595', '2025-07-13 05:15:02'),
+(3644, 'Coptic Nursing Home', '15862', 'Vihiga', 'Luanda', 'Coptic Orthodox Church', 'Coptic Orthodox Church', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.01081', '34.60541', '2025-07-13 05:15:02'),
+(3645, 'Ebukanga Dispensary', '15865', 'Vihiga', 'Emuhaya', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.08468', '34.57881', '2025-07-13 05:15:02'),
+(3646, 'Ebusiratsi Health Centre', '15866', 'Vihiga', 'Emuhaya', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.07941', '34.63435', '2025-07-13 05:15:02'),
+(3647, 'Ebusyubi Dispensary', '15867', 'Vihiga', 'Luanda', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.015824', '34.5563', '2025-07-13 05:15:02'),
+(3648, 'Ekamanji Dispensary', '15868', 'Vihiga', 'Luanda', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.03427', '34.5926', '2025-07-13 05:15:02'),
+(3649, 'Ekwanda Health Centre', '15870', 'Vihiga', 'Luanda', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.01411', '34.57131', '2025-07-13 05:15:02'),
+(3650, 'Ematsuli Dispensary', '15875', 'Vihiga', 'Emuhaya', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.11624', '34.63229', '2025-07-13 05:15:02'),
+(3651, 'Emuhaya Sub County Referral Hospital', '15876', 'Vihiga', 'Luanda', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.11259', '34.63297', '2025-07-13 05:15:02'),
+(3652, 'Emusenjeli Dispensary', '15878', 'Vihiga', 'Luanda', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.0406', '34.64638', '2025-07-13 05:15:02'),
+(3653, 'Enzaro Health Centre', '15879', 'Vihiga', 'Vihiga', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.00135', '34.70239', '2025-07-13 05:15:02'),
+(3654, 'Equator Nursing and Maternity Home', '15880', 'Vihiga', 'Luanda', 'Private Practice - Unspecified', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.03427', '34.5926', '2025-07-13 05:15:02'),
+(3655, 'Esiarambatsi Health Centre', '15885', 'Vihiga', 'Emuhaya', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.08084', '34.60738', '2025-07-13 05:15:02'),
+(3656, 'Esitsaba Dispensary', '15887', 'Vihiga', 'Luanda', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.00975', '34.61374', '2025-07-13 05:15:02'),
+(3657, 'Givudimbuli Health Centre', '15889', 'Vihiga', 'Sabatia', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.08814', '34.7807', '2025-07-13 05:15:02'),
+(3658, 'Hamisi Sub County Hospital', '15894', 'Vihiga', 'Hamisi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3659, 'Iduku Dispensary', '15896', 'Vihiga', 'Vihiga', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.07738', '34.69369', '2025-07-13 05:15:02'),
+(3660, 'Inyali Dispensary', '15903', 'Vihiga', 'Sabatia', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.08883', '34.75611', '2025-07-13 05:15:02'),
+(3661, 'Ipali Health Centre', '15904', 'Vihiga', 'Emuhaya', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.0505', '34.58067', '2025-07-13 05:15:02'),
+(3662, 'Jumuia Mission Hospital Kaimosi', '15913', 'Vihiga', 'Hamisi', 'Other Faith Based', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3663, 'Kegondi Health Centre', '15928', 'Vihiga', 'Sabatia', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.13037', '34.73081', '2025-07-13 05:15:02'),
+(3664, 'Kima Mission Hospital', '15946', 'Vihiga', 'Luanda', 'Christian Health Association of Kenya', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.0261', '34.6237', '2025-07-13 05:15:02'),
+(3665, 'Likindu Dispensary', '15960', 'Vihiga', 'Hamisi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.01703', '34.6594', '2025-07-13 05:15:02'),
+(3666, 'Luanda Mch/Fp Clinic', '15962', 'Vihiga', 'Luanda', 'Private Practice - Nurse / Midwife', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.02562', '34.58494', '2025-07-13 05:15:02'),
+(3667, 'Luanda Town Dispensary', '15963', 'Vihiga', 'Luanda', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.02453', '34.58669', '2025-07-13 05:15:02'),
+(3668, 'Lyanaginga Health Centre', '15982', 'Vihiga', 'Vihiga', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.0165', '34.65925', '2025-07-13 05:15:02'),
+(3669, 'Mbale Rural Health Training Centre', '16012', 'Vihiga', 'Vihiga', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.08033', '34.72189', '2025-07-13 05:15:02'),
+(3670, 'Mulele Dispensary', '16032', 'Vihiga', 'Vihiga', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.04537', '34.68658', '2025-07-13 05:15:02'),
+(3671, 'Munoywa Dispensary', '16044', 'Vihiga', 'Sabatia', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.098079', '34.751059', '2025-07-13 05:15:02'),
+(3672, 'Musitinyi Dispensary', '16052', 'Vihiga', 'Luanda', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.05669', '34.65628', '2025-07-13 05:15:02'),
+(3673, 'Nadanya Dispensary', '16060', 'Vihiga', 'Sabatia', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.1', '34.68', '2025-07-13 05:15:02'),
+(3674, 'Sabatia Sub County Hospital', '16098', 'Vihiga', 'Sabatia', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3675, 'Serem Health Centre', '16103', 'Vihiga', 'Hamisi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.08013', '34.85275', '2025-07-13 05:15:02'),
+(3676, 'Shiru Health Centre', '16117', 'Vihiga', 'Hamisi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.16167', '34.91163', '2025-07-13 05:15:02'),
+(3677, 'Tigoi Health Centre', '16151', 'Vihiga', 'Hamisi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.00591', '34.72554', '2025-07-13 05:15:02'),
+(3678, 'Vihiga County Referral Hospital', '16157', 'Vihiga', 'Vihiga', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3679, 'Vihiga Health Centre', '16158', 'Vihiga', 'Vihiga', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.03903', '34.71465', '2025-07-13 05:15:02'),
+(3680, 'Junction Medical Clinic', '16450', 'Vihiga', 'Sabatia', 'Private Practice - Nurse / Midwife', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.115198', '34.7328', '2025-07-13 05:15:02'),
+(3681, 'Jepkoyai Dispensary', '16453', 'Vihiga', 'Hamisi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.00584', '34.72548', '2025-07-13 05:15:02'),
+(3682, 'Joint Partner Medical Clinic', '16455', 'Vihiga', 'Hamisi', 'Private Practice - Nurse / Midwife', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.14149', '34.8809', '2025-07-13 05:15:02'),
+(3683, 'Kaptech Dispensary', '16456', 'Vihiga', 'Hamisi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.16416', '34.82459', '2025-07-13 05:15:02'),
+(3684, 'Kaptisi Dispensary', '16457', 'Vihiga', 'Hamisi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.18418', '34.92219', '2025-07-13 05:15:02');
+INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(3685, 'Kimogoi Dispensary', '16458', 'Vihiga', 'Hamisi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.05252', '34.7792', '2025-07-13 05:15:02'),
+(3686, 'Emusire Sub County Hospital', '16979', 'Vihiga', 'Emuhaya', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3687, 'Ebukoolo Dispensary', '17113', 'Vihiga', 'Emuhaya', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.07013', '34.56275', '2025-07-13 05:15:02'),
+(3688, 'Givole Dispensary', '17182', 'Vihiga', 'Hamisi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.073', '34.80199', '2025-07-13 05:15:02'),
+(3689, 'Hema Medical Clinic', '17674', 'Vihiga', 'Hamisi', 'Private Practice - Nurse / Midwife', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.00025', '34.73726', '2025-07-13 05:15:02'),
+(3690, 'Itando Mission of Hope and Health Centre', '18512', 'Vihiga', 'Sabatia', 'Christian Health Association of Kenya', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.09916', '34.73476', '2025-07-13 05:15:02'),
+(3691, 'Vigetse Medical Clinic', '20692', 'Vihiga', 'Vihiga', 'Nursing Council of Kenya', 'Kenya Conference of Catholic Bishops-  ACTS', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3692, 'Mago Care Health Centre', '21115', 'Vihiga', 'Hamisi', 'Non-Governmental Organizations', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.1324', '34.78924', '2025-07-13 05:15:02'),
+(3693, 'Kisasi Dispensary', '21456', 'Vihiga', 'Hamisi', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3694, 'Buna Sub-District Hospital', '13312', 'Wajir', 'Wajir North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '2.79142', '39.49683', '2025-07-13 05:15:02'),
+(3695, 'Burder Health Centre', '13313', 'Wajir', 'Wajir South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '1.11326', '40.27095', '2025-07-13 05:15:02'),
+(3696, 'Bute District Hospital', '13314', 'Wajir', 'Wajir North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '3.37063', '39.42488', '2025-07-13 05:15:02'),
+(3697, 'Dadajabula Sub District Hospital', '13317', 'Wajir', 'Wajir South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.53621', '40.87265', '2025-07-13 05:15:02'),
+(3698, 'Diff Health Centre', '13328', 'Wajir', 'Wajir South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.99408', '40.95947', '2025-07-13 05:15:02'),
+(3699, 'Griftu District Hospital', '13352', 'Wajir', 'Wajir West', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '1.99695', '39.75472', '2025-07-13 05:15:02'),
+(3700, 'Habaswein District Hospital', '13357', 'Wajir', 'Wajir South', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '1.02714', '39.50908', '2025-07-13 05:15:02'),
+(3701, 'Wajir County Referral Hospital', '13452', 'Wajir', 'Wajir East', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '1.74742', '40.06259', '2025-07-13 05:15:02'),
+(3702, 'Amakuriat Dispensary', '14198', 'West Pokot', 'Pokot North', 'Other Faith Based', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '2.27808', '35.00542', '2025-07-13 05:15:02'),
+(3703, 'Chepareria Sub District Hospital', '14330', 'West Pokot', 'Pokot South', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.30047', '35.19926', '2025-07-13 05:15:02'),
+(3704, 'GK Prisons Dispensary (Kapenguria)', '14520', 'West Pokot', 'Turkana Central', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '1.22766', '35.12453', '2025-07-13 05:15:02'),
+(3705, 'Kabichbich Health Centre', '14615', 'West Pokot', 'Pokot South', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.20981', '35.27705', '2025-07-13 05:15:02'),
+(3706, 'Kacheliba District Hospital', '14634', 'West Pokot', 'Pokot North', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.49008', '35.01068', '2025-07-13 05:15:02'),
+(3707, 'Kanyarkwat Dispensary', '14689', 'West Pokot', 'West Pokot', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.40867', '35.03128', '2025-07-13 05:15:02'),
+(3708, 'Kapenguria County Referral Hospital', '14701', 'West Pokot', 'West Pokot', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3709, 'Kaptabuk Dispensary', '14772', 'West Pokot', 'Pokot South', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '1.20401', '35.36087', '2025-07-13 05:15:02'),
+(3710, 'Keringet Health Centre', '14837', 'West Pokot', 'West Pokot', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.21147', '35.04913', '2025-07-13 05:15:02'),
+(3711, 'Konyao Dispensary', '14988', 'West Pokot', 'Pokot North', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '1.78654', '35.05103', '2025-07-13 05:15:02'),
+(3712, 'Kopeeto Dispensary', '14989', 'West Pokot', 'Loima', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', 'Stalled/Inactive', 'On Premises', '2.31124', '35.22434', '2025-07-13 05:15:02'),
+(3713, 'Lomut Health Centre ', '15073', 'West Pokot', 'Pokot Central', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
+(3714, 'Ortum Mission Hospital', '15446', 'West Pokot', 'Pokot South', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.43746', '35.35484', '2025-07-13 05:15:02'),
+(3715, 'Sigor Sub District Hospital', '15564', 'West Pokot', 'Pokot Central', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '1.4855', '35.46777', '2025-07-13 05:15:02'),
+(3716, 'Sina Dispensary', '15580', 'West Pokot', 'Pokot South', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', '', '', 'On Premises', '1.26711', '35.36548', '2025-07-13 05:15:02'),
+(3717, 'Turkwel Health Centre', '15755', 'West Pokot', 'West Pokot', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '1.91295', '35.36278', '2025-07-13 05:15:02'),
+(3718, 'Alale Health Centre', '16367', 'West Pokot', 'Pokot North', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '2.25005', '35.02779', '2025-07-13 05:15:02'),
+(3719, 'Tiinei Dispensary', '16368', 'West Pokot', 'Pokot North', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '1.46722', '34.94112', '2025-07-13 05:15:02'),
+(3720, 'Murkwijit Dispensary', '20055', 'West Pokot', 'West Pokot', 'Ministry of Health', 'USAID AMPATH Uzima', 'USAID', 'AMRS', 'Active', 'On Premises', '1.1921', '35.09173', '2025-07-13 05:15:02'),
+(3721, 'Onoch Dispensary', '20317', 'West Pokot', 'Pokot Central', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '1.46325', '35.42293', '2025-07-13 05:15:02');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `facility_settings`
+--
+
+CREATE TABLE `facility_settings` (
+  `id` int NOT NULL,
+  `facility_id` int DEFAULT NULL,
+  `facilityname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `mflcode` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `countyname` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `subcountyname` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `facilityincharge` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `facilityphone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `setup_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `fingerprints`
+--
+
+CREATE TABLE `fingerprints` (
+  `print_id` int NOT NULL,
+  `visitDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clientName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `sex` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `current_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `fingerprint_data` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `capture_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `fingerprints`
+--
+
+TRUNCATE TABLE `fingerprints`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `followup_psychiatric_form`
+--
+
+CREATE TABLE `followup_psychiatric_form` (
+  `visit_id` int NOT NULL,
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `clientName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `visitDate` date DEFAULT NULL,
+  `progress` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `rx_pan` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `next_appointment` date DEFAULT NULL,
+  `psychiatrist_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `followup_psychiatric_form`
+--
+
+TRUNCATE TABLE `followup_psychiatric_form`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `formulation`
+--
+
+CREATE TABLE `formulation` (
+  `formID` int NOT NULL,
+  `fname` varchar(225) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `description` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `formulation`
+--
+
+TRUNCATE TABLE `formulation`;
+--
+-- Dumping data for table `formulation`
+--
+
+INSERT INTO `formulation` (`formID`, `fname`, `description`) VALUES
+(1, 'Oral Solution', 'Taken Orally'),
+(2, 'Tablets', 'To be Swallowed with water'),
+(3, 'powder', 'Mix with clean water'),
+(4, 'injections', 'Inject as per the mfg instructions'),
+(5, 'Eye/Eye drops', 'To be used in eyes and ears');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `gad7_assessments`
+--
+
+CREATE TABLE `gad7_assessments` (
+  `assessment_id` int UNSIGNED NOT NULL,
+  `p_id` int UNSIGNED NOT NULL,
+  `mat_id` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `visitDate` date NOT NULL,
+  `therapist_id` int UNSIGNED NOT NULL,
+  `q1` tinyint(1) NOT NULL,
+  `q2` tinyint(1) NOT NULL,
+  `q3` tinyint(1) NOT NULL,
+  `q4` tinyint(1) NOT NULL,
+  `q5` tinyint(1) NOT NULL,
+  `q6` tinyint(1) NOT NULL,
+  `q7` tinyint(1) NOT NULL,
+  `total_score` tinyint NOT NULL,
+  `diagnosis` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `management_plan` text COLLATE utf8mb4_general_ci,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hepb_status`
+--
+
+CREATE TABLE `hepb_status` (
+  `status_id` int NOT NULL,
+  `status_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `hepb_status`
+--
+
+TRUNCATE TABLE `hepb_status`;
+--
+-- Dumping data for table `hepb_status`
+--
+
+INSERT INTO `hepb_status` (`status_id`, `status_name`, `date_created`) VALUES
+(1, 'Positive', '2024-04-14 19:49:39'),
+(2, 'Negative', '2024-04-14 19:49:44'),
+(3, 'Unknown', '2024-04-14 19:49:52');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hepc_status`
+--
+
+CREATE TABLE `hepc_status` (
+  `status_id` int NOT NULL,
+  `status_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `hepc_status`
+--
+
+TRUNCATE TABLE `hepc_status`;
+--
+-- Dumping data for table `hepc_status`
+--
+
+INSERT INTO `hepc_status` (`status_id`, `status_name`, `date_created`) VALUES
+(1, 'Positive', '2024-04-14 19:47:23'),
+(2, 'Negative', '2024-04-14 19:47:29'),
+(3, 'Unknown', '2024-04-14 19:47:37');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `initial_psychiatric_form`
+--
+
+CREATE TABLE `initial_psychiatric_form` (
+  `psy_id` int NOT NULL,
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `occupation` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `visitDate` date DEFAULT NULL,
+  `referral` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `rx_supporter` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `pre_complaints` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `corr_complaints` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `hx_illness` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `past_psych_hx` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `past_med_hx` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `sub_use_hx` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `fam_hx` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `ante_hx` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `dev_hx` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `child_hx` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `edu_hx` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `occup_hx` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `sex_hx` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `premord_hx` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `forens_hx` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `phys_exam` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `mental_exam` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `diagnosis` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `mgt_plan` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `integration_status`
+--
+
+CREATE TABLE `integration_status` (
+  `integration_id` int NOT NULL,
+  `integration_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `integration_status`
+--
+
+TRUNCATE TABLE `integration_status`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `involuntary_discontinuation`
+--
+
+CREATE TABLE `involuntary_discontinuation` (
+  `id` int NOT NULL,
+  `visit_date` date NOT NULL,
+  `client_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `enroll_date` date NOT NULL,
+  `discontinue_date` date NOT NULL,
+  `reasons` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `discontinuation_plan` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `follow_up_plan` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_signature` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_date` date NOT NULL,
+  `counselor_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_signature` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_date` date NOT NULL,
+  `cso_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `cso_org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `cso_signature` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `cso_date` date NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `involuntary_discontinuation`
+--
+
+TRUNCATE TABLE `involuntary_discontinuation`;
+--
+-- Dumping data for table `involuntary_discontinuation`
+--
+
+INSERT INTO `involuntary_discontinuation` (`id`, `visit_date`, `client_name`, `mat_id`, `enroll_date`, `discontinue_date`, `reasons`, `discontinuation_plan`, `follow_up_plan`, `clinician_name`, `clinician_org`, `clinician_signature`, `clinician_date`, `counselor_name`, `counselor_org`, `counselor_signature`, `counselor_date`, `cso_name`, `cso_org`, `cso_signature`, `cso_date`, `created_at`, `updated_at`) VALUES
+(1, '2025-12-04', 'PETER KARANJA MBUGUA', '10507MAT0009', '2019-09-18', '2025-12-04', 'High risk of drug overdose, Violence, Drug possession', 'Abrupt cessation', 'Test', 'Lyani Sitti', 'Karuri Health Centre', 'LS', '2025-12-04', 'Peter Kiburi', 'Karuri Health Centre', 'bb', '2025-12-04', 'Peter Kiburi', 'nnnn', 'bbb', '2025-12-04', '2025-12-04 08:17:07', '2025-12-04 08:17:07');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `juicetypes`
+--
+
+CREATE TABLE `juicetypes` (
+  `Id` int NOT NULL,
+  `Name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `juicetypes`
+--
+
+TRUNCATE TABLE `juicetypes`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `laboratory`
+--
+
+CREATE TABLE `laboratory` (
+  `lab_id` int NOT NULL,
+  `visitDate` date NOT NULL,
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clientName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `type_client` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `mode_drug_use` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `hiv_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `hbv_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `malaria_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `pregnancy_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `vdrl_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `urinalysis_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `hepc_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `lab_notes` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `lab_officer_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `next_appointment` date NOT NULL,
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP,
+  `appointment_status` enum('scheduled','done') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'scheduled'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `living_conditions`
+--
+
+CREATE TABLE `living_conditions` (
+  `cond_id` int NOT NULL,
+  `condition_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `living_conditions`
+--
+
+TRUNCATE TABLE `living_conditions`;
+--
+-- Dumping data for table `living_conditions`
+--
+
+INSERT INTO `living_conditions` (`cond_id`, `condition_name`) VALUES
+(4, 'Abandoned buildings'),
+(7, 'Bus stations'),
+(1, 'Family House'),
+(2, 'Friend\'s House'),
+(9, 'Injection Sites'),
+(10, 'Other Specify'),
+(6, 'Parks'),
+(5, 'Public areas'),
+(3, 'Streets'),
+(8, 'Tunnels');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `marital_status`
+--
+
+CREATE TABLE `marital_status` (
+  `mar_id` int NOT NULL,
+  `marital_status_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `marital_status`
+--
+
+TRUNCATE TABLE `marital_status`;
+--
+-- Dumping data for table `marital_status`
+--
+
+INSERT INTO `marital_status` (`mar_id`, `marital_status_name`, `date_created`) VALUES
+(1, 'Single', '2024-04-18 20:22:09'),
+(2, 'Married (Monogamous)', '2024-04-18 20:25:09'),
+(5, 'Married (Polygamous)', '2024-04-18 20:26:51'),
+(6, 'Separated/Divorced', '2024-04-18 20:27:32'),
+(7, 'Cohabiting', '2024-04-18 20:27:48'),
+(8, 'Widowed', '2024-04-20 09:17:55'),
+(9, 'Unknown', '2024-11-13 00:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `medical_history`
+--
+
+CREATE TABLE `medical_history` (
+  `id` int NOT NULL,
+  `visitDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clientName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `nickName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sname` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `dob` date NOT NULL,
+  `reg_date` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sex` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `hiv_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `marital_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `art_regimen` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `regimen_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tb_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `hepc_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `other_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `clinical_notes` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `current_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `last_vlDate` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `results` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `clinician_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `next_appointment` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `age` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Triggers `medical_history`
+--
+DELIMITER $$
+CREATE TRIGGER `update_patient_next_appointment` AFTER INSERT ON `medical_history` FOR EACH ROW BEGIN
+    -- Update next_appointment in patients table only if new value is not empty
+    IF NEW.next_appointment IS NOT NULL AND NEW.next_appointment != '' THEN
+        UPDATE patients 
+        SET next_appointment = NEW.next_appointment 
+        WHERE mat_id = NEW.mat_id;
+    END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `medical_history_new`
+--
+
+CREATE TABLE `medical_history_new` (
+  `id` int NOT NULL,
+  `visitDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clientName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `nickName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sname` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `dob` date NOT NULL,
+  `reg_date` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sex` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `hiv_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `marital_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `art_regimen` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `regimen_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tb_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `tb_regimen` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tb_start_date` date DEFAULT NULL,
+  `tb_end_date` date DEFAULT NULL,
+  `tpt_regimen` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tpt_start_date` date DEFAULT NULL,
+  `tpt_end_date` date DEFAULT NULL,
+  `hepc_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `other_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `clinical_notes` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `current_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `last_vlDate` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `results` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `clinician_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `next_appointment` date DEFAULT NULL,
+  `rx_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `appointment_status` enum('scheduled','done') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'scheduled'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `medical_history_new`
+--
+
+TRUNCATE TABLE `medical_history_new`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `nursing_history`
+--
+
+CREATE TABLE `nursing_history` (
+  `id` int NOT NULL,
+  `visitDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clientName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `nickName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sname` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `dob` date NOT NULL,
+  `reg_date` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sex` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `hiv_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `marital_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `art_regimen` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `regimen_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tb_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `hepc_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `other_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `clinical_notes` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `current_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `last_vlDate` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `results` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `clinician_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `next_appointment` date DEFAULT NULL,
+  `rx_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `appointment_status` enum('scheduled','done') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'scheduled'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `nursing_services`
+--
+
+CREATE TABLE `nursing_services` (
+  `nursing_id` int NOT NULL,
+  `nurising_service_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `nursing_services`
+--
+
+TRUNCATE TABLE `nursing_services`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `offences`
+--
+
+CREATE TABLE `offences` (
+  `offense_id` int NOT NULL,
+  `offense_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `offences`
+--
+
+TRUNCATE TABLE `offences`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `other_prescriptions`
+--
+
+CREATE TABLE `other_prescriptions` (
+  `id` int NOT NULL,
+  `prescription_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clientName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `mat_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `sex` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `age` int DEFAULT NULL,
+  `prescriber_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `prescription_date` date NOT NULL,
+  `prescr_status` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'submitted',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `other_status`
+--
+
+CREATE TABLE `other_status` (
+  `status_id` int NOT NULL,
+  `status_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `other_status`
+--
+
+TRUNCATE TABLE `other_status`;
+--
+-- Dumping data for table `other_status`
+--
+
+INSERT INTO `other_status` (`status_id`, `status_name`, `date_created`) VALUES
+(1, 'STI', '2024-04-14 19:52:04'),
+(2, 'PrEP', '2024-04-14 19:52:12'),
+(3, 'PEP', '2024-04-14 19:52:17'),
+(4, 'Hypertension', '2024-04-14 19:52:34'),
+(5, 'Diabetes', '2024-04-14 19:52:43'),
+(6, 'Asthma', '2024-04-14 19:52:49'),
+(7, 'None', '2024-04-21 00:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `patientfingerprints`
+--
+
+CREATE TABLE `patientfingerprints` (
+  `Id` int NOT NULL,
+  `Template` longblob NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `patientimages`
+--
+
+CREATE TABLE `patientimages` (
+  `Id` int NOT NULL,
+  `ImageData` longblob NOT NULL,
+  `Thumbnail` longblob
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `patientimages`
+--
+
+TRUNCATE TABLE `patientimages`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `patientjuicetypes`
+--
+
+CREATE TABLE `patientjuicetypes` (
+  `PatientId` int NOT NULL,
+  `JuiceTypeId` int NOT NULL,
+  `MakeUpToFixedTotal` tinyint(1) NOT NULL,
+  `Volume` decimal(19,5) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `patientjuicetypes`
+--
+
+TRUNCATE TABLE `patientjuicetypes`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `patients`
+--
+
+CREATE TABLE `patients` (
+  `p_id` int NOT NULL,
+  `reg_facility` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `mflcode` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `county` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `scounty` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `reg_date` date DEFAULT '2017-01-01',
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `mat_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `clientName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `sname` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `nickName` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `nat_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `dob` date NOT NULL,
+  `age` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sex` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `marital_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `residence_scounty` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `p_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `client_phone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `mat_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `transfer_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `referral_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `cso` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `referring_facility` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `reffering_fac_client_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `accompanment_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `peer_edu_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `peer_edu_phone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `rx_supporter_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `drugname` varchar(225) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `dosage` decimal(10,2) DEFAULT '0.00',
+  `reasons` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `current_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `status_change_notes` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'Normal',
+  `hcw_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `comp_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `last_vlDate` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `results` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `next_appointment` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `psycho_social_tca` date DEFAULT NULL,
+  `psychiatric_tca` date DEFAULT NULL,
+  `nursing_tca` date DEFAULT NULL,
+  `nutrition_tca` date DEFAULT NULL,
+  `laboratory_tca` date DEFAULT NULL,
+  `records_tca` date DEFAULT NULL,
+  `peer_tca` date DEFAULT NULL,
+  `admin_tca` date DEFAULT NULL,
+  `religion` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `occupation` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Triggers `patients`
+--
+DELIMITER $$
+CREATE TRIGGER `before_patients_delete` BEFORE DELETE ON `patients` FOR EACH ROW BEGIN
+    INSERT INTO deleted_patients
+    SELECT * FROM patients WHERE mat_id = OLD.mat_id;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `update_tca_dates` BEFORE UPDATE ON `patients` FOR EACH ROW BEGIN
+    IF NEW.next_appointment IS NOT NULL THEN
+        SET NEW.psycho_social_tca = NEW.next_appointment;
+        SET NEW.psychiatric_tca = NEW.next_appointment;
+        SET NEW.nursing_tca = NEW.next_appointment;
+        SET NEW.nutrition_tca = NEW.next_appointment;
+        SET NEW.laboratory_tca = NEW.next_appointment;
+        SET NEW.records_tca = NEW.next_appointment;
+        SET NEW.peer_tca = NEW.next_appointment;
+        SET NEW.admin_tca = NEW.next_appointment;
+    END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `patientsignatures`
+--
+
+CREATE TABLE `patientsignatures` (
+  `SessionId` int NOT NULL,
+  `ImageData` longblob NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `patient_drug_histories`
+--
+
+CREATE TABLE `patient_drug_histories` (
+  `id` int NOT NULL,
+  `encounter_id` int NOT NULL,
+  `drug_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `age_first_use` int DEFAULT NULL,
+  `duration_years` int DEFAULT NULL,
+  `frequency` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `quantity` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `route` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `last_used` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pharmacy`
+--
+
+CREATE TABLE `pharmacy` (
+  `disp_id` int NOT NULL,
+  `visitDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `mat_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clientName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `nickName` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `age` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sex` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `p_address` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `cso` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `drugname` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `dosage` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `reasons` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `current_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `pharm_officer_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `dispDate` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `photos`
+--
+
+CREATE TABLE `photos` (
+  `photo_id` int NOT NULL,
+  `visitDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clientName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `sex` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `image` mediumblob
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `phq9_assessments`
+--
+
+CREATE TABLE `phq9_assessments` (
+  `assessment_id` int UNSIGNED NOT NULL,
+  `p_id` int UNSIGNED NOT NULL,
+  `mat_id` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `visitDate` date NOT NULL,
+  `therapist_id` int UNSIGNED NOT NULL,
+  `q1` tinyint(1) NOT NULL,
+  `q2` tinyint(1) NOT NULL,
+  `q3` tinyint(1) NOT NULL,
+  `q4` tinyint(1) NOT NULL,
+  `q5` tinyint(1) NOT NULL,
+  `q6` tinyint(1) NOT NULL,
+  `q7` tinyint(1) NOT NULL,
+  `q8` tinyint(1) NOT NULL,
+  `q9` tinyint(1) NOT NULL,
+  `total_score` tinyint NOT NULL,
+  `diagnosis` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `management_plan` text COLLATE utf8mb4_general_ci,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `prescription_drugs`
+--
+
+CREATE TABLE `prescription_drugs` (
+  `id` int NOT NULL,
+  `prescription_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `drug_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `dosing` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `frequency` int DEFAULT NULL,
+  `days` int DEFAULT NULL,
+  `total_dosage` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `total_dispensed` int NOT NULL DEFAULT '0',
+  `remaining_balance` int DEFAULT '0',
+  `prescr_status` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'pending'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `prescription_drugs`
+--
+
+TRUNCATE TABLE `prescription_drugs`;
+--
+-- Dumping data for table `prescription_drugs`
+--
+
+INSERT INTO `prescription_drugs` (`id`, `prescription_id`, `drug_name`, `dosing`, `frequency`, `days`, `total_dosage`, `total_dispensed`, `remaining_balance`, `prescr_status`) VALUES
+(29, 'PRESCR-00000001', 'Buprenorphine 8mg', '01', 1, 1, '1', 0, 1, '0'),
+(33, 'PRESCR-00000002', 'Buprenorphine 4mg', '4', 1, 2, '8', 0, 8, '0'),
+(34, 'PRESCR-00000003', 'Paracetamol Tablet BP 500mg', '1000', 3, 3, '9000', 10, 8980, 'partially dispensed'),
+(35, 'PRESCR-00000003', 'Amoxicillin 500mg', '500', 3, 5, '7500', 14, 7472, 'partially dispensed'),
+(36, 'PRESCR-00000003', 'Cetirizine Hydrochloride Tablet 10mg', '10', 1, 5, '50', 5, 40, 'partially dispensed'),
+(37, 'PRESCR-00000004', 'Ciprofloxacin 500mg USP', '500', 2, 5, '5000', 10, 4980, 'partially dispensed'),
+(38, 'PRESCR-00000004', 'Hyoscine - N- Butylbromide 10mg', '10', 3, 3, '90', 10, 70, 'partially dispensed'),
+(39, 'PRESCR-00000004', 'Omeprazole ', '20', 1, 10, '200', 10, 180, 'partially dispensed'),
+(40, 'PRESCR-00000005', 'Clotrimazole 1.0% w/w', '1', 1, 14, '14', 1, 12, 'partially dispensed'),
+(41, 'PRESCR-00000006', 'Fluconazole 150mg', '150', 1, 1, '150', 1, 148, 'partially dispensed'),
+(42, 'PRESCR-00000006', 'Clotrimazole Vaginal Tablets 200mg', '1', 1, 3, '3', 1, 1, 'partially dispensed'),
+(43, 'PRESCR-00000007', 'Benzyl Benzoate Application 25%', '1', 1, 5, '5', 0, 0, 'pending'),
+(44, 'PRESCR-00000007', 'Cetirizine Hydrochloride Tablet 10mg', '10', 1, 5, '50', 5, 40, 'partially dispensed'),
+(45, 'PRESCR-00000007', 'Predinsolone 5mg', '10', 1, 5, '50', 10, 30, 'partially dispensed'),
+(46, 'PRESCR-00000008', 'Methadone', '30', 1, 30, '900', 1, 898, 'partially dispensed'),
+(47, 'PRESCR-00000009', 'Omeprazole ', '20', 1, 10, '200', 10, 180, 'partially dispensed'),
+(48, 'PRESCR-00000010', 'Amoxicillin 500mg', '500', 3, 5, '7500', 15, 7470, 'partially dispensed'),
+(49, 'PRESCR-00000010', 'Ibuprofen Tablet BP 400mg', '400', 3, 3, '3600', 10, 3580, 'partially dispensed'),
+(50, 'PRESCR-00000011', 'Omeprazole ', '20', 1, 10, '200', 10, 180, 'partially dispensed'),
+(51, 'PRESCR-00000012', 'Ibuprofen Tablet BP 400mg', '400', 3, 3, '3600', 12, 3576, 'partially dispensed'),
+(52, 'PRESCR-00000013', 'Omeprazole ', '20', 1, 5, '100', 10, 80, 'partially dispensed'),
+(53, 'PRESCR-00000013', 'Paracetamol Tablet BP 500mg', '2', 3, 3, '18', 10, -2, 'partially dispensed'),
+(54, 'PRESCR-00000014', 'Amoxicillin 500mg', '500', 3, 5, '7500', 15, 7470, 'partially dispensed'),
+(55, 'PRESCR-00000014', 'Paracetamol Tablet BP 500mg', '1000', 3, 3, '9000', 10, 8980, 'partially dispensed'),
+(56, 'PRESCR-00000014', 'Cetirizine Hydrochloride Tablet 10mg', '10', 1, 5, '50', 5, 40, 'partially dispensed'),
+(57, 'PRESCR-00000015', 'Omeprazole ', '20', 1, 10, '200', 10, 180, 'partially dispensed'),
+(58, 'PRESCR-00000016', 'Ibuprofen Tablet BP 400mg', '1', 3, 3, '9', 0, 9, '0'),
+(65, 'PRESCR-00000019', 'Omeprazole ', '20', 1, 10, '200', 10, 180, 'partially dispensed'),
+(70, 'PRESCR-00000022', 'Omeprazole ', '20', 1, 10, '200', 20, 160, 'partially dispensed'),
+(71, 'PRESCR-00000023', 'Ibuprofen Tablet BP 400mg', '1', 3, 3, '9', 0, 9, '0'),
+(72, 'PRESCR-00000024', 'Griseofulvin 250mg', '2', 1, 10, '20', 20, -20, 'dispensed and closed'),
+(73, 'PRESCR-00000024', 'Clotrimazole 1.0% w/w', '1', 1, 10, '10', 1, 8, 'partially dispensed'),
+(74, 'PRESCR-00000025', 'Omeprazole ', '20', 1, 10, '200', 0, 0, 'pending'),
+(75, 'PRESCR-00000025', 'Paracetamol Tablet BP 500mg', '2', 3, 3, '18', 0, 0, 'pending'),
+(76, 'PRESCR-00000026', 'Ibuprofen Tablet BP 400mg', '1', 3, 3, '9', 0, 0, 'pending'),
+(77, 'PRESCR-00000027', 'Meloxicam Tablet 7.5mg BP', '1', 1, 5, '5', 0, 0, 'pending'),
+(78, 'PRESCR-00000027', 'Diclofenac Gel 1%', '1', 3, 5, '15', 0, 0, 'pending'),
+(79, 'PRESCR-00000028', 'Omeprazole ', '1', 1, 10, '10', 0, 0, 'pending'),
+(80, 'PRESCR-00000028', 'Hyoscine - N- Butylbromide 10mg', '21', 3, 3, '189', 0, 0, 'pending'),
+(81, 'PRESCR-00000028', 'Paracetamol Tablet BP 500mg', '2', 3, 3, '18', 0, 0, 'pending'),
+(82, 'PRESCR-00000029', 'Omeprazole ', '1', 1, 10, '10', 0, 0, 'pending'),
+(83, 'PRESCR-00000030', 'Bisacodyl 5mg', '2', 3, 10, '60', 0, 0, 'pending'),
+(84, 'PRESCR-00000030', 'Omeprazole ', '1', 3, 10, '30', 0, 0, 'pending'),
+(85, 'PRESCR-00000031', 'Cetirizine Hydrochloride Tablet 10mg', '1', 1, 5, '5', 0, 0, 'pending'),
+(86, 'PRESCR-00000031', 'Paracetamol Tablet BP 500mg', '2', 3, 3, '18', 0, 0, 'pending'),
+(87, 'PRESCR-00000032', 'Hydrocortisone Cream 1% w/w', '1', 1, 7, '7', 1, 5, 'partially dispensed'),
+(88, 'PRESCR-00000032', 'Cetirizine Hydrochloride Tablet 10mg', '1', 1, 5, '5', 5, -5, 'dispensed and closed'),
+(89, 'PRESCR-00000032', 'Predinsolone 5mg', '2', 1, 5, '10', 10, -10, 'dispensed and closed'),
+(90, 'PRESCR-00000033', 'Amoxicillin 500mg', '1', 3, 5, '15', 0, 0, 'pending'),
+(91, 'PRESCR-00000033', 'Paracetamol Tablet BP 500mg', '2', 3, 3, '18', 0, 0, 'pending'),
+(92, 'PRESCR-00000033', 'Cetirizine Hydrochloride Tablet 10mg', '1', 1, 5, '5', 0, 0, 'pending'),
+(93, 'PRESCR-00000034', 'Aluminium oxide 200mg/Magnesium hydroxyde 400mg/simethicone 30mg', '2', 3, 5, '30', 0, 0, 'pending'),
+(94, 'PRESCR-00000035', 'Carbamazepine 200mg BP', '2', 2, 30, '120', 0, 0, 'pending'),
+(95, 'PRESCR-00000035', 'Albendazole 400mg', '1', 1, 1, '1', 0, 0, 'pending'),
+(96, 'PRESCR-00000001', 'Amlodipine 5mg', '10', 1, 30, '300', 0, 0, 'pending'),
+(97, 'PRESCR-00000001', 'Amitriptyline 25mg', '1', 1, 7, '7', 0, 0, 'pending');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `products`
+--
+
+CREATE TABLE `products` (
+  `id` int NOT NULL,
+  `category` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `productname` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `brandname` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `packsize` int DEFAULT NULL,
+  `pack_price` double DEFAULT NULL,
+  `unit_price` decimal(10,2) DEFAULT '0.00',
+  `price` double DEFAULT '0',
+  `reorder_level` int DEFAULT '0',
+  `currentstatus` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'active',
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `products`
+--
+
+TRUNCATE TABLE `products`;
+--
+-- Dumping data for table `products`
+--
+
+INSERT INTO `products` (`id`, `category`, `productname`, `brandname`, `packsize`, `pack_price`, `unit_price`, `price`, `reorder_level`, `currentstatus`, `date_created`) VALUES
+(1, '1', 'Ibuprofen Tablet BP 400mg', 'Gesic 400 ADL Brufen', 100, 125, 1.25, 3, 33, 'active', '2025-09-04 14:52:46'),
+(2, '1', 'Paracetamol Tablet BP 500mg', 'Cetamol 500mg', 100, 60, 0.60, 2, 33, 'active', '2025-09-04 14:52:46'),
+(3, '1', 'Piroxicam Capsules USP', 'Roxicam 20mg', 100, 65, 0.65, 5, 33, 'active', '2025-09-04 14:52:46'),
+(4, '1', 'Meloxicam Tablet 7.5mg BP', 'Melostar 7.5mg', 100, 161, 1.61, 5, 33, 'active', '2025-09-04 14:52:46'),
+(5, '1', 'Soluble Paracetamol BP 1000mg', 'PARA NOVA ', 8, 185, 23.13, 40, 3, 'active', '2025-09-04 14:52:46'),
+(6, '1', 'Ibuprofen 400mg/Paracetamol 325mg BP', 'Brustan Tablets', 10, 99, 9.90, 20, 3, 'active', '2025-09-04 14:52:46'),
+(7, '1', 'Aceclofenac 100mg/Paracetamol 500mg/Chlorzoxazone 375mg', 'ACEPAR-MR Caplets', 10, 260, 26.00, 35, 3, 'active', '2025-09-04 14:52:46'),
+(8, '1', 'Aceclofenac 100mg/Paracetamol 500mg/Chlorzoxazone 375mg', 'Rilif - MR Tablets', 20, 495, 24.75, 35, 7, 'active', '2025-09-04 14:52:46'),
+(9, '1', 'Aceclofenac 100mg/Paracetamol 500mg/Chlorzoxazone 500mg', 'Zyrtal - MR Tablets', 20, 685, 34.25, 50, 7, 'active', '2025-09-04 14:52:46'),
+(10, '1', 'Diclofenac 50mg/Paracetamol 500mg/Chlorzoxazone 250mg', 'DOLOACT - MR Tablets', 100, 1807, 18.07, 25, 33, 'active', '2025-09-04 14:52:46'),
+(11, '1', 'Paracetamol Tablet BP 500mg/Caffeine 65mg', 'Panadol Extra Tablets (Pairs)', 50, 396, 7.92, 20, 17, 'active', '2025-09-04 14:52:46'),
+(12, '1', 'Paracetamol Tablet BP 500mg', 'Panadol Advance Tablets (Pairs)', 50, 396, 7.92, 15, 17, 'active', '2025-09-04 14:52:46'),
+(13, '1', 'Etoricoxib Tablet 60mg', 'Tory 60 Tablet', 30, 830, 27.67, 40, 10, 'active', '2025-09-04 14:52:46'),
+(14, '1', 'Etoricoxib Tablet 90mg', 'Tory 90 Tablet', 30, 877, 29.23, 45, 10, 'active', '2025-09-04 14:52:46'),
+(15, '1', 'Etoricoxib Tablet 120mg', 'Tory 120 Tablet', 30, 1066, 35.53, 50, 10, 'active', '2025-09-04 14:52:46'),
+(16, '1', 'Paracetamol Tablet BP 500mg/Pseudoephedrine Hydrochloride 30mg/Chlorpheniramine Maleate 2mg', 'Panadol Cold&Flu Tablets', 24, 320, 13.33, 20, 8, 'active', '2025-09-04 14:52:46'),
+(17, '1', 'Paracetamol Tablet BP 300mg/Pseudoephedrine Hydrochloride 30mg/Chlorpheniramine Maleate 2mg/Caffeine 30mg', 'FLU-GONE Capsules', 1, 115, 115.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(18, '1', 'Paracetamol Tablet BP 650mg/Phenylephrine Hydrochloride 5mg/Chlorpheniramine Maleate 2mg', 'CONTUS-650 Tablet', 1, 99, 99.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(19, '1', 'Cetirizine Hydrochloride Tablet 10mg', 'CACHCET Tablet', 100, 78, 0.78, 5, 33, 'active', '2025-09-04 14:52:46'),
+(20, '1', 'Montelukast 10mg/Levocetirizine 5mg', 'Montallerg Tablets', 20, 1000, 50.00, 70, 7, 'active', '2025-09-04 14:52:46'),
+(21, '1', 'Montelukast 10mg', 'Montana 10mg', 14, 740, 52.86, 75, 5, 'active', '2025-09-04 14:52:46'),
+(22, '1', 'Montelukast 10mg/Levocetirizine 5mg', 'Motechest', 30, 409, 13.63, 40, 10, 'active', '2025-09-04 14:52:46'),
+(23, '1', 'Ephedrine 12mg/Theophyline 120mg', 'F-Tab (Franol) Tablet', 100, 179, 1.79, 5, 33, 'active', '2025-09-04 14:52:46'),
+(24, '1', 'Salbutamol Inhaler 100mcg', 'Medisalant 100mcg', 1, 165, 165.00, 350, 1, 'active', '2025-09-04 14:52:46'),
+(25, '1', 'Betamethasone 0.25mg/Dexchlorpheniramine Maleate BP 2mg', 'Celestinac Tablet', 30, 149, 4.97, 15, 10, 'active', '2025-09-04 14:52:46'),
+(26, '1', 'Paracetamol 500mg/Chlorzoxazone 250mg', 'Myospaz Tablet', 100, 1595, 15.95, 25, 33, 'active', '2025-09-04 14:52:46'),
+(27, '1', 'Diclofenac 100mg', 'ZOFENAC 100', 100, 75, 0.75, 10, 33, 'active', '2025-09-04 14:52:46'),
+(28, '1', 'Predinsolone 5mg', 'Olsolone Tablets', 100, 68, 0.68, 3, 33, 'active', '2025-09-04 14:52:46'),
+(29, '1', 'Paracetamol 500mg/Hyoscine Butylbromide 10mg', 'Duxscospan Plus (Buscopan Plus Generic)', 20, 338, 16.90, 25, 7, 'active', '2025-09-04 14:52:46'),
+(30, '1', 'Doxylamine Succ. 10mg/Pyridoxine 10mg ', 'NOSIC ', 20, 385, 19.25, 25, 7, 'active', '2025-09-04 14:52:46'),
+(31, '1', 'Metoclopramide 10mg', 'Emeton 10mg Tablet', 100, 70, 0.70, 5, 33, 'active', '2025-09-04 14:52:46'),
+(32, '1', 'Meloxicam EP Tablet 7.5mg', 'Melcam 7.5mg Tablet', 100, 331.5, 3.32, 5, 33, 'active', '2025-09-04 14:52:46'),
+(33, '1', 'Meloxicam EP Tablet 15mg', 'Melcam 15mg Tablet', 50, 306, 6.12, 10, 17, 'active', '2025-09-04 14:52:46'),
+(34, '1', 'Metoclopramide 10mg', 'Melasil - 10 Tablet', 100, 70, 0.70, 5, 33, 'active', '2025-09-04 14:52:46'),
+(35, '1', 'Promethazine 25mg', 'Promethazine Tablet', 100, 55, 0.55, 5, 33, 'active', '2025-09-04 14:52:46'),
+(36, '1', 'Paracetamol 120mg/5ml', 'Curamol Suspension 60mL', 1, 26, 26.00, 50, 1, 'active', '2025-09-04 14:52:46'),
+(37, '1', 'Paracetamol 120mg/5ml', 'Curamol Suspension 100mL', 1, 47, 47.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(38, '1', 'Paracetamol 120mg/5ml', 'Calpol Suspension 60mL', 1, 220, 220.00, 300, 1, 'active', '2025-09-04 14:52:46'),
+(39, '1', 'Ibuprofen 100mg/5ml', 'Triofen 60mL', 1, 21, 21.00, 50, 1, 'active', '2025-09-04 14:52:46'),
+(40, '1', 'Ibuprofen 100mg/5ml', 'Triofen 100mL', 1, 30, 30.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(41, '1', 'Paracetamol 120mg/5ml', 'Panadol Baby&Infant 100mL', 1, 343, 343.00, 450, 1, 'active', '2025-09-04 14:52:46'),
+(42, '1', 'Ibuprofen 100mg/Paracetamol 125mg BP', 'Brustan Suspension', 1, 235, 235.00, 300, 1, 'active', '2025-09-04 14:52:46'),
+(43, '1', 'Soluble Paracetamol BP 1000mg', 'Parafast ET 1000 Tablet', 8, 380, 47.50, 50, 3, 'active', '2025-09-04 14:52:46'),
+(44, '1', 'Loratidine USP 10mg', 'Loratin Fast', 100, 850, 8.50, 15, 33, 'active', '2025-09-04 14:52:46'),
+(45, '1', 'Hyoscine - N- Butylbromide 10mg', 'HYCIN 10 Tablets (Buscopan Generic)', 100, 240, 2.40, 10, 33, 'active', '2025-09-04 14:52:46'),
+(46, '1', 'Paracetamol 500mg/Hyoscine Butylbromide 10mg', 'Hismopan Plus Tablets (Buscopan Plus Generic)', 100, 600, 6.00, 15, 33, 'active', '2025-09-04 14:52:46'),
+(47, '1', 'Metronidazole 400mg', 'Tricozole - 400mg Tablet', 100, 120, 1.20, 5, 33, 'active', '2025-09-04 14:52:46'),
+(48, '1', 'Tetracycline Eye Ointment USP', 'Metacycline', 1, 33, 33.00, 50, 1, 'active', '2025-09-04 14:52:46'),
+(49, '1', 'Betamethasone 0.1% w/v/Neomycin 0.5 %w/v', 'Probeta-N', 1, 105, 105.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(50, '1', 'Ciprofloxacin/Dexamethasone Eye/Ear Drops', 'Ciploglax-D Eye Drops', 1, 149, 149.00, 300, 1, 'active', '2025-09-04 14:52:46'),
+(51, '1', 'Ciprofloxacin 0.3% USP', 'Ciproken', 1, 102, 102.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(52, '1', 'Dextran 70 USP 1mg/Hypromellose USP 3mg', 'Lubtear', 1, 255, 255.00, 350, 1, 'active', '2025-09-04 14:52:46'),
+(53, '1', 'Ciprofloxacin 0.3%/Beclomethasone 0.025%/Clotrimazole 1%/Lignocaine 2% Ear Drops', 'Otobiotic', 1, 228, 228.00, 300, 1, 'active', '2025-09-04 14:52:46'),
+(54, '1', 'fluticasone propionate ', 'Flonaspray', 1, 680, 680.00, 950, 1, 'active', '2025-09-04 14:52:46'),
+(55, '1', 'Esomeprazole', 'Protas 40 Tablets', 100, 1190, 11.90, 30, 33, 'active', '2025-09-04 14:52:46'),
+(56, '1', 'Esomeprazole', 'Nexium 20', 14, 550, 39.29, 70, 5, 'active', '2025-09-04 14:52:46'),
+(57, '1', 'Omeprazole Satchets', 'Risek insta', 10, 331, 33.10, 50, 3, 'active', '2025-09-04 14:52:46'),
+(58, '1', 'Omeprazole ', 'Omecos 20 Capsules', 100, 105, 1.05, 5, 33, 'active', '2025-09-04 14:52:46'),
+(59, '1', 'Pantoprazole Delayed Release', 'Pantakind 40', 60, 1440, 24.00, 35, 20, 'active', '2025-09-04 14:52:46'),
+(60, '1', 'Clotrimazole Vaginal Tablets 200mg', 'Canazol Vaginal Tablet, 3s', 1, 46, 46.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(61, '1', 'Ketocozole 200mg  BP', 'Hitoral 200mg Tablet', 100, 340, 3.40, 10, 33, 'active', '2025-09-04 14:52:46'),
+(62, '1', 'Amoxicllin 125mg/5mL', 'ELYMOX Suspension 100mL', 1, 43, 43.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(63, '1', 'Co-trimoxazole 240mg/5mL', 'BIOTRIM 100mL', 1, 45, 45.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(64, '1', 'Co-trimoxazole 240mg/5mL', 'BIOTRIM 50mL', 1, 30, 30.00, 50, 1, 'active', '2025-09-04 14:52:46'),
+(65, '1', 'Ampicillin/Cloxacillin 250mg/5mL', 'Ampiclo-Dawa Suspension', 1, 68, 68.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(66, '1', 'Ampicillin/Cloxacillin 250mg/250mg', 'Ampiclo-Dawa 500 Capsule', 100, 400, 4.00, 10, 33, 'active', '2025-09-04 14:52:46'),
+(67, '1', 'Flucloxacillin 125mg/5mL', 'ELYFLOX 100mL Suspension', 1, 76, 76.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(68, '1', 'Azithromycin Oral Suspension 200mg', 'IzziThree 15mg', 1, 39, 39.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(69, '1', 'Vitamin B Complex', 'Neuro-Forte', 20, 270, 13.50, 20, 7, 'active', '2025-09-04 14:52:46'),
+(70, '1', 'Levocetirizine 5mg', 'VIVACET L 5', 10, 55, 5.50, 20, 3, 'active', '2025-09-04 14:52:46'),
+(71, '1', 'Maternity Pads', 'Medimax', 1, 97, 97.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(72, '1', 'Maternity Pads', 'Medicott', 1, 90, 90.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(73, '1', 'Absorbent Cotton Wool 400mg', 'Velvex', 1, 250, 250.00, 350, 1, 'active', '2025-09-04 14:52:46'),
+(74, '1', 'Adult Diapers XL', 'MY A+ XLARGE', 10, 100, 10.00, 15, 3, 'active', '2025-09-04 14:52:46'),
+(75, '1', 'Adult Diapers L', 'MY A+ LARGE', 10, 100, 10.00, 15, 3, 'active', '2025-09-04 14:52:46'),
+(76, '1', 'Adult Pants L', 'ADFIT  PANTS LARGE', 30, 100, 3.33, 5, 10, 'active', '2025-09-04 14:52:46'),
+(77, '1', 'Sulphadoxine 500mg/Pyrimethamine 25mg', 'FANLAR Tablets', 25, 30, 1.20, 50, 8, 'active', '2025-09-04 14:52:46'),
+(78, '1', 'Terbinafine 250mg', 'Terbinaforce 250 Tablets', 30, 953, 31.77, 50, 10, 'active', '2025-09-04 14:52:46'),
+(79, '1', 'Fluconazole 150mg', 'NOCANZ 150 Tablet', 1, 15, 15.00, 50, 1, 'active', '2025-09-04 14:52:46'),
+(80, '1', 'Griseofulvin 250mg', 'Grisolab-250 Tablet', 100, 520, 5.20, 10, 33, 'active', '2025-09-04 14:52:46'),
+(81, '1', 'Griseofulvin 125mg', 'Biofulvin 125 Tablet', 100, 390, 3.90, 10, 33, 'active', '2025-09-04 14:52:46'),
+(82, '1', 'Artemether 20mg/Lumefantrine 120mg', 'LONART Tablet, 24s', 1, 55, 55.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(83, '1', 'Artemether 20mg/Lumefantrine 120mg', 'PANAART 20/120, 24s', 1, 0, 0.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(84, '1', 'Povidone-Iodine USP 1%', 'Peardine Mouth Wash, 100mL', 1, 90, 90.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(85, '1', 'Povidone-Iodine USP 1%', 'Rexe-Dine Mouth Wash', 1, 135, 135.00, 200, 1, 'active', '2025-09-04 14:52:46'),
+(86, '1', 'Amoxicillin 500mg', 'AMOXIMED 500 Capsule', 100, 320, 3.20, 6.6, 33, 'active', '2025-09-04 14:52:46'),
+(87, '1', 'Cefuroxime 500mg USP', 'Theoroxime 500 Tablets', 1, 165, 165.00, 400, 1, 'active', '2025-09-04 14:52:46'),
+(88, '1', 'Cefixime 400mg USP', 'Theofix - 400 Tablets', 10, 170, 17.00, 350, 3, 'active', '2025-09-04 14:52:46'),
+(89, '1', 'Azithromycin 500mg USP', 'AGYCIN-500 Tablet, 3s', 1, 55, 55.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(90, '1', 'Nitrofurantoin 100mg', 'NIFURAN', 100, 200, 2.00, 10, 33, 'active', '2025-09-04 14:52:46'),
+(91, '1', 'Tinidazole 500mg', 'Tinizol 500 Tablets,4s', 1, 11, 11.00, 50, 1, 'active', '2025-09-04 14:52:46'),
+(92, '1', 'Amoxicillin 250mg', 'SPASMOX 250 Capsule', 100, 195, 1.95, 3.3, 33, 'active', '2025-09-04 14:52:46'),
+(93, '1', 'Doxycycline 100mg', 'XYCYCLINE 100 Capsule', 100, 149, 1.49, 5, 33, 'active', '2025-09-04 14:52:46'),
+(94, '1', 'Secnidazole 1g', 'Secnida Forte Tablets, 2s', 1, 25, 25.00, 80, 1, 'active', '2025-09-04 14:52:46'),
+(95, '1', 'Levonogestrel 0.15mg/Ethinylestradiol 0.03mg', 'Microgynon Fe Tablets', 1, 225, 225.00, 300, 1, 'active', '2025-09-04 14:52:46'),
+(96, '1', 'Sildenafil 50mg ', 'MTM-50 Tablet', 4, 36, 9.00, 50, 1, 'active', '2025-09-04 14:52:46'),
+(97, '1', 'Sildenafil 100mg ', 'MTM-100 Tablet', 4, 46, 11.50, 50, 1, 'active', '2025-09-04 14:52:46'),
+(98, '1', 'Sildenafil 100mg ', 'Nelgra-100 Tablet', 4, 43, 10.75, 50, 1, 'active', '2025-09-04 14:52:46'),
+(99, '1', 'Sildenafil 100mg ', 'VEGA-100 Tablet', 4, 41, 10.25, 50, 1, 'active', '2025-09-04 14:52:46'),
+(100, '1', 'Levonogestrel 0.75mg', 'Postinor-2 Tablets, 2s', 1, 143, 143.00, 200, 1, 'active', '2025-09-04 14:52:46'),
+(101, '1', 'levonogestrel 0.75mg', 'Safe-72 Tablets,2s', 1, 20, 20.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(102, '1', 'Betamethasone Sodium Phosphate 2mg/ml/Betamethasone Dipropionate 5mg/ml Suspension for Inj,2ml', 'KRIDOFOS Injection', 1, 675, 675.00, 900, 1, 'active', '2025-09-04 14:52:46'),
+(103, '1', 'Medroxyprogesterone Injection 150mg/mL', 'Lydia Contraceptive Injection', 1, 80, 80.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(104, '1', 'Levonogestrel 0.15mg/Ethinylestradiol 0.03mg', 'Femiplan Tablets', 1, 85, 85.00, 120, 1, 'active', '2025-09-04 14:52:46'),
+(105, '1', 'Diclofenac 75mg Injection', 'CAREFENAC Injection', 10, 45, 4.50, 20, 3, 'active', '2025-09-04 14:52:46'),
+(106, '1', 'Carbamazepine 200mg BP', 'Carbamazepine 200mg Tablets', 100, 369, 3.69, 5, 33, 'active', '2025-09-04 14:52:46'),
+(107, '1', 'Amitriptyline 25mg', 'Amitiptyline Tablets, Cosmos', 100, 252, 2.52, 5, 33, 'active', '2025-09-04 14:52:46'),
+(108, '1', 'Phenobarbital 30mg', 'Phenobarbital Tablets, Cosmos', 100, 235, 2.35, 5, 33, 'active', '2025-09-04 14:52:46'),
+(109, '1', 'Diazepam 5mg', 'Cozepam Tablets', 100, 302, 3.02, 5, 33, 'active', '2025-09-04 14:52:46'),
+(110, '1', 'Maternity Pants', 'Dafi Maternity Pants, M-L', 6, 750, 125.00, 200, 2, 'active', '2025-09-04 14:52:46'),
+(111, '1', 'Maternity Pants', 'Dafi Maternity Pants, S-L', 6, 750, 125.00, 200, 2, 'active', '2025-09-04 14:52:46'),
+(112, '1', 'Amoxicillin/Clavulanate 457mg/5mL', 'Augmentin 457 Suspension', 1, 990, 990.00, 1200, 1, 'active', '2025-09-04 14:52:46'),
+(113, '1', 'Amoxicillin/Clavulanate 228.5mg/5mL', 'Augmentin 228 Suspension', 1, 635, 635.00, 850, 1, 'active', '2025-09-04 14:52:46'),
+(114, '1', 'Tamsulosin 0.4mg', 'Tamsolin Capsules', 10, 770, 77.00, 100, 3, 'active', '2025-09-04 14:52:46'),
+(115, '1', 'Amoxicillin/Clavulanate 625mg', 'Labclav 625 Tablets', 1, 115, 115.00, 300, 1, 'active', '2025-09-04 14:52:46'),
+(116, '1', 'Amoxicillin/Clavulanate 1000mg', 'Acinet 1000 Tablets', 1, 275, 275.00, 400, 1, 'active', '2025-09-04 14:52:46'),
+(117, '1', 'Amoxicillin/Clavulanate 375mg', 'Acinet 375 Tablets', 1, 171, 171.00, 250, 1, 'active', '2025-09-04 14:52:46'),
+(118, '1', 'Ciprofloxacin 500mg USP', 'Ciproglax 500mg Tablets', 100, 240, 2.40, 10, 33, 'active', '2025-09-04 14:52:46'),
+(119, '1', 'Finasteride 5mg/Tamsulosin 400mcg', 'FINOSIN Tablets', 30, 1750, 58.33, 75, 10, 'active', '2025-09-04 14:52:46'),
+(120, '1', 'Flucloxacillin Injection 500mg Vial', 'Flupene Injection', 1, 38, 38.00, 80, 1, 'active', '2025-09-04 14:52:46'),
+(121, '1', 'HydrocortisoneInjection 100mg', 'OCORTIN 100 Injection', 1, 30, 30.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(122, '1', 'Lidocaine Injection 20mg/mL, 30mL', 'LIDOCAINE 2% Injection', 1, 36, 36.00, 60, 1, 'active', '2025-09-04 14:52:46'),
+(123, '1', 'Cefuroxime 125mg/5mL', 'Evorox, 50mL Suspension', 1, 220, 220.00, 350, 1, 'active', '2025-09-04 14:52:46'),
+(124, '1', 'Cefalexin 125mh/5mL', 'Leocef, 100mL Suspension', 1, 80, 80.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(125, '1', 'Amoxicillin/Clavulanate 228.5mg/5mL', 'Labclav 228 Suspension', 1, 102, 102.00, 250, 1, 'active', '2025-09-04 14:52:46'),
+(126, '1', 'Amoxicillin/Clavulanate 457mg/5mL', 'ACINET DRY SYRUP 457', 1, 260, 260.00, 380, 1, 'active', '2025-09-04 14:52:46'),
+(127, '1', 'Ampicillin 60mg/cloxacillin 30mg/0.6mL', 'Neonatal Ampiclox Drops', 1, 345, 345.00, 500, 1, 'active', '2025-09-04 14:52:46'),
+(128, '1', 'Ampicillin 60mg/cloxacillin 30mg/0.6mL', 'Ampliclo-Dawa (Neonata Amplicox Gen)', 1, 50, 50.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(129, '1', 'Amlodipine 5mg/Losartan 50mg/Hydrochlorothiazide 12.5mg', 'Amlozaar-H Tablet', 30, 1400, 46.67, 70, 10, 'active', '2025-09-04 14:52:46'),
+(130, '1', 'Flucloxacillin 250mg/Amoxicillin 250mg', 'MoxaForte 500 Capsules, 20s', 1, 354, 354.00, 500, 1, 'active', '2025-09-04 14:52:46'),
+(131, '1', 'Ceftriaxone 1g', '\'GALAXY\'S SEFIN Injection', 1, 32, 32.00, 80, 1, 'active', '2025-09-04 14:52:46'),
+(132, '1', 'Urine Bag', 'Urine Collection Bag, 2000mL', 1, 48, 48.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(133, '1', 'Zinc Sulfate DT 20mg', 'Junior Zinc Tablets', 100, 89, 0.89, 5, 33, 'active', '2025-09-04 14:52:46'),
+(134, '1', 'Normal Saline Nasal Drops', 'Nosfree Saline Drops', 1, 17, 17.00, 80, 1, 'active', '2025-09-04 14:52:46'),
+(135, '1', 'Hyoscine - N- Butylbromide 5mg/5mL', 'Hycin Syrup, 60mL', 1, 62, 62.00, 120, 1, 'active', '2025-09-04 14:52:46'),
+(136, '1', 'Orals Rehydration Salts', 'ORASOL, ORS', 1, 8, 8.00, 20, 1, 'active', '2025-09-04 14:52:46'),
+(137, '1', 'Ondasetron 2mg/5mL', 'EMITOSS Oral Solution, 30mL', 1, 270, 270.00, 450, 1, 'active', '2025-09-04 14:52:46'),
+(138, '1', 'Zinc Sulfate 20mg Syrup', 'TOTO-ZincOD Syrup', 1, 80, 80.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(139, '1', 'Nystatin 100,000 units', 'NYSTAL Suspension', 1, 62, 62.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(140, '1', 'Glucosamine/Chondroitin/Cod Liver/Omega 3', 'Cartil Omega Softgel Capsules', 30, 1758, 58.60, 75, 10, 'active', '2025-09-04 14:52:46'),
+(141, '1', 'Calcium/Magnesium/Vitamin D', 'Osteocare Tablets', 30, 620, 20.67, 30, 10, 'active', '2025-09-04 14:52:46'),
+(142, '1', 'Calcium 320mg/Phosphorus 137.5mg', 'Purecal Chewable Tablets', 30, 750, 25.00, 35, 10, 'active', '2025-09-04 14:52:46'),
+(143, '1', 'Calcium/Magnesium/Vitamin D', 'Zedcal Oral Suspension, 200mL', 1, 549, 549.00, 750, 1, 'active', '2025-09-04 14:52:46'),
+(144, '1', 'Lansoprazole/Tinidazole/Clarithromycin', 'Sure Kit, H. Pylori Kit', 1, 698, 698.00, 1000, 1, 'active', '2025-09-04 14:52:46'),
+(145, '1', 'Amoxicillin,clarithromycin,Esomeprazole', 'Esofag kit,H.Pylori kit', 1, 950, 950.00, 1300, 1, 'active', '2025-09-04 14:52:46'),
+(146, '1', 'lansoprazole/Amoxicilin/Clarithromycin', 'Pylotrip,H.Pylori Kit', 1, 890, 890.00, 1300, 1, 'active', '2025-09-04 14:52:46'),
+(147, '1', 'syringe 10cc', 'Syringe 10cc', 1, 450, 450.00, 10, 1, 'active', '2025-09-04 14:52:46'),
+(148, '1', 'Syringe 5cc', 'Syringe 5cc', 1, 270, 270.00, 10, 1, 'active', '2025-09-04 14:52:46'),
+(149, '1', 'Lactulose solution', 'Osmolax Suspension', 1, 340, 340.00, 450, 1, 'active', '2025-09-04 14:52:46'),
+(150, '1', 'magaldrate and simethicone 200ml', 'Maganta Suspension', 1, 361.25, 361.25, 500, 1, 'active', '2025-09-04 14:52:46'),
+(151, '1', 'Sodium alginate 500mg/sodium bicarbonate/calcium carbonate', ' Asynta Max 200mL', 1, 467.5, 467.50, 700, 1, 'active', '2025-09-04 14:52:46'),
+(152, '1', 'Aluminium Hydroxide 365mg/magnesium hydroxyde/simethicone', 'Relcer Gel 180mL', 1, 325, 325.00, 450, 1, 'active', '2025-09-04 14:52:46'),
+(153, '1', 'Aluminium Hydroxide 365mg/magnesium hydroxyde/simethicone', 'Relcer Gel 100mL', 1, 247, 247.00, 350, 1, 'active', '2025-09-04 14:52:46'),
+(154, '1', 'Aluminium Hydroxide 120mg/Magnesium Trisilicate 250mg', 'Alugel Suspension, 100mL', 1, 81, 81.00, 120, 1, 'active', '2025-09-04 14:52:46'),
+(155, '1', 'Aluminium oxide 200mg/Magnesium hydroxyde 400mg/simethicone 30mg', 'Nilacid 200mL Suspension', 1, 255, 255.00, 350, 1, 'active', '2025-09-04 14:52:46'),
+(156, '1', 'Aluminium oxide 200mg/Magnesium hydroxyde 400mg/simethicone 30mg', 'Nilacid 100mL Suspension', 1, 135, 135.00, 250, 1, 'active', '2025-09-04 14:52:46'),
+(157, '1', 'Aluminium Hydroxide 120mg/Magnesium Trisilicate 250mg', 'Gocid 100mL Suspension', 1, 35, 35.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(158, '1', 'Alginic Acid Aluminium Hydroxide 365mg/magnesium hydroxyde/simethicone ', 'ULGICID Suspension 200mL', 1, 285, 285.00, 400, 1, 'active', '2025-09-04 14:52:46'),
+(159, '1', 'Sucralfate/Oxetacaine', 'Sucrafil O Gel Suspension, 100mL', 1, 280, 280.00, 400, 1, 'active', '2025-09-04 14:52:46'),
+(160, '1', 'Aluminium Hydroxide 300mg/magnesium hydroxyde 150mg/simethicone 100mg', 'Benagas Gel, 100mL', 1, 40, 40.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(161, '1', 'Aluminium Hydroxide 150mg/Magnesium Trisilicate 250mg', 'Tryactin Suspension, 100mL', 1, 40, 40.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(162, '1', 'Magaldrate 480mg and simethicone 20mg', 'Magnacid Gel 100mL', 1, 55, 55.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(163, '1', 'Ferric Ammonium Citrate 200mg/Folic 1.5mg/Cyanocobalamin 50mcg/Ethanol', 'Ranferon 12 Suspension, 200mL', 1, 325, 325.00, 450, 1, 'active', '2025-09-04 14:52:46'),
+(164, '1', 'Dried Ferrous Sulphate 200mg/Folic Acid 0.4mg', 'Ferrolic-LF Tablets, IFAS', 100, 133, 1.33, 5, 33, 'active', '2025-09-04 14:52:46'),
+(165, '1', 'Ferrous Fumarate 305mg/Folic Acid 0.75mg/Cyanocobalamin 5mcg/Ascorbic Acid 75mg/Zinc Sulphate 5mg', 'Ranferon Capsules', 30, 286, 9.53, 20, 10, 'active', '2025-09-04 14:52:46'),
+(166, '1', 'Iron 50mg/Manganese 1.33mg/Copper 0.70mg', '\'Tot\'Hema Ampoules\'', 20, 860, 43.00, 80, 7, 'active', '2025-09-04 14:52:46'),
+(167, '1', 'Diloxanide Furoate 250mg/Metronidazole 200mg/Dicyclomine 10mg/5mL', 'Entamaxin Oral Suspension, 100mL', 1, 90, 90.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(168, '1', 'Metronidazole 200mg/5mL', 'Amizole Oral Suspension', 1, 45, 45.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(169, '1', 'Metronidazole Benzoate 200mg/5mL', 'Tricozole - 200mg Suspension', 1, 45, 45.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(170, '1', 'Multivitamin Syrup', 'Filwel Kids, 100mL', 1, 204, 204.00, 300, 1, 'active', '2025-09-04 14:52:46'),
+(171, '1', 'Secnidazole 750mg/15mL', 'Secnida for Children, 15mL', 1, 98, 98.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(172, '1', 'Cyproheptadine 4mg/ B Vitamins/Minerals', 'Becoactin Tablets', 30, 360, 12.00, 15, 10, 'active', '2025-09-04 14:52:46'),
+(173, '1', 'Cyproheptadine 4mg/ B Vitamins/Minerals', 'Becoactin Syrup, 200mL', 30, 320, 10.67, 450, 10, 'active', '2025-09-04 14:52:46'),
+(174, '1', 'Cyproheptadine 2mg/ B Vitamins/Minerals', 'Cypro B Plus Syrup, 200mL', 1, 235, 235.00, 350, 1, 'active', '2025-09-04 14:52:46'),
+(175, '1', 'Cyproheptadine 2mg/ Tricholine Citrate 275mg', 'Cypon Syrup,100mL', 1, 210, 210.00, 300, 1, 'active', '2025-09-04 14:52:46'),
+(176, '1', 'Ambroxol Hydrochloride 15mg/5mL', 'Ambroxol Expectorant Syrup, 100mL', 1, 178.4, 178.40, 250, 1, 'active', '2025-09-04 14:52:46'),
+(177, '1', 'Adovas Syrup', 'Adovas Syrup, 100mL', 1, 204, 204.00, 350, 1, 'active', '2025-09-04 14:52:46'),
+(178, '1', 'Sulbutamol 1mg/Bromhexine 2mg/Guaifenesin 50mg', 'Cadistin Plus, 100mL', 1, 175, 175.00, 250, 1, 'active', '2025-09-04 14:52:46'),
+(179, '1', 'Chlorpheniramine 2mg/Sodium Citrate 44mg/Guaifenesin 80mg/Ammonium Chloride 100mg/Levomenthol 0.8mg', 'Cadiphen Syrup, 100mL', 1, 140, 140.00, 200, 1, 'active', '2025-09-04 14:52:46'),
+(180, '1', 'Dextromethorphan 10mg/Chlorpheniramine 2mg/Pseudoephedrine 30mg', 'Flu-Gone DM, 60mL', 1, 165, 165.00, 230, 1, 'active', '2025-09-04 14:52:46'),
+(181, '1', 'Dextromethorphan 10mg/Chlorpheniramine 2mg/Pseudoephedrine 30mg/Paracetamol', 'Flu-Gone P+, 60mL', 1, 165, 165.00, 230, 1, 'active', '2025-09-04 14:52:46'),
+(182, '1', 'Promethazine 2.5mg/Diphenhydramine 5mg/Ammonium Cl 90mg/Sodium Citrate 45mg/Ephedrine Hcl 7.5mg', 'Tridex Cough Mixture,100mL', 1, 58, 58.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(183, '1', 'Dextromethorphan 10mg/Cetirizine 5mg/Phenylephrine Hcl 5mg', 'Zefcolin Dry Cough Formula Syrup, 100mL', 1, 229, 229.00, 300, 1, 'active', '2025-09-04 14:52:46'),
+(184, '1', 'SalbutamoL Sulfate 2mg/Bromhexine Hcl 4mg/Guaifenesin 100mg/ Menthol 1mg', 'Ascoril Expectorant 100mL', 1, 214.4, 214.40, 300, 1, 'active', '2025-09-04 14:52:46'),
+(185, '1', 'SalbutamoL Sulfate 2mg/Bromhexine Hcl 4mg/Guaifenesin 100mg/ Menthol 1mg', 'Ascoril Expectorant 200mL', 1, 375.4, 375.40, 500, 1, 'active', '2025-09-04 14:52:46'),
+(186, '1', 'Chlorpheniramine 2mg/Sodium Citrate 44mg/Guaifenesin 80mg/Ammonium Chloride 100mg/Levomenthol 0.8mg', 'Cadistin Expectorant, 100mL', 1, 98, 98.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(187, '1', 'Chlorpheniramine 2mg/Pseudoephedrine 10mg/Paracetamol 120mg', 'Coldcap Syrup, 100mL', 1, 90, 90.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(188, '1', 'Diphenhydramine 10mg/Promethazine 5mg/Ammonium Chloride 180mg/Sodium Citrate 90mg', 'Benahist Syrup, 60mL', 1, 36, 36.00, 50, 1, 'active', '2025-09-04 14:52:46'),
+(189, '1', 'Diphenhydramine 10mg/Promethazine 5mg/Ammonium Chloride 180mg/Sodium Citrate 90mg', 'Benahist Syrup, 100mL', 1, 53, 53.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(190, '1', 'Chlorpheniramine 2mg/Pseudoephedrine 30mg/Guaifenesin 100mg', 'Trimex Diabetic', 1, 215, 215.00, 300, 1, 'active', '2025-09-04 14:52:46'),
+(191, '1', 'Ambroxol Hydrochloride 15mg/5mL', 'Mucosolvan Syrup,100mL', 1, 590, 590.00, 850, 1, 'active', '2025-09-04 14:52:46'),
+(192, '1', 'Chlorpheniramine 2mg/Pseudoephedrine 30mg/Sodium Citrate 44mg/Dextromethorphan 10mg/Menthol 1mg', 'Coscof-DM Linctus,100mL', 1, 155, 155.00, 250, 1, 'active', '2025-09-04 14:52:46'),
+(193, '1', 'Cod Liver Oil, Vitamin A&D, Calcium', 'Scott\'s Emulsion, Original, 100mL, Syrup', 1, 410, 410.00, 600, 1, 'active', '2025-09-04 14:52:46'),
+(194, '1', 'Cod Liver Oil, Vitamin A&D, Calcium', 'Scott\'s Emulsion, Orange Flavour, 100mL, Syrup', 1, 410, 410.00, 600, 1, 'active', '2025-09-04 14:52:46'),
+(195, '1', 'Bonnisan', 'Bonnisan, 120mL, Syrup', 1, 385, 385.00, 450, 1, 'active', '2025-09-04 14:52:46'),
+(196, '1', 'Sodium Bicarbonate 50mg/Terpeneless Dillseed Oil 2.15mg', 'Gripe Water', 1, 92, 92.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(197, '1', 'Levosalbutamol 1mg/5mg', 'Levostar, 100mL Syrup', 1, 216, 216.00, 300, 1, 'active', '2025-09-04 14:52:46'),
+(198, '1', 'Levocetirizine 2.5mg', 'ALERFREE Syrup,60mL', 1, 123, 123.00, 200, 1, 'active', '2025-09-04 14:52:46'),
+(199, '1', 'Desloratidine 2.5mg/5mL', 'DESOSTAR Syrup, 60mL', 1, 266, 266.00, 380, 1, 'active', '2025-09-04 14:52:46'),
+(200, '1', 'Loratidine USP 5mg/5mL', 'Lorhistina Syrup,  60mL', 1, 179, 179.00, 300, 1, 'active', '2025-09-04 14:52:46'),
+(201, '1', 'Predinsolone 5mg/5mL', 'Olsolone Syrup, 50mL', 1, 100, 100.00, 200, 1, 'active', '2025-09-04 14:52:46'),
+(202, '1', 'Promethazine Hcl, 5mg/5mL', 'Largan, Syrup', 1, 19, 19.00, 50, 1, 'active', '2025-09-04 14:52:46'),
+(203, '1', 'Chlorpheniramine Maleate 4mg', 'Dawa-CPM Tablets, 4mg', 100, 31, 0.31, 2, 33, 'active', '2025-09-04 14:52:46'),
+(204, '1', 'Chlorpheniramine Maleate 2mg/5mL', 'Dawa-CPM Syrup, 60mL', 1, 22, 22.00, 50, 1, 'active', '2025-09-04 14:52:46'),
+(205, '1', 'Cetirizine HCL 5mg/5mL', 'CetriPlain, 60mL Syrup', 1, 20, 20.00, 80, 1, 'active', '2025-09-04 14:52:46'),
+(206, '1', 'Sodium Lactate IV Infusion', 'Ringer - Lactate, 500mL,IV Infusion', 1, 80, 80.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(207, '1', 'Sodium Chloride, 0.9%', 'VIDASAL, 500mL, IV Infusion (Normal Saline)', 1, 80, 80.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(208, '1', 'Erythromycin 125mg/5mL', 'Erythrox 100mL', 1, 78, 78.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(209, '1', 'Clarithromycin 500mg', 'Aziclar-500 Tablets', 1, 229, 229.00, 350, 1, 'active', '2025-09-04 14:52:46'),
+(210, '1', 'Diloxanide Furoate 500mg/Metronidazole 400mg', 'Diracip-MDS, Tablets,15s', 1, 225, 225.00, 300, 1, 'active', '2025-09-04 14:52:46'),
+(211, '1', 'Azithromycin 1g/Fluconazole 150mg/Secnidazole 1g', 'AZFLOSEC KIT', 1, 325, 325.00, 500, 1, 'active', '2025-09-04 14:52:46'),
+(212, '1', 'Ciprofloxacin 500mg/Tinidazole 600mg', 'CIPRO-T, Tablets', 1, 150, 150.00, 250, 1, 'active', '2025-09-04 14:52:46'),
+(213, '1', 'Cefalexin 500mg', 'Felaxin 500 Capsules', 1, 6.8, 6.80, 15, 1, 'active', '2025-09-04 14:52:46'),
+(214, '1', 'Tramadol 50mg', 'Metadol Capsules', 100, 350, 3.50, 10, 33, 'active', '2025-09-04 14:52:46'),
+(215, '1', 'Cefadroxil 500mg', 'DROX 500', 1, 183.6, 183.60, 400, 1, 'active', '2025-09-04 14:52:46'),
+(216, '1', 'Pregnancy Test Strip', 'Pregnancy Test Strip', 1, 11, 11.00, 50, 1, 'active', '2025-09-04 14:52:46'),
+(217, '1', 'Metformin HCl 500mg', 'Glucophage 500 Tablets', 90, 395, 4.39, 8, 30, 'active', '2025-09-04 14:52:46'),
+(218, '1', 'Metformin HCl 850mg', 'Glucophage 850 Tablets', 60, 564, 9.40, 15, 20, 'active', '2025-09-04 14:52:46'),
+(219, '1', 'Norethisterone 5mg', 'Primolut N Tablets', 30, 940, 31.33, 45, 10, 'active', '2025-09-04 14:52:46'),
+(220, '1', 'Clomifene 50mg', 'Clophene 50mg, Tablets', 30, 379, 12.63, 50, 10, 'active', '2025-09-04 14:52:46'),
+(221, '1', 'Fluconazole 150mg/Azithromycin 1g/Secnidazole 1g', 'VDM KIT, Tablets', 1, 645, 645.00, 850, 1, 'active', '2025-09-04 14:52:46'),
+(222, '1', 'Glibenclamide 5mg', 'Nogluc 5mg, 28s Tablets', 28, 145, 5.18, 7, 9, 'active', '2025-09-04 14:52:46'),
+(223, '1', 'Metformin 500mg', 'Sukarmin 500mg Tablets', 100, 85, 0.85, 5, 33, 'active', '2025-09-04 14:52:46'),
+(224, '1', 'Amlodipine 5mg', 'Varinil 5 Tablets', 28, 155, 5.54, 10, 9, 'active', '2025-09-04 14:52:46'),
+(225, '1', 'Hydrochlorothiazide 50mg', 'HYMET Tablets', 100, 75, 0.75, 4, 33, 'active', '2025-09-04 14:52:46'),
+(226, '1', 'Acetylsalicylic Acid 75mg', 'Ascard 75 Tablets', 30, 105, 3.50, 150, 10, 'active', '2025-09-04 14:52:46'),
+(227, '1', 'Metformin HCl 850mg', 'Glucomet 850 Tablets', 56, 420, 7.50, 15, 19, 'active', '2025-09-04 14:52:46'),
+(228, '1', 'Glibenclamide 5mg', 'Nogluc 5mg, 112s Tablets', 112, 495, 4.42, 7, 37, 'active', '2025-09-04 14:52:46'),
+(229, '1', 'Anusol', 'Anusol Suppositories', 12, 700, 58.33, 80, 4, 'active', '2025-09-04 14:52:46'),
+(230, '1', 'Atenolol 50mg', 'Cardinol 50 Tablets, 28s', 28, 125, 4.46, 8, 9, 'active', '2025-09-04 14:52:46'),
+(231, '1', 'Losartan 50mg', 'Amlozaar 50 Tablets', 30, 950, 31.67, 45, 10, 'active', '2025-09-04 14:52:46'),
+(232, '1', 'Carvedilol 12.5mg', 'Vidol 12.5 Tablets', 28, 410, 14.64, 20, 9, 'active', '2025-09-04 14:52:46'),
+(233, '1', 'Carvedilol 6.25mg', 'Vidol 6.25 Tablets', 28, 285, 10.18, 15, 9, 'active', '2025-09-04 14:52:46'),
+(234, '1', 'Nifedipine 20mg', 'Nicardin-SR Tablets', 100, 80, 0.80, 5, 33, 'active', '2025-09-04 14:52:46'),
+(235, '1', 'Losartan 50mg', 'Angilock 50 Tablets', 30, 131.75, 4.39, 8, 10, 'active', '2025-09-04 14:52:46'),
+(236, '1', 'Losartan 50mg/Hydrochlorothiazide 12.5mg', 'Angilock-Plus 50/12.5 Tablets', 30, 170, 5.67, 10, 10, 'active', '2025-09-04 14:52:46'),
+(237, '1', 'Atenolol 50mg', 'Lonet 50 Tablets', 100, 337, 3.37, 5, 33, 'active', '2025-09-04 14:52:46'),
+(238, '1', 'Atorvastatin 20mg ', 'Avastatin 20 Tablets', 28, 304, 10.86, 20, 9, 'active', '2025-09-04 14:52:46'),
+(239, '1', 'Atorvastatin 20mg ', 'Atsta*20 Tablets', 30, 170, 5.67, 15, 10, 'active', '2025-09-04 14:52:46'),
+(240, '1', 'Enalapril 10mg', 'Dawapril 10 Tablet', 100, 113, 1.13, 5, 33, 'active', '2025-09-04 14:52:46'),
+(241, '1', 'Enalapril 5mg', 'Dawapril 5 Tablet', 100, 123, 1.23, 5, 33, 'active', '2025-09-04 14:52:46'),
+(242, '1', 'Co-trimoxazole 480mg Tablets', 'CO-TRI 480 Tablets', 100, 149, 1.49, 5, 33, 'active', '2025-09-04 14:52:46'),
+(243, '1', 'Co-trimoxazole 960mg Tablets', 'Co-trimoxazole 960 Tablets', 100, 485, 4.85, 10, 33, 'active', '2025-09-04 14:52:46'),
+(244, '1', 'Blood Lancets', 'Blood Lancets Pieces', 100, 174, 1.74, 300, 33, 'active', '2025-09-04 14:52:46'),
+(245, '1', 'Benzyl Benzoate Application 25%', 'Scabees Application, 100mL', 1, 210, 210.00, 300, 1, 'active', '2025-09-04 14:52:46'),
+(246, '1', 'Toothpaste', 'ELEDENT TOOTHPASTE, 75MG', 1, 120, 120.00, 250, 1, 'active', '2025-09-04 14:52:46'),
+(247, '1', 'Toothpaste', 'ELEDENT TOOTHPASTE, 150MG', 1, 220, 220.00, 350, 1, 'active', '2025-09-04 14:52:46'),
+(248, '1', 'Calcium Antiacids', 'ENO Tablets (Pairs)', 100, 595, 5.95, 20, 33, 'active', '2025-09-04 14:52:46'),
+(249, '1', 'Touch ang Go', 'Touch and Go', 1, 220, 220.00, 300, 1, 'active', '2025-09-04 14:52:46'),
+(250, '1', 'Hydrocortisone Ointment 1% w/w', 'ELYCORT 15G OINTMENT', 1, 62, 62.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(251, '1', 'Hydrocortisone Cream 1% w/w', 'ELYCORT 15G CREAM', 1, 66, 66.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(252, '1', 'Neomycin 5mg/Bacitracin 2.5mg/Gramicidin 0.5mg Powder', 'GRABACIN POWDER 10GM', 1, 125, 125.00, 200, 1, 'active', '2025-09-04 14:52:46'),
+(253, '1', 'Neomycin 5mg/Bacitracin 250 IU', 'NEBANOL POWDER 5MG', 1, 59, 59.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(254, '1', 'Neomycin 3.5mg/Bacitracin 5000 units/Bacitracin 500 units', 'GRABACIN 3 Ointment', 1, 255, 255.00, 350, 1, 'active', '2025-09-04 14:52:46'),
+(255, '1', 'Hydrocortisone Ointment 1% w/w', 'HYDROTOPIC Ointment 15g Tube', 1, 30, 30.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(256, '1', 'Condoms', 'Kiss Classic Condoms, 3s', 24, 627, 26.13, 50, 8, 'active', '2025-09-04 14:52:46'),
+(257, '1', 'Condoms', 'Kiss Strawberry Condoms, 3s', 24, 826, 34.42, 100, 8, 'active', '2025-09-04 14:52:46'),
+(258, '1', 'Condoms', 'Kiss Studded Condoms, 3s', 24, 892, 37.17, 100, 8, 'active', '2025-09-04 14:52:46'),
+(259, '1', 'Condoms', 'Kiss Chocolate Condoms, 3s', 24, 826, 34.42, 100, 8, 'active', '2025-09-04 14:52:46'),
+(260, '1', 'Condoms', 'Durex Fetherlite Ultra, 3s', 1, 337, 337.00, 550, 1, 'active', '2025-09-04 14:52:46'),
+(261, '1', 'Condoms', 'Durex Extra Safe, 3s', 1, 302, 302.00, 400, 1, 'active', '2025-09-04 14:52:46'),
+(262, '1', 'Condoms', 'TRUST RIBBED, 3s', 24, 920, 38.33, 100, 8, 'active', '2025-09-04 14:52:46'),
+(263, '1', 'Condoms', 'TRUST CLASSIC, 3s', 24, 600, 25.00, 50, 8, 'active', '2025-09-04 14:52:46'),
+(264, '1', 'Condoms', 'TRUST STUDDED, 3s', 24, 900, 37.50, 100, 8, 'active', '2025-09-04 14:52:46'),
+(265, '1', 'Bandages', 'Crepe Bandage Spandex 5cm', 1, 18, 18.00, 30, 1, 'active', '2025-09-04 14:52:46'),
+(266, '1', 'Bandages', 'Crepe Bandage Spandex 7.5cm', 1, 29, 29.00, 50, 1, 'active', '2025-09-04 14:52:46'),
+(267, '1', 'Bandages', 'Crepe Bandage Spandex 15cm', 1, 49, 49.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(268, '1', 'Bandages', 'Crepe Bandage Spandex 10cm', 1, 46, 46.00, 80, 1, 'active', '2025-09-04 14:52:46'),
+(269, '1', 'Diclofenac Gel 1%', 'DICLOGEN 1% GEL', 1, 19, 19.00, 80, 1, 'active', '2025-09-04 14:52:46'),
+(270, '1', 'Clotrimazole 1% w/w/Beclomethasone Dipropionate 0.025% w/w', 'Bulkot-B Cream', 1, 51, 51.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(271, '1', 'Betamethasone Dipropionate, Gentamicin & Clotrimazole  Cream', 'Xtraderm Cream', 1, 126, 126.00, 200, 1, 'active', '2025-09-04 14:52:46'),
+(272, '1', 'Clotrimazole 10.0% w/w/Betamethasone 0.5mg', 'Clozole-B Cream', 1, 72, 72.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(273, '1', 'Clotrimazole 1.0% w/w', 'Clozole Cream', 1, 28, 28.00, 70, 1, 'active', '2025-09-04 14:52:46'),
+(274, '1', 'Hydrocortisone Cream 1% w/w', 'OLCORT 15G Cream', 1, 28, 28.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(275, '1', 'Beclomethasone 0.025%, Miconazole 2%, Neomycin Sulphate 0.5% Chlorocresol 0.25%', 'Beclomin Ointment 15g', 1, 150, 150.00, 200, 1, 'active', '2025-09-04 14:52:46'),
+(276, '1', 'Betamethasone Valerate 0.1% w/w', 'MEDIVEN Ointment 15g', 1, 76, 76.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(277, '1', 'Betamethasone Valerate 0.1% w/w', 'MEDIVEN Cream 15g', 1, 45, 45.00, 80, 1, 'active', '2025-09-04 14:52:46'),
+(278, '1', 'Betamethasone Valerate 0.1% w/w/Salicylic acid 3% w/w', 'MEDIVEN-S Ointment 15g', 1, 180, 180.00, 250, 1, 'active', '2025-09-04 14:52:46'),
+(279, '1', 'Silver Sulfadiazine 1% w/w', 'Dermazine Cream 15g', 1, 40, 40.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(280, '1', 'Calamine Lotion', 'COVIGEN Calamine Lotion, 100mL', 1, 29, 29.00, 80, 1, 'active', '2025-09-04 14:52:46'),
+(281, '1', 'Surgical Spirit 70% v/v', 'COVIGEN Surgical Spirit, 50mL', 1, 26, 26.00, 50, 1, 'active', '2025-09-04 14:52:46'),
+(282, '1', 'Povidone-Iodine USP 10% w/v', 'FAHOLO POVIDONE IODINE, 50mL', 1, 50, 50.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(283, '1', 'Silver Sulfadiazine 1% w/w', 'Dermazine Cream 1% w/w, Dawa, 100g', 1, 169, 169.00, 250, 1, 'active', '2025-09-04 14:52:46'),
+(284, '1', 'Silver Sulfadiazine 1% w/w', 'Dermazine Cream 1% w/w, Dawa, 250g', 1, 308, 308.00, 500, 1, 'active', '2025-09-04 14:52:46'),
+(285, '1', 'Chlorine 3.5% w/v', 'FAHOLO Sodium Hypochlorite 3.5% w/v', 1, 300, 300.00, 450, 1, 'active', '2025-09-04 14:52:46'),
+(286, '1', 'Sterile Paraffin Dressing ', 'Sterifin Dressing Gauze, 10x10', 10, 287, 28.70, 50, 3, 'active', '2025-09-04 14:52:46'),
+(287, '1', 'Sodium Bicarbonate 300mg ', 'SodaMint Tablets', 100, 87, 0.87, 5, 33, 'active', '2025-09-04 14:52:46'),
+(288, '1', 'Indomethacin 25mg', 'Caredomet 25mg Capsules, Indocid', 100, 80, 0.80, 3, 33, 'active', '2025-09-04 14:52:46'),
+(289, '1', 'Esomeprazole 20mg', 'ESOMAC 20', 28, 789, 28.18, 35, 9, 'active', '2025-09-04 14:52:46'),
+(290, '1', 'Esomeprazole 20mg', 'ESOMAC 40', 14, 745, 53.21, 70, 5, 'active', '2025-09-04 14:52:46'),
+(291, '1', 'Albendazole 400mg', 'Zentel 400 Tablet', 1, 190, 190.00, 250, 1, 'active', '2025-09-04 14:52:46'),
+(292, '1', 'Ketoconazole 2% w/v', 'Hitoral  Shampoo, 100mL', 1, 316, 316.00, 500, 1, 'active', '2025-09-04 14:52:46'),
+(293, '1', 'Ivermectin BP 6mg', 'Iverkot-6', 10, 2100, 210.00, 250, 3, 'active', '2025-09-04 14:52:46'),
+(294, '1', 'Lidocaine HCl/Cetylpyridinium', 'Dentinox 10g', 2, 646, 323.00, 900, 1, 'active', '2025-09-04 14:52:46'),
+(295, '1', 'Trimetabol', 'Trimetabol Solution', 1, 750, 750.00, 1100, 1, 'active', '2025-09-04 14:52:46'),
+(296, '1', 'Diclofenac/Linseed/Methyl Salicylate/Racementhol/Benzyl Alcohol', 'VOLINI GEL, 100MG', 1, 218, 218.00, 300, 1, 'active', '2025-09-04 14:52:46'),
+(297, '1', 'Good Morning Lung Tonic', 'Good Morning, 60mL', 1, 76, 76.00, 130, 1, 'active', '2025-09-04 14:52:46'),
+(298, '1', 'Kofgon Red', 'KOFGON Syr, 60mL', 1, 25, 25.00, 50, 1, 'active', '2025-09-04 14:52:46'),
+(299, '1', 'Tricohist ', 'Tricohist, 100mL', 1, 108, 108.00, 180, 1, 'active', '2025-09-04 14:52:46'),
+(300, '1', 'Tricohist ', 'Tricohist, 60mL', 1, 95, 95.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(301, '1', 'Diphenhydramine 10mg/Promethazine 5mg/Ammonium Chloride 180mg', 'Tripozed, Expectorant, 100mL', 1, 41, 41.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(302, '1', 'Diclofenac Sodium Slow Release 100mg', 'Diclomol SR 100mg, Tablets', 100, 435, 4.35, 10, 33, 'active', '2025-09-04 14:52:46'),
+(303, '1', 'Tretinoine 0.05% w/w', 'Acnesol Cream, 25g', 1, 153, 153.00, 250, 1, 'active', '2025-09-04 14:52:46'),
+(304, '1', 'Telmisartan 80mg/Amlodipine 5mg', 'AMTEL 80/5 Tabs', 30, 2000, 66.67, 80, 10, 'active', '2025-09-04 14:52:46'),
+(305, '1', 'Sulfadoxine/Pyrimethamine', 'Malodar Tbalets, 3s', 1, 40, 40.00, 80, 1, 'active', '2025-09-04 14:52:46'),
+(306, '1', 'Flucloxacillin/Amoxicillin 250mg/5mL', 'MoxaForte Suspension, 100mL', 1, 265, 265.00, 350, 1, 'active', '2025-09-04 14:52:46'),
+(307, '1', 'Sensodyne Toothpaste', 'Sensodyne Multicare, 40mL', 1, 241, 241.00, 350, 1, 'active', '2025-09-04 14:52:46'),
+(308, '1', 'Sildenafil 100mg/5g', 'KAMAGRA ORAL JELLY 100MG', 1, 660, 660.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(309, '1', 'aceclofenac/Paracetamol/Chlorzoxazone', 'ACETAL MR Tablets', 10, 519, 51.90, 15, 3, 'active', '2025-09-04 14:52:46'),
+(310, '1', 'Canullas G22 (Blue)', 'Canullas G22 (Blue)', 1, 13, 13.00, 30, 1, 'active', '2025-09-04 14:52:46'),
+(311, '1', 'Canullas G24(Yellow)', 'Canullas G24(Yellow)', 1, 14, 14.00, 30, 1, 'active', '2025-09-04 14:52:46'),
+(312, '1', 'FloraNorm Satchets', 'FloraNorm Satchets', 10, 870, 87.00, 130, 3, 'active', '2025-09-04 14:52:46'),
+(313, '1', 'Amoxicillin 1g/Clavulanate 200mg', 'GAMOK Injection, Vial', 1, 125, 125.00, 200, 1, 'active', '2025-09-04 14:52:46'),
+(314, '1', 'Insulin Syringes, 0.5mL', 'Insulin Syringes, 0.5mL', 10, 205, 20.50, 30, 3, 'active', '2025-09-04 14:52:46'),
+(315, '1', 'Insulin Syringes, 1mL', 'Insulin Syringes, 1mL', 10, 200, 20.00, 30, 3, 'active', '2025-09-04 14:52:46'),
+(316, '1', 'Diclofenac/Paracetamol/Chlorzoxazone', 'LOBAK Tablets, 100s', 100, 969, 9.69, 15, 33, 'active', '2025-09-04 14:52:46'),
+(317, '1', 'Tranexamic Acid 500mg/5mL', 'MENOZIP INJ, 500mg/5mL', 5, 461, 92.20, 150, 2, 'active', '2025-09-04 14:52:46'),
+(318, '1', 'Carbocisteine 100mg', 'NASITHIOL INFANT, 60mL', 1, 56, 56.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(319, '1', 'Carbocisteine 100mg/Promethazine 2.5mg', 'NASITHIOL PROM, 100mL', 1, 67, 67.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(320, '1', 'Carbocisteine 100mg/Promethazine 2.5mg', 'NASITHIOL PROM, 60mL', 1, 56, 56.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(321, '1', 'Needle G21', 'Needle G21', 100, 128, 1.28, 5, 33, 'active', '2025-09-04 14:52:46'),
+(322, '1', 'Needle G23', 'Needle G23', 100, 128, 1.28, 5, 33, 'active', '2025-09-04 14:52:46'),
+(323, '1', 'Omeprazole Inj 40mg', 'Ompac 40mg', 1, 60, 60.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(324, '1', 'Ondasetron 4mg/2mL', 'ONDEX 4MG', 5, 431, 86.20, 150, 2, 'active', '2025-09-04 14:52:46'),
+(325, '1', 'Dihydroartemisinin 40mg/Piperaquine 320mg', 'P-ALAXIN 9S', 1, 175, 175.00, 250, 1, 'active', '2025-09-04 14:52:46'),
+(326, '1', 'Paracetamol/Codeine Phosphate/Doxylamine, Caffeine', 'TAMEPYN, 20S', 20, 215, 10.75, 15, 7, 'active', '2025-09-04 14:52:46'),
+(327, '1', 'Lubricating Jelly', 'Veri-Lube, 42g', 1, 117, 117.00, 280, 1, 'active', '2025-09-04 14:52:46'),
+(328, '1', 'Carbocisteine 100mg/Promethazine 2.5mg', 'Vithiol Syrup, 125mg', 1, 130, 130.00, 200, 1, 'active', '2025-09-04 14:52:46'),
+(329, '1', 'Timolol Eye Drops 0.5%', 'TIMOGLAX EYE DROPS, 5mL', 1, 67, 67.00, 150, 1, 'active', '2025-09-04 14:52:46'),
+(330, '1', 'Herbal Cough Lozenges', 'ZECUF LOZENGES, LEMON', 20, 185, 9.25, 30, 7, 'active', '2025-09-04 14:52:46'),
+(331, '1', 'Herbal Cough Lozenges', 'ZECUF LOZENGES, ORANGE', 20, 185, 9.25, 30, 7, 'active', '2025-09-04 14:52:46'),
+(332, '1', 'Miconazole Nitrate 2%w/w', 'MUCOBEN CREAM', 1, 30, 30.00, 100, 1, 'active', '2025-09-04 14:52:46'),
+(333, '1', 'Medicated Soap', 'TETMOSOL Medicated Soap', 1, 95, 95.00, 200, 1, 'active', '2025-09-04 14:52:46'),
+(334, '1', 'Strepsils', 'Strepsils Soothing, Honey & Lemon', 100, 1300, 13.00, 50, 33, 'active', '2025-09-04 14:52:46'),
+(335, '1', 'Strepsils', 'Strepsils Regular', 100, 1300, 13.00, 50, 33, 'active', '2025-09-04 14:52:46'),
+(336, '1', 'Mupirocin Ointment 2%', 'Zupricin Ointment, 15g', 1, 505.5, 505.50, 750, 1, 'active', '2025-09-04 14:52:46'),
+(337, '1', 'Mupirocin 2%/Betamethasone 0.5% Ointment', 'Zupricin B Ointment, 15g', 1, 625.5, 625.50, 850, 1, 'active', '2025-09-04 14:52:46'),
+(338, '1', 'Anti-Rabies Vaccine', 'Anti-Rabies Vaccine, Vial', 3, 800, 266.67, 1200, 1, 'active', '2025-09-04 14:52:46'),
+(339, '1', 'Vitamin B Complex', 'Neurobion Forte Tablets', 1, 3, 3.00, 10, 1, 'active', '2025-09-04 14:52:46'),
+(340, '1', 'Insulin 70/30', 'Mixtard 30, Vial', 1, 500, 500.00, 700, 1, 'active', '2025-09-04 14:52:46'),
+(341, '1', 'Bisacodyl 5mg', 'Bicolex 5, Tablets', 100, 187, 1.87, 5, 33, 'active', '2025-09-04 14:52:46'),
+(342, '1', 'Clindamycin 300mg', 'Clindacin-300 Capsules', 1, 135, 135.00, 250, 1, 'active', '2025-09-04 14:52:46'),
+(343, '1', 'Diloxanide 250mg/Metronidazole 200mg/Dicyclomine 10mg', 'Entamaxin Capsules,', 1, 190, 190.00, 300, 1, 'active', '2025-09-04 14:52:46'),
+(344, '1', 'Fluconazole 200mg ', 'Diconazol 200mg Tablets', 100, 1086, 10.86, 15, 33, 'active', '2025-09-04 14:52:46'),
+(345, '1', 'Crotamiton+Sulphur', 'Scabion Cream, 20g', 1, 135, 135.00, 200, 1, 'active', '2025-09-04 14:52:46'),
+(346, '1', 'Surgical Masks', 'Surgical Mask', 50, 150, 3.00, 10, 17, 'active', '2025-09-04 14:52:46'),
+(347, '1', 'MENTHO PLUS BALM', 'EMAMI MENTHO PLUS', 1, 41, 41.00, 80, 1, 'active', '2025-09-04 14:52:46'),
+(348, '1', 'Albendazole 400mg', 'NILWORM 400MG, TABLET', 1, 9, 9.00, 50, 1, 'active', '2025-09-04 14:52:46'),
+(349, '1', 'Albendazole 400mg/10mL', 'TANZOL SUSPENSION', 1, 18, 18.00, 50, 1, 'active', '2025-09-04 14:52:46');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `psychiatric_rx_problems`
+--
+
+CREATE TABLE `psychiatric_rx_problems` (
+  `problem_id` int NOT NULL,
+  `problem_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `psychiatric_rx_problems`
+--
+
+TRUNCATE TABLE `psychiatric_rx_problems`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `psychodar`
+--
+
+CREATE TABLE `psychodar` (
+  `dar_id` int NOT NULL,
+  `visitDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `visit_name` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clientName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `dob` date NOT NULL,
+  `age` int DEFAULT NULL,
+  `sex` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `marital_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `living_arrangements` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `hotspot` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `accomodation` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `drugname` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `dosage` int NOT NULL,
+  `living_conditions` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `accommodation` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `employment_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `treatment_stage` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `rx_stage` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `psycho_issues` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `psycho_interventions` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `reintegration_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `legal_issues` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `gbv_screen` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `gbv_support` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `linkage` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `therapists_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `therapists_notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `next_appointment` date NOT NULL,
+  `appointment_status` enum('scheduled','done') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'scheduled',
+  `referral_linkage` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `psychosocial_intake_form_1a`
+--
+
+CREATE TABLE `psychosocial_intake_form_1a` (
+  `id` int NOT NULL,
+  `visitDate` date DEFAULT NULL,
+  `visit_type` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `clientName` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `mat_id` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sex` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `other_sex_specify` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `pre_complaints` text COLLATE utf8mb4_general_ci,
+  `corr_complaints` text COLLATE utf8mb4_general_ci,
+  `hx_illness` text COLLATE utf8mb4_general_ci,
+  `past_psych_hx` text COLLATE utf8mb4_general_ci,
+  `past_med_hx` text COLLATE utf8mb4_general_ci,
+  `sub_use_hx` text COLLATE utf8mb4_general_ci,
+  `fam_hx` text COLLATE utf8mb4_general_ci,
+  `intake_date` date DEFAULT NULL,
+  `marital_status` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `marital_other_specify` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `living_arrangements` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `living_arrangements_detail` text COLLATE utf8mb4_general_ci,
+  `living_other_specify` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `previous_treatment` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `treatment_specify` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sexually_active` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sexual_partners` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `unprotected_sex` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `education_level` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `education_other_specify` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `has_income` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `income_specify` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `employment_status` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `missed_work` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `fired_work` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `therapist_initials` varchar(150) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `family_relationship` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `has_dependents` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `dependents` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `dependent_other_specify` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `has_support` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `support_data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `ante_hx` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `dev_hx` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `child_hx` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `gbv_experience` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `gbv_description` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `gbv_reported` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `gbv_medical` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `has_case` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `case_type` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `case_data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `premord_hx` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `forens_hx` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `phys_exam` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `mental_exam` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `diagnosis` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `mgt_plan` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `therapist_name` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `service_date` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `rx_supporter` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `referral` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `psychosocial_intake_form_1a`
+--
+
+TRUNCATE TABLE `psychosocial_intake_form_1a`;
+--
+-- Dumping data for table `psychosocial_intake_form_1a`
+--
+
+INSERT INTO `psychosocial_intake_form_1a` (`id`, `visitDate`, `visit_type`, `clientName`, `mat_id`, `sex`, `other_sex_specify`, `pre_complaints`, `corr_complaints`, `hx_illness`, `past_psych_hx`, `past_med_hx`, `sub_use_hx`, `fam_hx`, `intake_date`, `marital_status`, `marital_other_specify`, `living_arrangements`, `living_arrangements_detail`, `living_other_specify`, `previous_treatment`, `treatment_specify`, `sexually_active`, `sexual_partners`, `unprotected_sex`, `education_level`, `education_other_specify`, `has_income`, `income_specify`, `employment_status`, `missed_work`, `fired_work`, `therapist_initials`, `created_at`, `family_relationship`, `has_dependents`, `dependents`, `dependent_other_specify`, `has_support`, `support_data`, `ante_hx`, `dev_hx`, `child_hx`, `gbv_experience`, `gbv_description`, `gbv_reported`, `gbv_medical`, `has_case`, `case_type`, `case_data`, `premord_hx`, `forens_hx`, `phys_exam`, `mental_exam`, `diagnosis`, `mgt_plan`, `therapist_name`, `service_date`, `rx_supporter`, `referral`) VALUES
+(1, '2025-12-01', 'initial', 'DAVID KIONI WANGECI', 'MAT_11094MAT0003_INIT_1764621352', 'Male', NULL, '', '', '', '', '', '', '', '2025-12-26', 'Married', '', 'stable', NULL, '', 'yes', 'Testing', 'yes', 'single', 'yes', 'Secondary', '', 'yes', 'Matatu', 'Employment Part time (&lt;40hrs)', 'no', 'yes', NULL, '2025-12-01 20:35:52', 'fair', 'no', NULL, '', 'no', NULL, '', '', '', 'yes', '', NULL, NULL, 'yes', 'committed, arrested', '{\"Shoplifting\\/vandalism\":{\"committed\":1,\"arrested\":1},\"Drunk and disorderly\":{\"committed\":0,\"arrested\":0},\"Drug possession\":{\"committed\":0,\"arrested\":0},\"Drug peddling\":{\"committed\":0,\"arrested\":0},\"Weapons offense\":{\"committed\":0,\"arrested\":1},\"Burglary\":{\"committed\":1,\"arrested\":0},\"Robbery\":{\"committed\":0,\"arrested\":0},\"Assault\":{\"committed\":0,\"arrested\":0},\"Rape\":{\"committed\":1,\"arrested\":0},\"Murder\":{\"committed\":0,\"arrested\":0},\"Sex work\":{\"committed\":0,\"arrested\":0},\"Fraud\\/forgery\":{\"committed\":0,\"arrested\":0}}', '', '', '', '', '', '', 'Lyani Sitti', '2025-12-03', '', ''),
+(2, '2025-12-03', 'followup1', 'JOSEPH MUCHUMI MICHUKI', 'MAT_10973MAT0003_FUP_1764781894', 'Male', NULL, 'NAD', 'NAD', 'NAD', 'NAD', 'NAD', 'NAD', 'NAD', '2025-12-03', 'Remarried', '', 'no_stable', 'Family house, Friend&#039;s house, Streets', '', 'yes', 'None', 'yes', 'multiple', 'yes', 'Post-secondary', '', 'yes', 'Matatu', 'Unemployed (Currently not looking for work)', 'yes', 'yes', NULL, '2025-12-03 17:11:34', 'fair', 'yes', 'Children, Parent, Sibling', '', 'yes', '{\"Spouse\\/Partner\":{\"cash\":0,\"food\":0,\"shelter\":0,\"psychological\":1},\"Mother\":{\"cash\":0,\"food\":0,\"shelter\":1,\"psychological\":0},\"Father\":{\"cash\":1,\"food\":0,\"shelter\":0,\"psychological\":0},\"Brother\":{\"cash\":0,\"food\":1,\"shelter\":0,\"psychological\":0},\"Sister\":{\"cash\":0,\"food\":0,\"shelter\":1,\"psychological\":0},\"Child\":{\"cash\":0,\"food\":0,\"shelter\":0,\"psychological\":1},\"Peer educator\\/Outreach worker\":{\"cash\":0,\"food\":0,\"shelter\":0,\"psychological\":1},\"Other\":{\"cash\":0,\"food\":0,\"shelter\":1,\"psychological\":0}}', 'NAD', 'NAD', 'NAD', 'yes', 'Sexual GBV', 'yes', 'yes', 'yes', 'committed, arrested', '{\"Shoplifting\\/vandalism\":{\"committed\":1,\"arrested\":0},\"Drunk and disorderly\":{\"committed\":1,\"arrested\":1},\"Drug possession\":{\"committed\":0,\"arrested\":0},\"Drug peddling\":{\"committed\":0,\"arrested\":0},\"Weapons offense\":{\"committed\":1,\"arrested\":0},\"Burglary\":{\"committed\":0,\"arrested\":0},\"Robbery\":{\"committed\":1,\"arrested\":0},\"Assault\":{\"committed\":1,\"arrested\":1},\"Rape\":{\"committed\":0,\"arrested\":0},\"Murder\":{\"committed\":0,\"arrested\":0},\"Sex work\":{\"committed\":1,\"arrested\":0},\"Fraud\\/forgery\":{\"committed\":0,\"arrested\":0}}', 'NAD', 'NAD', 'NAD', 'NAD', 'NAD', 'Start on MAT', 'Lyani', '2025-12-03', 'None', 'NOne');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `psychosocial_interventions`
+--
+
+CREATE TABLE `psychosocial_interventions` (
+  `intervention_id` int NOT NULL,
+  `intervention_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `psychosocial_interventions`
+--
+
+TRUNCATE TABLE `psychosocial_interventions`;
+--
+-- Dumping data for table `psychosocial_interventions`
+--
+
+INSERT INTO `psychosocial_interventions` (`intervention_id`, `intervention_name`) VALUES
+(1, 'Individual Therapy'),
+(2, 'Couple Therapy'),
+(3, 'Group Therapy'),
+(4, 'Family Therapy'),
+(5, 'Psycho Education'),
+(6, 'Crisis/Conflict Management'),
+(7, 'None');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `psychosocial_outcomes`
+--
+
+CREATE TABLE `psychosocial_outcomes` (
+  `psyc_outcome_id` int NOT NULL,
+  `outcome_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `psychosocial_outcomes`
+--
+
+TRUNCATE TABLE `psychosocial_outcomes`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `psycho_followup_visits`
+--
+
+CREATE TABLE `psycho_followup_visits` (
+  `visit_id` int NOT NULL,
+  `followup_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `psycho_followup_visits`
+--
+
+TRUNCATE TABLE `psycho_followup_visits`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pumpcalibrationsteps`
+--
+
+CREATE TABLE `pumpcalibrationsteps` (
+  `PumpId` int NOT NULL,
+  `Volume` decimal(19,5) NOT NULL,
+  `Factor` decimal(19,5) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `pumpcalibrationsteps`
+--
+
+TRUNCATE TABLE `pumpcalibrationsteps`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pumps`
+--
+
+CREATE TABLE `pumps` (
+  `Id` int NOT NULL,
+  `TerminalId` int NOT NULL,
+  `Name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `PrimingVolume` decimal(19,5) NOT NULL,
+  `CalibrationFactor` decimal(19,5) NOT NULL,
+  `CalibrationAdjustment` decimal(19,5) NOT NULL,
+  `RepumpDelayMs` int NOT NULL,
+  `DriverType` varchar(1000) COLLATE utf8mb4_general_ci NOT NULL,
+  `DriverSettings` text COLLATE utf8mb4_general_ci NOT NULL,
+  `LastCalibrated` datetime DEFAULT NULL,
+  `CalibrationIntervalHours` int NOT NULL,
+  `CalibrationVolumeSteps` varchar(1000) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `Hidden` tinyint(1) NOT NULL,
+  `DrugId` int DEFAULT NULL,
+  `DrugStrengthValue` decimal(19,5) DEFAULT NULL,
+  `JuiceTypeId` int DEFAULT NULL,
+  `CurrentPumpStock` decimal(19,5) NOT NULL DEFAULT '0.00000',
+  `CurrentBottleDetails` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ShowPumpStock` tinyint(1) NOT NULL DEFAULT '0',
+  `ShowMainStock` tinyint(1) NOT NULL DEFAULT '1',
+  `MinimumPumpStock` decimal(19,5) NOT NULL DEFAULT '0.00000',
+  `MaximumPumpStock` decimal(19,5) NOT NULL DEFAULT '0.00000',
+  `CorrectableMiddleStepVariance` decimal(19,5) NOT NULL DEFAULT '0.00000',
+  `MaxCalibrationVariance` decimal(19,5) NOT NULL DEFAULT '0.20000',
+  `MaximumServiceVolume` decimal(19,5) DEFAULT NULL,
+  `CurrentServiceVolume` decimal(19,5) NOT NULL DEFAULT '0.00000'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `pumps`
+--
+
+TRUNCATE TABLE `pumps`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `referral`
+--
+
+CREATE TABLE `referral` (
+  `referral_id` int NOT NULL,
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `clientName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `age` int DEFAULT NULL,
+  `sex` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `refer_from` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `refer_to` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `referral_notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `referral_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `referral_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `status` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Submitted'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `referral`
+--
+
+TRUNCATE TABLE `referral`;
+--
+-- Dumping data for table `referral`
+--
+
+INSERT INTO `referral` (`referral_id`, `mat_id`, `clientName`, `age`, `sex`, `refer_from`, `refer_to`, `referral_notes`, `referral_name`, `referral_date`, `status`) VALUES
+(50, '23368MAT00001', 'ALI BAKARI JOBWE', 45, 'Male', 'Super Admin', 'Clinician', 'Change to Buprenorphine', 'Super Admin', '2025-10-02 06:15:55', 'Submitted'),
+(51, '10973MAT0003', 'JOSEPH MUCHUMI MICHUKI', 26, 'Male', 'Admin', 'Laboratory Scientist', 'For Toxicology', 'Lyani Sitti', '2025-12-03 07:57:06', 'completed'),
+(52, 'RUIRU0001', 'Test Client', 15, 'Female', 'Admin', 'HRIO', 'Update the TCA', 'Lyani Sitti', '2025-12-03 08:11:25', 'Submitted'),
+(53, 'KARURI0001', 'Karuri Client', 20, 'Male', 'Admin', 'Psychologist', 'update TCA to anoither', 'Lyani Sitti', '2025-12-04 09:20:36', 'completed'),
+(54, '10507MAT0002', 'EDWIN MUIRURI KANGETHE', 46, 'Male', 'Admin', 'HRIO', 'nnnhg', 'Lyani Sitti', '2025-12-17 15:07:15', 'Submitted');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `referral_linkage_services`
+--
+
+CREATE TABLE `referral_linkage_services` (
+  `ref_id` int NOT NULL,
+  `ref_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `referral_linkage_services`
+--
+
+TRUNCATE TABLE `referral_linkage_services`;
+--
+-- Dumping data for table `referral_linkage_services`
+--
+
+INSERT INTO `referral_linkage_services` (`ref_id`, `ref_name`) VALUES
+(1, 'Education Programs'),
+(2, 'Legal Support'),
+(3, 'Community Support'),
+(4, 'Peer Support'),
+(5, 'Family Support'),
+(6, 'Rehabilitation'),
+(7, 'Mental Health Support'),
+(8, 'Medical Services'),
+(9, 'HIV Services'),
+(10, 'GBV Services'),
+(11, 'None');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `regimens`
+--
+
+CREATE TABLE `regimens` (
+  `regimen_id` int NOT NULL,
+  `regimen_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `regimens`
+--
+
+TRUNCATE TABLE `regimens`;
+--
+-- Dumping data for table `regimens`
+--
+
+INSERT INTO `regimens` (`regimen_id`, `regimen_name`, `date_created`) VALUES
+(1, 'AF2E - TDF + 3TC + DTG', '2024-04-14 19:29:00'),
+(2, 'AF2F - TDF + 3TC + LPV/r', '2024-04-14 19:29:26'),
+(3, 'AF4C - ABC + 3TC + DTG', '2024-04-14 19:29:50'),
+(4, 'AF2D - TDF + 3TC + ATV/r', '2024-04-14 19:30:49'),
+(5, 'AF1D - AZT + 3TC + DTG', '2024-04-14 19:31:52'),
+(6, 'AF2B - TDF + 3TC + EFV', '2024-04-14 19:32:25'),
+(7, 'None', '2024-04-14 19:40:14');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `regimen_type`
+--
+
+CREATE TABLE `regimen_type` (
+  `regimen_id` int NOT NULL,
+  `regimen_type_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `regimen_type`
+--
+
+TRUNCATE TABLE `regimen_type`;
+--
+-- Dumping data for table `regimen_type`
+--
+
+INSERT INTO `regimen_type` (`regimen_id`, `regimen_type_name`, `date_created`) VALUES
+(6, 'First Line', '2024-04-30 13:37:40'),
+(7, 'Second Line', '2024-04-30 13:38:01'),
+(8, 'Third Line', '2024-04-30 13:38:11'),
+(9, 'None', '2024-04-30 13:38:15');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `reintegration_status`
+--
+
+CREATE TABLE `reintegration_status` (
+  `reint_id` int NOT NULL,
+  `reint_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+--
+-- Truncate table before insert `reintegration_status`
+--
+
+TRUNCATE TABLE `reintegration_status`;
+--
+-- Dumping data for table `reintegration_status`
+--
+
+INSERT INTO `reintegration_status` (`reint_id`, `reint_name`) VALUES
+(5, 'Community Reintegration'),
+(9, 'Cultural Reintegration'),
+(4, 'Education Reintegration'),
+(1, 'Family Reintegration'),
+(7, 'Health Reintegration'),
+(2, 'Housing Reintegration'),
+(6, 'Legal Reintegration'),
+(10, 'None'),
+(8, 'Peer Support Reintegration'),
+(3, 'Stable Reintegration');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `religion`
+--
+
+CREATE TABLE `religion` (
+  `id` int NOT NULL,
+  `religion_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `religion`
+--
+
+TRUNCATE TABLE `religion`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `seq_0_to_30`
+--
+
+CREATE TABLE `seq_0_to_30` (
+  `seq` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `seq_0_to_30`
+--
+
+TRUNCATE TABLE `seq_0_to_30`;
+--
+-- Dumping data for table `seq_0_to_30`
+--
+
+INSERT INTO `seq_0_to_30` (`seq`) VALUES
+(0),
+(1),
+(2),
+(3),
+(4),
+(5),
+(6),
+(7),
+(8),
+(9),
+(10),
+(11),
+(12),
+(13),
+(14),
+(15),
+(16),
+(17),
+(18),
+(19),
+(20),
+(21),
+(22),
+(23),
+(24),
+(25),
+(26),
+(27),
+(28),
+(29),
+(30),
+(31);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `serializedsettings`
+--
+
+CREATE TABLE `serializedsettings` (
+  `Id` int NOT NULL,
+  `SettingsKey` char(36) COLLATE utf8mb4_general_ci NOT NULL,
+  `TerminalId` int DEFAULT NULL,
+  `SettingsJson` text COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `serializedsettings`
+--
+
+TRUNCATE TABLE `serializedsettings`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `status`
+--
+
+CREATE TABLE `status` (
+  `status_id` int NOT NULL,
+  `status_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `descr` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `status`
+--
+
+TRUNCATE TABLE `status`;
+--
+-- Dumping data for table `status`
+--
+
+INSERT INTO `status` (`status_id`, `status_name`, `descr`, `date_created`) VALUES
+(1, 'Active', 'Patients who have not defaulted for over five consecutive days', '2024-03-05 20:09:41'),
+(3, 'LTFU', 'Patients who have defaulted for over 30 consecutive days', '2024-03-05 20:11:35'),
+(4, 'Defaulted', 'Patients who have missed doses for five consecutive days', '2024-03-05 20:12:08'),
+(5, 'Stopped', 'Patient who have been stopped by healthcare worker', '2024-03-05 20:13:03'),
+(6, 'Transit', 'Patients who have come to pick drugs for a short period or a day following temporary relocation', '2024-03-05 20:14:01'),
+(7, 'Transout', 'Patients who have relocated to other place and include prisoners', '2024-03-05 20:15:26'),
+(8, 'Dead', 'Patients who succumbed for whichever reason', '2024-03-05 20:24:25'),
+(9, 'Weaned', 'Patients who have had a successful replacement therapy and are no longer in need of nay replacement therapy and neither are they abusing drugs again', '2024-03-05 20:28:24'),
+(10, 'Transit-End', 'Clients on transit who have ended', '2024-01-03 00:00:00'),
+(11, 'Voluntary Discontinuation', 'Voluntary Discontinuation', '2025-09-30 23:04:01');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `statushistory`
+--
+
+CREATE TABLE `statushistory` (
+  `status_id` int NOT NULL,
+  `clientName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `sex` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `mat_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `current_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `new_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `visitDate` date NOT NULL,
+  `status_change_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `age` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `stocks`
+--
+
+CREATE TABLE `stocks` (
+  `stockID` int NOT NULL,
+  `drugID` int NOT NULL,
+  `transactionType` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `productname` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `brandname` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `reorderLevel` int DEFAULT NULL,
+  `openingBalance` double DEFAULT '0',
+  `quantityIn` int DEFAULT NULL,
+  `batch` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `expiryDate` datetime DEFAULT NULL,
+  `receivedFrom` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `quantityOut` int DEFAULT '0',
+  `transDate` datetime DEFAULT CURRENT_TIMESTAMP,
+  `stockBalance` int DEFAULT NULL,
+  `status` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `transBy` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `stock_movements`
+--
+
+CREATE TABLE `stock_movements` (
+  `trans_id` int NOT NULL,
+  `transactionType` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `drugID` int NOT NULL,
+  `drugname` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `opening_bal` int DEFAULT NULL,
+  `qty_in` int NOT NULL,
+  `received_from` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `qty_out` int DEFAULT NULL,
+  `batch_number` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `expiry_date` date NOT NULL,
+  `received_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `total_qty` double DEFAULT NULL,
+  `trans_date` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Triggers `stock_movements`
+--
+DELIMITER $$
+CREATE TRIGGER `trg_sync_stores_balance` AFTER INSERT ON `stock_movements` FOR EACH ROW BEGIN
+    -- Check if an entry for this drugID already exists in the summary table
+    DECLARE inventory_exists INT DEFAULT 0;
+
+    SELECT COUNT(*) INTO inventory_exists
+    FROM stores_inventory
+    WHERE drugID = NEW.drugID;
+
+    IF inventory_exists > 0 THEN
+        -- If it exists, update the stores_balance with the latest total_qty
+        UPDATE stores_inventory
+        SET 
+            stores_balance = NEW.total_qty,
+            -- Optionally update non-balance fields with the latest movement info
+            supplier_name = NEW.received_from,
+            received_by_full_name = NEW.received_by
+        WHERE drugID = NEW.drugID;
+    ELSE
+        -- If it does not exist, insert a new record
+        INSERT INTO stores_inventory (
+            drugID, 
+            drugname, 
+            stores_balance,
+            supplier_name,          
+            from_supplier,          
+            received_by_full_name,  
+            to_dispensing           
+        )
+        VALUES (
+            NEW.drugID, 
+            NEW.drugName, 
+            NEW.total_qty, 
+            NEW.received_from,      
+            NEW.qty_in,             
+            NEW.received_by,
+            0                      
+        );
+    END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `stores_inventory`
+--
+
+CREATE TABLE `stores_inventory` (
+  `inventory_id` int NOT NULL,
+  `drugID` int DEFAULT NULL,
+  `drugname` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `from_supplier` int DEFAULT NULL,
+  `supplier_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `to_dispensing` int DEFAULT NULL,
+  `stores_balance` int DEFAULT NULL,
+  `transaction_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `received_by_full_name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `issued_to_full_name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'Issuer'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sub_counties`
+--
+
+CREATE TABLE `sub_counties` (
+  `sub_county_id` int NOT NULL,
+  `sub_county_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `county_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `comp_date` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `suppliers`
+--
+
+CREATE TABLE `suppliers` (
+  `supplier_id` int NOT NULL,
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `contact_person` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `phone` int DEFAULT NULL,
+  `email` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `address` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `suppliers`
+--
+
+TRUNCATE TABLE `suppliers`;
+--
+-- Dumping data for table `suppliers`
+--
+
+INSERT INTO `suppliers` (`supplier_id`, `name`, `contact_person`, `phone`, `email`, `address`, `date_created`) VALUES
+(1, 'KEMSA', NULL, NULL, NULL, NULL, '2025-09-11 17:11:51'),
+(2, 'MEDS', NULL, NULL, NULL, NULL, '2025-09-11 17:11:51'),
+(3, 'Others', NULL, NULL, NULL, NULL, '2025-09-11 17:11:51');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `table_image`
+--
+
+CREATE TABLE `table_image` (
+  `photo_id` int NOT NULL,
+  `photo_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `photo` longblob,
+  `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblaccompanment`
+--
+
+CREATE TABLE `tblaccompanment` (
+  `accompanmentID` int NOT NULL,
+  `accompanmentType` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `tblaccompanment`
+--
+
+TRUNCATE TABLE `tblaccompanment`;
+--
+-- Dumping data for table `tblaccompanment`
+--
+
+INSERT INTO `tblaccompanment` (`accompanmentID`, `accompanmentType`, `date_created`) VALUES
+(1, 'Parent', '2024-04-09 19:18:26'),
+(2, 'Partner', '2024-04-09 19:18:37'),
+(3, 'Friend', '2024-04-09 19:18:47'),
+(4, 'Outreach worker', '2024-04-09 19:19:02'),
+(5, 'Other', '2024-04-09 19:19:14'),
+(6, 'None', '2024-04-13 17:56:29'),
+(7, 'Prison Warden', '2024-04-14 08:24:37');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblcso`
+--
+
+CREATE TABLE `tblcso` (
+  `cso_id` int NOT NULL,
+  `cso_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `tblcso`
+--
+
+TRUNCATE TABLE `tblcso`;
+--
+-- Dumping data for table `tblcso`
+--
+
+INSERT INTO `tblcso` (`cso_id`, `cso_name`, `description`, `date_created`) VALUES
+(1, 'MEWA', 'Muslim Education and Welfare Association (MEWA) is a non â€“ profit organization, which began as a group of young Muslim professionals working in Mombasa', '2024-04-11 19:20:24'),
+(2, 'RCT', 'Reachout Centre Trust is a non-profit organization founded in 24th Jan, 2003. The main mandate is to provide harm reduction services to all those in need', '2024-04-11 19:20:55'),
+(3, 'ICRH-K', 'Reproductive Health, Maternal Health and Family Planning. ICRHK recognizes that reproductive health services including family planning', '2024-04-11 19:22:24'),
+(4, 'Prisons Department', 'Clients enrolled through the prisons department or court', '2024-04-14 08:06:25'),
+(5, 'The Omari Project (TOP)', 'The Omari Project provides preventative interventions to improve PWUD (and their families) lives within a legitimizing framework.', '2024-04-25 10:34:58'),
+(6, 'Other', 'Any other CSO that is not listed.', '2024-04-25 10:34:58'),
+(7, 'LVCT', 'NGO', '2025-09-30 13:10:39');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblgender`
+--
+
+CREATE TABLE `tblgender` (
+  `gender_id` int NOT NULL,
+  `gender_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `tblgender`
+--
+
+TRUNCATE TABLE `tblgender`;
+--
+-- Dumping data for table `tblgender`
+--
+
+INSERT INTO `tblgender` (`gender_id`, `gender_name`) VALUES
+(1, 'Female'),
+(2, 'Male');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblreferral`
+--
+
+CREATE TABLE `tblreferral` (
+  `referralID` int NOT NULL,
+  `referralType` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `tblreferral`
+--
+
+TRUNCATE TABLE `tblreferral`;
+--
+-- Dumping data for table `tblreferral`
+--
+
+INSERT INTO `tblreferral` (`referralID`, `referralType`, `date_created`) VALUES
+(1, 'Self', '2024-04-09 18:59:40'),
+(2, 'GoK facility', '2024-04-09 18:59:53'),
+(3, 'Private Facility', '2024-04-09 19:00:12'),
+(4, 'CSO', '2024-04-09 19:00:17'),
+(5, 'Transfer from MAT clinic', '2024-04-09 19:00:31'),
+(6, 'Criminal Justice Sytem', '2024-04-09 19:00:43'),
+(7, 'Other referral', '2024-04-09 19:00:59');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblusers`
+--
+
+CREATE TABLE `tblusers` (
+  `user_id` int NOT NULL,
+  `username` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `first_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `last_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `gender` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `mobile` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `photo` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `userrole` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `full_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci GENERATED ALWAYS AS (concat(`first_name`,_utf8mb4' ',`last_name`)) STORED
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `tblusers`
+--
+
+TRUNCATE TABLE `tblusers`;
+--
+-- Dumping data for table `tblusers`
+--
+
+INSERT INTO `tblusers` (`user_id`, `username`, `first_name`, `last_name`, `email`, `password`, `gender`, `mobile`, `photo`, `userrole`, `date_created`) VALUES
+(6, 'admin', 'Lyani', 'Sitti', 'sittilyani@gmail.com', '$2y$10$dt.f.K8hdRs1y4Ymq5DrVegJIRMTIL1/REYJDfYcv8.8efhiEY7tS', 'Male', '0722427721', 'Super_Admin_6_20250924.jpeg', 'Admin', '2024-12-03 16:13:46'),
+(51, 'peter', 'Peter', 'Kiburi', 'p@gmail.com', '$2y$10$0.BDCpx9C34WQy0Y/SDPh.Akeu0z6GR9Mtl6XHE17.jbVfNBKqtmq', 'Male', '01119999999', '', 'Clinician', '2025-12-03 10:09:20'),
+(52, 'Edith', 'Edith', 'Mbugua', 'm@gmail.com', '$2y$10$omU1S2LIOFXGi7MVwHd6EOTpMRxjtddRkfcUrFF7afmp9CsRsQSlO', 'Female', '0222222222', '', 'Psychologist', '2025-12-04 10:48:45');
+
+--
+-- Triggers `tblusers`
+--
+DELIMITER $$
+CREATE TRIGGER `trg_populate_full_name` BEFORE INSERT ON `tblusers` FOR EACH ROW BEGIN
+    SET NEW.full_name = CONCAT(NEW.first_name, ' ', NEW.last_name);
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `trg_populate_full_name_insert` BEFORE INSERT ON `tblusers` FOR EACH ROW BEGIN
+    SET NEW.full_name = CONCAT(NEW.first_name, ' ', NEW.last_name);
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `trg_populate_full_name_update` BEFORE UPDATE ON `tblusers` FOR EACH ROW BEGIN
+    SET NEW.full_name = CONCAT(NEW.first_name, ' ', NEW.last_name);
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_hiv_status`
+--
+
+CREATE TABLE `tbl_hiv_status` (
+  `status_id` int NOT NULL,
+  `hiv_status_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `description` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `tbl_hiv_status`
+--
+
+TRUNCATE TABLE `tbl_hiv_status`;
+--
+-- Dumping data for table `tbl_hiv_status`
+--
+
+INSERT INTO `tbl_hiv_status` (`status_id`, `hiv_status_name`, `description`, `date_created`) VALUES
+(1, 'Positive', 'Patients who test positive for antibody or antigen test', '2024-04-14 19:13:05'),
+(2, 'Negative', 'Patients who tested negative for serology test algorithym', '2024-04-14 19:13:50'),
+(3, 'Unknown', 'Patients who have not tested for HIV serology', '2024-04-14 19:14:31');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tb_regimens`
+--
+
+CREATE TABLE `tb_regimens` (
+  `regimen_id` int NOT NULL,
+  `regimen_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `tb_regimens`
+--
+
+TRUNCATE TABLE `tb_regimens`;
+--
+-- Dumping data for table `tb_regimens`
+--
+
+INSERT INTO `tb_regimens` (`regimen_id`, `regimen_name`) VALUES
+(1, '2 RHZE'),
+(2, '4 RH'),
+(3, '10 RH'),
+(4, '4 Km/Mfx/Pto/Cfz/H-Inh/Z/E'),
+(5, '5 Mfx/Cfz//Z/E'),
+(6, '15 R/Z/Lfx'),
+(7, '4 RHZE');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tb_status`
+--
+
+CREATE TABLE `tb_status` (
+  `status_id` int NOT NULL,
+  `status_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `tb_status`
+--
+
+TRUNCATE TABLE `tb_status`;
+--
+-- Dumping data for table `tb_status`
+--
+
+INSERT INTO `tb_status` (`status_id`, `status_name`, `date_created`) VALUES
+(1, 'Positive', '2024-04-14 19:44:15'),
+(2, 'Negative', '2024-04-14 19:44:21'),
+(3, 'Unknown', '2024-04-14 19:44:30');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `temp_updates`
+--
+
+CREATE TABLE `temp_updates` (
+  `p_id` int NOT NULL,
+  `new_clientName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `temp_updates`
+--
+
+TRUNCATE TABLE `temp_updates`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `terminals`
+--
+
+CREATE TABLE `terminals` (
+  `Id` int NOT NULL,
+  `Name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `LocationId` int NOT NULL,
+  `PrisonLocationId` int DEFAULT NULL,
+  `ViewAllRegisters` tinyint(1) DEFAULT NULL,
+  `PrisonId` int NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `terminals`
+--
+
+TRUNCATE TABLE `terminals`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `toxicology_results`
+--
+
+CREATE TABLE `toxicology_results` (
+  `tox_id` int NOT NULL,
+  `visitDate` datetime NOT NULL,
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clientName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `mode_drug_use` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `amphetamine` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `metamphetamine` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `morphine` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `barbiturates` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `cocaine` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `codeine` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `benzodiazepines` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `marijuana` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `amitriptyline` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `opiates` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `phencyclidine` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `methadone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `buprenorphine` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `nicotine` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `other_tca` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tramadol` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ketamine` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `fentanyl` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `oxycodone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `propoxyphene` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ecstacy` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `other_drugs` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `lab_notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `date_of_test` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `next_appointment` date NOT NULL,
+  `lab_officer_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `date_created` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tpt_regimens`
+--
+
+CREATE TABLE `tpt_regimens` (
+  `tpt_id` int NOT NULL,
+  `tpt_regimen_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `tpt_regimens`
+--
+
+TRUNCATE TABLE `tpt_regimens`;
+--
+-- Dumping data for table `tpt_regimens`
+--
+
+INSERT INTO `tpt_regimens` (`tpt_id`, `tpt_regimen_name`) VALUES
+(1, '3H for 3 mo'),
+(2, '6H for 6 mo'),
+(3, '3HP once weekly for 3 mo'),
+(4, 'Levofloxacin for 6 mo');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `transaction_types`
+--
+
+CREATE TABLE `transaction_types` (
+  `id` int NOT NULL,
+  `transactionType` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `transaction_types`
+--
+
+TRUNCATE TABLE `transaction_types`;
+--
+-- Dumping data for table `transaction_types`
+--
+
+INSERT INTO `transaction_types` (`id`, `transactionType`) VALUES
+(1, 'Purchase'),
+(2, 'Promotion'),
+(3, 'Donation'),
+(4, 'Returns'),
+(5, 'Exchange');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `transfer_forms`
+--
+
+CREATE TABLE `transfer_forms` (
+  `id` int NOT NULL,
+  `p_id` int NOT NULL,
+  `facilityname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `mflcode` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `county` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `sub_county` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clientName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `sex` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `dob` date NOT NULL,
+  `client_phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `reg_facility` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `reg_date` date NOT NULL,
+  `referral_date` date NOT NULL,
+  `type_of_movement` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `other_specify` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `from_site` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `to_site` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `reason_transfer` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinical_history` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `psychosocial` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `lab_investigations` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `vaccinations` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `diagnosis` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `current_dose` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `date_last_administered` datetime NOT NULL,
+  `other_medications` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `clinician_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_signature` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_date` date NOT NULL,
+  `counselor_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_signature` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_date` date NOT NULL,
+  `pdf_filename` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `json_data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT 'JSON data for future API/development use',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `treatment_stage`
+--
+
+CREATE TABLE `treatment_stage` (
+  `stage_id` int NOT NULL,
+  `stage_of_rx_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `treatment_stage`
+--
+
+TRUNCATE TABLE `treatment_stage`;
+--
+-- Dumping data for table `treatment_stage`
+--
+
+INSERT INTO `treatment_stage` (`stage_id`, `stage_of_rx_name`) VALUES
+(1, 'Induction New'),
+(2, 'Re-induction'),
+(3, 'Stabilization'),
+(4, 'Maintenance'),
+(5, 'Cessation'),
+(6, 'Weaned off'),
+(7, 'None');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `triage_services`
+--
+
+CREATE TABLE `triage_services` (
+  `id` int NOT NULL,
+  `patient_id` int NOT NULL,
+  `clinician_id` int NOT NULL,
+  `facility_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `mfl_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `county` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `sub_county` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `enrolment_date` date DEFAULT NULL,
+  `enrolment_time` time DEFAULT NULL,
+  `visit_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `client_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `nickname` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `mat_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `sex` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `presenting_complaints` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `pulse` int DEFAULT NULL,
+  `oxygen_saturation` int DEFAULT NULL,
+  `blood_pressure` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `temperature` decimal(4,2) DEFAULT NULL,
+  `respiratory_rate` int DEFAULT NULL,
+  `height` decimal(5,2) DEFAULT NULL,
+  `weight` decimal(5,2) DEFAULT NULL,
+  `bmi` decimal(4,2) DEFAULT NULL,
+  `bmi_interpretation` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `cows_provider` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `cows_date` date DEFAULT NULL,
+  `cows_scores` json DEFAULT NULL,
+  `cows_totals` json DEFAULT NULL,
+  `cows_interpretations` json DEFAULT NULL,
+  `status` enum('incomplete','complete') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT 'incomplete',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+--
+-- Truncate table before insert `triage_services`
+--
+
+TRUNCATE TABLE `triage_services`;
+--
+-- Dumping data for table `triage_services`
+--
+
+INSERT INTO `triage_services` (`id`, `patient_id`, `clinician_id`, `facility_name`, `mfl_code`, `county`, `sub_county`, `enrolment_date`, `enrolment_time`, `visit_type`, `client_name`, `nickname`, `mat_id`, `sex`, `presenting_complaints`, `pulse`, `oxygen_saturation`, `blood_pressure`, `temperature`, `respiratory_rate`, `height`, `weight`, `bmi`, `bmi_interpretation`, `cows_provider`, `cows_date`, `cows_scores`, `cows_totals`, `cows_interpretations`, `status`, `created_at`, `updated_at`) VALUES
+(1, 2349, 6, 'Ruiru Sub-County Hospital', '23368', 'Kwale', 'Matuga', '2025-12-03', '07:28:00', '', 'Test Client ', '', 'RUIRU0001', 'Female', '', NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, '', 'Lyani Sitti', '2025-12-03', NULL, NULL, NULL, 'incomplete', '2025-12-03 07:28:59', '2025-12-03 07:28:59'),
+(2, 1885, 6, 'Karuri Health Centre', '23368', 'Kwale', 'Matuga', '2025-12-04', '08:08:00', 'induction', 'Karuri Client ', '', 'KARURI0001', 'Male', '', 56, 90, '120/80', 37.00, NULL, NULL, NULL, NULL, '', 'Lyani Sitti', '2025-12-04', NULL, NULL, NULL, 'incomplete', '2025-12-04 08:09:59', '2025-12-04 08:09:59');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `userroles`
+--
+
+CREATE TABLE `userroles` (
+  `id` int NOT NULL,
+  `role` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `descr` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncate table before insert `userroles`
+--
+
+TRUNCATE TABLE `userroles`;
+--
+-- Dumping data for table `userroles`
+--
+
+INSERT INTO `userroles` (`id`, `role`, `descr`) VALUES
+(1, 'Admin', 'Overall system user'),
+(2, 'Clinician', 'prescribes to patients drugs'),
+(3, 'Receptionist', 'Registers patients in the system'),
+(4, 'Pharmacist', 'Dispenses drugs to patients'),
+(5, 'Psychologist', 'Counsels Clients'),
+(6, 'Laboratory Scientist', 'Tests Clients'),
+(7, 'Peer Educator', 'Check daily roll for clients'),
+(8, 'HRIO', 'HRIO'),
+(9, 'Psychiatrist', 'Psychiatrist'),
+(10, 'Data Manager', 'Data Manager'),
+(11, 'Guest', 'Guest'),
+(12, 'Super Admin', 'Administrator of everything');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `viral_load`
+--
+
+CREATE TABLE `viral_load` (
+  `vl_id` int NOT NULL,
+  `mat_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `clientName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `dob` date NOT NULL,
+  `reg_date` date NOT NULL,
+  `sex` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `hiv_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `art_regimen` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `regimen_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinical_notes` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `last_vlDate` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `results` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `next_appointment` date NOT NULL,
+  `comp_date` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `voluntary_discontinuation`
+--
+
+CREATE TABLE `voluntary_discontinuation` (
+  `id` int NOT NULL,
+  `visit_date` date NOT NULL,
+  `client_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `facilityname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `discontinued_date` date NOT NULL,
+  `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `request_type` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Type of discontinuation requested (Abrupt cessation, Accelerated taper, Gradual taper, Other)',
+  `discontinuation_reason` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Reasons for discontinuation',
+  `discontinue_date` date NOT NULL COMMENT 'Date commenced on discontinuation',
+  `client_signature` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Client signature or thumb print',
+  `clinician_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_signature` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `clinician_date` date NOT NULL,
+  `counselor_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_signature` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `counselor_date` date NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `administrationroutes`
+--
+ALTER TABLE `administrationroutes`
+  ADD PRIMARY KEY (`route_id`);
+
+--
+-- Indexes for table `backup_log`
+--
+ALTER TABLE `backup_log`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `categories`
+--
+ALTER TABLE `categories`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`);
+
+--
+-- Indexes for table `client_consents`
+--
+ALTER TABLE `client_consents`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `clinical_encounters`
+--
+ALTER TABLE `clinical_encounters`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `triage_id` (`triage_id`),
+  ADD KEY `patient_id` (`patient_id`),
+  ADD KEY `clinician_id` (`clinician_id`);
+
+--
+-- Indexes for table `clinic_visits`
+--
+ALTER TABLE `clinic_visits`
+  ADD PRIMARY KEY (`clinic_id`);
+
+--
+-- Indexes for table `consents`
+--
+ALTER TABLE `consents`
+  ADD PRIMARY KEY (`consent_id`);
+
+--
+-- Indexes for table `counties`
+--
+ALTER TABLE `counties`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `county_code` (`county_code`),
+  ADD UNIQUE KEY `county_name` (`county_name`);
+
+--
+-- Indexes for table `csos`
+--
+ALTER TABLE `csos`
+  ADD PRIMARY KEY (`cso_id`),
+  ADD UNIQUE KEY `cso_name` (`cso_name`);
+
+--
+-- Indexes for table `daily_report_comments`
+--
+ALTER TABLE `daily_report_comments`
+  ADD PRIMARY KEY (`comment_id`),
+  ADD UNIQUE KEY `unique_comment_date` (`log_date`,`drugID`);
+
+--
+-- Indexes for table `deleted_patients`
+--
+ALTER TABLE `deleted_patients`
+  ADD PRIMARY KEY (`p_id`),
+  ADD UNIQUE KEY `mat_id` (`mat_id`);
+
+--
+-- Indexes for table `deleted_prescriptions`
+--
+ALTER TABLE `deleted_prescriptions`
+  ADD PRIMARY KEY (`del_id`);
+
+--
+-- Indexes for table `dispensing_comments`
+--
+ALTER TABLE `dispensing_comments`
+  ADD PRIMARY KEY (`comment_id`),
+  ADD UNIQUE KEY `unique_comment_date` (`log_date`,`drugID`),
+  ADD KEY `drugID` (`drugID`);
+
+--
+-- Indexes for table `dosing`
+--
+ALTER TABLE `dosing`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `drug`
+--
+ALTER TABLE `drug`
+  ADD PRIMARY KEY (`drugID`),
+  ADD UNIQUE KEY `drugName` (`drugName`);
+
+--
+-- Indexes for table `drugcategory`
+--
+ALTER TABLE `drugcategory`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `drug_sources`
+--
+ALTER TABLE `drug_sources`
+  ADD PRIMARY KEY (`source_id`),
+  ADD UNIQUE KEY `source_name` (`source_name`);
+
+--
+-- Indexes for table `durationunits`
+--
+ALTER TABLE `durationunits`
+  ADD PRIMARY KEY (`unit_id`);
+
+--
+-- Indexes for table `education_level`
+--
+ALTER TABLE `education_level`
+  ADD PRIMARY KEY (`edu_id`),
+  ADD UNIQUE KEY `edu_name` (`edu_name`);
+
+--
+-- Indexes for table `employment_status`
+--
+ALTER TABLE `employment_status`
+  ADD PRIMARY KEY (`emp_id`),
+  ADD UNIQUE KEY `emp_status_name` (`emp_status_name`);
+
+--
+-- Indexes for table `enrolment_status`
+--
+ALTER TABLE `enrolment_status`
+  ADD PRIMARY KEY (`enrolment_id`),
+  ADD UNIQUE KEY `enrolment_status_name` (`enrolment_status_name`);
+
+--
+-- Indexes for table `facerecognitionnodes`
+--
+ALTER TABLE `facerecognitionnodes`
+  ADD PRIMARY KEY (`Id`);
+
+--
+-- Indexes for table `facilities`
+--
+ALTER TABLE `facilities`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `mfl_code` (`mflcode`),
+  ADD UNIQUE KEY `facilityname` (`facilityname`);
+
+--
+-- Indexes for table `facility_settings`
+--
+ALTER TABLE `facility_settings`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `facility_id` (`facility_id`);
+
+--
+-- Indexes for table `fingerprints`
+--
+ALTER TABLE `fingerprints`
+  ADD PRIMARY KEY (`print_id`),
+  ADD KEY `mat_id` (`mat_id`);
+
+--
+-- Indexes for table `followup_psychiatric_form`
+--
+ALTER TABLE `followup_psychiatric_form`
+  ADD PRIMARY KEY (`visit_id`),
+  ADD KEY `mat_id` (`mat_id`);
+
+--
+-- Indexes for table `formulation`
+--
+ALTER TABLE `formulation`
+  ADD PRIMARY KEY (`formID`);
+
+--
+-- Indexes for table `gad7_assessments`
+--
+ALTER TABLE `gad7_assessments`
+  ADD PRIMARY KEY (`assessment_id`);
+
+--
+-- Indexes for table `hepb_status`
+--
+ALTER TABLE `hepb_status`
+  ADD PRIMARY KEY (`status_id`);
+
+--
+-- Indexes for table `hepc_status`
+--
+ALTER TABLE `hepc_status`
+  ADD PRIMARY KEY (`status_id`);
+
+--
+-- Indexes for table `initial_psychiatric_form`
+--
+ALTER TABLE `initial_psychiatric_form`
+  ADD PRIMARY KEY (`psy_id`),
+  ADD KEY `mat_id` (`mat_id`);
+
+--
+-- Indexes for table `integration_status`
+--
+ALTER TABLE `integration_status`
+  ADD PRIMARY KEY (`integration_id`),
+  ADD UNIQUE KEY `integration_name` (`integration_name`);
+
+--
+-- Indexes for table `involuntary_discontinuation`
+--
+ALTER TABLE `involuntary_discontinuation`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_mat_id` (`mat_id`),
+  ADD KEY `idx_client_name` (`client_name`),
+  ADD KEY `idx_discontinue_date` (`discontinue_date`);
+
+--
+-- Indexes for table `juicetypes`
+--
+ALTER TABLE `juicetypes`
+  ADD PRIMARY KEY (`Id`);
+
+--
+-- Indexes for table `laboratory`
+--
+ALTER TABLE `laboratory`
+  ADD PRIMARY KEY (`lab_id`),
+  ADD KEY `fk_mat_id` (`mat_id`);
+
+--
+-- Indexes for table `living_conditions`
+--
+ALTER TABLE `living_conditions`
+  ADD PRIMARY KEY (`cond_id`),
+  ADD UNIQUE KEY `condition_name` (`condition_name`);
+
+--
+-- Indexes for table `marital_status`
+--
+ALTER TABLE `marital_status`
+  ADD PRIMARY KEY (`mar_id`),
+  ADD UNIQUE KEY `marital_status_name` (`marital_status_name`);
+
+--
+-- Indexes for table `medical_history`
+--
+ALTER TABLE `medical_history`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `medical_history_new`
+--
+ALTER TABLE `medical_history_new`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `nursing_history`
+--
+ALTER TABLE `nursing_history`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `nursing_services`
+--
+ALTER TABLE `nursing_services`
+  ADD PRIMARY KEY (`nursing_id`);
+
+--
+-- Indexes for table `offences`
+--
+ALTER TABLE `offences`
+  ADD PRIMARY KEY (`offense_id`),
+  ADD UNIQUE KEY `offense_name` (`offense_name`);
+
+--
+-- Indexes for table `other_prescriptions`
+--
+ALTER TABLE `other_prescriptions`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `prescription_id` (`prescription_id`);
+
+--
+-- Indexes for table `other_status`
+--
+ALTER TABLE `other_status`
+  ADD PRIMARY KEY (`status_id`);
+
+--
+-- Indexes for table `patientfingerprints`
+--
+ALTER TABLE `patientfingerprints`
+  ADD PRIMARY KEY (`Id`);
+
+--
+-- Indexes for table `patientimages`
+--
+ALTER TABLE `patientimages`
+  ADD PRIMARY KEY (`Id`);
+
+--
+-- Indexes for table `patients`
+--
+ALTER TABLE `patients`
+  ADD PRIMARY KEY (`p_id`),
+  ADD UNIQUE KEY `mat_id` (`mat_id`);
+
+--
+-- Indexes for table `patient_drug_histories`
+--
+ALTER TABLE `patient_drug_histories`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `encounter_id` (`encounter_id`);
+
+--
+-- Indexes for table `pharmacy`
+--
+ALTER TABLE `pharmacy`
+  ADD PRIMARY KEY (`disp_id`);
+
+--
+-- Indexes for table `photos`
+--
+ALTER TABLE `photos`
+  ADD PRIMARY KEY (`photo_id`),
+  ADD UNIQUE KEY `mat_id` (`mat_id`);
+
+--
+-- Indexes for table `phq9_assessments`
+--
+ALTER TABLE `phq9_assessments`
+  ADD PRIMARY KEY (`assessment_id`);
+
+--
+-- Indexes for table `prescription_drugs`
+--
+ALTER TABLE `prescription_drugs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `prescription_id` (`prescription_id`);
+
+--
+-- Indexes for table `psychiatric_rx_problems`
+--
+ALTER TABLE `psychiatric_rx_problems`
+  ADD PRIMARY KEY (`problem_id`);
+
+--
+-- Indexes for table `psychodar`
+--
+ALTER TABLE `psychodar`
+  ADD PRIMARY KEY (`dar_id`);
+
+--
+-- Indexes for table `psychosocial_intake_form_1a`
+--
+ALTER TABLE `psychosocial_intake_form_1a`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `psychosocial_interventions`
+--
+ALTER TABLE `psychosocial_interventions`
+  ADD PRIMARY KEY (`intervention_id`);
+
+--
+-- Indexes for table `psychosocial_outcomes`
+--
+ALTER TABLE `psychosocial_outcomes`
+  ADD PRIMARY KEY (`psyc_outcome_id`);
+
+--
+-- Indexes for table `psycho_followup_visits`
+--
+ALTER TABLE `psycho_followup_visits`
+  ADD PRIMARY KEY (`visit_id`);
+
+--
+-- Indexes for table `pumpcalibrationsteps`
+--
+ALTER TABLE `pumpcalibrationsteps`
+  ADD PRIMARY KEY (`PumpId`,`Volume`);
+
+--
+-- Indexes for table `pumps`
+--
+ALTER TABLE `pumps`
+  ADD PRIMARY KEY (`Id`);
+
+--
+-- Indexes for table `referral`
+--
+ALTER TABLE `referral`
+  ADD PRIMARY KEY (`referral_id`);
+
+--
+-- Indexes for table `referral_linkage_services`
+--
+ALTER TABLE `referral_linkage_services`
+  ADD PRIMARY KEY (`ref_id`);
+
+--
+-- Indexes for table `regimens`
+--
+ALTER TABLE `regimens`
+  ADD PRIMARY KEY (`regimen_id`);
+
+--
+-- Indexes for table `reintegration_status`
+--
+ALTER TABLE `reintegration_status`
+  ADD PRIMARY KEY (`reint_id`),
+  ADD UNIQUE KEY `reint_name` (`reint_name`);
+
+--
+-- Indexes for table `religion`
+--
+ALTER TABLE `religion`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `seq_0_to_30`
+--
+ALTER TABLE `seq_0_to_30`
+  ADD PRIMARY KEY (`seq`);
+
+--
+-- Indexes for table `serializedsettings`
+--
+ALTER TABLE `serializedsettings`
+  ADD PRIMARY KEY (`Id`),
+  ADD UNIQUE KEY `SettingsKey` (`SettingsKey`,`TerminalId`);
+
+--
+-- Indexes for table `status`
+--
+ALTER TABLE `status`
+  ADD PRIMARY KEY (`status_id`);
+
+--
+-- Indexes for table `statushistory`
+--
+ALTER TABLE `statushistory`
+  ADD PRIMARY KEY (`status_id`);
+
+--
+-- Indexes for table `stocks`
+--
+ALTER TABLE `stocks`
+  ADD PRIMARY KEY (`stockID`),
+  ADD KEY `idx_stocks_brandname_transDate` (`brandname`,`transDate` DESC);
+
+--
+-- Indexes for table `stock_movements`
+--
+ALTER TABLE `stock_movements`
+  ADD PRIMARY KEY (`trans_id`);
+
+--
+-- Indexes for table `stores_inventory`
+--
+ALTER TABLE `stores_inventory`
+  ADD PRIMARY KEY (`inventory_id`);
+
+--
+-- Indexes for table `sub_counties`
+--
+ALTER TABLE `sub_counties`
+  ADD PRIMARY KEY (`sub_county_id`);
+
+--
+-- Indexes for table `suppliers`
+--
+ALTER TABLE `suppliers`
+  ADD PRIMARY KEY (`supplier_id`),
+  ADD UNIQUE KEY `name` (`name`);
+
+--
+-- Indexes for table `tblcso`
+--
+ALTER TABLE `tblcso`
+  ADD PRIMARY KEY (`cso_id`);
+
+--
+-- Indexes for table `tblusers`
+--
+ALTER TABLE `tblusers`
+  ADD PRIMARY KEY (`user_id`),
+  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Indexes for table `tb_regimens`
+--
+ALTER TABLE `tb_regimens`
+  ADD PRIMARY KEY (`regimen_id`);
+
+--
+-- Indexes for table `temp_updates`
+--
+ALTER TABLE `temp_updates`
+  ADD PRIMARY KEY (`p_id`);
+
+--
+-- Indexes for table `terminals`
+--
+ALTER TABLE `terminals`
+  ADD PRIMARY KEY (`Id`),
+  ADD UNIQUE KEY `Name` (`Name`);
+
+--
+-- Indexes for table `toxicology_results`
+--
+ALTER TABLE `toxicology_results`
+  ADD PRIMARY KEY (`tox_id`);
+
+--
+-- Indexes for table `tpt_regimens`
+--
+ALTER TABLE `tpt_regimens`
+  ADD PRIMARY KEY (`tpt_id`);
+
+--
+-- Indexes for table `transfer_forms`
+--
+ALTER TABLE `transfer_forms`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_mat_id` (`mat_id`),
+  ADD KEY `idx_p_id` (`p_id`),
+  ADD KEY `idx_referral_date` (`referral_date`);
+
+--
+-- Indexes for table `treatment_stage`
+--
+ALTER TABLE `treatment_stage`
+  ADD PRIMARY KEY (`stage_id`);
+
+--
+-- Indexes for table `triage_services`
+--
+ALTER TABLE `triage_services`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `patient_id` (`patient_id`),
+  ADD KEY `clinician_id` (`clinician_id`);
+
+--
+-- Indexes for table `userroles`
+--
+ALTER TABLE `userroles`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `role` (`role`);
+
+--
+-- Indexes for table `viral_load`
+--
+ALTER TABLE `viral_load`
+  ADD PRIMARY KEY (`vl_id`);
+
+--
+-- Indexes for table `voluntary_discontinuation`
+--
+ALTER TABLE `voluntary_discontinuation`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_mat_id` (`mat_id`),
+  ADD KEY `idx_client_name` (`client_name`),
+  ADD KEY `idx_discontinue_date` (`discontinue_date`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `administrationroutes`
+--
+ALTER TABLE `administrationroutes`
+  MODIFY `route_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `backup_log`
+--
+ALTER TABLE `backup_log`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `categories`
+--
+ALTER TABLE `categories`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `client_consents`
+--
+ALTER TABLE `client_consents`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `clinical_encounters`
+--
+ALTER TABLE `clinical_encounters`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `consents`
+--
+ALTER TABLE `consents`
+  MODIFY `consent_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `counties`
+--
+ALTER TABLE `counties`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+
+--
+-- AUTO_INCREMENT for table `csos`
+--
+ALTER TABLE `csos`
+  MODIFY `cso_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `daily_report_comments`
+--
+ALTER TABLE `daily_report_comments`
+  MODIFY `comment_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `deleted_patients`
+--
+ALTER TABLE `deleted_patients`
+  MODIFY `p_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `deleted_prescriptions`
+--
+ALTER TABLE `deleted_prescriptions`
+  MODIFY `del_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `dispensing_comments`
+--
+ALTER TABLE `dispensing_comments`
+  MODIFY `comment_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `dosing`
+--
+ALTER TABLE `dosing`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `drug`
+--
+ALTER TABLE `drug`
+  MODIFY `drugID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1035;
+
+--
+-- AUTO_INCREMENT for table `drugcategory`
+--
+ALTER TABLE `drugcategory`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `drug_sources`
+--
+ALTER TABLE `drug_sources`
+  MODIFY `source_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `durationunits`
+--
+ALTER TABLE `durationunits`
+  MODIFY `unit_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `education_level`
+--
+ALTER TABLE `education_level`
+  MODIFY `edu_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `enrolment_status`
+--
+ALTER TABLE `enrolment_status`
+  MODIFY `enrolment_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `facerecognitionnodes`
+--
+ALTER TABLE `facerecognitionnodes`
+  MODIFY `Id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `facilities`
+--
+ALTER TABLE `facilities`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3722;
+
+--
+-- AUTO_INCREMENT for table `facility_settings`
+--
+ALTER TABLE `facility_settings`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `fingerprints`
+--
+ALTER TABLE `fingerprints`
+  MODIFY `print_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `followup_psychiatric_form`
+--
+ALTER TABLE `followup_psychiatric_form`
+  MODIFY `visit_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `formulation`
+--
+ALTER TABLE `formulation`
+  MODIFY `formID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `gad7_assessments`
+--
+ALTER TABLE `gad7_assessments`
+  MODIFY `assessment_id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hepb_status`
+--
+ALTER TABLE `hepb_status`
+  MODIFY `status_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `hepc_status`
+--
+ALTER TABLE `hepc_status`
+  MODIFY `status_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `initial_psychiatric_form`
+--
+ALTER TABLE `initial_psychiatric_form`
+  MODIFY `psy_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `integration_status`
+--
+ALTER TABLE `integration_status`
+  MODIFY `integration_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `involuntary_discontinuation`
+--
+ALTER TABLE `involuntary_discontinuation`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `juicetypes`
+--
+ALTER TABLE `juicetypes`
+  MODIFY `Id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `laboratory`
+--
+ALTER TABLE `laboratory`
+  MODIFY `lab_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `living_conditions`
+--
+ALTER TABLE `living_conditions`
+  MODIFY `cond_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `marital_status`
+--
+ALTER TABLE `marital_status`
+  MODIFY `mar_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `medical_history`
+--
+ALTER TABLE `medical_history`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `medical_history_new`
+--
+ALTER TABLE `medical_history_new`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `nursing_history`
+--
+ALTER TABLE `nursing_history`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `nursing_services`
+--
+ALTER TABLE `nursing_services`
+  MODIFY `nursing_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `offences`
+--
+ALTER TABLE `offences`
+  MODIFY `offense_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `other_prescriptions`
+--
+ALTER TABLE `other_prescriptions`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `other_status`
+--
+ALTER TABLE `other_status`
+  MODIFY `status_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `patients`
+--
+ALTER TABLE `patients`
+  MODIFY `p_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `patient_drug_histories`
+--
+ALTER TABLE `patient_drug_histories`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pharmacy`
+--
+ALTER TABLE `pharmacy`
+  MODIFY `disp_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `photos`
+--
+ALTER TABLE `photos`
+  MODIFY `photo_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `phq9_assessments`
+--
+ALTER TABLE `phq9_assessments`
+  MODIFY `assessment_id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `prescription_drugs`
+--
+ALTER TABLE `prescription_drugs`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=98;
+
+--
+-- AUTO_INCREMENT for table `psychiatric_rx_problems`
+--
+ALTER TABLE `psychiatric_rx_problems`
+  MODIFY `problem_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `psychodar`
+--
+ALTER TABLE `psychodar`
+  MODIFY `dar_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `psychosocial_intake_form_1a`
+--
+ALTER TABLE `psychosocial_intake_form_1a`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `psychosocial_interventions`
+--
+ALTER TABLE `psychosocial_interventions`
+  MODIFY `intervention_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `psychosocial_outcomes`
+--
+ALTER TABLE `psychosocial_outcomes`
+  MODIFY `psyc_outcome_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `psycho_followup_visits`
+--
+ALTER TABLE `psycho_followup_visits`
+  MODIFY `visit_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pumps`
+--
+ALTER TABLE `pumps`
+  MODIFY `Id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `referral`
+--
+ALTER TABLE `referral`
+  MODIFY `referral_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+
+--
+-- AUTO_INCREMENT for table `referral_linkage_services`
+--
+ALTER TABLE `referral_linkage_services`
+  MODIFY `ref_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `reintegration_status`
+--
+ALTER TABLE `reintegration_status`
+  MODIFY `reint_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `religion`
+--
+ALTER TABLE `religion`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `serializedsettings`
+--
+ALTER TABLE `serializedsettings`
+  MODIFY `Id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `status`
+--
+ALTER TABLE `status`
+  MODIFY `status_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `statushistory`
+--
+ALTER TABLE `statushistory`
+  MODIFY `status_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `stocks`
+--
+ALTER TABLE `stocks`
+  MODIFY `stockID` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `stock_movements`
+--
+ALTER TABLE `stock_movements`
+  MODIFY `trans_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `stores_inventory`
+--
+ALTER TABLE `stores_inventory`
+  MODIFY `inventory_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `sub_counties`
+--
+ALTER TABLE `sub_counties`
+  MODIFY `sub_county_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `suppliers`
+--
+ALTER TABLE `suppliers`
+  MODIFY `supplier_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `tblcso`
+--
+ALTER TABLE `tblcso`
+  MODIFY `cso_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `tblusers`
+--
+ALTER TABLE `tblusers`
+  MODIFY `user_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+
+--
+-- AUTO_INCREMENT for table `tb_regimens`
+--
+ALTER TABLE `tb_regimens`
+  MODIFY `regimen_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `terminals`
+--
+ALTER TABLE `terminals`
+  MODIFY `Id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `toxicology_results`
+--
+ALTER TABLE `toxicology_results`
+  MODIFY `tox_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `tpt_regimens`
+--
+ALTER TABLE `tpt_regimens`
+  MODIFY `tpt_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `transfer_forms`
+--
+ALTER TABLE `transfer_forms`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `treatment_stage`
+--
+ALTER TABLE `treatment_stage`
+  MODIFY `stage_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `triage_services`
+--
+ALTER TABLE `triage_services`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `userroles`
+--
+ALTER TABLE `userroles`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `viral_load`
+--
+ALTER TABLE `viral_load`
+  MODIFY `vl_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `voluntary_discontinuation`
+--
+ALTER TABLE `voluntary_discontinuation`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `clinical_encounters`
+--
+ALTER TABLE `clinical_encounters`
+  ADD CONSTRAINT `clinical_encounters_ibfk_1` FOREIGN KEY (`triage_id`) REFERENCES `triage_services` (`id`),
+  ADD CONSTRAINT `clinical_encounters_ibfk_2` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`p_id`),
+  ADD CONSTRAINT `clinical_encounters_ibfk_3` FOREIGN KEY (`clinician_id`) REFERENCES `tblusers` (`user_id`);
+
+--
+-- Constraints for table `dispensing_comments`
+--
+ALTER TABLE `dispensing_comments`
+  ADD CONSTRAINT `dispensing_comments_ibfk_1` FOREIGN KEY (`drugID`) REFERENCES `drug` (`drugID`);
+
+--
+-- Constraints for table `facility_settings`
+--
+ALTER TABLE `facility_settings`
+  ADD CONSTRAINT `facility_settings_ibfk_1` FOREIGN KEY (`facility_id`) REFERENCES `facilities` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `fingerprints`
+--
+ALTER TABLE `fingerprints`
+  ADD CONSTRAINT `fingerprints_ibfk_1` FOREIGN KEY (`mat_id`) REFERENCES `patients` (`mat_id`);
+
+--
+-- Constraints for table `followup_psychiatric_form`
+--
+ALTER TABLE `followup_psychiatric_form`
+  ADD CONSTRAINT `followup_psychiatric_form_ibfk_1` FOREIGN KEY (`mat_id`) REFERENCES `patients` (`mat_id`);
+
+--
+-- Constraints for table `initial_psychiatric_form`
+--
+ALTER TABLE `initial_psychiatric_form`
+  ADD CONSTRAINT `initial_psychiatric_form_ibfk_1` FOREIGN KEY (`mat_id`) REFERENCES `patients` (`mat_id`);
+
+--
+-- Constraints for table `laboratory`
+--
+ALTER TABLE `laboratory`
+  ADD CONSTRAINT `fk_mat_id` FOREIGN KEY (`mat_id`) REFERENCES `patients` (`mat_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `patient_drug_histories`
+--
+ALTER TABLE `patient_drug_histories`
+  ADD CONSTRAINT `patient_drug_histories_ibfk_1` FOREIGN KEY (`encounter_id`) REFERENCES `clinical_encounters` (`id`);
+
+--
+-- Constraints for table `photos`
+--
+ALTER TABLE `photos`
+  ADD CONSTRAINT `photos_ibfk_1` FOREIGN KEY (`mat_id`) REFERENCES `patients` (`mat_id`);
+
+--
+-- Constraints for table `prescription_drugs`
+--
+ALTER TABLE `prescription_drugs`
+  ADD CONSTRAINT `prescription_drugs_ibfk_1` FOREIGN KEY (`prescription_id`) REFERENCES `other_prescriptions` (`prescription_id`);
+
+--
+-- Constraints for table `triage_services`
+--
+ALTER TABLE `triage_services`
+  ADD CONSTRAINT `triage_services_ibfk_1` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`p_id`),
+  ADD CONSTRAINT `triage_services_ibfk_2` FOREIGN KEY (`clinician_id`) REFERENCES `tblusers` (`user_id`);
+SET FOREIGN_KEY_CHECKS=1;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

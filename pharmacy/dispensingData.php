@@ -69,7 +69,7 @@ if ($userId) {
     $new_num_rows = $endDateObj->format('j') - $num_rows;
 
     }
-    
+
     // Fetch and calculate the earliest missed appointment from multiple TCA dates
     $appointmentInfo = [
         'date' => null,
@@ -454,6 +454,18 @@ if ($statusResult->num_rows > 0) {
         .custom-alert button { margin-top: 10px; padding: 8px 16px; background-color: red; color: white; border: none; border-radius: 5px; cursor: pointer; }
         .custom-alert button:hover { background-color: darkred; }
         .missed-appointment { color: red; font-weight: bold; }
+        .conversion {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+    }
+
+    .label { font-size: 16px; color: #666; font-weight: bold;  text-transform: uppercase;letter-spacing: 1px;    }
     </style>
 </head>
 <body>
@@ -618,6 +630,20 @@ if ($statusResult->num_rows > 0) {
                     <label for="pharm_officer_name">Dispensing Officer Name</label>
                     <input type="text" name="pharm_officer_name" class="readonly-input" value="<?php echo htmlspecialchars($pharm_office_name); ?>">
                 </div>
+                <div class="conversion">
+                    <div class="label">Volume (mLs)</div>
+                    <p style="font-weight: bold; font-size: 56px; color: #cc0000; width: 60px;">
+                        <?php
+                                   if (isset($currentSettings['dosage']) && is_numeric($currentSettings['dosage'])) {
+                                       echo htmlspecialchars(number_format(floatval($currentSettings['dosage']) / 5, 2));
+                                   } else {
+                                       echo '0.00';
+                                   }
+                               ?>
+
+                    </p>
+                </div>
+
                 <input type="hidden" name="daysToNextAppointment" value="<?php echo $daysToAppointment; ?>">
                 <input type="hidden" name="isMissed" value="<?php echo $isMissed ? 'true' : 'false'; ?>">
                 <input type="hidden" name="appointmentType" value="<?php echo htmlspecialchars($appointmentInfo['appointmentType']); ?>">
@@ -684,7 +710,32 @@ if ($statusResult->num_rows > 0) {
                 </div>
                 <?php endif; ?>
 
+<<<<<<< Updated upstream
                 <button type="submit" class="submit-btn">Dispense</button>
+=======
+                <button type="submit" onClick="dispense()" class="submit-btn">Dispense</button>
+
+                <script>
+                    function dispense(){       //alert(99);
+                       const xhr = new XMLHttpRequest();
+                        xhr.open("GET", "http://192.168.10.6/masterflexapi/pumpapi.php?action=raw&ml=10", true);
+
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState === 4) {
+                                if (xhr.status === 200) {
+                                    //console.log("Response:", xhr.responseText);
+                                    alert(xhr.responseText);
+                                } else {
+                                    //console.error("Error:", xhr.status, xhr.responseText);
+                                }
+                            }
+                        };
+
+                        xhr.send();
+                   }
+
+                </script>
+>>>>>>> Stashed changes
             </div>
             </div>
     </form>
