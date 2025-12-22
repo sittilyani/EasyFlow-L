@@ -132,7 +132,7 @@ if ($res) {
 }
 
 $summary = array_map(function ($v) {
-    return json_decode($v, true);
+    return json_decode($v ?? '{}', true);
 }, $summary);
 
 
