@@ -73,7 +73,7 @@ try {
 
     // 3. Missed Appointment Check
     if ($isMissed || $DaysToNextAppointment == 0) {
-        // $routineErrors[] = "Routine Dispensing Failed: Client has a **Missed Appointment** or **No appointment date**. Kindly refer to the clinician.";
+        $routineErrors[] = "Routine Dispensing Failed: Client has a **Missed Appointment** or **No appointment date**. Kindly refer to the clinician.";
     }
 
     // 4. Dosage Validation
@@ -129,32 +129,19 @@ try {
         throw new Exception(implode(', ', $routineErrors));
     }
 
-    // todo: send api to device
+    // Executing pump command
 
-    // $payload = json_encode([
-    //     'port' => $pump_port,
-    //     'ml'   => $dosage / 5,
-    // ]);
-    $dummy_payload = json_encode([
-        'title' => 'foo',
-        'userId' => 1,
-    ]);
+    $ml = ($dosage / 5) * 400;
+    $pump_cmd = "/lm50h10j4V1600L400z{$ml}D{$ml}R";
+    $command = "pumpAPI.exe $pump_port 9600 raw $pump_cmd";
 
-    // $ch = curl_init('host.docker.internal:8080');
-    $ch = curl_init('https://my.api.mockaroo.com/pump');
-    curl_setopt_array($ch, [
-        CURLOPT_POST           => true,
-        // CURLOPT_POSTFIELDS     => $payload,
-        CURLOPT_POSTFIELDS     => $dummy_payload,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPHEADER     => ['Content-Type: application/json', 'X-API-Key: cfc74ec0']
-    ]);
+    $output = [];
+    $return_var = 0;
 
-    $response = json_decode(curl_exec($ch), true);
-    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    exec($command, $output, $return_var);
 
-    if ($http_code < 200 || $http_code >= 300 || $response["success"] !== true) {
-        throw new Exception("Device API call failed (HTTP $http_code): " . json_encode($response));
+    if ($return_var !== 0) {
+        throw new Exception("Pump call failed with result code $return_var:\n" . implode('\n', $output));
     }
 
     $insertQuery = "

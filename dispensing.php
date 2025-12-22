@@ -2,7 +2,7 @@
 session_start();
 include 'includes/config.php';
 
-// In your dispensing.php — replace the whole PumpServiceIntegration class
+// In your dispensing.php ï¿½ replace the whole PumpServiceIntegration class
 // In dispensing.php
 
 // In dispensing.php
