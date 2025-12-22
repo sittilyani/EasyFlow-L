@@ -269,10 +269,14 @@ if ($statusResult->num_rows > 0) {
     $statusOptions = "<option value=''>No status found</option>";
 }
 
+$devices = [];
 $stmt_devices = $conn->prepare("SELECT * FROM pump_devices");
-$stmt_devices->execute();
-$result_devices = $stmt_devices->get_result();
-$devices = $result_devices->fetch_all(MYSQLI_ASSOC);
+
+if ($stmt_devices !== false) {
+    $stmt_devices->execute();
+    $result_devices = $stmt_devices->get_result();
+    $devices = $result_devices->fetch_all(MYSQLI_ASSOC);
+}
 
 $sql_str = "SELECT (
     SELECT JSON_OBJECTAGG(id, rem) FROM (
