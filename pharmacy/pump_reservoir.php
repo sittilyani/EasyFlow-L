@@ -318,8 +318,7 @@ $sub_dir = '';
             </div>
         </div>
     </div>
-<!-- todo: get subfolder using php, using laragon server to start with /subfolder/... -->
- <!-- todo: transform all remote resources to local, e.g. jquery -->
+
     <script src="../assets/js/jquery-3.7.1.min.js"></script>
     <script src="../assets/js/bootstrap.min.js"></script>
 
