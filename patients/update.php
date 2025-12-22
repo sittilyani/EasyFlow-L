@@ -142,7 +142,7 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
     <title>Patient Update</title>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <link rel="stylesheet" href="../assets/css/forms.css" type="text/css">
-    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="../assets/js/jquery-3.7.1.min.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
     <style>
         form {

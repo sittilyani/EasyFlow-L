@@ -115,7 +115,7 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
         <button class="close-btn" onclick="closePage()">Close Page</button>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../assets/js/jquery-3.7.1.min.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
     <script>
         $(document).ready(function() {

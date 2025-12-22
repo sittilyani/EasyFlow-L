@@ -135,7 +135,7 @@ $summary = array_map(function ($v) {
     return json_decode($v ?? '{}', true);
 }, $summary);
 
-
+$sub_dir = '';
 ?>
 
 <!DOCTYPE html>
@@ -183,6 +183,7 @@ $summary = array_map(function ($v) {
 </head>
 
 <body>
+    <div><?php echo $projectRoot; ?></div>
     <div class="container">
         <div class="d-flex justify-content-between align-items-center">
             <h2>Pump Reservoir</h2>
@@ -296,7 +297,7 @@ $summary = array_map(function ($v) {
                     <form id="dispenseForm" action="pump_reservoir.php" method="post">
                         <div class="form-group">
                             <label for="device-select">Pump device:</label>
-                            <select class="form-control" name="device" id="device-select" required <?php if (count($devices) === 1) echo 'disabled' ?>>
+                            <select class="form-control" name="device" id="device-select" required>
                                 <?php if (count($devices) !== 1): ?>
                                     <option value="" disabled hidden selected>select device</option>
                                 <?php endif; ?>
@@ -318,8 +319,8 @@ $summary = array_map(function ($v) {
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="../assets/js/jquery-3.7.1.min.js"></script>
+    <script src="../assets/js/bootstrap.min.js"></script>
 
     <script>
         const jsonData = JSON.parse(`<?php echo json_encode($summary); ?>`);
