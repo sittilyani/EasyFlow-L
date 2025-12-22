@@ -536,12 +536,10 @@ if (isset($_SESSION['errorMessages'])) {
                 </div>
                 <div class="form-group">
                     <label for="pump_device">Pump Device</label>
-                    <select id="pump_device" name="pump_device" required <?php if (count($devices) === 1) echo 'disabled' ?>>
-                        <?php if (count($devices) !== 1): ?>
-                            <option value="" disabled hidden selected>select device</option>
-                        <?php endif; ?>
+                    <select id="pump_device" name="pump_device" required>
+                        <option value="" disabled hidden selected>select device</option>
                         <?php foreach ($devices as $row): ?>
-                            <option value="<?php echo $row['id'] ?>" <?php if (count($devices) === 1) echo 'selected' ?>>
+                            <option value="<?php echo $row['id'] ?>">
                                 <?php echo $row['label'] ?> (<?php echo $row['port'] ?>)
                             </option>
                         <?php endforeach; ?>
@@ -625,8 +623,8 @@ if (isset($_SESSION['errorMessages'])) {
         <button onclick="closeAlert()">OK</button>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="../assets/js/jquery-3.7.1.min.js"></script>
+    <script src="../assets/js/bootstrap.min.js"></script>
 
     <script>
         function validateForm() {

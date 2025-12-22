@@ -132,7 +132,7 @@ try {
     // Executing pump command
 
     $ml = ($dosage / 5) * 400;
-    $pump_cmd = "/lm50h10j4V1600L400z{$ml}D{$ml}R";
+    $pump_cmd = "/1m50h10j4V1600L400z{$ml}D{$ml}R";
     $command = "pumpAPI.exe $pump_port 9600 raw $pump_cmd";
 
     $output = [];
