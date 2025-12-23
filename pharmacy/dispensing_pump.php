@@ -72,7 +72,8 @@ $sql = "SELECT * FROM patients WHERE (mat_id LIKE '%$search%'
         OR drugname LIKE '%$search%'
         OR dosage LIKE '%$search%'
         OR current_status LIKE '%$search%')
-        AND current_status IN ('Active', 'LTFU', 'Defaulted')";
+        AND current_status IN ('Active', 'LTFU', 'Defaulted')
+        AND drugname = 'Methadone'";
 // Pagination setup
 $results_per_page = 10; // Number of results per page
 $number_of_results = mysqli_num_rows(mysqli_query($conn, $sql)); // Total number of results
