@@ -72,8 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['milligrams'])) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['reverse'])) {
-    print_r($_POST);
-    if (!$_POST['reverse']) {
+    if ($_POST['reverse'] !== 'on') {
         $pumpQuery = "SELECT
             pd.port,
             (
