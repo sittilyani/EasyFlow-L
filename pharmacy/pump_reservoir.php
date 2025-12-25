@@ -3,7 +3,8 @@ session_start();
 // Include the database connection file
 include '../includes/config.php';
 
-$error_message = "";
+$topup_error_message = "";
+$prime_error_message = "";
 $success_message = "";
 
 // Ensure $conn is a mysqli object
@@ -14,14 +15,14 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 // Set charset to avoid collation issues
 $conn->set_charset('utf8mb4');
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['milligrams'])) {
     $mg = $_POST['milligrams'];
     $dev = $_POST['device'];
 
     // Validate input
     if (!is_numeric($mg) || $mg <= 0 || !is_numeric($dev)) {
-        $error_message = "Form submission failed, either milligrams was invalid or device not selected!";
-        $form_values = [
+        $topup_error_message = "Form submission failed, either milligrams was invalid or device not selected!";
+        $topup_form_values = [
             'milligrams' => $mg,
             'device' => $dev
         ];
@@ -61,7 +62,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($conn->commit()) {
             $success_message = "Pump content updated successfully.";
         } else {
-            $error_message = "Error: " . $conn->error;
+            $topup_error_message = "Error: " . $conn->error;
+            $topup_form_values = [
+                'milligrams' => $mg,
+                'device' => $dev
+            ];
+        }
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['reverse'])) {
+    print_r($_POST);
+    if (!$_POST['reverse']) {
+        $pumpQuery = "SELECT
+            pd.port,
+            (
+                (SELECT new_milligrams FROM pump_reservoir_history WHERE pump_id = pd.id AND `topup_to` IS NULL ORDER BY created_at DESC) -
+                (SELECT COALESCE(SUM(dosage), 0) FROM pharmacy WHERE pump_id = pd.id AND dispDate >= (SELECT `topup_from` FROM pump_reservoir_history WHERE pump_id = pd.id AND `topup_to` IS NULL ORDER BY created_at DESC))
+            ) AS rem
+            FROM pump_devices pd WHERE pd.id = ?";
+        $pumpStmt = $conn->prepare($pumpQuery);
+        $pumpStmt->bind_param('i', $_POST['device']);
+        $pumpStmt->execute();
+        $pumpResult = $pumpStmt->get_result();
+        $pumpRow = $pumpResult->fetch_assoc();
+        $remainingQuantity = $pumpRow['rem'] ?? 0;
+        $pump_port = $pumpRow['port'];
+
+        if ($remainingQuantity <= 100) {
+            $prime_error_message = "Pump reservoir is low, please top up to have at least 100mg.";
+            $prime_form_values = [
+                'device' => $_POST['device'],
+                'reverse' => $_POST['reverse'],
+            ];
+        }
+    }
+    
+    if (empty($prime_error_message)) {
+        $ml = (100 / 5) * 400;
+        $dir = $_POST['reverse'] === 'on' ? 'P' : 'R';
+        $pump_cmd = "/1m50h10j4V1600L400z{$ml}D{$ml}{$dir}";
+        $command = "pumpAPI.exe $pump_port 9600 raw $pump_cmd";
+
+        $output = [];
+        $return_var = 0;
+
+        exec($command, $output, $return_var);
+
+        if ($return_var !== 0) {
+            $prime_error_message = "Pump call failed with result code $return_var:\n" . implode('\n', $output);
+            $prime_form_values = [
+                'device' => $_POST['device'],
+                'reverse' => $_POST['reverse'],
+            ];
         }
     }
 }
@@ -183,7 +236,6 @@ $sub_dir = '';
 </head>
 
 <body>
-    <div><?php echo $projectRoot; ?></div>
     <div class="container">
         <div class="d-flex justify-content-between align-items-center">
             <h2>Pump Reservoir</h2>
@@ -239,9 +291,15 @@ $sub_dir = '';
         <div class="d-block d-lg-flex justify-content-between align-items-center">
             <h2>History</h2>
 
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#pump-content-update">
-                Switch/Top up content
-            </button>
+            <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-primary mr-2" data-toggle="modal" data-target="#prime-pump">
+                    Prime/Test pump
+                </button>
+
+                <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#pump-content-update">
+                    Switch/Top up content
+                </button>
+            </div>
         </div>
 
         <table class="table table-striped">
@@ -286,9 +344,9 @@ $sub_dir = '';
                     </button>
                 </div>
                 <div class="modal-body">
-                    <?php if (!empty($error_message)): ?>
+                    <?php if (!empty($topup_error_message)): ?>
                         <div class="alert alert-warning" role="alert">
-                            <?php echo htmlspecialchars($error_message); ?>
+                            <?php echo htmlspecialchars($topup_error_message); ?>
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -298,11 +356,9 @@ $sub_dir = '';
                         <div class="form-group">
                             <label for="device-select">Pump device:</label>
                             <select class="form-control" name="device" id="device-select" required>
-                                <?php if (count($devices) !== 1): ?>
-                                    <option value="" disabled hidden selected>select device</option>
-                                <?php endif; ?>
+                                <option value="" disabled hidden <?php if (!isset($topup_form_values['device'])) echo 'selected' ?>>select device</option>
                                 <?php foreach ($devices as $row): ?>
-                                    <option value="<?php echo $row['id'] ?>" <?php if (count($devices) === 1 || (isset($form_values['device']) && $form_values['device'] === $row['id'])) echo 'selected' ?>>
+                                    <option value="<?php echo $row['id'] ?>" <?php if ((isset($topup_form_values['device']) && $topup_form_values['device'] === $row['id'])) echo 'selected' ?>>
                                         <?php echo $row['label'] ?> (<?php echo $row['port'] ?>)
                                     </option>
                                 <?php endforeach; ?>
@@ -310,9 +366,61 @@ $sub_dir = '';
                         </div>
                         <div class="form-group">
                             <label for="milligrams">Milligrams:</label>
-                            <input class="form-control" type="number" placeholder="milligrams" name="milligrams" id="milligrams" step="5" min="5" max="2000" required value="<?php echo isset($form_values['milligrams']) ? $form_values['milligrams'] : ''; ?>">
+                            <input class="form-control" type="number" placeholder="milligrams" name="milligrams" id="milligrams" step="5" min="5" max="2000" required value="<?php echo isset($topup_form_values['milligrams']) ? $topup_form_values['milligrams'] : ''; ?>">
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="prime-pump" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Prime/Test pump</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <?php if (!empty($prime_error_message)): ?>
+                        <div class="alert alert-warning" role="alert">
+                            <?php echo htmlspecialchars($prime_error_message); ?>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    <?php endif; ?>
+                    <p>
+                        This option lets you prime/test the pump. Please ensure there is cup placed at
+                        the end of the dispensing pipe and at least 100mg of content before proceeding.
+                    </p>
+                    <p>
+                        Any liquid dispensed should be returned to the reservoir.
+                    </p>
+
+                    <form id="dispenseForm" action="pump_reservoir.php" method="post">
+                        <div class="form-group">
+                            <label for="device-select">Pump device:</label>
+                            <select class="form-control" name="device" id="device-select" required>
+                                <option value="" disabled hidden <?php if (!isset($prime_form_values['device'])) echo 'selected' ?>>select device</option>
+                                <?php foreach ($devices as $row): ?>
+                                    <option value="<?php echo $row['id'] ?>" <?php if ((isset($prime_form_values['device']) && $prime_form_values['device'] === $row['id'])) echo 'selected' ?>>
+                                        <?php echo $row['label'] ?> (<?php echo $row['port'] ?> - REM: <?php echo $summary['remaining'][$row['id']] ?? 0 ?>mg)
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <input type="hidden" name="reverse" value="0">
+                        <div class="form-check">
+                            <input class="form-check-input" name="reverse" type="checkbox" <?php if (isset($prime_form_values['reverse']) && $prime_form_values['reverse'] === 'on') echo 'checked' ?> id="prime-reverse">
+                            <label class="form-check-label" for="prime-reverse">
+                                Reverse prime direction
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-4">Submit</button>
                     </form>
                 </div>
             </div>
@@ -346,14 +454,19 @@ $sub_dir = '';
         }
 
         window.addEventListener('DOMContentLoaded', (event) => {
-            console.log(jsonData);
             filterSummaryValues();
         });
     </script>
 
-    <?php if(!empty($error_message)): ?>
+    <?php if(!empty($topup_error_message)): ?>
         <script>
             $('#pump-content-update').modal('show');
+        </script>
+    <?php endif; ?>
+
+    <?php if(!empty($prime_error_message)): ?>
+        <script>
+            $('#prime-pump').modal('show');
         </script>
     <?php endif; ?>
 </body>
