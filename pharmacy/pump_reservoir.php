@@ -254,7 +254,7 @@ $sub_dir = '';
         <div class="stats-container">
             <div class="stat-item stat-remaining">
                 <span class="stat-value" id="stat-remaining">0</span>
-                <span class="stat-label">Millilitres(ML) remaining</span>
+                <span class="stat-label">Milligrams(MG) remaining</span>
             </div>
             
             <div class="stat-item stat-today">
@@ -365,7 +365,7 @@ $sub_dir = '';
                         </div>
                         <div class="form-group">
                             <label for="milligrams">Milligrams:</label>
-                            <input class="form-control" type="number" placeholder="milligrams" name="milligrams" id="milligrams" step="5" min="5" max="2000" required value="<?php echo isset($topup_form_values['milligrams']) ? $topup_form_values['milligrams'] : ''; ?>">
+                            <input class="form-control" type="number" placeholder="milligrams" name="milligrams" id="milligrams" step="5" min="5" required value="<?php echo isset($topup_form_values['milligrams']) ? $topup_form_values['milligrams'] : ''; ?>">
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>

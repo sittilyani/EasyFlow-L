@@ -365,6 +365,11 @@ if ($statusResult->num_rows > 0) {
 } else {
     $statusOptions = "<option value=''>No status found</option>";
 }
+
+if (isset($_SESSION['dispensing_errors'])) {
+    $errorMessages = $_SESSION['dispensing_errors'];
+    unset($_SESSION['dispensing_errors']);
+}
 ?>
 
 <!DOCTYPE html>
@@ -547,6 +552,18 @@ if ($statusResult->num_rows > 0) {
             </div>
         </div>
 
+        <?php if (isset($errorMessages)): ?>
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+                <?php foreach ($errorMessages as $error): ?>
+                    <p><?php echo htmlspecialchars($error); ?></p>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
         <form id="dispenseForm" action="dispensingData_process.php" method="post" onsubmit="return validateForm()">
         <div class="form-container">
 
@@ -715,6 +732,9 @@ if ($statusResult->num_rows > 0) {
         <p>CANNOT Dispense unless the patient status is "Active".</p>
         <button onclick="closeAlert()">OK</button>
     </div>
+
+    <script src="../assets/js/jquery-3.7.1.min.js"></script>
+    <script src="../assets/js/bootstrap.min.js"></script>
 
     <script>
         function validateForm() {

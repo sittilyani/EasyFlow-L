@@ -335,7 +335,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="form-group">
                     <label for="marital_status">Marital Status</label>
-                    <input type="text" name="marital_status" class="form-control readonly-input" readonly value="<?php echo htmlspecialchars($medicalHistoryData['marital_status']); ?>">
+                    <input type="text" name="marital_status" class="form-control readonly-input" readonly value="<?php echo htmlspecialchars($medicalHistoryData['marital_status'] ?? ''); ?>">
                 </div>
 
                 <!-- HIV Status with dynamic readonly logic -->
