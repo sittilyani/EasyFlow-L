@@ -3,11 +3,10 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 17, 2025 at 04:21 PM
+-- Generation Time: Dec 31, 2025 at 08:29 AM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.26
 
-SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
@@ -21,24 +20,24 @@ SET time_zone = "+00:00";
 --
 -- Database: `methadone`
 --
+CREATE DATABASE IF NOT EXISTS `methadone` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `methadone`;
 
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `administrationroutes`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `administrationroutes`;
 CREATE TABLE `administrationroutes` (
   `route_id` int NOT NULL,
   `routetype` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `administrationroutes`
---
-
-TRUNCATE TABLE `administrationroutes`;
 --
 -- Dumping data for table `administrationroutes`
 --
@@ -57,7 +56,10 @@ INSERT INTO `administrationroutes` (`route_id`, `routetype`, `date_created`) VAL
 --
 -- Table structure for table `backup_log`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `backup_log`;
 CREATE TABLE `backup_log` (
   `id` int NOT NULL,
   `backup_date` date NOT NULL,
@@ -66,17 +68,15 @@ CREATE TABLE `backup_log` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `backup_log`
---
-
-TRUNCATE TABLE `backup_log`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `categories`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `categories`;
 CREATE TABLE `categories` (
   `id` int NOT NULL,
   `name` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -84,11 +84,6 @@ CREATE TABLE `categories` (
   `photo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `categories`
---
-
-TRUNCATE TABLE `categories`;
 --
 -- Dumping data for table `categories`
 --
@@ -104,7 +99,10 @@ INSERT INTO `categories` (`id`, `name`, `description`, `photo`) VALUES
 --
 -- Table structure for table `client_consents`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `client_consents`;
 CREATE TABLE `client_consents` (
   `id` int NOT NULL,
   `p_id` int NOT NULL COMMENT 'ID from the patients table',
@@ -133,25 +131,15 @@ CREATE TABLE `client_consents` (
   `consent_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'yes'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `client_consents`
---
-
-TRUNCATE TABLE `client_consents`;
---
--- Dumping data for table `client_consents`
---
-
-INSERT INTO `client_consents` (`id`, `p_id`, `mat_id`, `client_name`, `sex`, `visit_date`, `cso`, `declaration_phone`, `national_id`, `client_age`, `guardian_accompany`, `guardian_name`, `guardian_id`, `mat_facility`, `clinician_name`, `clinician_org`, `clinician_signature`, `clinician_date`, `counselor_name`, `counselor_org`, `counselor_signature`, `counselor_date`, `pdf_filename`, `created_at`, `consent_status`) VALUES
-(1, 9428, '23368MAT01256', 'OMAR SALIM DENMARK', 'Male', '2025-11-24', 'Reachout Center Trust', '0222336655', '1111111', '41', 'Nugu', 'Nugus', '33344422', 'Kombani Mat Clinic', 'Clinician Clinician', 'Kombani Mat Clinic', 'MM', '2025-11-24', 'Pyschiatrist User', 'Kombani Mat Clinic', 'NN', '2025-11-24', '23368MAT01256_20251124_092722.pdf', '2025-11-24 09:27:22', 'yes'),
-(2, 1873, '10507MAT0927', 'HARTMAN ALULU ALULU', 'Male', '2025-12-04', 'CSO - LVCT', '', '', '', '', '', '', 'Karuri Health Centre', 'Peter Kiburi', 'Karuri Health Centre', 'nnnnnn', '2025-12-04', 'Edith Mbugua', 'Karuri Health Centre', 'nnnnnn', '2025-12-04', '10507MAT0927_20251204_075817.pdf', '2025-12-04 07:58:17', 'yes');
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `clinical_encounters`
 --
+-- Creation: Dec 03, 2025 at 01:42 PM
+--
 
+DROP TABLE IF EXISTS `clinical_encounters`;
 CREATE TABLE `clinical_encounters` (
   `id` int NOT NULL,
   `triage_id` int NOT NULL,
@@ -211,27 +199,20 @@ CREATE TABLE `clinical_encounters` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
---
--- Truncate table before insert `clinical_encounters`
---
-
-TRUNCATE TABLE `clinical_encounters`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `clinic_visits`
 --
+-- Creation: Dec 02, 2025 at 07:14 PM
+--
 
+DROP TABLE IF EXISTS `clinic_visits`;
 CREATE TABLE `clinic_visits` (
   `clinic_id` int NOT NULL,
   `visit_name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `clinic_visits`
---
-
-TRUNCATE TABLE `clinic_visits`;
 --
 -- Dumping data for table `clinic_visits`
 --
@@ -255,7 +236,10 @@ INSERT INTO `clinic_visits` (`clinic_id`, `visit_name`) VALUES
 --
 -- Table structure for table `consents`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `consents`;
 CREATE TABLE `consents` (
   `consent_id` int NOT NULL,
   `clientName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -271,7 +255,10 @@ CREATE TABLE `consents` (
 --
 -- Table structure for table `counties`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `counties`;
 CREATE TABLE `counties` (
   `id` int NOT NULL,
   `county_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -280,11 +267,6 @@ CREATE TABLE `counties` (
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `counties`
---
-
-TRUNCATE TABLE `counties`;
 --
 -- Dumping data for table `counties`
 --
@@ -343,23 +325,24 @@ INSERT INTO `counties` (`id`, `county_code`, `county_name`, `region`, `date_crea
 --
 -- Table structure for table `csos`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `csos`;
 CREATE TABLE `csos` (
   `cso_id` int NOT NULL,
   `cso_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `csos`
---
-
-TRUNCATE TABLE `csos`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `daily_report_comments`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `daily_report_comments`;
 CREATE TABLE `daily_report_comments` (
   `comment_id` int NOT NULL,
   `log_date` date NOT NULL,
@@ -367,17 +350,15 @@ CREATE TABLE `daily_report_comments` (
   `comments` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `daily_report_comments`
---
-
-TRUNCATE TABLE `daily_report_comments`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `deleted_patients`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `deleted_patients`;
 CREATE TABLE `deleted_patients` (
   `p_id` int NOT NULL,
   `reg_facility` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -435,7 +416,10 @@ CREATE TABLE `deleted_patients` (
 --
 -- Table structure for table `deleted_prescriptions`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `deleted_prescriptions`;
 CREATE TABLE `deleted_prescriptions` (
   `del_id` int NOT NULL,
   `disp_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -456,7 +440,10 @@ CREATE TABLE `deleted_prescriptions` (
 --
 -- Table structure for table `dispensing_comments`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `dispensing_comments`;
 CREATE TABLE `dispensing_comments` (
   `comment_id` int NOT NULL,
   `log_date` date NOT NULL,
@@ -464,27 +451,20 @@ CREATE TABLE `dispensing_comments` (
   `comments` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `dispensing_comments`
---
-
-TRUNCATE TABLE `dispensing_comments`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `dosing`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `dosing`;
 CREATE TABLE `dosing` (
   `id` int NOT NULL,
   `dosage` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `dosing`
---
-
-TRUNCATE TABLE `dosing`;
 --
 -- Dumping data for table `dosing`
 --
@@ -502,7 +482,10 @@ INSERT INTO `dosing` (`id`, `dosage`) VALUES
 --
 -- Table structure for table `drug`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `drug`;
 CREATE TABLE `drug` (
   `drugID` int NOT NULL,
   `drugName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -512,11 +495,6 @@ CREATE TABLE `drug` (
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `drug`
---
-
-TRUNCATE TABLE `drug`;
 --
 -- Dumping data for table `drug`
 --
@@ -825,18 +803,16 @@ INSERT INTO `drug` (`drugID`, `drugName`, `drugCategory`, `description`, `price`
 --
 -- Table structure for table `drugcategory`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `drugcategory`;
 CREATE TABLE `drugcategory` (
   `id` int NOT NULL,
   `catname` varchar(225) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `drugcategory`
---
-
-TRUNCATE TABLE `drugcategory`;
 --
 -- Dumping data for table `drugcategory`
 --
@@ -858,18 +834,16 @@ INSERT INTO `drugcategory` (`id`, `catname`, `description`) VALUES
 --
 -- Table structure for table `drug_sources`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `drug_sources`;
 CREATE TABLE `drug_sources` (
   `source_id` int NOT NULL,
   `source_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `drug_sources`
---
-
-TRUNCATE TABLE `drug_sources`;
 --
 -- Dumping data for table `drug_sources`
 --
@@ -884,18 +858,16 @@ INSERT INTO `drug_sources` (`source_id`, `source_name`, `date_created`) VALUES
 --
 -- Table structure for table `durationunits`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `durationunits`;
 CREATE TABLE `durationunits` (
   `unit_id` int NOT NULL,
   `duration` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `durationunits`
---
-
-TRUNCATE TABLE `durationunits`;
 --
 -- Dumping data for table `durationunits`
 --
@@ -911,33 +883,29 @@ INSERT INTO `durationunits` (`unit_id`, `duration`, `date_created`) VALUES
 --
 -- Table structure for table `education_level`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `education_level`;
 CREATE TABLE `education_level` (
   `edu_id` int NOT NULL,
   `edu_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `education_level`
---
-
-TRUNCATE TABLE `education_level`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `employment_status`
 --
+-- Creation: Dec 02, 2025 at 07:28 PM
+--
 
+DROP TABLE IF EXISTS `employment_status`;
 CREATE TABLE `employment_status` (
   `emp_id` int NOT NULL,
   `emp_status_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `employment_status`
---
-
-TRUNCATE TABLE `employment_status`;
 --
 -- Dumping data for table `employment_status`
 --
@@ -953,7 +921,10 @@ INSERT INTO `employment_status` (`emp_id`, `emp_status_name`) VALUES
 --
 -- Table structure for table `enrolment_status`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `enrolment_status`;
 CREATE TABLE `enrolment_status` (
   `enrolment_id` int NOT NULL,
   `enrolment_status_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -961,11 +932,6 @@ CREATE TABLE `enrolment_status` (
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `enrolment_status`
---
-
-TRUNCATE TABLE `enrolment_status`;
 --
 -- Dumping data for table `enrolment_status`
 --
@@ -981,7 +947,10 @@ INSERT INTO `enrolment_status` (`enrolment_id`, `enrolment_status_name`, `decsri
 --
 -- Table structure for table `facerecognitionnodes`
 --
+-- Creation: Dec 09, 2025 at 11:03 AM
+--
 
+DROP TABLE IF EXISTS `facerecognitionnodes`;
 CREATE TABLE `facerecognitionnodes` (
   `Id` int NOT NULL,
   `PatientId` int DEFAULT NULL,
@@ -994,17 +963,15 @@ CREATE TABLE `facerecognitionnodes` (
   `RightId` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `facerecognitionnodes`
---
-
-TRUNCATE TABLE `facerecognitionnodes`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `facilities`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `facilities`;
 CREATE TABLE `facilities` (
   `id` int NOT NULL,
   `facilityname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -1022,11 +989,6 @@ CREATE TABLE `facilities` (
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `facilities`
---
-
-TRUNCATE TABLE `facilities`;
 --
 -- Dumping data for table `facilities`
 --
@@ -1284,8 +1246,7 @@ INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcou
 (250, 'Busia County Referral Hospital', '15834', 'Busia', 'Matayos', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'AMRS', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (251, 'Busibwabo Dispensary', '15835', 'Busia', 'Matayos', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.41086', '34.20122', '2025-07-13 05:15:02'),
 (252, 'Butula Mission Health Centre', '15838', 'Busia', 'Butula', 'Other Faith Based', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.34325', '34.33363', '2025-07-13 05:15:02'),
-(253, 'Bwaliro Dispensary', '15840', 'Busia', 'Butula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.37825', '34.3162', '2025-07-13 05:15:02');
-INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(253, 'Bwaliro Dispensary', '15840', 'Busia', 'Butula', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.37825', '34.3162', '2025-07-13 05:15:02'),
 (254, 'GK Prisons Dispensary (Busia)', '15891', 'Busia', 'Matayos', 'Other Public Institution', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.45296', '34.11452', '2025-07-13 05:15:02'),
 (255, 'Igara Dispensary', '15897', 'Busia', 'Nambale', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.53294', '34.36315', '2025-07-13 05:15:02'),
 (256, 'Khayo Dispensary', '15937', 'Busia', 'Nambale', 'Ministry of Health', 'USAID Dumisha Afya', 'USAID', '', 'Stalled/Inactive', 'On Premises', '0.51051', '34.38897', '2025-07-13 05:15:02'),
@@ -1534,8 +1495,7 @@ INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcou
 (499, 'Ogongo Sub County Hospital', '13967', 'Homa Bay', 'Mbita', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (500, 'Okiki Amayo Health Centre', '13972', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.41198', '34.51135', '2025-07-13 05:15:02'),
 (501, 'Olando Dispensary', '13974', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.43246', '34.65263', '2025-07-13 05:15:02'),
-(502, 'Ombek Health Centre', '13978', 'Homa Bay', 'Rachuonyo South', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02');
-INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(502, 'Ombek Health Centre', '13978', 'Homa Bay', 'Rachuonyo South', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (503, 'Ombo Kachieng Dispensary', '13979', 'Homa Bay', 'Ndhiwa', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (504, 'Omboga Dispensary', '13980', 'Homa Bay', 'Rachuonyo North', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.43925', '34.62273', '2025-07-13 05:15:02'),
 (505, 'Omiro Dispensary', '13981', 'Homa Bay', 'Kabondo Kasipul', 'Ministry of Health', 'HOMA BAY CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.45299', '34.80357', '2025-07-13 05:15:02'),
@@ -1779,8 +1739,7 @@ INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcou
 (743, 'St Charles Lwanga Health Centre', '15957', 'Kakamega', 'Lugari', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.62801', '34.88434', '2025-07-13 05:15:02'),
 (744, 'Kuvasali Health Centre', '15959', 'Kakamega', 'Malava', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.42106', '34.94322', '2025-07-13 05:15:02'),
 (745, 'Likuyani Sub-County Hospital', '15961', 'Kakamega', 'Likuyani', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
-(746, 'Lugari Forest Dispensary', '15964', 'Kakamega', 'Lugari', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.66328', '34.90693', '2025-07-13 05:15:02');
-INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(746, 'Lugari Forest Dispensary', '15964', 'Kakamega', 'Lugari', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.66328', '34.90693', '2025-07-13 05:15:02'),
 (747, 'Lumakanda Sub County Hospital', '15969', 'Kakamega', 'Lugari', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.63478', '34.97615', '2025-07-13 05:15:02'),
 (748, 'Lumani Dispensary', '15970', 'Kakamega', 'Lugari', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.4904', '34.72177', '2025-07-13 05:15:02'),
 (749, 'Lunganyiro Health Centre', '15972', 'Kakamega', 'Matungu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
@@ -2029,8 +1988,7 @@ INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcou
 (992, 'Makongeni dispensary', '18432', 'Kiambu', 'Thika Town', 'Local Authority', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.06234', '37.10882', '2025-07-13 05:15:02'),
 (993, 'Gachororo health centre', '18608', 'Kiambu', 'Juja', 'Ministry of Health', 'Kiambu County Endeleza Program', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-1.08697', '37.02015', '2025-07-13 05:15:02'),
 (994, 'Mundoro Community Dispensary', '18658', 'Kiambu', 'Gatundu South', 'Community Development Fund', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.95055', '36.76462', '2025-07-13 05:15:02'),
-(995, 'Langata Health centre (Ruiru)', '18762', 'Kiambu', 'Ruiru', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02');
-INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(995, 'Langata Health centre (Ruiru)', '18762', 'Kiambu', 'Ruiru', 'Ministry of Health', 'LVCT Dhibiti', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (996, 'Cordis Maria Dispensary', '19722', 'Kiambu', 'Ruiru', 'Kenya Episcopal Conference-Catholic Secretariat', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-1.21589', '36.93658', '2025-07-13 05:15:02'),
 (997, 'Holy family catholic hospital githunguri', '19963', 'Kiambu', 'Githunguri', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (998, 'Child & Family Wellness Clinic', '19985', 'Kiambu', 'Kiambu Town', 'Other Faith Based', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.17535', '36.8304', '2025-07-13 05:15:02'),
@@ -2273,8 +2231,7 @@ INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcou
 (1235, 'Gucha District Hospital', '13594', 'Kisii', 'Bomachoge Chache', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.79631', '34.72383', '2025-07-13 05:15:02'),
 (1236, 'Hema Hospital', '13603', 'Kisii', 'Kitutu Chache South', 'Private Enterprise (Institution)', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.67496', '34.77007', '2025-07-13 05:15:02'),
 (1237, 'Ibacho Sub-District Hospital', '13611', 'Kisii', 'Nyaribari Masaba', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.89806', '34.94024', '2025-07-13 05:15:02'),
-(1238, 'Ibeno Sub-District Hospital', '13612', 'Kisii', 'Nyaribari Chache', 'Ministry of Health', 'KISII COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.77956', '34.85261', '2025-07-13 05:15:02');
-INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(1238, 'Ibeno Sub-District Hospital', '13612', 'Kisii', 'Nyaribari Chache', 'Ministry of Health', 'KISII COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.77956', '34.85261', '2025-07-13 05:15:02'),
 (1239, 'Igare Medical Clinic', '13613', 'Kisii', 'Bobasi', 'Private Enterprise (Institution)', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (1240, 'Iranda Health Centre', '13620', 'Kisii', 'Kitutu Chache South', 'Ministry of Health', 'LVCT Vukisha 95', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.62703', '34.74898', '2025-07-13 05:15:02'),
 (1241, 'Irondi Dispensary', '13621', 'Kisii', 'Nyaribari Chache', 'Ministry of Health', 'KISII COUNTY DEPARTMENT OF HEALTH SERVICES', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.7861', '34.87875', '2025-07-13 05:15:02'),
@@ -2517,8 +2474,7 @@ INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcou
 (1478, 'OTIENO OWALA HEALTH CENTRE', '20024', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (1479, 'Osewre Dispensary', '20069', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.13337', '34.44436', '2025-07-13 05:15:02'),
 (1480, 'Avenue Hospital Kisumu', '20123', 'Kisumu', 'Kisumu Central', 'Private Enterprise (Institution)', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.088626', '34.770387', '2025-07-13 05:15:02'),
-(1481, 'Mbaka Oromo Health Centre', '20199', 'Kisumu', 'Kisumu West', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02');
-INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(1481, 'Mbaka Oromo Health Centre', '20199', 'Kisumu', 'Kisumu West', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (1482, 'Onyuongo Dispensary', '20209', 'Kisumu', 'Nyakach', 'Ministry of Health', 'CIHEB Entrench', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.32515', '35.00533', '2025-07-13 05:15:02'),
 (1483, 'Dago Jonyo Dispensary', '20377', 'Kisumu', 'Seme', 'Ministry of Health', 'HJF-Kisumu West', 'DOD', 'KenyaEMR', 'Active', 'On Premises', '-0.18251', '34.50411', '2025-07-13 05:15:02'),
 (1484, 'Manyatta Community Medical Clinic', '20512', 'Kisumu', 'Kisumu East', 'Private Practice - Clinical Officer', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.09366', '34.78063', '2025-07-13 05:15:02'),
@@ -2767,8 +2723,7 @@ INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcou
 (1728, 'Mother Angela Huruma Hospital', '14553', 'Laikipia', 'Laikipia East', 'Kenya Episcopal Conference-Catholic Secretariat', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (1729, 'Ilpolei Dispensary', '14561', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '0.35968', '37.07226', '2025-07-13 05:15:02'),
 (1730, 'Kalalu Dispensary', '14659', 'Laikipia', 'Laikipia East', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.08227', '37.16625', '2025-07-13 05:15:02'),
-(1731, 'Kimanjo Dispensary', '14869', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.47444', '37.01297', '2025-07-13 05:15:02');
-INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(1731, 'Kimanjo Dispensary', '14869', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.47444', '37.01297', '2025-07-13 05:15:02'),
 (1732, 'Lamuria Dispensary (Laikipia East)', '15007', 'Laikipia', 'Laikipia East', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.13434', '36.86165', '2025-07-13 05:15:02'),
 (1733, 'Likii Dispensary', '15035', 'Laikipia', 'Laikipia East', 'Other Public Institution', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.02416', '37.07758', '2025-07-13 05:15:02'),
 (1734, 'Lokusero Dispensary', '15065', 'Laikipia', 'Laikipia North', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '0.30832', '37.29749', '2025-07-13 05:15:02'),
@@ -3017,8 +2972,7 @@ INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcou
 (1977, 'Ilatu Health Centre (Makindu)', '19976', 'Makueni', 'Kibwezi West', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (1978, 'Kimeeni Dispensary', '20130', 'Makueni', 'Mbooni', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.6939', '37.7391', '2025-07-13 05:15:02'),
 (1979, 'Mbuvo Health Centre', '20271', 'Makueni', 'Makueni', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-2.07199', '37.76967', '2025-07-13 05:15:02'),
-(1980, 'GK Makueni', '20722', 'Makueni', 'Makueni', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02');
-INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(1980, 'GK Makueni', '20722', 'Makueni', 'Makueni', 'Ministry of Health', 'LVCT Prisons', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (1981, 'Haifa Med Clinic', '20974', 'Makueni', 'Mbooni', 'Private Practice - Nurse / Midwifery', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.6594', '37.44871', '2025-07-13 05:15:02'),
 (1982, 'Banisa Sub County Hospital', '13300', 'Mandera', 'Banissa', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (1983, 'Mandera Central Sub county Hospital', '13335', 'Mandera', 'Mandera South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
@@ -3264,8 +3218,7 @@ INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcou
 (2223, 'Aga Khan Hospital (Mombasa)', '11203', 'Mombasa', 'Mvita', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-4.07012', '39.67003', '2025-07-13 05:15:02'),
 (2224, 'Al Farooq Hospital', '11208', 'Mombasa', 'Mvita', 'Private Practice - Private Institution Academic', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.04899', '39.66513', '2025-07-13 05:15:02'),
 (2225, 'Amurt Health Centre (Likoni)', '11221', 'Mombasa', 'Likoni', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-4.07765', '39.65362', '2025-07-13 05:15:02'),
-(2226, 'Bamburi Dispensary', '11239', 'Mombasa', 'Nyali', 'Local Authority', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.00435', '39.69335', '2025-07-13 05:15:02');
-INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(2226, 'Bamburi Dispensary', '11239', 'Mombasa', 'Nyali', 'Local Authority', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.00435', '39.69335', '2025-07-13 05:15:02'),
 (2227, 'Bamburi Medicare', '11240', 'Mombasa', 'Nyali', 'Private Enterprise (Institution)', 'USAID Stawisha Pwani', 'USAID', '', '', 'On Premises', '-4.00329', '39.6986', '2025-07-13 05:15:02'),
 (2228, 'Baobab Clinic - Bamburi Cement', '11243', 'Mombasa', 'Nyali', 'Private Enterprise (Institution)', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-3.96975', '39.7061', '2025-07-13 05:15:02'),
 (2229, 'Bokole CDF Dispensary', '11254', 'Mombasa', 'Changamwe', 'Ministry of Health', 'USAID Stawisha Pwani', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-4.01724', '39.60873', '2025-07-13 05:15:02'),
@@ -3506,8 +3459,7 @@ INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcou
 (2466, 'Marura Nursing Home', '13070', 'Nairobi', 'Ruaraka', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.24875', '36.871', '2025-07-13 05:15:02'),
 (2467, 'Marurui Dispensary', '13071', 'Nairobi', 'Roysambu', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.20244', '36.9038', '2025-07-13 05:15:02'),
 (2468, 'Mary Immaculate Sisters Dispensary', '13072', 'Nairobi', 'Makadara', 'Other Faith Based', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.29206', '36.8574', '2025-07-13 05:15:02'),
-(2469, 'The Mater Misericordiae Hospital', '13074', 'Nairobi', 'Starehe', 'Kenya Episcopal Conference-Catholic Secretariat', 'Coptic Orthodox Church', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02');
-INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(2469, 'The Mater Misericordiae Hospital', '13074', 'Nairobi', 'Starehe', 'Kenya Episcopal Conference-Catholic Secretariat', 'Coptic Orthodox Church', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (2470, 'Mathare 3A (EDARP)', '13075', 'Nairobi', 'Mathare', 'Kenya Episcopal Conference-Catholic Secretariat', 'Coptic Orthodox Church', 'CDC', 'ECare', 'Active', 'On Premises', '-1.26038', '36.8476', '2025-07-13 05:15:02'),
 (2471, 'Mathari Hospital', '13076', 'Nairobi', 'Mathare', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.26097', '36.84912', '2025-07-13 05:15:02'),
 (2472, 'Mathare North Health Centre', '13077', 'Nairobi', 'Ruaraka', 'Local Authority', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.25323', '36.86485', '2025-07-13 05:15:02'),
@@ -3521,7 +3473,8 @@ INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcou
 (2480, 'Mji Wa Huruma Dispensary ', '13093', 'Nairobi', 'Westlands', 'Ministry of Health', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (2481, 'Moi Airbase Hospital', '13095', 'Nairobi', 'Kamukunji', 'Armed Forces', 'HJF-Nairobi', 'DOD', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (2482, 'Mukuru Mmm Clinic', '13101', 'Nairobi', 'Embakasi South', 'Kenya Episcopal Conference-Catholic Secretariat', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-1.30472', '36.885', '2025-07-13 05:15:02'),
-(2483, 'Mutuini Sub-District Hospital', '13105', 'Nairobi', 'Dagoretti South', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.3', '36.7', '2025-07-13 05:15:02'),
+(2483, 'Mutuini Sub-District Hospital', '13105', 'Nairobi', 'Dagoretti South', 'Ministry of Health', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.3', '36.7', '2025-07-13 05:15:02');
+INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
 (2484, 'Nairobi Deaf (Liverpool)', '13108', 'Nairobi', 'Starehe', 'Non-Governmental Organizations', 'CIHEB CONNECT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-1.2852', '36.821', '2025-07-13 05:15:02'),
 (2485, 'Meridian Equator Hospital', '13109', 'Nairobi', 'Langata', 'Private Enterprise (Institution)', 'USAID Fahari ya Jamii', 'USAID', 'KenyaEMR', 'Active', 'On Cloud', '-1.30801', '36.82421', '2025-07-13 05:15:02'),
 (2486, 'Nairobi Hospital', '13110', 'Nairobi', 'Dagoretti North', 'Private Enterprise (Institution)', 'No Partner', 'No Agency', '', '', 'On Premises', '-1.296139', '36.803995', '2025-07-13 05:15:02'),
@@ -3741,8 +3694,7 @@ INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcou
 (2700, 'Kamara Dispensary', '14668', 'Nakuru', 'Kuresoi North', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.0965', '35.67934', '2025-07-13 05:15:02'),
 (2701, 'Kapkures Health Centre (Nakuru West)', '14733', 'Nakuru', 'Nakuru West', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (2702, 'Karagita Health Centre', '14801', 'Nakuru', 'Naivasha', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
-(2703, 'Karati Dispensary', '14802', 'Nakuru', 'Gilgil', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.69032', '36.47886', '2025-07-13 05:15:02');
-INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(2703, 'Karati Dispensary', '14802', 'Nakuru', 'Gilgil', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.69032', '36.47886', '2025-07-13 05:15:02'),
 (2704, 'Karunga Dispensary', '14805', 'Nakuru', 'Gilgil', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.40633', '36.35059', '2025-07-13 05:15:02'),
 (2705, 'Keringet  Sub County Hospital', '14836', 'Nakuru', 'Kuresoi South', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (2706, 'Kiambogo Dispensary (Gilgil)', '14845', 'Nakuru', 'Gilgil', 'Ministry of Health', 'USAID Tujenge Jamii Activity', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
@@ -3985,8 +3937,7 @@ INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcou
 (2943, 'Bogwendo Health Centre(Manga)', '13504', 'Nyamira', 'Manga', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '-0.64391', '34.89357', '2025-07-13 05:15:02'),
 (2944, 'Bosiango Health Centre', '13514', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.63996', '34.95055', '2025-07-13 05:15:02'),
 (2945, 'Chepngombe Health Centre', '13523', 'Nyamira', 'Borabu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.83926', '35.00363', '2025-07-13 05:15:02'),
-(2946, 'Chaina Dispensary', '13525', 'Nyamira', 'Nyamira North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02');
-INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(2946, 'Chaina Dispensary', '13525', 'Nyamira', 'Nyamira North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (2947, 'Ekerenyo Sub-District Hospital', '13540', 'Nyamira', 'Nyamira North', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.52815', '34.98799', '2025-07-13 05:15:02'),
 (2948, 'Embonga Health Centre', '13543', 'Nyamira', 'Nyamira', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', 'Stalled/Inactive', 'On Premises', '-0.54319', '34.88419', '2025-07-13 05:15:02'),
 (2949, 'Endiba Health Centre', '13544', 'Nyamira', 'Borabu', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.55994', '34.96206', '2025-07-13 05:15:02'),
@@ -4229,8 +4180,7 @@ INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcou
 (3186, 'Kadenge Ratuoro Health Centre', '13641', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.02373', '34.17477', '2025-07-13 05:15:02'),
 (3187, 'Kagwa Health Centre', '13644', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.22851', '34.25665', '2025-07-13 05:15:02'),
 (3188, 'Kaluo Health Centre', '13648', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
-(3189, 'Kambajo Dispensary', '13651', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.078944', '34.21136', '2025-07-13 05:15:02');
-INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(3189, 'Kambajo Dispensary', '13651', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.078944', '34.21136', '2025-07-13 05:15:02'),
 (3190, 'Kapiyo Health Centre', '13655', 'Siaya', 'Bondo', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (3191, 'Kogelo Dispensary', '13710', 'Siaya', 'Alego Usonga', 'Ministry of Health', 'Siaya CHMT', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '0.00716', '34.3448', '2025-07-13 05:15:02'),
 (3192, 'Kunya Dispensary', '13725', 'Siaya', 'Rarieda', 'Ministry of Health', 'CHS Shinda Tena', 'CDC', 'KenyaEMR', 'Active', 'On Cloud', '-0.28581', '34.39937', '2025-07-13 05:15:02'),
@@ -4481,8 +4431,7 @@ INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcou
 (3437, 'Muthambi Health Centre', '12589', 'Tharaka-Nithi', 'Muthambi', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.27457', '37.66054', '2025-07-13 05:15:02'),
 (3438, 'Mutindwa Dispensary', '12597', 'Tharaka-Nithi', 'Mwimbi', 'Ministry of Health', 'No Partner', 'No Agency', '', '', 'On Premises', '-0.24269', '37.60172', '2025-07-13 05:15:02'),
 (3439, 'Nguruki-Iruma Dispensary', '12659', 'Tharaka-Nithi', 'Mwimbi', 'Christian Health Association of Kenya', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', '-0.22126', '37.689', '2025-07-13 05:15:02'),
-(3440, 'Nkondi Health centre', '12665', 'Tharaka-Nithi', 'Tharaka South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02');
-INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(3440, 'Nkondi Health centre', '12665', 'Tharaka-Nithi', 'Tharaka South', 'Ministry of Health', 'No Partner', 'No Agency', '', 'Stalled/Inactive', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (3441, 'St Orsola Mission Hospital', '12769', 'Tharaka-Nithi', 'Tharaka South', 'Christian Health Association of Kenya', 'CHAK CHAP STAWISHA', 'CDC', 'KenyaEMR', 'Active', 'On Premises', '-0.31621', '37.90028', '2025-07-13 05:15:02'),
 (3442, 'Thanantu Faith Hospital', '12793', 'Tharaka-Nithi', 'Tharaka North', 'Private Enterprise (Institution)', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (3443, 'Tharaka District Hospital', '12795', 'Tharaka-Nithi', 'Tharaka South', 'Ministry of Health', 'USAID Jamii Tekelezi', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '-0.15802', '37.97501', '2025-07-13 05:15:02'),
@@ -4726,8 +4675,7 @@ INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcou
 (3681, 'Jepkoyai Dispensary', '16453', 'Vihiga', 'Hamisi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.00584', '34.72548', '2025-07-13 05:15:02'),
 (3682, 'Joint Partner Medical Clinic', '16455', 'Vihiga', 'Hamisi', 'Private Practice - Nurse / Midwife', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.14149', '34.8809', '2025-07-13 05:15:02'),
 (3683, 'Kaptech Dispensary', '16456', 'Vihiga', 'Hamisi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.16416', '34.82459', '2025-07-13 05:15:02'),
-(3684, 'Kaptisi Dispensary', '16457', 'Vihiga', 'Hamisi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.18418', '34.92219', '2025-07-13 05:15:02');
-INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `owner`, `sdp`, `agency`, `emr`, `emrstatus`, `infrastructuretype`, `latitude`, `longitude`, `date_created`) VALUES
+(3684, 'Kaptisi Dispensary', '16457', 'Vihiga', 'Hamisi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', '0.18418', '34.92219', '2025-07-13 05:15:02'),
 (3685, 'Kimogoi Dispensary', '16458', 'Vihiga', 'Hamisi', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.05252', '34.7792', '2025-07-13 05:15:02'),
 (3686, 'Emusire Sub County Hospital', '16979', 'Vihiga', 'Emuhaya', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', 'KenyaEMR', 'Active', 'On Premises', 'Not Found', 'Not Found', '2025-07-13 05:15:02'),
 (3687, 'Ebukoolo Dispensary', '17113', 'Vihiga', 'Emuhaya', 'Ministry of Health', 'USAID NURU YA MTOTO', 'USAID', '', '', 'On Premises', '0.07013', '34.56275', '2025-07-13 05:15:02'),
@@ -4771,7 +4719,10 @@ INSERT INTO `facilities` (`id`, `facilityname`, `mflcode`, `countyname`, `subcou
 --
 -- Table structure for table `facility_settings`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `facility_settings`;
 CREATE TABLE `facility_settings` (
   `id` int NOT NULL,
   `facility_id` int DEFAULT NULL,
@@ -4785,12 +4736,22 @@ CREATE TABLE `facility_settings` (
   `setup_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `facility_settings`
+--
+
+INSERT INTO `facility_settings` (`id`, `facility_id`, `facilityname`, `mflcode`, `countyname`, `subcountyname`, `facilityincharge`, `facilityphone`, `email`, `setup_date`) VALUES
+(6, 938, 'Karuri Health Centre', NULL, 'Kiambu', 'Kiambaa', 'Dr Elizabeth', '0111222555', 'p@gmail.com', '2025-12-03 17:25:07');
+
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `fingerprints`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `fingerprints`;
 CREATE TABLE `fingerprints` (
   `print_id` int NOT NULL,
   `visitDate` datetime DEFAULT CURRENT_TIMESTAMP,
@@ -4802,17 +4763,15 @@ CREATE TABLE `fingerprints` (
   `capture_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `fingerprints`
---
-
-TRUNCATE TABLE `fingerprints`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `followup_psychiatric_form`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `followup_psychiatric_form`;
 CREATE TABLE `followup_psychiatric_form` (
   `visit_id` int NOT NULL,
   `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -4824,28 +4783,21 @@ CREATE TABLE `followup_psychiatric_form` (
   `psychiatrist_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `followup_psychiatric_form`
---
-
-TRUNCATE TABLE `followup_psychiatric_form`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `formulation`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `formulation`;
 CREATE TABLE `formulation` (
   `formID` int NOT NULL,
   `fname` varchar(225) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `description` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `formulation`
---
-
-TRUNCATE TABLE `formulation`;
 --
 -- Dumping data for table `formulation`
 --
@@ -4862,7 +4814,10 @@ INSERT INTO `formulation` (`formID`, `fname`, `description`) VALUES
 --
 -- Table structure for table `gad7_assessments`
 --
+-- Creation: Dec 02, 2025 at 05:19 PM
+--
 
+DROP TABLE IF EXISTS `gad7_assessments`;
 CREATE TABLE `gad7_assessments` (
   `assessment_id` int UNSIGNED NOT NULL,
   `p_id` int UNSIGNED NOT NULL,
@@ -4882,23 +4837,29 @@ CREATE TABLE `gad7_assessments` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `gad7_assessments`
+--
+
+INSERT INTO `gad7_assessments` (`assessment_id`, `p_id`, `mat_id`, `visitDate`, `therapist_id`, `q1`, `q2`, `q3`, `q4`, `q5`, `q6`, `q7`, `total_score`, `diagnosis`, `management_plan`, `created_at`) VALUES
+(1, 1764, '10973MAT0003', '2025-12-02', 6, 2, 2, 2, 2, 2, 3, 3, 16, 'Severe anxiety', 'Provide supportive counselling (refer to a psychologist if available).\nRefer to a medical officer, psychiatrist, or mental health team immediately.\nConsider pharmacological treatment (e.g., SSRIs) in consultation with a specialist.', '2025-12-02 17:19:52'),
+(2, 1772, '10973MAT0011', '2025-12-03', 6, 1, 2, 2, 3, 3, 3, 3, 17, 'Severe anxiety', 'Provide supportive counselling (refer to a psychologist if available).\nRefer to a medical officer, psychiatrist, or mental health team immediately.\nConsider pharmacological treatment (e.g., SSRIs) in consultation with a specialist.', '2025-12-03 17:12:50');
+
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `hepb_status`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `hepb_status`;
 CREATE TABLE `hepb_status` (
   `status_id` int NOT NULL,
   `status_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `hepb_status`
---
-
-TRUNCATE TABLE `hepb_status`;
 --
 -- Dumping data for table `hepb_status`
 --
@@ -4913,18 +4874,16 @@ INSERT INTO `hepb_status` (`status_id`, `status_name`, `date_created`) VALUES
 --
 -- Table structure for table `hepc_status`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `hepc_status`;
 CREATE TABLE `hepc_status` (
   `status_id` int NOT NULL,
   `status_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `hepc_status`
---
-
-TRUNCATE TABLE `hepc_status`;
 --
 -- Dumping data for table `hepc_status`
 --
@@ -4939,7 +4898,10 @@ INSERT INTO `hepc_status` (`status_id`, `status_name`, `date_created`) VALUES
 --
 -- Table structure for table `initial_psychiatric_form`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `initial_psychiatric_form`;
 CREATE TABLE `initial_psychiatric_form` (
   `psy_id` int NOT NULL,
   `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -4973,23 +4935,24 @@ CREATE TABLE `initial_psychiatric_form` (
 --
 -- Table structure for table `integration_status`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `integration_status`;
 CREATE TABLE `integration_status` (
   `integration_id` int NOT NULL,
   `integration_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `integration_status`
---
-
-TRUNCATE TABLE `integration_status`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `involuntary_discontinuation`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `involuntary_discontinuation`;
 CREATE TABLE `involuntary_discontinuation` (
   `id` int NOT NULL,
   `visit_date` date NOT NULL,
@@ -5016,40 +4979,15 @@ CREATE TABLE `involuntary_discontinuation` (
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `involuntary_discontinuation`
---
-
-TRUNCATE TABLE `involuntary_discontinuation`;
---
--- Dumping data for table `involuntary_discontinuation`
---
-
-INSERT INTO `involuntary_discontinuation` (`id`, `visit_date`, `client_name`, `mat_id`, `enroll_date`, `discontinue_date`, `reasons`, `discontinuation_plan`, `follow_up_plan`, `clinician_name`, `clinician_org`, `clinician_signature`, `clinician_date`, `counselor_name`, `counselor_org`, `counselor_signature`, `counselor_date`, `cso_name`, `cso_org`, `cso_signature`, `cso_date`, `created_at`, `updated_at`) VALUES
-(1, '2025-12-04', 'PETER KARANJA MBUGUA', '10507MAT0009', '2019-09-18', '2025-12-04', 'High risk of drug overdose, Violence, Drug possession', 'Abrupt cessation', 'Test', 'Lyani Sitti', 'Karuri Health Centre', 'LS', '2025-12-04', 'Peter Kiburi', 'Karuri Health Centre', 'bb', '2025-12-04', 'Peter Kiburi', 'nnnn', 'bbb', '2025-12-04', '2025-12-04 08:17:07', '2025-12-04 08:17:07');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `juicetypes`
---
-
-CREATE TABLE `juicetypes` (
-  `Id` int NOT NULL,
-  `Name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Truncate table before insert `juicetypes`
---
-
-TRUNCATE TABLE `juicetypes`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `laboratory`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `laboratory`;
 CREATE TABLE `laboratory` (
   `lab_id` int NOT NULL,
   `visitDate` date NOT NULL,
@@ -5076,17 +5014,15 @@ CREATE TABLE `laboratory` (
 --
 -- Table structure for table `living_conditions`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `living_conditions`;
 CREATE TABLE `living_conditions` (
   `cond_id` int NOT NULL,
   `condition_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `living_conditions`
---
-
-TRUNCATE TABLE `living_conditions`;
 --
 -- Dumping data for table `living_conditions`
 --
@@ -5108,18 +5044,16 @@ INSERT INTO `living_conditions` (`cond_id`, `condition_name`) VALUES
 --
 -- Table structure for table `marital_status`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `marital_status`;
 CREATE TABLE `marital_status` (
   `mar_id` int NOT NULL,
   `marital_status_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `marital_status`
---
-
-TRUNCATE TABLE `marital_status`;
 --
 -- Dumping data for table `marital_status`
 --
@@ -5138,7 +5072,10 @@ INSERT INTO `marital_status` (`mar_id`, `marital_status_name`, `date_created`) V
 --
 -- Table structure for table `medical_history`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `medical_history`;
 CREATE TABLE `medical_history` (
   `id` int NOT NULL,
   `visitDate` datetime DEFAULT CURRENT_TIMESTAMP,
@@ -5168,6 +5105,7 @@ CREATE TABLE `medical_history` (
 --
 -- Triggers `medical_history`
 --
+DROP TRIGGER IF EXISTS `update_patient_next_appointment`;
 DELIMITER $$
 CREATE TRIGGER `update_patient_next_appointment` AFTER INSERT ON `medical_history` FOR EACH ROW BEGIN
     -- Update next_appointment in patients table only if new value is not empty
@@ -5185,7 +5123,10 @@ DELIMITER ;
 --
 -- Table structure for table `medical_history_new`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `medical_history_new`;
 CREATE TABLE `medical_history_new` (
   `id` int NOT NULL,
   `visitDate` datetime DEFAULT CURRENT_TIMESTAMP,
@@ -5219,17 +5160,15 @@ CREATE TABLE `medical_history_new` (
   `appointment_status` enum('scheduled','done') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'scheduled'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `medical_history_new`
---
-
-TRUNCATE TABLE `medical_history_new`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `nursing_history`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `nursing_history`;
 CREATE TABLE `nursing_history` (
   `id` int NOT NULL,
   `visitDate` datetime DEFAULT CURRENT_TIMESTAMP,
@@ -5262,39 +5201,38 @@ CREATE TABLE `nursing_history` (
 --
 -- Table structure for table `nursing_services`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `nursing_services`;
 CREATE TABLE `nursing_services` (
   `nursing_id` int NOT NULL,
   `nurising_service_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `nursing_services`
---
-
-TRUNCATE TABLE `nursing_services`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `offences`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `offences`;
 CREATE TABLE `offences` (
   `offense_id` int NOT NULL,
   `offense_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `offences`
---
-
-TRUNCATE TABLE `offences`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `other_prescriptions`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `other_prescriptions`;
 CREATE TABLE `other_prescriptions` (
   `id` int NOT NULL,
   `prescription_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -5308,23 +5246,28 @@ CREATE TABLE `other_prescriptions` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `other_prescriptions`
+--
+
+INSERT INTO `other_prescriptions` (`id`, `prescription_id`, `clientName`, `mat_id`, `sex`, `age`, `prescriber_name`, `prescription_date`, `prescr_status`, `created_at`) VALUES
+(1, 'PRESCR-00000001', 'Karuri Client', 'KARURI0001', 'Male', 20, 'Lyani Sitti', '2025-12-04', 'submitted', '2025-12-04 08:15:04');
+
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `other_status`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `other_status`;
 CREATE TABLE `other_status` (
   `status_id` int NOT NULL,
   `status_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `other_status`
---
-
-TRUNCATE TABLE `other_status`;
 --
 -- Dumping data for table `other_status`
 --
@@ -5343,7 +5286,10 @@ INSERT INTO `other_status` (`status_id`, `status_name`, `date_created`) VALUES
 --
 -- Table structure for table `patientfingerprints`
 --
+-- Creation: Dec 09, 2025 at 11:03 AM
+--
 
+DROP TABLE IF EXISTS `patientfingerprints`;
 CREATE TABLE `patientfingerprints` (
   `Id` int NOT NULL,
   `Template` longblob NOT NULL
@@ -5354,42 +5300,26 @@ CREATE TABLE `patientfingerprints` (
 --
 -- Table structure for table `patientimages`
 --
+-- Creation: Dec 09, 2025 at 11:04 AM
+--
 
+DROP TABLE IF EXISTS `patientimages`;
 CREATE TABLE `patientimages` (
   `Id` int NOT NULL,
   `ImageData` longblob NOT NULL,
   `Thumbnail` longblob
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `patientimages`
---
-
-TRUNCATE TABLE `patientimages`;
--- --------------------------------------------------------
-
---
--- Table structure for table `patientjuicetypes`
---
-
-CREATE TABLE `patientjuicetypes` (
-  `PatientId` int NOT NULL,
-  `JuiceTypeId` int NOT NULL,
-  `MakeUpToFixedTotal` tinyint(1) NOT NULL,
-  `Volume` decimal(19,5) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Truncate table before insert `patientjuicetypes`
---
-
-TRUNCATE TABLE `patientjuicetypes`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `patients`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+-- Last update: Dec 21, 2025 at 08:01 AM
+--
 
+DROP TABLE IF EXISTS `patients`;
 CREATE TABLE `patients` (
   `p_id` int NOT NULL,
   `reg_facility` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -5445,6 +5375,7 @@ CREATE TABLE `patients` (
 --
 -- Triggers `patients`
 --
+DROP TRIGGER IF EXISTS `before_patients_delete`;
 DELIMITER $$
 CREATE TRIGGER `before_patients_delete` BEFORE DELETE ON `patients` FOR EACH ROW BEGIN
     INSERT INTO deleted_patients
@@ -5452,6 +5383,7 @@ CREATE TRIGGER `before_patients_delete` BEFORE DELETE ON `patients` FOR EACH ROW
 END
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `update_tca_dates`;
 DELIMITER $$
 CREATE TRIGGER `update_tca_dates` BEFORE UPDATE ON `patients` FOR EACH ROW BEGIN
     IF NEW.next_appointment IS NOT NULL THEN
@@ -5473,7 +5405,10 @@ DELIMITER ;
 --
 -- Table structure for table `patientsignatures`
 --
+-- Creation: Dec 09, 2025 at 11:04 AM
+--
 
+DROP TABLE IF EXISTS `patientsignatures`;
 CREATE TABLE `patientsignatures` (
   `SessionId` int NOT NULL,
   `ImageData` longblob NOT NULL
@@ -5484,7 +5419,10 @@ CREATE TABLE `patientsignatures` (
 --
 -- Table structure for table `patient_drug_histories`
 --
+-- Creation: Dec 03, 2025 at 01:44 PM
+--
 
+DROP TABLE IF EXISTS `patient_drug_histories`;
 CREATE TABLE `patient_drug_histories` (
   `id` int NOT NULL,
   `encounter_id` int NOT NULL,
@@ -5502,7 +5440,11 @@ CREATE TABLE `patient_drug_histories` (
 --
 -- Table structure for table `pharmacy`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+-- Last update: Dec 17, 2025 at 12:14 PM
+--
 
+DROP TABLE IF EXISTS `pharmacy`;
 CREATE TABLE `pharmacy` (
   `disp_id` int NOT NULL,
   `visitDate` datetime DEFAULT CURRENT_TIMESTAMP,
@@ -5527,7 +5469,10 @@ CREATE TABLE `pharmacy` (
 --
 -- Table structure for table `photos`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `photos`;
 CREATE TABLE `photos` (
   `photo_id` int NOT NULL,
   `visitDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -5542,7 +5487,11 @@ CREATE TABLE `photos` (
 --
 -- Table structure for table `phq9_assessments`
 --
+-- Creation: Dec 02, 2025 at 05:14 PM
+-- Last update: Dec 17, 2025 at 03:05 PM
+--
 
+DROP TABLE IF EXISTS `phq9_assessments`;
 CREATE TABLE `phq9_assessments` (
   `assessment_id` int UNSIGNED NOT NULL,
   `p_id` int UNSIGNED NOT NULL,
@@ -5564,12 +5513,28 @@ CREATE TABLE `phq9_assessments` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `phq9_assessments`
+--
+
+INSERT INTO `phq9_assessments` (`assessment_id`, `p_id`, `mat_id`, `visitDate`, `therapist_id`, `q1`, `q2`, `q3`, `q4`, `q5`, `q6`, `q7`, `q8`, `q9`, `total_score`, `diagnosis`, `management_plan`, `created_at`) VALUES
+(1, 1764, '10973MAT0003', '2025-12-02', 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 'Mild depression', 'Provide counselling support and continue to monitor; refer to mental health team if available.\nIf patient is on EFV, substitute with a different ARV after ruling out treatment failure IF APPLICABLE (See \'Managing Single Drug Substitutions for ART\').', '2025-12-02 17:14:43'),
+(2, 1772, '10973MAT0011', '2025-12-02', 6, 1, 1, 1, 1, 1, 1, 2, 2, 3, 13, 'Moderate depression*', 'Provide supportive counselling (refer to a psychologist if available).\nRefer to a medical officer, psychiatrist, or mental health team if available.\nIf patient is on EFV, substitute with a different ARV after ruling out treatment failure IF APPLICABLE (See \'Managing Single Drug Substitutions for ART\').\n*Symptoms should ideally be present for at least 2 weeks for a diagnosis of depression and before considering treatment with antidepressant medication.', '2025-12-02 17:23:08'),
+(3, 1772, '10973MAT0011', '2025-12-02', 6, 3, 3, 3, 2, 2, 2, 2, 2, 1, 20, 'Severe depression*', 'Provide supportive counselling (refer to a psychologist if available).\nRefer to a medical officer, psychiatrist, or mental health team if available.\nSevere depression may require patients to start on anti-depressants immediately.\nIf patient is on EFV, substitute with a different ARV after ruling out treatment failure IF APPLICABLE (See \'Managing Single Drug Substitutions for ART\').\n*Symptoms should ideally be present for at least 2 weeks for a diagnosis of depression and before considering treatment with antidepressant medication.', '2025-12-02 17:30:23'),
+(4, 2349, 'RUIRU0001', '2025-12-03', 6, 2, 3, 2, 2, 2, 2, 2, 3, 3, 21, 'Severe depression*', 'Provide supportive counselling (refer to a psychologist if available).\nRefer to a medical officer, psychiatrist, or mental health team if available.\nSevere depression may require patients to start on anti-depressants immediately.\nIf patient is on EFV, substitute with a different ARV after ruling out treatment failure IF APPLICABLE (See \'Managing Single Drug Substitutions for ART\').\n*Symptoms should ideally be present for at least 2 weeks for a diagnosis of depression and before considering treatment with antidepressant medication.', '2025-12-03 07:52:17'),
+(5, 1764, '10973MAT0003', '2025-12-03', 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 'Mild depression', 'Provide counselling support and continue to monitor; refer to mental health team if available.\nIf patient is on EFV, substitute with a different ARV after ruling out treatment failure IF APPLICABLE (See \'Managing Single Drug Substitutions for ART\').', '2025-12-03 17:12:29'),
+(6, 1885, 'KARURI0001', '2025-12-04', 6, 2, 2, 2, 2, 2, 3, 3, 3, 3, 22, 'Severe depression*', 'Provide supportive counselling (refer to a psychologist if available).\nRefer to a medical officer, psychiatrist, or mental health team if available.\nSevere depression may require patients to start on anti-depressants immediately.\nIf patient is on EFV, substitute with a different ARV after ruling out treatment failure IF APPLICABLE (See \'Managing Single Drug Substitutions for ART\').\n*Symptoms should ideally be present for at least 2 weeks for a diagnosis of depression and before considering treatment with antidepressant medication.', '2025-12-04 08:33:33'),
+(7, 944, '10507MAT0002', '2025-12-17', 6, 0, 0, 1, 1, 1, 1, 1, 0, 0, 5, 'Mild depression', 'Provide counselling support and continue to monitor; refer to mental health team if available.\nIf patient is on EFV, substitute with a different ARV after ruling out treatment failure IF APPLICABLE (See \'Managing Single Drug Substitutions for ART\').', '2025-12-17 15:05:43');
+
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `prescription_drugs`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `prescription_drugs`;
 CREATE TABLE `prescription_drugs` (
   `id` int NOT NULL,
   `prescription_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -5583,11 +5548,6 @@ CREATE TABLE `prescription_drugs` (
   `prescr_status` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `prescription_drugs`
---
-
-TRUNCATE TABLE `prescription_drugs`;
 --
 -- Dumping data for table `prescription_drugs`
 --
@@ -5655,7 +5615,10 @@ INSERT INTO `prescription_drugs` (`id`, `prescription_id`, `drug_name`, `dosing`
 --
 -- Table structure for table `products`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `products`;
 CREATE TABLE `products` (
   `id` int NOT NULL,
   `category` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -5670,11 +5633,6 @@ CREATE TABLE `products` (
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `products`
---
-
-TRUNCATE TABLE `products`;
 --
 -- Dumping data for table `products`
 --
@@ -6035,23 +5993,24 @@ INSERT INTO `products` (`id`, `category`, `productname`, `brandname`, `packsize`
 --
 -- Table structure for table `psychiatric_rx_problems`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `psychiatric_rx_problems`;
 CREATE TABLE `psychiatric_rx_problems` (
   `problem_id` int NOT NULL,
   `problem_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `psychiatric_rx_problems`
---
-
-TRUNCATE TABLE `psychiatric_rx_problems`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `psychodar`
 --
+-- Creation: Dec 03, 2025 at 04:55 PM
+--
 
+DROP TABLE IF EXISTS `psychodar`;
 CREATE TABLE `psychodar` (
   `dar_id` int NOT NULL,
   `visitDate` datetime DEFAULT CURRENT_TIMESTAMP,
@@ -6086,12 +6045,26 @@ CREATE TABLE `psychodar` (
   `referral_linkage` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `psychodar`
+--
+
+INSERT INTO `psychodar` (`dar_id`, `visitDate`, `visit_name`, `mat_id`, `clientName`, `dob`, `age`, `sex`, `marital_status`, `living_arrangements`, `hotspot`, `accomodation`, `drugname`, `dosage`, `living_conditions`, `accommodation`, `employment_status`, `treatment_stage`, `rx_stage`, `psycho_issues`, `psycho_interventions`, `reintegration_status`, `legal_issues`, `gbv_screen`, `gbv_support`, `linkage`, `therapists_name`, `therapists_notes`, `next_appointment`, `appointment_status`, `referral_linkage`) VALUES
+(1, '2025-11-24 00:00:00', NULL, '23368MAT00001', 'ALI BAKARI JOBWE', '1980-06-15', 45, 'Male', 'single', NULL, '', 'stable', NULL, 4, NULL, NULL, 'skilled', NULL, 'maintainance', 'NON', 'individual_therapy', 'family_reintegration', 'None', 'yes', 'yes', 'education_support', 'Unknown', NULL, '2026-06-24', 'scheduled', NULL),
+(2, '2025-12-03 00:00:00', 'Initial visit', 'RUIRU0001', 'Test Client', '2010-08-02', 15, 'Female', 'Single', 'non-stable', NULL, NULL, 'Methadone', 20, 'Friend\'s House, Streets, Abandoned buildings, Public areas', 'unstable', 'Unskilled Employment', 'Induction New', NULL, 'None', 'Individual Therapy', 'Peer Support Reintegration', 'None', 'yes', 'yes', NULL, '6', 'None', '2025-12-05', 'scheduled', 'GBV Services'),
+(3, '2025-12-04 00:00:00', 'Initial visit', 'KARURI0001', 'Karuri Client', '2005-05-11', 20, 'Male', 'Unknown', 'stable', NULL, NULL, 'Methadone', 70, 'Friend\'s House, Streets, Abandoned buildings', 'unstable', 'Skilled Employment', 'Induction New', NULL, 'bbbb', 'Individual Therapy', 'None', 'vvvv', 'yes', 'yes', NULL, '6', 'vvvvvv', '2025-12-08', 'scheduled', 'Education Programs'),
+(4, '2025-12-04 00:00:00', 'Follow up 1', 'KARURI0001', 'Karuri Client', '2005-05-11', 20, 'Male', 'Single', 'stable', NULL, NULL, 'Methadone', 70, 'Tunnels', 'stable', 'Skilled Employment', 'Maintenance', NULL, 'nnn', 'Individual Therapy', 'Family Reintegration', 'bbbbbb', 'yes', 'yes', NULL, '6', 'updated', '2025-12-10', 'scheduled', 'Education Programs'),
+(5, '2025-12-04 00:00:00', 'Initial visit', 'KARURI0001', 'Karuri Client', '2005-05-11', 20, 'Male', 'Cohabiting', 'stable', NULL, NULL, 'Methadone', 70, 'Abandoned buildings', 'stable', 'Skilled Employment', 'Induction New', NULL, 'bbbbb', 'Individual Therapy', 'None', 'test', 'yes', 'yes', NULL, '6', 'gggg', '2025-12-10', 'scheduled', 'Education Programs');
+
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `psychosocial_intake_form_1a`
 --
+-- Creation: Dec 03, 2025 at 05:20 PM
+--
 
+DROP TABLE IF EXISTS `psychosocial_intake_form_1a`;
 CREATE TABLE `psychosocial_intake_form_1a` (
   `id` int NOT NULL,
   `visitDate` date DEFAULT NULL,
@@ -6156,11 +6129,6 @@ CREATE TABLE `psychosocial_intake_form_1a` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Truncate table before insert `psychosocial_intake_form_1a`
---
-
-TRUNCATE TABLE `psychosocial_intake_form_1a`;
---
 -- Dumping data for table `psychosocial_intake_form_1a`
 --
 
@@ -6173,17 +6141,15 @@ INSERT INTO `psychosocial_intake_form_1a` (`id`, `visitDate`, `visit_type`, `cli
 --
 -- Table structure for table `psychosocial_interventions`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `psychosocial_interventions`;
 CREATE TABLE `psychosocial_interventions` (
   `intervention_id` int NOT NULL,
   `intervention_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `psychosocial_interventions`
---
-
-TRUNCATE TABLE `psychosocial_interventions`;
 --
 -- Dumping data for table `psychosocial_interventions`
 --
@@ -6202,56 +6168,53 @@ INSERT INTO `psychosocial_interventions` (`intervention_id`, `intervention_name`
 --
 -- Table structure for table `psychosocial_outcomes`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `psychosocial_outcomes`;
 CREATE TABLE `psychosocial_outcomes` (
   `psyc_outcome_id` int NOT NULL,
   `outcome_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `psychosocial_outcomes`
---
-
-TRUNCATE TABLE `psychosocial_outcomes`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `psycho_followup_visits`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `psycho_followup_visits`;
 CREATE TABLE `psycho_followup_visits` (
   `visit_id` int NOT NULL,
   `followup_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `psycho_followup_visits`
---
-
-TRUNCATE TABLE `psycho_followup_visits`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `pumpcalibrationsteps`
 --
+-- Creation: Dec 09, 2025 at 11:04 AM
+--
 
+DROP TABLE IF EXISTS `pumpcalibrationsteps`;
 CREATE TABLE `pumpcalibrationsteps` (
   `PumpId` int NOT NULL,
   `Volume` decimal(19,5) NOT NULL,
   `Factor` decimal(19,5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `pumpcalibrationsteps`
---
-
-TRUNCATE TABLE `pumpcalibrationsteps`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `pumps`
 --
+-- Creation: Dec 09, 2025 at 11:04 AM
+--
 
+DROP TABLE IF EXISTS `pumps`;
 CREATE TABLE `pumps` (
   `Id` int NOT NULL,
   `TerminalId` int NOT NULL,
@@ -6281,17 +6244,16 @@ CREATE TABLE `pumps` (
   `CurrentServiceVolume` decimal(19,5) NOT NULL DEFAULT '0.00000'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `pumps`
---
-
-TRUNCATE TABLE `pumps`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `referral`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+-- Last update: Dec 17, 2025 at 03:07 PM
+--
 
+DROP TABLE IF EXISTS `referral`;
 CREATE TABLE `referral` (
   `referral_id` int NOT NULL,
   `mat_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -6306,11 +6268,6 @@ CREATE TABLE `referral` (
   `status` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Submitted'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `referral`
---
-
-TRUNCATE TABLE `referral`;
 --
 -- Dumping data for table `referral`
 --
@@ -6327,17 +6284,15 @@ INSERT INTO `referral` (`referral_id`, `mat_id`, `clientName`, `age`, `sex`, `re
 --
 -- Table structure for table `referral_linkage_services`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `referral_linkage_services`;
 CREATE TABLE `referral_linkage_services` (
   `ref_id` int NOT NULL,
   `ref_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `referral_linkage_services`
---
-
-TRUNCATE TABLE `referral_linkage_services`;
 --
 -- Dumping data for table `referral_linkage_services`
 --
@@ -6360,18 +6315,16 @@ INSERT INTO `referral_linkage_services` (`ref_id`, `ref_name`) VALUES
 --
 -- Table structure for table `regimens`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `regimens`;
 CREATE TABLE `regimens` (
   `regimen_id` int NOT NULL,
   `regimen_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `regimens`
---
-
-TRUNCATE TABLE `regimens`;
 --
 -- Dumping data for table `regimens`
 --
@@ -6390,18 +6343,16 @@ INSERT INTO `regimens` (`regimen_id`, `regimen_name`, `date_created`) VALUES
 --
 -- Table structure for table `regimen_type`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `regimen_type`;
 CREATE TABLE `regimen_type` (
   `regimen_id` int NOT NULL,
   `regimen_type_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `regimen_type`
---
-
-TRUNCATE TABLE `regimen_type`;
 --
 -- Dumping data for table `regimen_type`
 --
@@ -6417,17 +6368,15 @@ INSERT INTO `regimen_type` (`regimen_id`, `regimen_type_name`, `date_created`) V
 --
 -- Table structure for table `reintegration_status`
 --
+-- Creation: Dec 03, 2025 at 01:43 PM
+--
 
+DROP TABLE IF EXISTS `reintegration_status`;
 CREATE TABLE `reintegration_status` (
   `reint_id` int NOT NULL,
   `reint_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
---
--- Truncate table before insert `reintegration_status`
---
-
-TRUNCATE TABLE `reintegration_status`;
 --
 -- Dumping data for table `reintegration_status`
 --
@@ -6449,32 +6398,28 @@ INSERT INTO `reintegration_status` (`reint_id`, `reint_name`) VALUES
 --
 -- Table structure for table `religion`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `religion`;
 CREATE TABLE `religion` (
   `id` int NOT NULL,
   `religion_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `religion`
---
-
-TRUNCATE TABLE `religion`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `seq_0_to_30`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `seq_0_to_30`;
 CREATE TABLE `seq_0_to_30` (
   `seq` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `seq_0_to_30`
---
-
-TRUNCATE TABLE `seq_0_to_30`;
 --
 -- Dumping data for table `seq_0_to_30`
 --
@@ -6518,7 +6463,10 @@ INSERT INTO `seq_0_to_30` (`seq`) VALUES
 --
 -- Table structure for table `serializedsettings`
 --
+-- Creation: Dec 09, 2025 at 11:04 AM
+--
 
+DROP TABLE IF EXISTS `serializedsettings`;
 CREATE TABLE `serializedsettings` (
   `Id` int NOT NULL,
   `SettingsKey` char(36) COLLATE utf8mb4_general_ci NOT NULL,
@@ -6526,17 +6474,15 @@ CREATE TABLE `serializedsettings` (
   `SettingsJson` text COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `serializedsettings`
---
-
-TRUNCATE TABLE `serializedsettings`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `status`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `status`;
 CREATE TABLE `status` (
   `status_id` int NOT NULL,
   `status_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -6544,11 +6490,6 @@ CREATE TABLE `status` (
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `status`
---
-
-TRUNCATE TABLE `status`;
 --
 -- Dumping data for table `status`
 --
@@ -6570,7 +6511,10 @@ INSERT INTO `status` (`status_id`, `status_name`, `descr`, `date_created`) VALUE
 --
 -- Table structure for table `statushistory`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `statushistory`;
 CREATE TABLE `statushistory` (
   `status_id` int NOT NULL,
   `clientName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -6588,7 +6532,10 @@ CREATE TABLE `statushistory` (
 --
 -- Table structure for table `stocks`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `stocks`;
 CREATE TABLE `stocks` (
   `stockID` int NOT NULL,
   `drugID` int NOT NULL,
@@ -6613,7 +6560,11 @@ CREATE TABLE `stocks` (
 --
 -- Table structure for table `stock_movements`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+-- Last update: Dec 17, 2025 at 12:14 PM
+--
 
+DROP TABLE IF EXISTS `stock_movements`;
 CREATE TABLE `stock_movements` (
   `trans_id` int NOT NULL,
   `transactionType` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -6633,6 +6584,7 @@ CREATE TABLE `stock_movements` (
 --
 -- Triggers `stock_movements`
 --
+DROP TRIGGER IF EXISTS `trg_sync_stores_balance`;
 DELIMITER $$
 CREATE TRIGGER `trg_sync_stores_balance` AFTER INSERT ON `stock_movements` FOR EACH ROW BEGIN
     -- Check if an entry for this drugID already exists in the summary table
@@ -6681,7 +6633,10 @@ DELIMITER ;
 --
 -- Table structure for table `stores_inventory`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `stores_inventory`;
 CREATE TABLE `stores_inventory` (
   `inventory_id` int NOT NULL,
   `drugID` int DEFAULT NULL,
@@ -6700,7 +6655,10 @@ CREATE TABLE `stores_inventory` (
 --
 -- Table structure for table `sub_counties`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `sub_counties`;
 CREATE TABLE `sub_counties` (
   `sub_county_id` int NOT NULL,
   `sub_county_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -6708,12 +6666,322 @@ CREATE TABLE `sub_counties` (
   `comp_date` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `sub_counties`
+--
+
+INSERT INTO `sub_counties` (`sub_county_id`, `sub_county_name`, `county_name`, `comp_date`) VALUES
+(1, 'Baringo Central', 'Baringo', '2025-01-10 00:00:00'),
+(2, 'Baringo North', 'Baringo', '2025-01-10 00:00:00'),
+(3, 'Baringo South', 'Baringo', '2025-01-10 00:00:00'),
+(4, 'Eldama Ravine', 'Baringo', '2025-01-10 00:00:00'),
+(5, 'Mogotio', 'Baringo', '2025-01-10 00:00:00'),
+(6, 'Tiaty', 'Baringo', '2025-01-10 00:00:00'),
+(7, 'Bomet Central', 'Bomet', '2025-01-10 00:00:00'),
+(8, 'Bomet East', 'Bomet', '2025-01-10 00:00:00'),
+(9, 'Chepalungu', 'Bomet', '2025-01-10 00:00:00'),
+(10, 'Konoin', 'Bomet', '2025-01-10 00:00:00'),
+(11, 'Sotik', 'Bomet', '2025-01-10 00:00:00'),
+(12, 'Bumula', 'Bungoma', '2025-01-10 00:00:00'),
+(13, 'Kabuchai', 'Bungoma', '2025-01-10 00:00:00'),
+(14, 'Kanduyi', 'Bungoma', '2025-01-10 00:00:00'),
+(15, 'Kimilil', 'Bungoma', '2025-01-10 00:00:00'),
+(16, 'Mt Elgon', 'Bungoma', '2025-01-10 00:00:00'),
+(17, 'Sirisia', 'Bungoma', '2025-01-10 00:00:00'),
+(18, 'Tongaren', 'Bungoma', '2025-01-10 00:00:00'),
+(19, 'Webuye East', 'Bungoma', '2025-01-10 00:00:00'),
+(20, 'Webuye West', 'Bungoma', '2025-01-10 00:00:00'),
+(21, 'Budalangi', 'Busia', '2025-01-10 00:00:00'),
+(22, 'Butula', 'Busia', '2025-01-10 00:00:00'),
+(23, 'Funyula', 'Busia', '2025-01-10 00:00:00'),
+(24, 'Nambele', 'Busia', '2025-01-10 00:00:00'),
+(25, 'Teso North', 'Busia', '2025-01-10 00:00:00'),
+(26, 'Teso South', 'Busia', '2025-01-10 00:00:00'),
+(27, 'Keiyo North', 'Elgeyo Marakwet', '2025-01-10 00:00:00'),
+(28, 'Keiyo South', 'Elgeyo Marakwet', '2025-01-10 00:00:00'),
+(29, 'Marakwet East', 'Elgeyo Marakwet', '2025-01-10 00:00:00'),
+(30, 'Marakwet West', 'Elgeyo Marakwet', '2025-01-10 00:00:00'),
+(31, 'Manyatta', 'Embu', '2025-01-10 00:00:00'),
+(32, 'Mbeere North', 'Embu', '2025-01-10 00:00:00'),
+(33, 'Mbeere South', 'Embu', '2025-01-10 00:00:00'),
+(34, 'Runyenjes', 'Embu', '2025-01-10 00:00:00'),
+(35, 'Daadab', 'Garissa', '2025-01-10 00:00:00'),
+(36, 'Fafi', 'Garissa', '2025-01-10 00:00:00'),
+(37, 'Garissa Township', 'Garissa', '2025-01-10 00:00:00'),
+(38, 'Hulugho', 'Garissa', '2025-01-10 00:00:00'),
+(39, 'Ijara', 'Garissa', '2025-01-10 00:00:00'),
+(40, 'Lagdera', 'Garissa', '2025-01-10 00:00:00'),
+(41, 'Balambala', 'Garissa', '2025-01-10 00:00:00'),
+(42, 'Homabay Town', 'Homa Bay', '2025-01-10 00:00:00'),
+(43, 'Kabondo', 'Homa Bay', '2025-01-10 00:00:00'),
+(44, 'Karachwonyo', 'Homa Bay', '2025-01-10 00:00:00'),
+(45, 'Kasipul', 'Homa Bay', '2025-01-10 00:00:00'),
+(46, 'Mbita', 'Homa Bay', '2025-01-10 00:00:00'),
+(47, 'Ndhiwa', 'Homa Bay', '2025-01-10 00:00:00'),
+(48, 'Rangwe', 'Homa Bay', '2025-01-10 00:00:00'),
+(49, 'Suba', 'Homa Bay', '2025-01-10 00:00:00'),
+(50, 'Isiolo', 'Isiolo', '2025-01-10 00:00:00'),
+(51, 'Merti', 'Isiolo', '2025-01-10 00:00:00'),
+(52, 'Garbatulla', 'Isiolo', '2025-01-10 00:00:00'),
+(53, 'Isinya', 'Kajiado', '2025-01-10 00:00:00'),
+(54, 'Kajiado Central', 'Kajiado', '2025-01-10 00:00:00'),
+(55, 'Kajiado North', 'Kajiado', '2025-01-10 00:00:00'),
+(56, 'Loitokitok', 'Kajiado', '2025-01-10 00:00:00'),
+(57, 'Mashuuru', 'Kajiado', '2025-01-10 00:00:00'),
+(58, 'Butere', 'Kakamega', '2025-01-10 00:00:00'),
+(59, 'Kakamega Central', 'Kakamega', '2025-01-10 00:00:00'),
+(60, 'Kakamega East', 'Kakamega', '2025-01-10 00:00:00'),
+(61, 'Kakamega North', 'Kakamega', '2025-01-10 00:00:00'),
+(62, 'Kakamega South', 'Kakamega', '2025-01-10 00:00:00'),
+(63, 'Khwisero', 'Kakamega', '2025-01-10 00:00:00'),
+(64, 'Lugari', 'Kakamega', '2025-01-10 00:00:00'),
+(65, 'Lukuyani', 'Kakamega', '2025-01-10 00:00:00'),
+(66, 'Lurambi', 'Kakamega', '2025-01-10 00:00:00'),
+(67, 'Matete', 'Kakamega', '2025-01-10 00:00:00'),
+(68, 'Mumias', 'Kakamega', '2025-01-10 00:00:00'),
+(69, 'Mutungu', 'Kakamega', '2025-01-10 00:00:00'),
+(70, 'Navakholo', 'Kakamega', '2025-01-10 00:00:00'),
+(71, 'Ainamoi', 'Kericho', '2025-01-10 00:00:00'),
+(72, 'Belgut', 'Kericho', '2025-01-10 00:00:00'),
+(73, 'Bureti', 'Kericho', '2025-01-10 00:00:00'),
+(74, 'Kipkelion East', 'Kericho', '2025-01-10 00:00:00'),
+(75, 'Kipkelion West', 'Kericho', '2025-01-10 00:00:00'),
+(76, 'Soin/Sigowet', 'Kericho', '2025-01-10 00:00:00'),
+(77, 'Gatundu North', 'Kiambu', '2025-01-10 00:00:00'),
+(78, 'Gatundu South', 'Kiambu', '2025-01-10 00:00:00'),
+(79, 'Githunguri', 'Kiambu', '2025-01-10 00:00:00'),
+(80, 'Juja', 'Kiambu', '2025-01-10 00:00:00'),
+(81, 'Kabete', 'Kiambu', '2025-01-10 00:00:00'),
+(82, 'Kiambaa', 'Kiambu', '2025-01-10 00:00:00'),
+(83, 'Kiambu', 'Kiambu', '2025-01-10 00:00:00'),
+(84, 'Kikuyu', 'Kiambu', '2025-01-10 00:00:00'),
+(85, 'Limuru', 'Kiambu', '2025-01-10 00:00:00'),
+(86, 'Ruiru', 'Kiambu', '2025-01-10 00:00:00'),
+(87, 'Thika Town', 'Kiambu', '2025-01-10 00:00:00'),
+(88, 'Lari', 'Kiambu', '2025-01-10 00:00:00'),
+(89, 'Ganze', 'Kilifi', '2025-01-10 00:00:00'),
+(90, 'Kaloleni', 'Kilifi', '2025-01-10 00:00:00'),
+(91, 'Kilifi North', 'Kilifi', '2025-01-10 00:00:00'),
+(92, 'Kilifi South', 'Kilifi', '2025-01-10 00:00:00'),
+(93, 'Magarini', 'Kilifi', '2025-01-10 00:00:00'),
+(94, 'Malindi', 'Kilifi', '2025-01-10 00:00:00'),
+(95, 'Rabai', 'Kilifi', '2025-01-10 00:00:00'),
+(96, 'Kirinyaga Central', 'Kirinyaga', '2025-01-10 00:00:00'),
+(97, 'Kirinyaga East', 'Kirinyaga', '2025-01-10 00:00:00'),
+(98, 'Kirinyaga West', 'Kirinyaga', '2025-01-10 00:00:00'),
+(99, 'Mwea East', 'Kirinyaga', '2025-01-10 00:00:00'),
+(100, 'Mwea West', 'Kirinyaga', '2025-01-10 00:00:00'),
+(101, 'Kitutu Chache North', 'Kisii', '2025-01-10 00:00:00'),
+(102, 'Kitutu Chache South', 'Kisii', '2025-01-10 00:00:00'),
+(103, 'Nyaribari Masaba', 'Kisii', '2025-01-10 00:00:00'),
+(104, 'Nyaribari Chache', 'Kisii', '2025-01-10 00:00:00'),
+(105, 'Bomachoge Borabu', 'Kisii', '2025-01-10 00:00:00'),
+(106, 'Bomachoge Chache', 'Kisii', '2025-01-10 00:00:00'),
+(107, 'Bobasi', 'Kisii', '2025-01-10 00:00:00'),
+(108, 'South Mugirango', 'Kisii', '2025-01-10 00:00:00'),
+(109, 'Bonchari', 'Kisii', '2025-01-10 00:00:00'),
+(110, 'Kisumu Central', 'Kisumu', '2025-01-10 00:00:00'),
+(111, 'Kisumu East', 'Kisumu', '2025-01-10 00:00:00'),
+(112, 'Kisumu West', 'Kisumu', '2025-01-10 00:00:00'),
+(113, 'Muhoroni', 'Kisumu', '2025-01-10 00:00:00'),
+(114, 'Nyakach', 'Kisumu', '2025-01-10 00:00:00'),
+(115, 'Nyando', 'Kisumu', '2025-01-10 00:00:00'),
+(116, 'Seme', 'Kisumu', '2025-01-10 00:00:00'),
+(117, 'Kitui West', 'Kitui', '2025-01-10 00:00:00'),
+(118, 'Kitui Central', 'Kitui', '2025-01-10 00:00:00'),
+(119, 'Kitui Rural', 'Kitui', '2025-01-10 00:00:00'),
+(120, 'Kitui South', 'Kitui', '2025-01-10 00:00:00'),
+(121, 'Kitui East', 'Kitui', '2025-01-10 00:00:00'),
+(122, 'Mwingi North', 'Kitui', '2025-01-10 00:00:00'),
+(123, 'Mwingi West', 'Kitui', '2025-01-10 00:00:00'),
+(124, 'Mwingi Central', 'Kitui', '2025-01-10 00:00:00'),
+(125, 'Kinango', 'Kwale', '2025-01-10 00:00:00'),
+(126, 'Lunga Lunga', 'Kwale', '2025-01-10 00:00:00'),
+(127, 'Msambweni', 'Kwale', '2025-01-10 00:00:00'),
+(128, 'Matuga', 'Kwale', '2025-01-10 00:00:00'),
+(129, 'Laikipia Central', 'Laikipia', '2025-01-10 00:00:00'),
+(130, 'Laikipia East', 'Laikipia', '2025-01-10 00:00:00'),
+(131, 'Laikipia North', 'Laikipia', '2025-01-10 00:00:00'),
+(132, 'Laikipia West', 'Laikipia', '2025-01-10 00:00:00'),
+(133, 'Nyahururu', 'Laikipia', '2025-01-10 00:00:00'),
+(134, 'Lamu East', 'Lamu', '2025-01-10 00:00:00'),
+(135, 'Lamu West', 'Lamu', '2025-01-10 00:00:00'),
+(136, 'Kathiani', 'Machakos', '2025-01-10 00:00:00'),
+(137, 'Machakos Town', 'Machakos', '2025-01-10 00:00:00'),
+(138, 'Masinga', 'Machakos', '2025-01-10 00:00:00'),
+(139, 'Matungulu', 'Machakos', '2025-01-10 00:00:00'),
+(140, 'Mavoko', 'Machakos', '2025-01-10 00:00:00'),
+(141, 'Mwala', 'Machakos', '2025-01-10 00:00:00'),
+(142, 'Yatta', 'Machakos', '2025-01-10 00:00:00'),
+(143, 'Kaiti', 'Makueni', '2025-01-10 00:00:00'),
+(144, 'Kibwezi West', 'Makueni', '2025-01-10 00:00:00'),
+(145, 'Kibwezi East', 'Makueni', '2025-01-10 00:00:00'),
+(146, 'Kilome', 'Makueni', '2025-01-10 00:00:00'),
+(147, 'Makueni', 'Makueni', '2025-01-10 00:00:00'),
+(148, 'Mbooni', 'Makueni', '2025-01-10 00:00:00'),
+(149, 'Banissa', 'Mandera', '2025-01-10 00:00:00'),
+(150, 'Lafey', 'Mandera', '2025-01-10 00:00:00'),
+(151, 'Mandera East', 'Mandera', '2025-01-10 00:00:00'),
+(152, 'Mandera North', 'Mandera', '2025-01-10 00:00:00'),
+(153, 'Mandera South', 'Mandera', '2025-01-10 00:00:00'),
+(154, 'Mandera West', 'Mandera', '2025-01-10 00:00:00'),
+(155, 'Laisamis', 'Marsabit', '2025-01-10 00:00:00'),
+(156, 'Moyale', 'Marsabit', '2025-01-10 00:00:00'),
+(157, 'North Hor', 'Marsabit', '2025-01-10 00:00:00'),
+(158, 'Saku', 'Marsabit', '2025-01-10 00:00:00'),
+(159, 'Buuri', 'Meru', '2025-01-10 00:00:00'),
+(160, 'Igembe Central', 'Meru', '2025-01-10 00:00:00'),
+(161, 'Igembe North', 'Meru', '2025-01-10 00:00:00'),
+(162, 'Igembe South', 'Meru', '2025-01-10 00:00:00'),
+(163, 'Imenti Central', 'Meru', '2025-01-10 00:00:00'),
+(164, 'Imenti North', 'Meru', '2025-01-10 00:00:00'),
+(165, 'Imenti South', 'Meru', '2025-01-10 00:00:00'),
+(166, 'Tigania East', 'Meru', '2025-01-10 00:00:00'),
+(167, 'Tigania West', 'Meru', '2025-01-10 00:00:00'),
+(168, 'Awendo', 'Migori', '2025-01-10 00:00:00'),
+(169, 'Kuria East', 'Migori', '2025-01-10 00:00:00'),
+(170, 'Kuria West', 'Migori', '2025-01-10 00:00:00'),
+(171, 'Mabera', 'Migori', '2025-01-10 00:00:00'),
+(172, 'Ntimaru', 'Migori', '2025-01-10 00:00:00'),
+(173, 'Rongo', 'Migori', '2025-01-10 00:00:00'),
+(174, 'Suna East', 'Migori', '2025-01-10 00:00:00'),
+(175, 'Suna West', 'Migori', '2025-01-10 00:00:00'),
+(176, 'Uriri', 'Migori', '2025-01-10 00:00:00'),
+(177, 'Changamwe', 'Mombasa', '2025-01-10 00:00:00'),
+(178, 'Jomvu', 'Mombasa', '2025-01-10 00:00:00'),
+(179, 'Kisauni', 'Mombasa', '2025-01-10 00:00:00'),
+(180, 'Likoni', 'Mombasa', '2025-01-10 00:00:00'),
+(181, 'Mvita', 'Mombasa', '2025-01-10 00:00:00'),
+(182, 'Nyali', 'Mombasa', '2025-01-10 00:00:00'),
+(183, 'Gatanga', 'Muranga', '2025-01-10 00:00:00'),
+(184, 'Kahuro', 'Muranga', '2025-01-10 00:00:00'),
+(185, 'Kandara', 'Muranga', '2025-01-10 00:00:00'),
+(186, 'Kangema', 'Muranga', '2025-01-10 00:00:00'),
+(187, 'Kigumo', 'Muranga', '2025-01-10 00:00:00'),
+(188, 'Kiharu', 'Muranga', '2025-01-10 00:00:00'),
+(189, 'Mathioya', 'Muranga', '2025-01-10 00:00:00'),
+(190, 'Murang’a South', 'Muranga', '2025-01-10 00:00:00'),
+(191, 'Dagoretti North', 'Nairobi (City)', '2025-01-10 00:00:00'),
+(192, 'Dagoretti South', 'Nairobi (City)', '2025-01-10 00:00:00'),
+(193, 'Embakasi Central', 'Nairobi (City)', '2025-01-10 00:00:00'),
+(194, 'Embakasi East', 'Nairobi (City)', '2025-01-10 00:00:00'),
+(195, 'Embakasi North', 'Nairobi (City)', '2025-01-10 00:00:00'),
+(196, 'Embakasi South', 'Nairobi (City)', '2025-01-10 00:00:00'),
+(197, 'Embakasi West', 'Nairobi (City)', '2025-01-10 00:00:00'),
+(198, 'Kamukunji', 'Nairobi (City)', '2025-01-10 00:00:00'),
+(199, 'Kasarani', 'Nairobi (City)', '2025-01-10 00:00:00'),
+(200, 'Kibra', 'Nairobi (City)', '2025-01-10 00:00:00'),
+(201, 'Lang’ata', 'Nairobi (City)', '2025-01-10 00:00:00'),
+(202, 'Makadara', 'Nairobi (City)', '2025-01-10 00:00:00'),
+(203, 'Mathare', 'Nairobi (City)', '2025-01-10 00:00:00'),
+(204, 'Roysambu', 'Nairobi (City)', '2025-01-10 00:00:00'),
+(205, 'Ruaraka', 'Nairobi (City)', '2025-01-10 00:00:00'),
+(206, 'Starehe', 'Nairobi (City)', '2025-01-10 00:00:00'),
+(207, 'Westlands', 'Nairobi (City)', '2025-01-10 00:00:00'),
+(208, 'Bahati', 'Nakuru', '2025-01-10 00:00:00'),
+(209, 'Gilgil', 'Nakuru', '2025-01-10 00:00:00'),
+(210, 'Kuresoi North', 'Nakuru', '2025-01-10 00:00:00'),
+(211, 'Kuresoi South', 'Nakuru', '2025-01-10 00:00:00'),
+(212, 'Molo', 'Nakuru', '2025-01-10 00:00:00'),
+(213, 'Naivasha', 'Nakuru', '2025-01-10 00:00:00'),
+(214, 'Nakuru Town East', 'Nakuru', '2025-01-10 00:00:00'),
+(215, 'Nakuru Town West', 'Nakuru', '2025-01-10 00:00:00'),
+(216, 'Njoro', 'Nakuru', '2025-01-10 00:00:00'),
+(217, 'Rongai', 'Nakuru', '2025-01-10 00:00:00'),
+(218, 'Subukia', 'Nakuru', '2025-01-10 00:00:00'),
+(219, 'Aldai', 'Nandi', '2025-01-10 00:00:00'),
+(220, 'Chesumei', 'Nandi', '2025-01-10 00:00:00'),
+(221, 'Emgwen', 'Nandi', '2025-01-10 00:00:00'),
+(222, 'Mosop', 'Nandi', '2025-01-10 00:00:00'),
+(223, 'Nandi Hills', 'Nandi', '2025-01-10 00:00:00'),
+(224, 'Tindiret', 'Nandi', '2025-01-10 00:00:00'),
+(225, 'Narok East', 'Narok', '2025-01-10 00:00:00'),
+(226, 'Narok North', 'Narok', '2025-01-10 00:00:00'),
+(227, 'Narok South', 'Narok', '2025-01-10 00:00:00'),
+(228, 'Narok West', 'Narok', '2025-01-10 00:00:00'),
+(229, 'Transmara East', 'Narok', '2025-01-10 00:00:00'),
+(230, 'Transmara West', 'Narok', '2025-01-10 00:00:00'),
+(231, 'Borabu', 'Nyamira', '2025-01-10 00:00:00'),
+(232, 'Manga', 'Nyamira', '2025-01-10 00:00:00'),
+(233, 'Masaba North', 'Nyamira', '2025-01-10 00:00:00'),
+(234, 'Nyamira North', 'Nyamira', '2025-01-10 00:00:00'),
+(235, 'Nyamira South', 'Nyamira', '2025-01-10 00:00:00'),
+(236, 'Kinangop', 'Nyandarua', '2025-01-10 00:00:00'),
+(237, 'Kipipiri', 'Nyandarua', '2025-01-10 00:00:00'),
+(238, 'Ndaragwa', 'Nyandarua', '2025-01-10 00:00:00'),
+(239, 'Ol-Kalou', 'Nyandarua', '2025-01-10 00:00:00'),
+(240, 'Ol Joro Orok', 'Nyandarua', '2025-01-10 00:00:00'),
+(241, 'Kieni East', 'Nyeri', '2025-01-10 00:00:00'),
+(242, 'Kieni West', 'Nyeri', '2025-01-10 00:00:00'),
+(243, 'Mathira East', 'Nyeri', '2025-01-10 00:00:00'),
+(244, 'Mathira West', 'Nyeri', '2025-01-10 00:00:00'),
+(245, 'Mukurweini', 'Nyeri', '2025-01-10 00:00:00'),
+(246, 'Nyeri Town', 'Nyeri', '2025-01-10 00:00:00'),
+(247, 'Othaya', 'Nyeri', '2025-01-10 00:00:00'),
+(248, 'Tetu', 'Nyeri', '2025-01-10 00:00:00'),
+(249, 'Samburu East', 'Samburu', '2025-01-10 00:00:00'),
+(250, 'Samburu North', 'Samburu', '2025-01-10 00:00:00'),
+(251, 'Samburu West', 'Samburu', '2025-01-10 00:00:00'),
+(252, 'Alego Usonga', 'Siaya', '2025-01-10 00:00:00'),
+(253, 'Bondo', 'Siaya', '2025-01-10 00:00:00'),
+(254, 'Gem', 'Siaya', '2025-01-10 00:00:00'),
+(255, 'Rarieda', 'Siaya', '2025-01-10 00:00:00'),
+(256, 'Ugenya', 'Siaya', '2025-01-10 00:00:00'),
+(257, 'Unguja', 'Siaya', '2025-01-10 00:00:00'),
+(258, 'Mwatate', 'Taita Taveta', '2025-01-10 00:00:00'),
+(259, 'Taveta', 'Taita Taveta', '2025-01-10 00:00:00'),
+(260, 'Voi', 'Taita Taveta', '2025-01-10 00:00:00'),
+(261, 'Wundanyi', 'Taita Taveta', '2025-01-10 00:00:00'),
+(262, 'Bura', 'Tana River', '2025-01-10 00:00:00'),
+(263, 'Galole', 'Tana River', '2025-01-10 00:00:00'),
+(264, 'Garsen', 'Tana River', '2025-01-10 00:00:00'),
+(265, 'Tharaka North', 'Tharaka-Nithi', '2025-01-10 00:00:00'),
+(266, 'Tharaka South', 'Tharaka-Nithi', '2025-01-10 00:00:00'),
+(267, 'Chuka', 'Tharaka-Nithi', '2025-01-10 00:00:00'),
+(268, 'Igambango’mbe', 'Tharaka-Nithi', '2025-01-10 00:00:00'),
+(269, 'Maara', 'Tharaka-Nithi', '2025-01-10 00:00:00'),
+(270, 'Chiakariga and Muthambi', 'Tharaka-Nithi', '2025-01-10 00:00:00'),
+(271, 'Cherangany', 'Trans-Nzoia', '2025-01-10 00:00:00'),
+(272, 'Endebess', 'Trans-Nzoia', '2025-01-10 00:00:00'),
+(273, 'Kiminini', 'Trans-Nzoia', '2025-01-10 00:00:00'),
+(274, 'Kwanza', 'Trans-Nzoia', '2025-01-10 00:00:00'),
+(275, 'Saboti', 'Trans-Nzoia', '2025-01-10 00:00:00'),
+(276, 'Loima', 'Turkana', '2025-01-10 00:00:00'),
+(277, 'Turkana Central', 'Turkana', '2025-01-10 00:00:00'),
+(278, 'Turkana East', 'Turkana', '2025-01-10 00:00:00'),
+(279, 'Turkana North', 'Turkana', '2025-01-10 00:00:00'),
+(280, 'Turkana South', 'Turkana', '2025-01-10 00:00:00'),
+(281, 'Ainabkoi', 'Uasin Gishu', '2025-01-10 00:00:00'),
+(282, 'Kapseret', 'Uasin Gishu', '2025-01-10 00:00:00'),
+(283, 'Kesses', 'Uasin Gishu', '2025-01-10 00:00:00'),
+(284, 'Moiben', 'Uasin Gishu', '2025-01-10 00:00:00'),
+(285, 'Soy', 'Uasin Gishu', '2025-01-10 00:00:00'),
+(286, 'Turbo', 'Uasin Gishu', '2025-01-10 00:00:00'),
+(287, 'Emuhaya', 'Vihiga', '2025-01-10 00:00:00'),
+(288, 'Hamisi', 'Vihiga', '2025-01-10 00:00:00'),
+(289, 'Luanda', 'Vihiga', '2025-01-10 00:00:00'),
+(290, 'Sabatia', 'Vihiga', '2025-01-10 00:00:00'),
+(291, 'Vihiga', 'Vihiga', '2025-01-10 00:00:00'),
+(292, 'Eldas', 'Wajir', '2025-01-10 00:00:00'),
+(293, 'Tarbaj', 'Wajir', '2025-01-10 00:00:00'),
+(294, 'Wajir East', 'Wajir', '2025-01-10 00:00:00'),
+(295, 'Wajir North', 'Wajir', '2025-01-10 00:00:00'),
+(296, 'Wajir South', 'Wajir', '2025-01-10 00:00:00'),
+(297, 'Wajir West', 'Wajir', '2025-01-10 00:00:00'),
+(298, 'Central Pokot', 'West Pokot', '2025-01-10 00:00:00'),
+(299, 'North Pokot', 'West Pokot', '2025-01-10 00:00:00'),
+(300, 'Pokot South', 'West Pokot', '2025-01-10 00:00:00'),
+(301, 'West Pokot', 'West Pokot', '2025-01-10 00:00:00');
+
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `suppliers`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `suppliers`;
 CREATE TABLE `suppliers` (
   `supplier_id` int NOT NULL,
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -6724,11 +6992,6 @@ CREATE TABLE `suppliers` (
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `suppliers`
---
-
-TRUNCATE TABLE `suppliers`;
 --
 -- Dumping data for table `suppliers`
 --
@@ -6743,7 +7006,10 @@ INSERT INTO `suppliers` (`supplier_id`, `name`, `contact_person`, `phone`, `emai
 --
 -- Table structure for table `table_image`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `table_image`;
 CREATE TABLE `table_image` (
   `photo_id` int NOT NULL,
   `photo_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -6757,18 +7023,16 @@ CREATE TABLE `table_image` (
 --
 -- Table structure for table `tblaccompanment`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `tblaccompanment`;
 CREATE TABLE `tblaccompanment` (
   `accompanmentID` int NOT NULL,
   `accompanmentType` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `tblaccompanment`
---
-
-TRUNCATE TABLE `tblaccompanment`;
 --
 -- Dumping data for table `tblaccompanment`
 --
@@ -6787,7 +7051,10 @@ INSERT INTO `tblaccompanment` (`accompanmentID`, `accompanmentType`, `date_creat
 --
 -- Table structure for table `tblcso`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `tblcso`;
 CREATE TABLE `tblcso` (
   `cso_id` int NOT NULL,
   `cso_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -6795,11 +7062,6 @@ CREATE TABLE `tblcso` (
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `tblcso`
---
-
-TRUNCATE TABLE `tblcso`;
 --
 -- Dumping data for table `tblcso`
 --
@@ -6818,17 +7080,15 @@ INSERT INTO `tblcso` (`cso_id`, `cso_name`, `description`, `date_created`) VALUE
 --
 -- Table structure for table `tblgender`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `tblgender`;
 CREATE TABLE `tblgender` (
   `gender_id` int NOT NULL,
   `gender_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `tblgender`
---
-
-TRUNCATE TABLE `tblgender`;
 --
 -- Dumping data for table `tblgender`
 --
@@ -6842,18 +7102,16 @@ INSERT INTO `tblgender` (`gender_id`, `gender_name`) VALUES
 --
 -- Table structure for table `tblreferral`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `tblreferral`;
 CREATE TABLE `tblreferral` (
   `referralID` int NOT NULL,
   `referralType` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `tblreferral`
---
-
-TRUNCATE TABLE `tblreferral`;
 --
 -- Dumping data for table `tblreferral`
 --
@@ -6872,7 +7130,10 @@ INSERT INTO `tblreferral` (`referralID`, `referralType`, `date_created`) VALUES
 --
 -- Table structure for table `tblusers`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `tblusers`;
 CREATE TABLE `tblusers` (
   `user_id` int NOT NULL,
   `username` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -6889,11 +7150,6 @@ CREATE TABLE `tblusers` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Truncate table before insert `tblusers`
---
-
-TRUNCATE TABLE `tblusers`;
---
 -- Dumping data for table `tblusers`
 --
 
@@ -6905,18 +7161,21 @@ INSERT INTO `tblusers` (`user_id`, `username`, `first_name`, `last_name`, `email
 --
 -- Triggers `tblusers`
 --
+DROP TRIGGER IF EXISTS `trg_populate_full_name`;
 DELIMITER $$
 CREATE TRIGGER `trg_populate_full_name` BEFORE INSERT ON `tblusers` FOR EACH ROW BEGIN
     SET NEW.full_name = CONCAT(NEW.first_name, ' ', NEW.last_name);
 END
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `trg_populate_full_name_insert`;
 DELIMITER $$
 CREATE TRIGGER `trg_populate_full_name_insert` BEFORE INSERT ON `tblusers` FOR EACH ROW BEGIN
     SET NEW.full_name = CONCAT(NEW.first_name, ' ', NEW.last_name);
 END
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `trg_populate_full_name_update`;
 DELIMITER $$
 CREATE TRIGGER `trg_populate_full_name_update` BEFORE UPDATE ON `tblusers` FOR EACH ROW BEGIN
     SET NEW.full_name = CONCAT(NEW.first_name, ' ', NEW.last_name);
@@ -6929,7 +7188,10 @@ DELIMITER ;
 --
 -- Table structure for table `tbl_hiv_status`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `tbl_hiv_status`;
 CREATE TABLE `tbl_hiv_status` (
   `status_id` int NOT NULL,
   `hiv_status_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -6937,11 +7199,6 @@ CREATE TABLE `tbl_hiv_status` (
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `tbl_hiv_status`
---
-
-TRUNCATE TABLE `tbl_hiv_status`;
 --
 -- Dumping data for table `tbl_hiv_status`
 --
@@ -6956,17 +7213,15 @@ INSERT INTO `tbl_hiv_status` (`status_id`, `hiv_status_name`, `description`, `da
 --
 -- Table structure for table `tb_regimens`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `tb_regimens`;
 CREATE TABLE `tb_regimens` (
   `regimen_id` int NOT NULL,
   `regimen_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `tb_regimens`
---
-
-TRUNCATE TABLE `tb_regimens`;
 --
 -- Dumping data for table `tb_regimens`
 --
@@ -6985,18 +7240,16 @@ INSERT INTO `tb_regimens` (`regimen_id`, `regimen_name`) VALUES
 --
 -- Table structure for table `tb_status`
 --
+-- Creation: Dec 02, 2025 at 03:09 PM
+--
 
+DROP TABLE IF EXISTS `tb_status`;
 CREATE TABLE `tb_status` (
   `status_id` int NOT NULL,
   `status_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `date_created` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `tb_status`
---
-
-TRUNCATE TABLE `tb_status`;
 --
 -- Dumping data for table `tb_status`
 --
@@ -7011,23 +7264,24 @@ INSERT INTO `tb_status` (`status_id`, `status_name`, `date_created`) VALUES
 --
 -- Table structure for table `temp_updates`
 --
+-- Creation: Dec 02, 2025 at 03:16 PM
+--
 
+DROP TABLE IF EXISTS `temp_updates`;
 CREATE TABLE `temp_updates` (
   `p_id` int NOT NULL,
   `new_clientName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `temp_updates`
---
-
-TRUNCATE TABLE `temp_updates`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `terminals`
 --
+-- Creation: Dec 09, 2025 at 11:04 AM
+--
 
+DROP TABLE IF EXISTS `terminals`;
 CREATE TABLE `terminals` (
   `Id` int NOT NULL,
   `Name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
@@ -7037,17 +7291,15 @@ CREATE TABLE `terminals` (
   `PrisonId` int NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `terminals`
---
-
-TRUNCATE TABLE `terminals`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `toxicology_results`
 --
+-- Creation: Dec 02, 2025 at 03:16 PM
+--
 
+DROP TABLE IF EXISTS `toxicology_results`;
 CREATE TABLE `toxicology_results` (
   `tox_id` int NOT NULL,
   `visitDate` datetime NOT NULL,
@@ -7088,17 +7340,15 @@ CREATE TABLE `toxicology_results` (
 --
 -- Table structure for table `tpt_regimens`
 --
+-- Creation: Dec 02, 2025 at 03:16 PM
+--
 
+DROP TABLE IF EXISTS `tpt_regimens`;
 CREATE TABLE `tpt_regimens` (
   `tpt_id` int NOT NULL,
   `tpt_regimen_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `tpt_regimens`
---
-
-TRUNCATE TABLE `tpt_regimens`;
 --
 -- Dumping data for table `tpt_regimens`
 --
@@ -7114,17 +7364,15 @@ INSERT INTO `tpt_regimens` (`tpt_id`, `tpt_regimen_name`) VALUES
 --
 -- Table structure for table `transaction_types`
 --
+-- Creation: Dec 02, 2025 at 03:16 PM
+--
 
+DROP TABLE IF EXISTS `transaction_types`;
 CREATE TABLE `transaction_types` (
   `id` int NOT NULL,
   `transactionType` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `transaction_types`
---
-
-TRUNCATE TABLE `transaction_types`;
 --
 -- Dumping data for table `transaction_types`
 --
@@ -7141,7 +7389,10 @@ INSERT INTO `transaction_types` (`id`, `transactionType`) VALUES
 --
 -- Table structure for table `transfer_forms`
 --
+-- Creation: Dec 02, 2025 at 03:16 PM
+--
 
+DROP TABLE IF EXISTS `transfer_forms`;
 CREATE TABLE `transfer_forms` (
   `id` int NOT NULL,
   `p_id` int NOT NULL,
@@ -7184,22 +7435,28 @@ CREATE TABLE `transfer_forms` (
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `transfer_forms`
+--
+
+INSERT INTO `transfer_forms` (`id`, `p_id`, `facilityname`, `mflcode`, `county`, `sub_county`, `clientName`, `mat_id`, `sex`, `dob`, `client_phone`, `reg_facility`, `reg_date`, `referral_date`, `type_of_movement`, `other_specify`, `from_site`, `to_site`, `reason_transfer`, `clinical_history`, `psychosocial`, `lab_investigations`, `vaccinations`, `diagnosis`, `current_dose`, `date_last_administered`, `other_medications`, `clinician_name`, `clinician_org`, `clinician_signature`, `clinician_date`, `counselor_name`, `counselor_org`, `counselor_signature`, `counselor_date`, `pdf_filename`, `json_data`, `created_at`, `updated_at`) VALUES
+(1, 2349, 'Ruiru Sub-County Hospital', '', 'Kiambu', 'Ruiru', 'Test Client', 'RUIRU0001', 'Female', '2010-08-02', '', 'Kombani Mat Clinic', '2025-12-03', '2025-12-03', 'Transfer Out', '', 'Kombani Mat Clinic', 'Nagara MAT clinic', 'Self request', 'NAD', 'NAD', 'NAD', 'NAD', 'NAD', 'Methadone', '2025-12-03 12:02:00', '', 'Lyani Sitti', 'other', 'cc', '2025-12-03', 'Peter Kiburi', 'other', 'cc', '2025-12-03', 'RUIRU0001_2025-12-03.pdf', '{\"p_id\":\"2349\",\"facilityname\":\"Ruiru Sub-County Hospital\",\"mflcode\":\"\",\"county\":\"Kiambu\",\"sub_county\":\"Ruiru\",\"clientName\":\"Test Client\",\"mat_id\":\"RUIRU0001\",\"sex\":\"Female\",\"dob\":\"2010-08-02\",\"client_phone\":\"\",\"reg_facility\":\"Kombani Mat Clinic\",\"reg_date\":\"2025-12-03\",\"referral_date\":\"2025-12-03\",\"type_of_movement\":\"Transfer Out\",\"other_specify\":\"\",\"from_site\":\"Kombani Mat Clinic\",\"to_site\":\"Nagara MAT clinic\",\"reason_transfer\":\"Self request\",\"clinical_history\":\"NAD\",\"psychosocial\":\"NAD\",\"lab_investigations\":\"NAD\",\"vaccinations\":\"NAD\",\"diagnosis\":\"NAD\",\"current_dose\":\"Methadone\",\"date_last_administered\":\"2025-12-03T12:02\",\"other_medications\":\"\",\"clinician_name\":\"Lyani Sitti\",\"clinician_org\":\"other\",\"clinician_signature\":\"cc\",\"clinician_date\":\"2025-12-03\",\"counselor_name\":\"Peter Kiburi\",\"counselor_org\":\"other\",\"counselor_signature\":\"cc\",\"counselor_date\":\"2025-12-03\"}', '2025-12-03 09:03:28', '2025-12-03 09:03:28'),
+(2, 1007, 'Karuri Health Centre', '', 'Kiambu', 'Kiambaa', 'EDWIN WARIUKI NJUGI', '10507MAT0065', 'Male', '1982-09-29', '', 'Karuri MAT Clinic', '2020-08-01', '2025-12-04', 'Transfer Out', '', 'Karuri MAT Clinic', 'Mathare MAt clinic', 'Testing', 'bb', 'bbb', 'bbb', 'bbb', 'bbb', '70', '2025-12-04 11:22:00', '', 'Lyani Sitti', 'nnn', 'nnn', '2025-12-04', 'Peter Kiburi', 'nnnn', 'nnnn', '2025-12-04', '10507MAT0065_2025-12-04.pdf', '{\"p_id\":\"1007\",\"facilityname\":\"Karuri Health Centre\",\"mflcode\":\"\",\"county\":\"Kiambu\",\"sub_county\":\"Kiambaa\",\"clientName\":\"EDWIN WARIUKI NJUGI\",\"mat_id\":\"10507MAT0065\",\"sex\":\"Male\",\"dob\":\"1982-09-29\",\"client_phone\":\"\",\"reg_facility\":\"Karuri MAT Clinic\",\"reg_date\":\"2020-08-01\",\"referral_date\":\"2025-12-04\",\"type_of_movement\":\"Transfer Out\",\"other_specify\":\"\",\"from_site\":\"Karuri MAT Clinic\",\"to_site\":\"Mathare MAt clinic\",\"reason_transfer\":\"Testing\",\"clinical_history\":\"bb\",\"psychosocial\":\"bbb\",\"lab_investigations\":\"bbb\",\"vaccinations\":\"bbb\",\"diagnosis\":\"bbb\",\"current_dose\":\"70\",\"date_last_administered\":\"2025-12-04T11:22\",\"other_medications\":\"\",\"clinician_name\":\"Lyani Sitti\",\"clinician_org\":\"nnn\",\"clinician_signature\":\"nnn\",\"clinician_date\":\"2025-12-04\",\"counselor_name\":\"Peter Kiburi\",\"counselor_org\":\"nnnn\",\"counselor_signature\":\"nnnn\",\"counselor_date\":\"2025-12-04\"}', '2025-12-04 08:22:50', '2025-12-04 08:22:50');
+
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `treatment_stage`
 --
+-- Creation: Dec 02, 2025 at 03:16 PM
+--
 
+DROP TABLE IF EXISTS `treatment_stage`;
 CREATE TABLE `treatment_stage` (
   `stage_id` int NOT NULL,
   `stage_of_rx_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `treatment_stage`
---
-
-TRUNCATE TABLE `treatment_stage`;
 --
 -- Dumping data for table `treatment_stage`
 --
@@ -7218,7 +7475,10 @@ INSERT INTO `treatment_stage` (`stage_id`, `stage_of_rx_name`) VALUES
 --
 -- Table structure for table `triage_services`
 --
+-- Creation: Dec 03, 2025 at 01:44 PM
+--
 
+DROP TABLE IF EXISTS `triage_services`;
 CREATE TABLE `triage_services` (
   `id` int NOT NULL,
   `patient_id` int NOT NULL,
@@ -7255,11 +7515,6 @@ CREATE TABLE `triage_services` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
--- Truncate table before insert `triage_services`
---
-
-TRUNCATE TABLE `triage_services`;
---
 -- Dumping data for table `triage_services`
 --
 
@@ -7272,18 +7527,16 @@ INSERT INTO `triage_services` (`id`, `patient_id`, `clinician_id`, `facility_nam
 --
 -- Table structure for table `userroles`
 --
+-- Creation: Dec 02, 2025 at 03:16 PM
+--
 
+DROP TABLE IF EXISTS `userroles`;
 CREATE TABLE `userroles` (
   `id` int NOT NULL,
   `role` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `descr` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncate table before insert `userroles`
---
-
-TRUNCATE TABLE `userroles`;
 --
 -- Dumping data for table `userroles`
 --
@@ -7307,7 +7560,10 @@ INSERT INTO `userroles` (`id`, `role`, `descr`) VALUES
 --
 -- Table structure for table `viral_load`
 --
+-- Creation: Dec 02, 2025 at 03:16 PM
+--
 
+DROP TABLE IF EXISTS `viral_load`;
 CREATE TABLE `viral_load` (
   `vl_id` int NOT NULL,
   `mat_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -7331,7 +7587,10 @@ CREATE TABLE `viral_load` (
 --
 -- Table structure for table `voluntary_discontinuation`
 --
+-- Creation: Dec 02, 2025 at 03:16 PM
+--
 
+DROP TABLE IF EXISTS `voluntary_discontinuation`;
 CREATE TABLE `voluntary_discontinuation` (
   `id` int NOT NULL,
   `visit_date` date NOT NULL,
@@ -7582,12 +7841,6 @@ ALTER TABLE `involuntary_discontinuation`
   ADD KEY `idx_mat_id` (`mat_id`),
   ADD KEY `idx_client_name` (`client_name`),
   ADD KEY `idx_discontinue_date` (`discontinue_date`);
-
---
--- Indexes for table `juicetypes`
---
-ALTER TABLE `juicetypes`
-  ADD PRIMARY KEY (`Id`);
 
 --
 -- Indexes for table `laboratory`
@@ -7958,7 +8211,7 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `client_consents`
 --
 ALTER TABLE `client_consents`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `clinical_encounters`
@@ -8066,7 +8319,7 @@ ALTER TABLE `facilities`
 -- AUTO_INCREMENT for table `facility_settings`
 --
 ALTER TABLE `facility_settings`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `fingerprints`
@@ -8090,7 +8343,7 @@ ALTER TABLE `formulation`
 -- AUTO_INCREMENT for table `gad7_assessments`
 --
 ALTER TABLE `gad7_assessments`
-  MODIFY `assessment_id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `assessment_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `hepb_status`
@@ -8120,13 +8373,7 @@ ALTER TABLE `integration_status`
 -- AUTO_INCREMENT for table `involuntary_discontinuation`
 --
 ALTER TABLE `involuntary_discontinuation`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT for table `juicetypes`
---
-ALTER TABLE `juicetypes`
-  MODIFY `Id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `laboratory`
@@ -8180,7 +8427,7 @@ ALTER TABLE `offences`
 -- AUTO_INCREMENT for table `other_prescriptions`
 --
 ALTER TABLE `other_prescriptions`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `other_status`
@@ -8216,7 +8463,7 @@ ALTER TABLE `photos`
 -- AUTO_INCREMENT for table `phq9_assessments`
 --
 ALTER TABLE `phq9_assessments`
-  MODIFY `assessment_id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `assessment_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `prescription_drugs`
@@ -8234,7 +8481,7 @@ ALTER TABLE `psychiatric_rx_problems`
 -- AUTO_INCREMENT for table `psychodar`
 --
 ALTER TABLE `psychodar`
-  MODIFY `dar_id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `dar_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `psychosocial_intake_form_1a`
@@ -8330,7 +8577,7 @@ ALTER TABLE `stores_inventory`
 -- AUTO_INCREMENT for table `sub_counties`
 --
 ALTER TABLE `sub_counties`
-  MODIFY `sub_county_id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `sub_county_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=302;
 
 --
 -- AUTO_INCREMENT for table `suppliers`
@@ -8378,7 +8625,7 @@ ALTER TABLE `tpt_regimens`
 -- AUTO_INCREMENT for table `transfer_forms`
 --
 ALTER TABLE `transfer_forms`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `treatment_stage`
@@ -8482,7 +8729,6 @@ ALTER TABLE `prescription_drugs`
 ALTER TABLE `triage_services`
   ADD CONSTRAINT `triage_services_ibfk_1` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`p_id`),
   ADD CONSTRAINT `triage_services_ibfk_2` FOREIGN KEY (`clinician_id`) REFERENCES `tblusers` (`user_id`);
-SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
