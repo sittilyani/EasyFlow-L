@@ -18,21 +18,16 @@ $successMessages = [];
 
 // --- Helper function to display messages and redirect ---
 function displayMessagesAndRedirect($conn, $successes, $errors, $mat_id) {
-    echo "<html><head><title>Dispensing Results</title></head><body>";
-
-    // Display Successes
-    foreach ($successes as $message) {
-        echo "<div style='background-color: #DDFCAF; color: green; font-size: 18px; padding: 15px; margin-bottom: 10px; text-align: center; border-radius: 5px;'>$message</div>";
+    if (!empty($successes)) {
+        $_SESSION['dispensing_successes'] = $successes;
+        header("Location: dispensing.php");
     }
 
-    // Display Errors
-    foreach ($errors as $error) {
-        echo "<div style='background-color: #EDFEB0; color: red; padding: 10px; margin-bottom: 10px; border-radius: 5px; font-weight: bold;'>$error</div>";
+    if (!empty($errors)) {
+        $_SESSION['dispensing_errors'] = $errors;
+        header("Location: {$_SERVER['HTTP_REFERER']}");
     }
-
-    // Redirect back to the main dispensing page
-    echo "<script>setTimeout(function(){ window.location.href = 'dispensing.php'; }, 4000);</script>";
-    echo "</body></html>";
+    
     exit();
 }
 

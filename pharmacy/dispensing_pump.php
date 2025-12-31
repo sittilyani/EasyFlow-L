@@ -9,6 +9,11 @@ if (isset($_GET['message'])) {
     $message = urldecode($_GET['message']);
     echo "<div>" . $message . "</div>";
 }
+
+if (isset($_SESSION['successMessages'])) {
+    $successMessages = $_SESSION['successMessages'];
+    unset($_SESSION['successMessages']);
+}
 ?>
 
 <!DOCTYPE html>
@@ -26,6 +31,17 @@ if (isset($_GET['message'])) {
     </style>
 </head>
 <body>
+    <?php if (isset($successMessages)): ?>
+        <div class="alert alert-success">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+
+            <?php foreach ($successMessages as $success): ?>
+                <p><?php echo htmlspecialchars($success); ?></p>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
     <h2 style="color: #2C3162; ">Controlled Drugs Dispensing Form</h2>
 
     <form id="searchForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="GET">
@@ -56,7 +72,8 @@ $sql = "SELECT * FROM patients WHERE (mat_id LIKE '%$search%'
         OR drugname LIKE '%$search%'
         OR dosage LIKE '%$search%'
         OR current_status LIKE '%$search%')
-        AND current_status IN ('Active', 'LTFU', 'Defaulted')";
+        AND current_status IN ('Active', 'LTFU', 'Defaulted')
+        AND drugname = 'Methadone'";
 // Pagination setup
 $results_per_page = 10; // Number of results per page
 $number_of_results = mysqli_num_rows(mysqli_query($conn, $sql)); // Total number of results
@@ -145,6 +162,9 @@ if ($current_page < $number_of_pages) {
 }
 echo "</div>";
 ?>
+
+<script src="../assets/js/jquery-3.7.1.min.js"></script>
+    <script src="../assets/js/bootstrap.min.js"></script>
 
 <script>
         function cancelSearch() {
