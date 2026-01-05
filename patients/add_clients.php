@@ -220,7 +220,7 @@ if (isset($_SESSION['user_id']) && isset($conn)) {
                 // Fetch facilities and required details for data attributes
                 // Rely on the single connection opened at the top
                 if (isset($conn)) {
-                    $sql = "SELECT facilityname, mflcode, countyname, subcountyname FROM facilities WHERE facilityname LIKE '%MAT clinic%' ORDER BY facilityname ASC";
+                    $sql = "SELECT facilityname, mflcode, countyname, subcountyname FROM facilities ORDER BY facilityname ASC";
                     $result = $conn->query($sql);
                     if ($result && $result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
