@@ -1,9 +1,11 @@
 <?php
 session_start();
 include 'includes/config.php';
+$factor = '400';
 
+if(isset($_SESSION['factor'])) $factor = $_SESSION['factor'];
 // Safety limits
-define('MAX_DAILY_DOSAGE_MG', 120);
+define('MAX_DAILY_DOSAGE_MG', 300);
 define('METHADONE_CONCENTRATION', 10);
 
 $routineErrors = [];
@@ -131,7 +133,7 @@ try {
 
     // Executing pump command
 
-    $ml = (($dosage / 5) + 5) * 400;
+    $ml = ($dosage / 5) * $factor;
     $pump_cmd = "/1m50h10j4V1600L400z{$ml}D{$ml}R";
     $command = "pumpAPI.exe $pump_port 9600 raw $pump_cmd";
 
@@ -188,8 +190,3 @@ try {
     header("Location: {$_SERVER['HTTP_REFERER']}");
     exit;
 }
-
-
-
-
-
