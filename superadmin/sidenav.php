@@ -16,7 +16,7 @@ $user_id = $_SESSION['user_id'] ?? '';
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Patient Management System</title>
+<title>EasyFlow-L</title>
 <link rel="stylesheet" href="../assets/fontawesome/css/font-awesome.css" type="text/css">
 <link rel="apple-touch-icon" sizes="180x180" href="../assets/favicons/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicons/favicon-32x32.png">

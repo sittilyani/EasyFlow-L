@@ -16,7 +16,7 @@ $user_id = $_SESSION['user_id'] ?? '';
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Patient Management System</title>
+<title>EasyFlow-L</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="../assets/fontawesome/css/font-awesome.min.css" type="text/css">
 <link rel="stylesheet" href="../assets/css/bootstrap.min.css" type="text/css">
