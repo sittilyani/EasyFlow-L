@@ -386,6 +386,48 @@ if (isset($_SESSION['errorMessages'])) {
         .custom-alert button { margin-top: 10px; padding: 8px 16px; background-color: red; color: white; border: none; border-radius: 5px; cursor: pointer; }
         .custom-alert button:hover { background-color: darkred; }
         .missed-appointment { color: red; font-weight: bold; }
+        /* Add this to your CSS section */
+.form-group2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.form-group2 input[type="text"].readonly-input {
+    width: 220px !important;
+    height: 160px !important;
+    background-color: #007bff; /* Blue background */
+    color: white !important;
+    border: 2px solid #0056b3;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 4.2rem;
+    font-weight: bold;
+    padding: 0;
+    margin: 5px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+    box-shadow: 0 4px 8px rgba(0, 91, 187, 0.2);
+    transition: all 0.3s ease;
+}
+
+/* Optional: Add hover effect */
+.form-group2 input[type="text"].readonly-input:hover {
+    background-color: #0056b3;
+    box-shadow: 0 6px 12px rgba(0, 91, 187, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Optional: Add label if needed */
+.form-group2 label {
+    font-weight: 600;
+    color: #007bff;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
     </style>
 </head>
 <body>
@@ -534,6 +576,17 @@ if (isset($_SESSION['errorMessages'])) {
                     <label for="pharm_officer_name">Dispensing Officer Name</label>
                     <input type="text" name="pharm_officer_name" class="readonly-input" value="<?php echo htmlspecialchars($pharm_office_name); ?>">
                 </div>
+                <?php
+                // Calculate mls value once
+                $mlsValue = '';
+                if (isset($currentSettings['dosage']) && is_numeric($currentSettings['dosage'])) {
+                    $mlsValue = number_format(floatval($currentSettings['dosage']) / 5, 2);
+                }
+                ?>
+
+                <div class="form-group2">
+                    <input type="text" name="mls" class="readonly-input" readonly value="<?php echo htmlspecialchars($mlsValue); ?>">
+                </div>
                 <div class="form-group">
                     <label for="pump_device">Pump Device</label>
                     <select id="pump_device" name="pump_device" required>
@@ -551,6 +604,7 @@ if (isset($_SESSION['errorMessages'])) {
                 <div class="form-group" style="visibility: hidden;"><label></label><input type="text"></div>
                 <div class="form-group" style="visibility: hidden;"><label></label><input type="text"></div>
             </div>
+
 
             <div class="photo-container">
                 <?php if ($photoPath && file_exists($photoPath)): ?>
