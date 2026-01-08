@@ -356,7 +356,7 @@ $sub_dir = '';
                         </div>
                         <div class="form-group">
                             <label for="milligrams">Milligrams:</label>
-                            <input class="form-control" type="number" placeholder="milligrams" name="milligrams" id="milligrams" step="5" min="5" max="2000" required value="<?php echo isset($form_values['milligrams']) ? $form_values['milligrams'] : ''; ?>">
+                            <input class="form-control" type="number" placeholder="milligrams" name="milligrams" id="milligrams" step="5" min="5" max="12000" required value="<?php echo isset($form_values['milligrams']) ? $form_values['milligrams'] : ''; ?>">
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
