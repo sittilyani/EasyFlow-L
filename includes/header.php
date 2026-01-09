@@ -207,8 +207,9 @@ if ($isLoggedIn) {
     <div class="header">
         <div class="logo-container">
             <div class="logo">
-                <img src="../assets/images/LVCT logo- PNG.png" width="469" height="238" alt="">
-                <span style="font-size: 28px; color: #FFFFFF;">IORPMS</span>
+                <!--<img src="../assets/images/LVCT logo- PNG.png" width="469" height="238" alt="">-->
+                <img src="../assets/images/EasyFlow_Logo2.png" width="891" height="280" alt="">
+                <span style="font-size: 28px; color: #FFFFFF;">EasyFlow-L</span>
             </div>
             <div class="system-name" style="font-size: 28px; color: #FFFFFF;">Patient Management System</div>
             <a href="https://www.lvcthealth.org/" class="user-details" style="font-size: 22px; font-weight: bold; margin-left: 50px;">About Us</a>

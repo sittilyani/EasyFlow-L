@@ -264,7 +264,7 @@ $sub_dir = '';
 					const xhr = new XMLHttpRequest();
 					var port = "&port=<?php echo $row['port'] ?>";
 					
-					xhr.open("GET","http://localhost/iorpms/iorpms/api.php?cmd="+ opt + port, true);
+					xhr.open("GET","http://localhost/iorpms/api.php?cmd="+ opt + port, true);
 										
 					xhr.onreadystatechange = function () {
 						if (xhr.readyState === 4) {

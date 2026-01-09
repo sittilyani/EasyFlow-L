@@ -77,7 +77,7 @@
         <!-- Your content goes here -->
         <div class="footer">
                 <div class="footer-content">
-                        <span>Integrated Opioid Replacement Patient Management System (IORPMS) <?php echo date('Y');?> - &copy; LVCT@20</span>
+                        <span>EasyFlow-L: an Integrated Opioid Replacement Patient Management System - developed by LVCTHealth - Stawisha Pwani Project <?php echo date('Y');?> - &copy; LVCT@20</span>
                         <div class="social-links">
                                 <a href="https://web.facebook.com/LVCTHealth/" target="_blank" rel="noopener noreferrer" title="Facebook">
                                         <i class="fab fa-facebook"></i>

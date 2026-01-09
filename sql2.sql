@@ -21,3 +21,7 @@ CREATE TABLE IF NOT EXISTS `pump_reservoir_history` (
 
 ALTER TABLE `pharmacy` ADD COLUMN `pump_id` INT NULL;
 ALTER TABLE `pharmacy` ADD CONSTRAINT `pharmacy_pump_link` FOREIGN KEY (`pump_id`) REFERENCES `pump_devices`(`id`);
+
+--check pump port if COM3 run
+INSERT INTO `pump_devices` (label, port) VALUES ('Pump A',
+'COM3');

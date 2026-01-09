@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>patient management system</title>
+    <title>EasyFlow-L</title>
 
 
     <style>
@@ -158,7 +158,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <div class="container-item">
                 <div class="logo">
-                    <img src="../assets/images/LVCT logo- PNG.png" width="200" height="142" alt="">
+                    <!--<img src="../assets/images/LVCT logo- PNG.png" width="200" height="142" alt="">-->
+                    <img src="../assets/images/EasyFlow_Logo2.png" width="400" height="116" alt="">
                 </div>
             </div>
             <div class="container-item">
