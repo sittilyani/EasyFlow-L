@@ -665,9 +665,9 @@ if (isset($_SESSION['errorMessages'])) {
                     </table>
                 </div>
                 <?php endif; ?>
-
-                <button type="submit" class="submit-btn">Dispense</button>
+              <button type="submit" class="submit-btn">Dispense</button>
             </div>
+
             </div>
     </form>
     </div>
@@ -692,7 +692,7 @@ if (isset($_SESSION['errorMessages'])) {
             const dosage = parseInt(document.querySelector('input[name="dosage"]').value);
 
             const pumpDevice = document.getElementById('pump_device').value;
-            
+
             if (remObj[pumpDevice] <= dosage) {
                 alert('Remaining quantity for the selected pump device is less than the dosage.');
                 return false;
