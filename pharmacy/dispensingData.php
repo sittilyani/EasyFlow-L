@@ -678,7 +678,7 @@ if (isset($_SESSION['dispensing_errors'])) {
                     <label for="pharm_officer_name">Dispensing Officer Name</label>
                     <input type="text" name="pharm_officer_name" class="readonly-input" value="<?php echo htmlspecialchars($pharm_office_name); ?>">
                 </div>
-                <?php
+                <!--<?php
                 // Calculate mls value once
                 $mlsValue = '';
                 if (isset($currentSettings['dosage']) && is_numeric($currentSettings['dosage'])) {
@@ -688,7 +688,7 @@ if (isset($_SESSION['dispensing_errors'])) {
 
                 <div class="form-group2">
                     <input type="text" name="mls" class="readonly-input" readonly value="<?php echo htmlspecialchars($mlsValue); ?>">
-                </div>
+                </div>-->
                 <input type="hidden" name="daysToNextAppointment" value="<?php echo $daysToAppointment; ?>">
                 <input type="hidden" name="isMissed" value="<?php echo $isMissed ? 'true' : 'false'; ?>">
                 <input type="hidden" name="appointmentType" value="<?php echo htmlspecialchars($appointmentInfo['appointmentType']); ?>">
