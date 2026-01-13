@@ -115,7 +115,7 @@ define('PUMP_ENABLED', true);
 define('PUMP_SERVICE_PATH', __DIR__ . 'pump/pump_service.php');
 
 // Safety limits
-define('MAX_DAILY_DOSAGE_MG', 120);
+define('MAX_DAILY_DOSAGE_MG', 300);
 define('METHADONE_CONCENTRATION', 10);
 
 // Simplified Pump Service Integration

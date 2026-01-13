@@ -113,9 +113,14 @@ $user_id = $_SESSION['user_id'] ?? '';
 
         <div class="welcome-message" id="welcomeMessage">
             <img src="../assets/images/pt-doctor-removebg-preview.png" width="172" height="116" alt="">
-            <h3>Welcome to the integrated patient management system</h3>
+            <h3>Remeber these steps</h3>
             <p>Select an option from the side navigation to access services. Your access level is: <strong><?php echo ucfirst($userrole); ?></strong></p>
-            <p>As an <strong><?php echo ucfirst($userrole); ?></strong>, <span style="color: red;">always backup your database on external hard-drive and cloud e.g Google Drive</span></p>
+            <p><span style="color: red;">1. Fill the jug with Methadone</span></p>
+            <p>2. Put the cup in receiving chamber</p>
+            <p>3. Press on PRIME button</p>
+            <p>4. Measure the amount received</p>
+            <p>5. Now press Calibrate and enter amount measured</p>
+            <p>6. If doesn't work Press Reverse Prime then repeat steps 3 - 5'</p>
         </div>
     </div>
 </div>
