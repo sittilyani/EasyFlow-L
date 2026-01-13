@@ -250,7 +250,7 @@ $sub_dir = '';
                 Prime 
             </button>
 			
-			<button id="factor" type="button" onclick="calibrate()" class="btn btn-primary" disabled>
+			<button type="button" onclick="calibrate()" class="btn btn-primary">
                 Calibrate (<?php echo $factor; ?>)
             </button>
 			
@@ -260,38 +260,32 @@ $sub_dir = '';
 				
 
 			<script>
-				var port;
-				
 				function pump(opt){	
-					if(port){ 
-						const xhr = new XMLHttpRequest();	
-						
-						xhr.open("GET","http://localhost/iorpms/api.php?cmd="+ opt +"&port="+ port, true);
-											
-						xhr.onreadystatechange = function () {
-							if (xhr.readyState === 4) {
-								if (xhr.status === 200) { 									
-									 if(!isNaN(xhr.responseText)) $("#factor").html('Calibrate ('+ xhr.responseText +')').removeAttr('disabled');
-									 //else alert('Response = '+ xhr.responseText);
-									 else alert('Pump error occured');
-								} else {
-									alert("Error:"+ xhr.status +' - '+ xhr.responseText);
-								}
+					const xhr = new XMLHttpRequest();
+					var port = "&port=<?php echo $row['port'] ?>";
+					
+					xhr.open("GET","http://localhost/iorpms/api.php?cmd="+ opt + port, true);
+										
+					xhr.onreadystatechange = function () {
+						if (xhr.readyState === 4) {
+							if (xhr.status === 200) { alert(opt +' = '+ xhr.responseText);
+								//console.log("Response:", xhr.responseText);
+								
+							} else {
+								alert("Error:"+ xhr.status +' - '+ xhr.responseText);
 							}
-						};
-						
-						xhr.send();
-					}
-					else alert("Please filter the target pump first!");
+							//alert(23);
+						}
+					};
+					//alert(34545);
+					xhr.send();
+					//alert(opt); /**/
 				}
 				
 				function calibrate(){
-					if(port){
-						var factor = prompt('Enter the dispenced amount')
-						
-						if(factor) pump(factor);
-					}
-					else alert("Please filter the target pump first!");
+					var factor = prompt('Enter the dispenced amount')
+					
+					if(factor) pump(factor);
 				}
 			</script>
         </div>
@@ -362,7 +356,7 @@ $sub_dir = '';
                         </div>
                         <div class="form-group">
                             <label for="milligrams">Milligrams:</label>
-                            <input class="form-control" type="number" placeholder="milligrams" name="milligrams" id="milligrams" step="5" min="5" max="2000" required value="<?php echo isset($form_values['milligrams']) ? $form_values['milligrams'] : ''; ?>">
+                            <input class="form-control" type="number" placeholder="milligrams" name="milligrams" id="milligrams" step="5" min="5" max="12000" required value="<?php echo isset($form_values['milligrams']) ? $form_values['milligrams'] : ''; ?>">
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
@@ -374,31 +368,26 @@ $sub_dir = '';
     <script src="../assets/js/jquery-3.7.1.min.js"></script>
     <script src="../assets/js/bootstrap.min.js"></script>
 
-    <script>		
-		const jsonData = JSON.parse(`<?php echo json_encode($summary); ?>`);
+    <script>
+        const jsonData = JSON.parse(`<?php echo json_encode($summary); ?>`);
 
         function objTotal(obj) {
             return Object.values(obj || {}).reduce((acc, val) => acc + (val ?? 0), 0);
         }
 
-        function filterSummaryValues(filterValue) { 
-			port = null;
-			
+        function filterSummaryValues(filterValue) {
             if (!filterValue) {
                 document.getElementById('stat-today').textContent = objTotal(jsonData['today']);
                 document.getElementById('stat-week').textContent = objTotal(jsonData['this_week']);
                 document.getElementById('stat-month').textContent = objTotal(jsonData['this_month']);
                 document.getElementById('stat-overral').textContent = objTotal(jsonData['all_time']);
                 document.getElementById('stat-remaining').textContent = objTotal(jsonData['remaining']);
-				
             } else {
                 document.getElementById('stat-today').textContent = jsonData['today'][filterValue] || 0;
                 document.getElementById('stat-week').textContent = jsonData['this_week'][filterValue] || 0;
                 document.getElementById('stat-month').textContent = jsonData['this_month'][filterValue] || 0;
                 document.getElementById('stat-overral').textContent = jsonData['all_time'][filterValue] || 0;
                 document.getElementById('stat-remaining').textContent = jsonData['remaining'][filterValue] || 0;
-				
-				if(!isNaN(filterValue)) port = filterValue;				
             }
         }
 
