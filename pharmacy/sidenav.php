@@ -24,8 +24,221 @@ $user_id = $_SESSION['user_id'] ?? '';
 <link rel="icon" type="image/png" sizes="16x16" href="../assets/favicons/favicon-16x16.png">
 <link rel="manifest" href="../assets/favicons/site.webmanifest">
 <link rel="stylesheet" href="../assets/css/bootstrap.min.css" type="text/css">
-<link rel="stylesheet" href="../assets/css/sidenav.css" type="text/css">
+<!--<link rel="stylesheet" href="../assets/css/sidenav.css" type="text/css">-->
 <style>
+       * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+        display: flex;
+        min-height: 100vh;
+        background-color: #f5f7fa;
+    }
+
+    .sidenav {
+        height: 100vh;
+        width: 300px;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background: linear-gradient(135deg, #1a2a6c, #2b5876);
+        overflow-x: hidden;
+        padding-top: 70px;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidenav h2 {
+        color: white;
+        text-align: center;
+        margin-bottom: 30px;
+        padding: 0 15px;
+        font-size: 22px;
+    }
+
+    .sidenav a {
+        padding: 15px 25px;
+        text-decoration: none;
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        transition: 0.3s;
+        border-left: 4px solid transparent;
+    }
+
+    .sidenav a i {
+        margin-right: 12px;
+        font-size: 18px;
+        width: 25px;
+        text-align: center;
+    }
+
+    .sidenav a:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        border-left: 4px solid #4facfe;
+    }
+
+    .sidenav a.active {
+        background-color: rgba(255, 255, 255, 0.15);
+        color: white;
+        border-left: 4px solid #4facfe;
+    }
+
+    .main {
+        margin-left: 300px;
+        padding: 30px;
+        width: calc(100% - 250px);
+        min-height: 100vh;
+    }
+
+    .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .content-header h2 {
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .user-info span {
+        font-size: 14px;
+    }
+
+    .current-time {
+        background: #f8f9fa;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .logout-btn {
+        background: #dc3545;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 14px;
+        transition: background 0.3s;
+    }
+
+    .logout-btn:hover {
+        background: #c82333;
+        color: white;
+        text-decoration: none;
+    }
+
+    .content-area {
+        background: white;
+        border-radius: 8px;
+        padding: 25px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        min-height: 400px;
+    }
+
+    .welcome-message .sops{
+                    background: white;
+                    text-align: left;
+                    padding: 30px;
+                    font-size: 24px;
+                    font-weight: bold;
+                    line-height: 2;
+            }
+
+    @media screen and (max-width: 768px) {
+        .sidenav {
+            width: 100%;
+            height: auto;
+            position: relative;
+            padding-top: 20px;
+        }
+
+        .sidenav a {
+            float: left;
+            padding: 15px;
+        }
+
+        .main {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .content-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .user-info {
+            flex-wrap: wrap;
+        }
+        /* Timeout warning styling */
+    .timeout-warning {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 5px;
+        padding: 20px;
+        z-index: 1000;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .timeout-warning h4 {
+        margin-top: 0;
+        color: #856404;
+    }
+
+    .timeout-warning p {
+        margin-bottom: 15px;
+    }
+
+    .timeout-warning button {
+        background-color: #f0ad4e;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        color: #fff;
+        cursor: pointer;
+    }
+
+}
+/* Gear icon styling */
+    .settings-icon {
+        float: center;
+        margin-top: 5px;
+        font-size: 26px;
+        color: #FFFFFF;
+    }
+
+    /* Home link styling to differentiate it */
+    .home-link {
+        background-color: #CC0000;
+        font-weight: bold;
+    }
+
+
+
 
 </style>
 </head>
@@ -113,14 +326,16 @@ $user_id = $_SESSION['user_id'] ?? '';
 
         <div class="welcome-message" id="welcomeMessage">
             <img src="../assets/images/pt-doctor-removebg-preview.png" width="172" height="116" alt="">
-            <h3>Remeber these steps</h3>
-            <p>Select an option from the side navigation to access services. Your access level is: <strong><?php echo ucfirst($userrole); ?></strong></p>
-            <p><span style="color: red;">1. Fill the jug with Methadone</span></p>
-            <p>2. Put the cup in receiving chamber</p>
-            <p>3. Press on PRIME button</p>
-            <p>4. Measure the amount received</p>
-            <p>5. Now press Calibrate and enter amount measured</p>
-            <p>6. If doesn't work Press Reverse Prime then repeat steps 3 - 5'</p>
+            <h3>Remeber these steps and Repeat <span style="color: red;">CALIBRATION</span> every after serving <span style="color: red;">20</span> Clients </h3>
+
+            <div class='sops'>
+                <p>1. Fill the jug with Methadone</p>
+                <p>2. Put the cup in receiving chamber</p>
+                <p>3. Press on <span style="color: red;">PRIME</span> button</p>
+                <p>4. Measure the  <span style="color: red;">amount dispensed</span> into the cup</p>
+                <p>5. Now press  <span style="color: red;">Calibrate</span> and enter amount measured</p>
+                <p>6. If doesn't work Press  <span style="color: red;">Reverse Prime</span> then repeat steps 3 - 5'</p>
+            </div>
         </div>
     </div>
 </div>
