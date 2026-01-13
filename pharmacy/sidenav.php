@@ -260,8 +260,6 @@ $user_id = $_SESSION['user_id'] ?? '';
     <!-- Home link - will navigate away from this page -->
                 <a href="../dashboard/dashboard.php" class="home-link">
                     <i class="fa fa-home"></i>Home </a>
-                <a href="../pharmacy/dispensing.php" target="contentFrame" class="nav-link" style="background: #66ccff; color: #000000; margin-top: 10px;">
-                    <i class="fa fa-ban"></i>Dispense without pump</a>
                 <a href="../pharmacy/dispensing_pump.php" target="contentFrame" class="nav-link" style="background: yellow; color: #000000; margin-top: 10px;">
                     <i class="fa fa-ban"></i>Dispense with Pump</a>
                 <a href="../pharmacy/pump_reservoir.php" target="contentFrame" class="nav-link">
@@ -272,6 +270,8 @@ $user_id = $_SESSION['user_id'] ?? '';
                     <i class="fa fa-anchor"></i>Prisons Dispensing</a>
                 <a href="../pharmacy/retro_dispensing_module.php" target="contentFrame" class="nav-link">
                     <i class="fa fa-anchor"></i>Retro Dispensing</a>
+                <a href="../pharmacy/dispensing.php" target="contentFrame" class="nav-link" style="background: #66ccff; color: #000000; margin-top: 10px;">
+                    <i class="fa fa-ban"></i>Dispense without pump</a>
                 <a href="../pharmacy/edit_dispensed_dose.php" target="contentFrame" class="nav-link" style="background: #ccccff; color: #000000; margin-top: 10px;">
                     <i class="fa fa-anchor"></i>Edit dispensed doses</a>
                 <a href="../pharmacy/inventory_form.php" target="contentFrame" class="nav-link" style="background: #b1f0c2; color: #000000; margin-top: 10px;">
