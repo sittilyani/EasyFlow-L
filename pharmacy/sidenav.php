@@ -156,7 +156,7 @@ $user_id = $_SESSION['user_id'] ?? '';
                     background: white;
                     text-align: left;
                     padding: 30px;
-                    font-size: 24px;
+                    font-size: 22px;
                     font-weight: bold;
                     line-height: 2;
             }
@@ -326,15 +326,20 @@ $user_id = $_SESSION['user_id'] ?? '';
 
         <div class="welcome-message" id="welcomeMessage">
             <img src="../assets/images/pt-doctor-removebg-preview.png" width="172" height="116" alt="">
-            <h3>Remeber these steps and Repeat <span style="color: red;">CALIBRATION</span> every after serving <span style="color: red;">20</span> Clients </h3>
-
+            <h3>Remember these steps and Repeat <span style="color: red;">PRIME/REVERSE PRIME AND CALIBRATION</span> every after serving <span style="color: red;">20</span> Clients </h3>
+            <p>This feature is critical as it ensures that the pump dispenses the correct volumes of drugs     even with wear and tear of the pump tube.</p>
             <div class='sops'>
                 <p>1. Fill the jug with Methadone</p>
-                <p>2. Put the cup in receiving chamber</p>
-                <p>3. Press on <span style="color: red;">PRIME</span> button</p>
-                <p>4. Measure the  <span style="color: red;">amount dispensed</span> into the cup</p>
-                <p>5. Now press  <span style="color: red;">Calibrate</span> and enter amount measured</p>
-                <p>6. If doesn't work Press  <span style="color: red;">Reverse Prime</span> then repeat steps 3 - 5'</p>
+                <p>2. Put the container in receiving chamber</p>
+                <p>3. Click on Dispensing Pharmacy</p>
+                <p>4. Click on Pump Reservoir on the left</p>
+                <p>5. Click <span style='color:red'>Prime</span> button to fill pump tube with dispensing drug </p>
+                <p>NB. <span style='color:red'>Repeat priming</span> until drug dispenses to the target container. If pump unresponsive, use </p>
+                <p>6. <span style='color:red'>Reverse Prime</span> button to initiate the pump or empty drug from the tube</p>
+                <p>7. If drug completely fills the tube, prime once on an empty tumbler/container, measure the dispensed volume and measure to determine its quantity in millimetres.</p>
+                <p>8. Click on <span style='color:red'>Calibrate</span> button and enter the dispensed volume in the prompt</p>
+                <p>9. Now you can proceed to normal dispensing procedure after calibration</p>
+                <p>10. <span style='color:red'>NOTE:</span> Its highly advisable that priming and calibration be done everyday before first client is served</p>
             </div>
         </div>
     </div>
