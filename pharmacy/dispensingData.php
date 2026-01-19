@@ -684,11 +684,22 @@ if (isset($_SESSION['dispensing_errors'])) {
                 if (isset($currentSettings['dosage']) && is_numeric($currentSettings['dosage'])) {
                     $mlsValue = number_format(floatval($currentSettings['dosage']) / 5, 2);
                 }
+                ?>-->
+
+                <?php
+                // Calculate mls value only if drug is methadone
+                $mlsValue = '';
+                if (isset($currentSettings['drugname']) &&
+                    strtolower($currentSettings['drugname']) === 'methadone' &&
+                    isset($currentSettings['dosage']) &&
+                    is_numeric($currentSettings['dosage'])) {
+                    $mlsValue = number_format(floatval($currentSettings['dosage']) / 5, 2);
+                }
                 ?>
 
                 <div class="form-group2">
                     <input type="text" name="mls" class="readonly-input" readonly value="<?php echo htmlspecialchars($mlsValue); ?>">
-                </div>-->
+                </div>
                 <input type="hidden" name="daysToNextAppointment" value="<?php echo $daysToAppointment; ?>">
                 <input type="hidden" name="isMissed" value="<?php echo $isMissed ? 'true' : 'false'; ?>">
                 <input type="hidden" name="appointmentType" value="<?php echo htmlspecialchars($appointmentInfo['appointmentType']); ?>">
