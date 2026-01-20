@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fields = [
         'reg_facility', 'mflcode', 'county', 'scounty', 'mat_id', 'mat_number', 'clientName',
         'sname', 'nickName', 'nat_id', 'dob', 'sex', 'marital_status', 'residence_scounty',
-        'p_address', 'client_phone', 'mat_status', 'transfer_id', 'referral_type',
+        'p_address', 'client_phone', 'mat_status', 'transfer_id', 'referral_type', 'cso',
         'referring_facility', 'reffering_fac_client_number', 'accompanment_type',
         'peer_edu_name', 'peer_edu_phone', 'rx_supporter_name', 'dosage', 'reasons',
         'current_status', 'next_appointment', 'hcw_name', 'reg_date' // Correctly included
