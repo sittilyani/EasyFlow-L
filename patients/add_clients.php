@@ -66,16 +66,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sql = "INSERT INTO patients (
             reg_facility, mflcode, county, scounty, reg_date, mat_id, mat_number, clientName, sname,
             nickName, nat_id, dob, age, sex, marital_status, residence_scounty, p_address,
-            client_phone, mat_status, transfer_id, referral_type, referring_facility,
+            client_phone, mat_status, transfer_id, referral_type, cso, referring_facility,
             reffering_fac_client_number, accompanment_type, peer_edu_name, peer_edu_phone,
             rx_supporter_name, drugname, reasons, current_status, hcw_name
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $conn->prepare($sql);
         if ($stmt) {
 
             // 33 parameters in total (32 string fields + 1 integer field for 'age')
-            $type_string = "ssssssssssssissssssssssssssssss";
+            $type_string = "ssssssssssssisssssssssssssssssss";
 
             $stmt->bind_param(
                 $type_string,
@@ -100,6 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $formData['mat_status'],
                 $formData['transfer_id'],
                 $formData['referral_type'],
+                $formData['cso'],
                 $formData['referring_facility'],
                 $formData['reffering_fac_client_number'],
                 $formData['accompanment_type'],

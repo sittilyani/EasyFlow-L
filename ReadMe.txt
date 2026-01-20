@@ -961,3 +961,6 @@ https://chat.deepseek.com/a/chat/s/93bc31bc-d902-45da-abe4-05111c19caee
 cd C:\laragon\www\iorpms\pump_python
 C:\laragon\bin\python\python-3.13\python.exe pump_controller.py dispense 2
 
+INSERT INTO `facilities` VALUES('100000', 'Kisauni MAT Clinic', '28293', 'Mombasa', 'Nyali', 'Ministry of Health', 'Stawisha Pwani', 'No Agency', '', 'Active', 'On Premises', 'Not Found', 'Not Found', '2026-01-16 05:15:02');
+INSERT INTO `facilities` VALUES('100001', 'Miritini Treatment And Rehabilitation Center', '29098', 'Mombasa', 'Jomvu', 'Ministry of Health', 'Stawisha Pwani', 'No Agency', '', 'Active', 'On Premises', 'Not Found', 'Not Found', '2026-01-16 05:15:02');
+
