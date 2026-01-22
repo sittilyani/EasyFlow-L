@@ -1,7 +1,5 @@
 <?php
 include('../includes/config.php');
-include('../includes/footer.php');
-include('../includes/header.php');
 
 // Check if the delete action is triggered
 if(isset($_GET['delete_id'])) {
@@ -57,7 +55,7 @@ $result = $conn->query($sql);
             <?php while ($row = $result->fetch_assoc()) : ?>
                 <tr>
                     <td><?php echo $row['clientName']; ?></td>
-                    <td><?php echo $row['mat_number']; ?></td>
+                    <td><?php echo $row['mat_id']; ?></td>
                     <td><img src="<?php echo $row['Image']; ?>" alt="<?php echo $row['clientName']; ?>"></td>
                     <td>
                       <a href='update.php?p_id=" . $row['p_id'] . "' class="btn btn-warning">Update</a> &#124;
