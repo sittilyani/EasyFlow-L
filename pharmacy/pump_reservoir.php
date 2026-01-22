@@ -246,15 +246,15 @@ $sub_dir = '';
                 Switch/Top up content
             </button>
 			
-			<button type="button" onclick="pump('D')" class="btn btn-primary">
+			<button type="button" onclick="pump('P')" class="btn btn-primary">
                 Prime 
             </button>
 			
-			<button id="factor" type="button" onclick="calibrate()" class="btn btn-primary" disabled>
+			<button id="factor" type="button" onclick="calibrate()" class="btn btn-primary">
                 Calibrate (<?php echo $factor; ?>)
             </button>
 			
-			<button type="button" onclick="pump('P')" class="btn btn-primary">
+			<button type="button" onclick="pump('D')" class="btn btn-primary">
                 Reverse Prime
             </button>
 				
@@ -273,7 +273,7 @@ $sub_dir = '';
 								if (xhr.status === 200) { 									
 									 if(!isNaN(xhr.responseText)) $("#factor").html('Calibrate ('+ xhr.responseText +')').removeAttr('disabled');
 									 //else alert('Response = '+ xhr.responseText);
-									 else alert('Pump error occured');
+									 //else alert('Pump error occured');
 								} else {
 									alert("Error:"+ xhr.status +' - '+ xhr.responseText);
 								}
@@ -398,8 +398,10 @@ $sub_dir = '';
                 document.getElementById('stat-overral').textContent = jsonData['all_time'][filterValue] || 0;
                 document.getElementById('stat-remaining').textContent = jsonData['remaining'][filterValue] || 0;
 				
-				if(!isNaN(filterValue)) port = filterValue;				
+				port = $("#device-select").text().match(/COM\d+/)?.[0];
             }
+			
+			//alert(port);
         }
 
         window.addEventListener('DOMContentLoaded', (event) => {
