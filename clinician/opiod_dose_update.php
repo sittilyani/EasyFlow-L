@@ -84,7 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["update"])) {
 
             // Redirect to dispensing.php with success message
             $successMessage = urlencode("Patient dosage updated successfully, please search to confirm changes!");
-            header("Location: ../pharmacy/dispensing.php?message=" . $successMessage);
+            header("Location: ../clinician/prescribe.php?message=" . $successMessage);
             exit();
         } else {
             $errorMessages[] = "Error updating patient information";

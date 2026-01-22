@@ -62,7 +62,7 @@ echo "
     </style>
     <script>
         setTimeout(function() {
-            window.location.href = '../views/view_all_patients.php'; // Redirect after 3 seconds
+            window.location.href = '../patients/view_all_patients.php'; // Redirect after 3 seconds
         }, 3000);
     </script>
 </head>

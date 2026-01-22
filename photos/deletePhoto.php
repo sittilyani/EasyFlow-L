@@ -5,8 +5,8 @@ include('../includes/config.php');
 if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['p_id'])) {
     $p_id = $_GET['p_id'];
 
-    // Fetch the image path from the database
-    $sql = "SELECT image FROM photos WHERE p_id = ?";
+    // First, get the mat_id from patients table
+    $sql = "SELECT mat_id FROM patients WHERE p_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $p_id);
     $stmt->execute();
@@ -14,38 +14,43 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['p_id'])) {
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        $image_path = $row['image'];
+        $mat_id = $row['mat_id'];
 
-        // Debug: Print the image path
-        echo "Image Path: " . $image_path . "<br>";
-
-        // Delete the photo record from the database
-        $delete_sql = "DELETE FROM photos WHERE p_id = ?";
+        // Delete all photos associated with this mat_id (BLOB data will be deleted automatically)
+        $delete_sql = "DELETE FROM photos WHERE mat_id = ?";
         $delete_stmt = $conn->prepare($delete_sql);
-        $delete_stmt->bind_param("i", $p_id);
-        $delete_stmt->execute();
+        $delete_stmt->bind_param("s", $mat_id);
 
-        // Debug: Check if the file exists before attempting to delete
-        if (file_exists($image_path)) {
-            echo "File exists.<br>";
-            // Delete the photo file from the server
-            if (unlink($image_path)) {
-                $message = "Photo and record deleted successfully.";
+        if ($delete_stmt->execute()) {
+            $affected_rows = $delete_stmt->affected_rows;
+
+            if ($affected_rows > 0) {
+                $message = "Photo(s) deleted successfully! ($affected_rows photo(s) removed)";
+                $status = "success";
             } else {
-                $message = "Error: Unable to delete photo file from the server.";
+                $message = "No photos found to delete for this patient.";
+                $status = "warning";
             }
         } else {
-            $message = "Error: Photo file not found on the server.";
+            $message = "Error: Unable to delete photo(s). " . $delete_stmt->error;
+            $status = "error";
         }
+
+        $delete_stmt->close();
     } else {
-        $message = "Error: Photo record not found in the database.";
+        $message = "Error: Patient record not found.";
+        $status = "error";
     }
+
+    $stmt->close();
 } else {
-    $message = "Error: Invalid request.";
+    $message = "Error: Invalid request. Patient ID missing.";
+    $status = "error";
 }
 
-// Redirect back to the index.php after 3 seconds
-header("refresh:3;url=index.php");
+$conn->close();
 
-echo $message;
+// Redirect back to read.php with message
+header("Location: client_search.php?message=" . urlencode($message) . "&status=" . $status);
+exit();
 ?>
