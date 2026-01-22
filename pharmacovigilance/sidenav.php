@@ -18,7 +18,6 @@ $user_id = $_SESSION['user_id'] ?? '';
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>EasyFlow-L</title>
 <link rel="stylesheet" href="../assets/fontawesome/css/font-awesome.css" type="text/css">
-<link rel="stylesheet" href="../assets/fontawesome/css/font-awesome.min.css" type="text/css">
 <link rel="stylesheet" href="../assets/fontawesome/css/font-awesome.css" type="text/css">
 <link rel="apple-touch-icon" sizes="180x180" href="../assets/favicons/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicons/favicon-32x32.png">
@@ -41,47 +40,25 @@ $user_id = $_SESSION['user_id'] ?? '';
 
 <div class="sidenav">
     <h2>
-        <i class="fa fa-stethoscope"></i><br>
-        Clinical Consultations
+        <i class="fa fa-umbrella"></i><br>
+        Pharmacovigilance
     </h2>
 
     <!-- Home link - will navigate away from this page -->
     <a href="../dashboard/dashboard.php" class="nav-link home-link">
         <i class="fa fa-home"></i>Home
     </a>
-    <a href="../clinician/prescribe.php" target="contentFrame" class="nav-link" style="background: yellow; color: #000000;">
-            <i class="fa fa-clone"></i>Update dosage</a>
-    <a href="../clinician/client_search_consent.php" target="contentFrame" class="nav-link">
-        <i class="fa fa-lock"></i>Consent Form 3 E ver 2020</a>
-    <a href="../clinician/treatment-old.php" target="contentFrame" class="nav-link"  style="background: yellow; margin-top: 10px; color: #000000;">
-        <i class="fa fa-stethoscope"></i>Clinical Follow Up - OLD</a>
-    <a href="../clinician/clinician_follow_up_form.php" target="contentFrame" class="nav-link" style="background: #cff0ce; margin-top: 10px; color: #000000;">
-        <i class="fa fa-stethoscope"></i>Clinical Follow Up - NEW</a>
-    <a href="../clinician/clinical_encounter_search.php" target="contentFrame" class="nav-link">
-        <i class="fa fa-stethoscope"></i>Initial Clinical Encounter Form</a>
 
-    <a href="../clinician/other_prescriptions.php" target="contentFrame" class="nav-link">
-        <i class="fa fa-file"></i>Prescribe other drugs</a>
-    <a href="../clinician/search_patients_involuntary.php" target="contentFrame" class="nav-link">
-        <i class="fa fa-user-circle"></i>Involuntary Discontinuation</a>
-    <a href="../clinician/search_patients_voluntary.php" target="contentFrame" class="nav-link">
-        <i class="fa fa-user-circle"></i>Voluntary Discontinuation</a>
-    <a href="../referrals/referral_dashboard.php" target="contentFrame" class="nav-link">
-            <i class="fa fa-stethoscope"></i>View referrals</a>
-    <a href="../patients/view_hiv_positive.php" target="contentFrame"  class="nav-link">
-        <i class="fa fa-microchip"></i>HIV Viral Load</a>
-    <a href="../clinician/transfer_form_search.php" target="contentFrame" class="nav-link">
-        <i class="fa fa-stethoscope"></i>Transfer Form</a>
-    <a href="../laboratory/toxicology_results.php" target="contentFrame"  class="nav-link">
-        <i class="fa fa-binoculars"></i>Toxicology Results</a>
-    <a href="../reports/search_patient_treatment_card_form3c.php" target="contentFrame" class="nav-link">
-        <i class="fa fa-users"></i>Form 3C Yellow Card</a>
+                <a href="https://pv.pharmacyboardkenya.org/" target="contentFrame" class="nav-link">
+                    <i class="fa fa-search"></i>Report ADRs and PQHPTs</a>
+
+
 
 </div>
 
 <div class="main">
     <div class="content-header">
-        <h2>Patient clinical management</h2>
+        <h2>Pharmacovigilance</h2>
         <div class="user-info">
             <div class="user-details">
                     <?php
@@ -107,9 +84,9 @@ $user_id = $_SESSION['user_id'] ?? '';
 
         <div class="welcome-message" id="welcomeMessage">
             <img src="../assets/images/pt-doctor-removebg-preview.png" width="172" height="116" alt="">
-            <h3>Welcome to the integrated patient management system</h3>
-            <p>Select an option from the side navigation to access services. Your access level is: <strong><?php echo ucfirst($userrole); ?></strong></p>
-            <p>As an <strong><?php echo ucfirst($userrole); ?></strong>, <span style="color: red;">always backup your database on external hard-drive and cloud e.g Google Drive</span></p>
+            <h3>Welcome to the Pharmacy and Poisons Board Website</h3>
+            <p>Do Not Be Certain, always Be Suscipicous></p>
+            <p>Report all suspected adverse drug reactions and poor quality health products and technologies</p>
         </div>
     </div>
 </div>
