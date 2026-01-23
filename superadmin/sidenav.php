@@ -51,7 +51,7 @@ $user_id = $_SESSION['user_id'] ?? '';
     <a href="../backup/backup.php" class="nav-link">
         <i class="fa fa-database"></i> Backup System</a>
 
-    <a href="../backup/view_backups.php" target="contentFrame" class="nav-link">
+    <a href="../backup/view_backups-manual.php" target="contentFrame" class="nav-link">
         <i class="fa fa-eye"></i>View Backups</a>
 
     <a href="../public/user_registration.php" target="contentFrame" class="nav-link">
