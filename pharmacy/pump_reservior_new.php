@@ -254,7 +254,30 @@ $calibration_history = $calHistoryResult->fetch_all(MYSQLI_ASSOC);
         </div>
 
         <div class="stats-container">
-            <!-- ... (Your existing stats container) ... -->
+            <div class="stat-item stat-remaining">
+                <span class="stat-value" id="stat-remaining">0</span>
+                <span class="stat-label">Millilitres(ML) remaining</span>
+            </div>
+
+            <div class="stat-item stat-today">
+                <span class="stat-value" id="stat-today">0</span>
+                <span class="stat-label">Milligrams dispensed today</span>
+            </div>
+
+            <div class="stat-item stat-week">
+                <span class="stat-value" id="stat-week">0</span>
+                <span class="stat-label">Milligrams dispensed this week</span>
+            </div>
+
+            <div class="stat-item stat-month">
+                <span class="stat-value" id="stat-month">0</span>
+                <span class="stat-label">Milligrams dispensed this month</span>
+            </div>
+
+            <div class="stat-item stat-overral">
+                <span class="stat-value" id="stat-overral">0</span>
+                <span class="stat-label">Milligrams dispensed overral</span>
+            </div>
         </div>
 
         <?php if (!empty($success_message)): ?>
@@ -328,7 +351,21 @@ $calibration_history = $calHistoryResult->fetch_all(MYSQLI_ASSOC);
                 </tr>
             </thead>
             <tbody>
-                <!-- ... (Your existing history table rows) ... -->
+                <?php foreach ($pump_history as $row): ?>
+                    <tr>
+                        <td scope="row"><?php echo htmlspecialchars($row['device_label']); ?> (<?php echo htmlspecialchars($row['device_port']); ?>)</td>
+                        <td><?php echo htmlspecialchars($row['milligrams']); ?></td>
+                        <td><?php echo htmlspecialchars($row['new_milligrams']); ?></td>
+                        <td><?php echo htmlspecialchars($row['topup_from']); ?></td>
+                        <td><?php echo htmlspecialchars($row['topup_to'] ?? ''); ?></td>
+                        <td><?php echo htmlspecialchars($row['dispenses'] ?? 0); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                <?php if (empty($pump_history)): ?>
+                    <tr>
+                        <td scope="row" colspan="5" class="text-center">No history available</td>
+                    </tr>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
@@ -397,7 +434,7 @@ $calibration_history = $calHistoryResult->fetch_all(MYSQLI_ASSOC);
                             <strong>Calibration Instructions:</strong><br>
                             1. Prime the pump with 10mg dose (should dispense 2mL for 5mg/mL concentration)<br>
                             2. Measure actual dispensed volume<br>
-                            3. Calculate new factor: New Factor = (Actual mL / Expected mL) × Current Factor<br>
+                            3. Calculate new factor: New Factor = (Actual mL / Expected mL) ï¿½ Current Factor<br>
                             4. Enter calculated factor above
                         </div>
 
@@ -410,8 +447,47 @@ $calibration_history = $calHistoryResult->fetch_all(MYSQLI_ASSOC);
     </div>
 
     <!-- Original Top-up Modal -->
-    <div class="modal fade" id="pump-content-update" tabindex="-1" role="dialog">
-        <!-- ... (Your existing top-up modal) ... -->
+    <div class="modal fade" id="pump-content-update" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Switch/Top up content</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <?php if (!empty($error_message)): ?>
+                        <div class="alert alert-warning" role="alert">
+                            <?php echo htmlspecialchars($error_message); ?>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    <?php endif; ?>
+                    <form id="dispenseForm" action="pump_reservoir.php" method="post">
+                        <div class="form-group">
+                            <label for="device-select">Pump device:</label>
+                            <select class="form-control" name="device" id="device-select" required>
+                                <?php if (count($devices) !== 1): ?>
+                                    <option value="" disabled hidden selected>select device</option>
+                                <?php endif; ?>
+                                <?php foreach ($devices as $row): ?>
+                                    <option value="<?php echo $row['id'] ?>" <?php if (count($devices) === 1 || (isset($form_values['device']) && $form_values['device'] === $row['id'])) echo 'selected' ?>>
+                                        <?php echo $row['label'] ?> (<?php echo $row['port'] ?>)
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="milligrams">Milligrams:</label>
+                            <input class="form-control" type="number" placeholder="milligrams" name="milligrams" id="milligrams" step="5" min="5" max="12000" required value="<?php echo isset($form_values['milligrams']) ? $form_values['milligrams'] : ''; ?>">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="../assets/js/jquery-3.7.1.min.js"></script>
