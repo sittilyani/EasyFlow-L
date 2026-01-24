@@ -953,3 +953,48 @@ END$$
 DELIMITER ;
 
 
+<<<<<<< Updated upstream
+=======
+Download FTDI chip software for reading the pump
+
+
+https://chat.deepseek.com/a/chat/s/93bc31bc-d902-45da-abe4-05111c19caee 
+
+cd C:\laragon\www\iorpms\pump_python
+C:\laragon\bin\python\python-3.13\python.exe pump_controller.py dispense 2
+
+INSERT INTO `facilities` VALUES('100000', 'Kisauni MAT Clinic', '28293', 'Mombasa', 'Nyali', 'Ministry of Health', 'Stawisha Pwani', 'No Agency', '', 'Active', 'On Premises', 'Not Found', 'Not Found', '2026-01-16 05:15:02');
+INSERT INTO `facilities` VALUES('100001', 'Miritini Treatment And Rehabilitation Center', '29098', 'Mombasa', 'Jomvu', 'Ministry of Health', 'Stawisha Pwani', 'No Agency', '', 'Active', 'On Premises', 'Not Found', 'Not Found', '2026-01-16 05:15:02');
+
+
+Pump persistence adjustments table
+
+CREATE TABLE pump_calibration (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    pump_id INT NOT NULL,
+    calibration_factor DECIMAL(10,2) NOT NULL,
+    concentration_mg_per_ml DECIMAL(5,2) NOT NULL DEFAULT 5.00,
+    tubing_type VARCHAR(50),
+    calibrated_by VARCHAR(100),
+    calibrated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    notes TEXT,
+    is_active BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY (pump_id) REFERENCES pump_devices(id) ON DELETE CASCADE
+);
+
+-- Create an index for better performance
+CREATE INDEX idx_pump_active ON pump_calibration(pump_id, is_active);
+
+-- Insert default calibration for existing pumps
+INSERT INTO pump_calibration (pump_id, calibration_factor, concentration_mg_per_ml, calibrated_by, notes)
+SELECT id, 500, 5.00, 'System', 'Default calibration' FROM pump_devices;
+
+
+added
+../pharmacy/update_factor.php
+../pharmacy/update_calibration.php
+../pharmacy/calibration_test.php
+
+
+
+>>>>>>> Stashed changes
