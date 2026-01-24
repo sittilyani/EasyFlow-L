@@ -1,39 +1,12 @@
 <?php
 session_start();
 include 'includes/config.php';
+$factor = '400';
 
-// Default values
-$default_factor = '500';
-$concentration = 5.00; // 5mg/mL
-
-// Get calibration from database for specific pump
-$pump_device = isset($_POST['pump_device']) ? (int)$_POST['pump_device'] : null;
-
-// Initialize factor with session or default
-$factor = isset($_SESSION['factor']) ? $_SESSION['factor'] : $default_factor;
-
-// If we have a specific pump, try to get its calibration
-if ($pump_device) {
-    $calQuery = "SELECT calibration_factor, concentration_mg_per_ml
-                 FROM pump_calibration
-                 WHERE pump_id = ? AND is_active = TRUE
-                 ORDER BY calibrated_at DESC LIMIT 1";
-    $calStmt = $conn->prepare($calQuery);
-    $calStmt->bind_param('i', $pump_device);
-    $calStmt->execute();
-    $calResult = $calStmt->get_result();
-
-    if ($calResult->num_rows > 0) {
-        $calRow = $calResult->fetch_assoc();
-        $factor = $calRow['calibration_factor'];
-        $concentration = $calRow['concentration_mg_per_ml'];
-    }
-    $calStmt->close();
-}
-
+if(isset($_SESSION['factor'])) $factor = $_SESSION['factor'];
 // Safety limits
 define('MAX_DAILY_DOSAGE_MG', 300);
-define('METHADONE_CONCENTRATION', $concentration);
+define('METHADONE_CONCENTRATION', 10);
 
 $routineErrors = [];
 $successMessages = [];
@@ -158,8 +131,9 @@ try {
         throw new Exception(implode(', ', $routineErrors));
     }
 
-    // Executing pump command with calibrated factor
-    $ml = ($dosage / METHADONE_CONCENTRATION) * $factor;
+    // Executing pump command
+
+    $ml = ($dosage / 5) * $factor;
     $pump_cmd = "/1m50h10j4V1600L400z{$ml}P{$ml}R";
     $command = "pumpAPI.exe $pump_port 9600 raw $pump_cmd";
 
@@ -198,12 +172,13 @@ try {
     $updateStatusStmt->execute();
     $updateStatusStmt->close();
 
-    $successMessages[] = "Routine Drug ($drugname) dispensed successfully! (Dosage: $dosage mg = " . ($dosage / METHADONE_CONCENTRATION) . " mL, Cal Factor: $factor)";
+    $successMessages[] = "Routine Drug ($drugname) dispensed successfully! (Dosage: $dosage mg)";
 
     $conn->commit();
     $routineDispenseSuccess = true;
 
     $stmt->close();
+
 
     $_SESSION['successMessages'] = $successMessages;
     header("Location: pharmacy/dispensing_pump.php");
