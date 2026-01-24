@@ -26,7 +26,8 @@ if (isset($_SESSION['dispensing_successes'])) {
     <link rel="stylesheet" href="../assets/css/tables.css" type="text/css">
     <!-- Add your CSS styling here -->
     <style>
-
+         .tablets-display { color: blue; font-weight: bold; }
+         .volume-display { color: red; font-weight: bold; }
 
     </style>
 </head>
@@ -99,44 +100,65 @@ if ($result->num_rows > 0) {
                 <th style='width: 80px;'>Sex</th>
                 <th style='width: 120px;'>Drug</th>
                 <th style='width: 100px;'>Dosage(mg)</th>
-                <th style='width: 100px;'>Dosage(mL)</th>
+                <th style='width: 100px;'>Volume(mL)</th>
                 <th style='width: 60px;'>Current Status</th>
                 <th style='width: 80px;'>History</th>
                 <th>Action</th>
             </tr>
         </thead>
     <tbody>";
+        while ($row = $result->fetch_assoc()) {
 
-    while ($row = $result->fetch_assoc()) {
-        // Calculate dosage_ml for each row
-        $dosage = !empty($row['dosage']) ? $row['dosage'] : 0;
-        $dosage_ml = $dosage / 5;
+            $drugname = $row['drugname'];
+            $dosage   = (float)$row['dosage'];
 
-        echo "<tr>
-                <td>" . $row['p_id'] . "</td>
-                <td>" . $row['mat_id'] . "</td>
-                <td>" . $row['clientName'] . "</td>
-                <td>" . $row['age'] . "</td>
-                <td>" . $row['sex'] . "</td>
-                <td style ='color: blue;'>" . $row['drugname'] . "</td>
-                <td>" . $dosage . "</td>
-                <td style='color: red; font-weight: bold; align-items: center;'>" . $dosage_ml . "</td>
-                <td>" . $row['current_status'] . "</td>
+            // Check if drug is Methadone (liquid) or tablets
+            if (stripos($drugname, 'methadone') !== false) {
+                // Methadone: 5mg/mL
+                $display_value = $dosage / 5;
+                $display_text  = number_format($display_value, 1) . " mL";
+                $display_class = "volume-display";
+            } else {
+                // Tablets
+                preg_match('/(\d+(\.\d+)?)\s*mg/i', $drugname, $matches);
+                $tablet_strength = isset($matches[1]) ? (float)$matches[1] : 1;
+
+                if ($tablet_strength > 0) {
+                    $tablets = $dosage / $tablet_strength;
+                    $display_text = number_format($tablets, 1) . " Tablet(s)";
+                } else {
+                    $display_text = $dosage . " Tablet(s)";
+                }
+                $display_class = "tablets-display";
+            }
+
+            echo "<tr>
+                <td>{$row['p_id']}</td>
+                <td>{$row['mat_id']}</td>
+                <td>{$row['clientName']}</td>
+                <td>{$row['age']}</td>
+                <td>{$row['sex']}</td>
+                <td style='color: blue;'>{$row['drugname']}</td>
+                <td>{$dosage}</td>
+                <td class='{$display_class}'>{$display_text}</td>
+                <td>{$row['current_status']}</td>
                 <td>
                     <center>
-                    <a href='history.php?p_id=" . $row['p_id'] . "' style='font-size: 24px; color: brown;'><i class='fa fa-exclamation-circle'></i></a>
+                        <a href='history.php?p_id={$row['p_id']}' style='font-size:24px;color:brown;'>
+                            <i class='fa fa-exclamation-circle'></i>
+                        </a>
                     </center>
-
                 </td>
                 <td>
-                    <a href='../pharmacy/view-missed.php?mat_id=" . $row['mat_id'] . "'>View</a> &#124;
-                    <a href='dispensingData.php?mat_id=" . $row['mat_id'] . "'>DISPENSE</a> &#124;
-                    <a href='multi_dispensing.php?mat_id=" . $row['mat_id'] . "'>MDD</a> &#124;
-                    <a href='../referrals/referral.php?mat_id=" . $row['mat_id'] . "'>Refer</a>
+                    <a href='../pharmacy/view-missed.php?mat_id={$row['mat_id']}'>View</a> |
+                    <a href='dispensingData.php?mat_id={$row['mat_id']}'>DISPENSE</a> |
+                    <a href='multi_dispensing.php?mat_id={$row['mat_id']}'>MDD</a> |
+                    <a href='../referrals/referral.php?mat_id={$row['mat_id']}'>Refer</a>
                 </td>
             </tr>";
-    }
-    echo "</table>";
+        }
+        echo "</tbody></table>";
+
 } else {
     echo "<p>No results found.</p>";
 }
