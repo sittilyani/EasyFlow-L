@@ -128,7 +128,7 @@ $devices = $result_devices->fetch_all(MYSQLI_ASSOC);
 
 // Pagination defaults
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
-$limit = 20;
+$limit = 5;
 $offset = ($page - 1) * $limit;
 
 // Query pump_reservoir_history ordered by created_at DESC with pagination
@@ -207,7 +207,38 @@ $calibration_history = $calHistoryResult->fetch_all(MYSQLI_ASSOC);
     <script src="../assets/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="../assets/css/bootstrap.css" type="text/css">
     <style>
-        /* ... (Your existing CSS styles) ... */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        body { background-color: #f5f7fa; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h2 { color: #2C3162; margin: 20px 0; text-align: center; }
+        .stats-container { display: flex; justify-content: space-between; background-color: #deffee; padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .stat-item { text-align: center; padding: 10px; border-radius: 6px; flex: 1; margin: 0 10px; }
+        .stat-remaining { background-color: #fff9c4; color: #d32f2f; border: 1px solid #ffd54f; }
+        .stat-today { background-color: #f3e5f5; color: #7b1fa2; border: 1px solid #ce93d8; }
+        .stat-week { background-color: #f3e5f5; color: #7b1fa2; border: 1px solid #ce93d8; }
+        .stat-month { background-color: #f3e5f5; color: #7b1fa2; border: 1px solid #ce93d8; }
+        .stat-overral { background-color: #f3e5f5; color: #7b1fa2; border: 1px solid #ce93d8; }
+        .stat-value { font-size: 20px; font-weight: bold; display: block; }
+        .stat-label { font-size: 14px; margin-top: 5px; }
+        /* Repositioning the prescriptions-container and submit-btn */
+        .prescriptions-container {
+            margin-bottom: 20px; /* Space between table and button */
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .prescriptions-table { width: 100%; border-collapse: collapse; }
+        .prescriptions-table th, .prescriptions-table td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        .prescriptions-table th { background-color: #f2f2f2; font-weight: bold; }
+        .prescriptions-table input[type="number"] { width: 80px; padding: 5px; }
+        .prescriptions-table input[type="checkbox"] { transform: scale(1.2); }
+        .custom-alert { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: yellow; color: red; border: 2px solid red; padding: 20px; width: 300px; text-align: center; z-index: 1000; border-radius: 8px; font-size: 16px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .custom-alert button { margin-top: 10px; padding: 8px 16px; background-color: red; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .custom-alert button:hover { background-color: darkred; }
+        .missed-appointment { color: red; font-weight: bold; }
+
         .calibration-info {
             background-color: #e3f2fd;
             padding: 10px;
@@ -308,7 +339,7 @@ $calibration_history = $calHistoryResult->fetch_all(MYSQLI_ASSOC);
         </div>
 
         <!-- Calibration History Table -->
-        <div class="mt-4">
+        <!--<div class="mt-4">
             <h4>Calibration History</h4>
             <table class="table table-sm table-bordered">
                 <thead>
@@ -328,7 +359,7 @@ $calibration_history = $calHistoryResult->fetch_all(MYSQLI_ASSOC);
                         <td><?php echo htmlspecialchars($history['pump_label']); ?></td>
                         <td><?php echo $history['calibration_factor']; ?></td>
                         <td><?php echo $history['concentration_mg_per_ml']; ?> mg/mL</td>
-                        <td><?php echo htmlspecialchars($history['tubing_type']); ?></td>
+                        <td><?php echo htmlspecialchars(isset($history['tubing_type']) ? $history['tubing_type'] : 'system'); ?></td>
                         <td><?php echo htmlspecialchars($history['calibrated_by']); ?></td>
                         <td><?php echo date('Y-m-d H:i', strtotime($history['calibrated_at'])); ?></td>
                         <td><?php echo htmlspecialchars($history['notes']); ?></td>
@@ -336,7 +367,7 @@ $calibration_history = $calHistoryResult->fetch_all(MYSQLI_ASSOC);
                     <?php endforeach; ?>
                 </tbody>
             </table>
-        </div>
+        </div>-->
 
         <!-- Main History Table -->
         <table class="table table-striped mt-4">
