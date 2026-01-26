@@ -1,6 +1,13 @@
 <?php
+// Use centralized session manager from includes directory
+include '../includes/session_manager.php';
+
+// Check if user is logged in
+requireLogin();
+
 // Include the header (which handles session and config)
 include '../includes/header.php';
+
 
 // Define role-based permissions for cards and sidebars
 $rolePermissions = [
@@ -631,6 +638,52 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // If you need to check periodically (optional)
         // setInterval(checkPrescriptionCount, 5000); // Check every 5 seconds
+    </script>
+    <script>
+        // Keep session alive across page navigation
+        let sessionKeepAlive = null;
+
+        function startSessionKeepAlive() {
+            // Send keep-alive request every 5 minutes
+            sessionKeepAlive = setInterval(() => {
+                fetch('../includes/keepalive.php')
+                    .then(response => response.text())
+                    .then(data => {
+                        console.log('Session kept alive');
+                    })
+                    .catch(error => {
+                        console.error('Error keeping session alive:', error);
+                    });
+            }, 300000); // 5 minutes
+        }
+
+        // Stop keep-alive when leaving page
+        function stopSessionKeepAlive() {
+            if (sessionKeepAlive) {
+                clearInterval(sessionKeepAlive);
+                sessionKeepAlive = null;
+            }
+        }
+
+        // Start when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            startSessionKeepAlive();
+        });
+
+        // Clean up before page unload
+        window.addEventListener('beforeunload', stopSessionKeepAlive);
+
+        // Reset timeout on user activity
+        ['click', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
+            document.addEventListener(event, function() {
+                // Send activity ping
+                fetch('../includes/keepalive.php?activity=1')
+                    .then(response => response.text())
+                    .then(data => {
+                        console.log('Activity recorded');
+                    });
+            });
+        });
     </script>
 </body>
 </html>

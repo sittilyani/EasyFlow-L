@@ -1,15 +1,15 @@
 <?php
-// Use centralized session management
+// Use centralized session manager
 include "../includes/session_manager.php";
-updateSessionActivity();
-requireLogin(); // This will redirect to login if not logged in
+requireLogin();
 
 // Include configuration
 include "../includes/config.php";
 
-// Get user role from session
-$userrole = $_SESSION['userrole'] ?? '';
-$user_id = $_SESSION['user_id'] ?? '';
+// Get user info from session manager functions
+$userrole = getUserRole();
+$user_id = getUserId();
+$full_name = getUserFullName();
 ?>
 
 <!DOCTYPE html>
@@ -256,6 +256,52 @@ $user_id = $_SESSION['user_id'] ?? '';
     // Initialize timer
     resetTimer();
 </script>
+<script>
+        // Keep session alive across page navigation
+        let sessionKeepAlive = null;
+
+        function startSessionKeepAlive() {
+            // Send keep-alive request every 5 minutes
+            sessionKeepAlive = setInterval(() => {
+                fetch('../includes/keepalive.php')
+                    .then(response => response.text())
+                    .then(data => {
+                        console.log('Session kept alive');
+                    })
+                    .catch(error => {
+                        console.error('Error keeping session alive:', error);
+                    });
+            }, 300000); // 5 minutes
+        }
+
+        // Stop keep-alive when leaving page
+        function stopSessionKeepAlive() {
+            if (sessionKeepAlive) {
+                clearInterval(sessionKeepAlive);
+                sessionKeepAlive = null;
+            }
+        }
+
+        // Start when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            startSessionKeepAlive();
+        });
+
+        // Clean up before page unload
+        window.addEventListener('beforeunload', stopSessionKeepAlive);
+
+        // Reset timeout on user activity
+        ['click', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
+            document.addEventListener(event, function() {
+                // Send activity ping
+                fetch('../includes/keepalive.php?activity=1')
+                    .then(response => response.text())
+                    .then(data => {
+                        console.log('Activity recorded');
+                    });
+            });
+        });
+    </script>
 
 </body>
 </html>

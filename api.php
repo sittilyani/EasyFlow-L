@@ -11,7 +11,7 @@ if ($input) {
     $port   = $_GET['port'] ?? 'COM4';
 	$cmd = $_GET['cmd'] ?? 'D';
 
-	if($action==="raw" && ($cmd==='P' || $cmd==='D')){ 
+	if($action==="raw" && ($cmd==='P' || $cmd==='D')){
 	   if(!empty($cmd)){	
 			$cmd = '/1m50h10j4V1600L400z4000'. $cmd .'4000R';
 			// Build the command string

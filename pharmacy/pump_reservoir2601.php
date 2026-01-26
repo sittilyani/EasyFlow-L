@@ -1,0 +1,643 @@
+<?php
+session_start();
+include '../includes/config.php';
+
+$error_message = "";
+$success_message = "";
+
+if (!isset($conn) || !($conn instanceof mysqli)) {
+    die("Database connection failed. Check config.php.");
+}
+
+$conn->set_charset('utf8mb4');
+
+// Get pump calibrations
+function getPumpCalibration($conn, $pump_id = null) {
+    if ($pump_id) {
+        $query = "SELECT calibration_factor, concentration_mg_per_ml, tubing_type
+                  FROM pump_calibration
+                  WHERE pump_id = ? AND is_active = TRUE
+                  ORDER BY calibrated_at DESC LIMIT 1";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param('i', $pump_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $calibration = $result->fetch_assoc();
+        $stmt->close();
+        return $calibration ?: ['calibration_factor' => 500, 'concentration_mg_per_ml' => 5.00];
+    }
+    return ['calibration_factor' => 500, 'concentration_mg_per_ml' => 5.00];
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['update_calibration'])) {
+        // Handle calibration update
+        $pump_id = $_POST['pump_id'];
+        $calibration_factor = $_POST['calibration_factor'];
+        $concentration = $_POST['concentration'] ?? 5.00;
+        $tubing_type = $_POST['tubing_type'] ?? '';
+        $notes = $_POST['notes'] ?? '';
+        $calibrated_by = $_SESSION['username'] ?? 'System';
+
+        // Deactivate old calibrations for this pump
+        $deactivateStmt = $conn->prepare("UPDATE pump_calibration SET is_active = FALSE WHERE pump_id = ?");
+        $deactivateStmt->bind_param('i', $pump_id);
+        $deactivateStmt->execute();
+        $deactivateStmt->close();
+
+        // Insert new calibration
+        $insertStmt = $conn->prepare("
+            INSERT INTO pump_calibration (pump_id, calibration_factor, concentration_mg_per_ml, tubing_type, calibrated_by, notes)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ");
+        $insertStmt->bind_param('iddsss', $pump_id, $calibration_factor, $concentration, $tubing_type, $calibrated_by, $notes);
+
+        if ($insertStmt->execute()) {
+            $success_message = "Calibration updated successfully!";
+        } else {
+            $error_message = "Failed to update calibration: " . $conn->error;
+        }
+        $insertStmt->close();
+    } else {
+        // Original top-up logic
+        $mg = $_POST['milligrams'];
+        $dev = $_POST['device'];
+
+        if (!is_numeric($mg) || $mg <= 0 || !is_numeric($dev)) {
+            $error_message = "Form submission failed, either milligrams was invalid or device not selected!";
+            $form_values = [
+                'milligrams' => $mg,
+                'device' => $dev
+            ];
+        } else {
+            $conn->begin_transaction();
+
+            # last top up
+            $stmtLastTopUp = $conn->prepare("SELECT id FROM pump_reservoir_history WHERE pump_id = ? AND `topup_to` IS NULL ORDER BY created_at DESC LIMIT 1");
+            $stmtLastTopUp->bind_param('i', $dev);
+            $stmtLastTopUp->execute();
+            $stmtLastTopUp->bind_result($lastTopUp);
+            $stmtLastTopUp->fetch();
+            $stmtLastTopUp->close();
+
+            $stmtUpdate = $conn->prepare("UPDATE pump_reservoir_history SET `topup_to` = NOW() WHERE id = ?");
+            $stmtUpdate->bind_param('i', $lastTopUp);
+            $stmtUpdate->execute();
+            $stmtUpdate->close();
+
+            $pumpQuery = "SELECT (
+                    (SELECT new_milligrams FROM pump_reservoir_history WHERE id = ?) -
+                    (SELECT COALESCE(SUM(dosage), 0) FROM pharmacy WHERE pump_id = pd.id AND dispDate >= (SELECT `topup_from` FROM pump_reservoir_history WHERE id = ?))
+                ) AS rem FROM pump_devices pd WHERE pd.id = ?";
+            $pumpStmt = $conn->prepare($pumpQuery);
+            $pumpStmt->bind_param('iii', $lastTopUp, $lastTopUp, $dev);
+            $pumpStmt->execute();
+            $pumpResult = $pumpStmt->get_result();
+            $pumpRow = $pumpResult->fetch_assoc();
+            $remainingQuantity = $pumpRow['rem'] ?? 0;
+            $newTotal = $remainingQuantity + $mg;
+
+            $stmtCreate = $conn->prepare("INSERT INTO pump_reservoir_history (`milligrams`, new_milligrams, `topup_from`, `pump_id`) VALUES (?, ?, NOW(), ?)");
+            $stmtCreate->bind_param('idi', $mg, $newTotal, $dev);
+            $stmtCreate->execute();
+            $stmtCreate->close();
+
+            if ($conn->commit()) {
+                $success_message = "Pump content updated successfully.";
+            } else {
+                $error_message = "Error: " . $conn->error;
+            }
+        }
+    }
+}
+
+// Get all pumps with their calibrations
+$stmt_devices = $conn->prepare("
+    SELECT pd.*,
+           pc.calibration_factor,
+           pc.concentration_mg_per_ml,
+           pc.tubing_type,
+           pc.calibrated_at
+    FROM pump_devices pd
+    LEFT JOIN pump_calibration pc ON pd.id = pc.pump_id AND pc.is_active = TRUE
+    ORDER BY pd.id
+");
+$stmt_devices->execute();
+$result_devices = $stmt_devices->get_result();
+$devices = $result_devices->fetch_all(MYSQLI_ASSOC);
+
+// Pagination defaults
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$limit = 5;
+$offset = ($page - 1) * $limit;
+
+// Query pump_reservoir_history ordered by created_at DESC with pagination
+$stmt_history = $conn->prepare("
+    SELECT prs.id, prs.milligrams, prs.new_milligrams, prs.topup_from, prs.topup_to, prs.created_at, dev.label AS device_label, dev.port AS device_port,
+    (SELECT COUNT(*) FROM pharmacy p WHERE p.pump_id = dev.id AND p.dispDate >= prs.topup_from AND (prs.topup_to IS NULL OR p.dispDate <= prs.topup_to)) AS dispenses
+    FROM pump_reservoir_history prs INNER JOIN pump_devices dev ON prs.pump_id = dev.id ORDER BY created_at DESC LIMIT ? OFFSET ?;
+");
+$stmt_history->bind_param('ii', $limit, $offset);
+$stmt_history->execute();
+$result_history = $stmt_history->get_result();
+$pump_history = $result_history->fetch_all(MYSQLI_ASSOC);
+$stmt_history->close();
+
+$date_filters = [
+    'today' => 'CURDATE()',
+    'this_week' => '(CURDATE() - INTERVAL WEEKDAY(CURDATE()) DAY)',
+    'this_month' => '(CURDATE() - INTERVAL (DAY(CURDATE()) - 1) DAY)',
+    'all_time' => '1800-01-01',
+];
+
+$sql_str_builder = [
+    "(
+        SELECT JSON_OBJECTAGG(id, rem) FROM (
+            SELECT
+            id,
+            (
+                (SELECT new_milligrams FROM pump_reservoir_history WHERE pump_id = pd.id AND `topup_to` IS NULL ORDER BY created_at DESC) -
+                (SELECT COALESCE(SUM(dosage), 0) FROM pharmacy WHERE pump_id = pd.id AND dispDate >= (SELECT `topup_from` FROM pump_reservoir_history WHERE pump_id = pd.id AND `topup_to` IS NULL ORDER BY created_at DESC))
+            ) AS rem
+            FROM pump_devices pd GROUP BY id
+        ) tbl
+    ) AS remaining"
+];
+
+foreach ($date_filters as $filter => $date_filter) {
+    $sql_str_builder[] = "
+        (SELECT JSON_OBJECTAGG(pump, count) FROM
+        (SELECT pd.id AS pump, COALESCE(pharmacy_totals.total_dosage, 0) AS count
+         FROM pump_devices pd
+         LEFT JOIN (
+             SELECT pump_id, SUM(dosage) AS total_dosage
+             FROM pharmacy
+             WHERE dispDate >= $date_filter
+             GROUP BY pump_id
+         ) AS pharmacy_totals ON pd.id = pharmacy_totals.pump_id) {$filter}_pump)
+        AS $filter
+    ";
+}
+
+$summary = [];
+$res = $conn->query('SELECT ' . implode(', ', $sql_str_builder));
+if ($res) {
+    $summary = $res->fetch_assoc();
+    $res->free();
+}
+
+$summary = array_map(function ($v) {
+    return json_decode($v ?? '{}', true);
+}, $summary);
+
+// Get calibration history
+$calHistoryQuery = "SELECT pc.*, pd.label as pump_label, pd.port as pump_port
+                    FROM pump_calibration pc
+                    JOIN pump_devices pd ON pc.pump_id = pd.id
+                    ORDER BY pc.calibrated_at DESC LIMIT 10";
+$calHistoryResult = $conn->query($calHistoryQuery);
+$calibration_history = $calHistoryResult->fetch_all(MYSQLI_ASSOC);
+
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Pump Reservoir</title>
+    <script src="../assets/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="../assets/css/bootstrap.css" type="text/css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        body { background-color: #f5f7fa; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h2 { color: #2C3162; margin: 20px 0; text-align: center; }
+        .stats-container { display: flex; justify-content: space-between; background-color: #deffee; padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .stat-item { text-align: center; padding: 10px; border-radius: 6px; flex: 1; margin: 0 10px; }
+        .stat-remaining { background-color: #fff9c4; color: #d32f2f; border: 1px solid #ffd54f; }
+        .stat-today { background-color: #f3e5f5; color: #7b1fa2; border: 1px solid #ce93d8; }
+        .stat-week { background-color: #f3e5f5; color: #7b1fa2; border: 1px solid #ce93d8; }
+        .stat-month { background-color: #f3e5f5; color: #7b1fa2; border: 1px solid #ce93d8; }
+        .stat-overral { background-color: #f3e5f5; color: #7b1fa2; border: 1px solid #ce93d8; }
+        .stat-value { font-size: 20px; font-weight: bold; display: block; }
+        .stat-label { font-size: 14px; margin-top: 5px; }
+        /* Repositioning the prescriptions-container and submit-btn */
+        .prescriptions-container {
+            margin-bottom: 20px; /* Space between table and button */
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .prescriptions-table { width: 100%; border-collapse: collapse; }
+        .prescriptions-table th, .prescriptions-table td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        .prescriptions-table th { background-color: #f2f2f2; font-weight: bold; }
+        .prescriptions-table input[type="number"] { width: 80px; padding: 5px; }
+        .prescriptions-table input[type="checkbox"] { transform: scale(1.2); }
+        .custom-alert { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: yellow; color: red; border: 2px solid red; padding: 20px; width: 300px; text-align: center; z-index: 1000; border-radius: 8px; font-size: 16px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .custom-alert button { margin-top: 10px; padding: 8px 16px; background-color: red; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .custom-alert button:hover { background-color: darkred; }
+        .missed-appointment { color: red; font-weight: bold; }
+
+        .calibration-info {
+            background-color: #e3f2fd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #2196f3;
+        }
+        .calibration-badge {
+            background-color: #4caf50;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        .modal-lg {
+            max-width: 700px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2>Pump Reservoir</h2>
+            <div class="form-group">
+                <label for="filter-select">Filter</label>
+                <select class="form-control" id="filter-select" onchange="filterSummaryValues(this.value)">
+                    <option selected>All</option>
+                    <option value="undefined">Unspecified</option>
+                    <?php foreach ($devices as $row):
+                        $calibration = getPumpCalibration($conn, $row['id']);
+                    ?>
+                        <option value="<?php echo strval($row['id']); ?>"
+                                data-factor="<?php echo $calibration['calibration_factor']; ?>"
+                                data-concentration="<?php echo $calibration['concentration_mg_per_ml']; ?>">
+                            <?php echo htmlspecialchars($row['label']); ?> (<?php echo htmlspecialchars($row['port']); ?>)
+                            <?php if ($row['calibration_factor']): ?>
+                                <span class="calibration-badge">Cal: <?php echo $row['calibration_factor']; ?></span>
+                            <?php endif; ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-item stat-remaining">
+                <span class="stat-value" id="stat-remaining">0</span>
+                <span class="stat-label">Millilitres(ML) remaining</span>
+            </div>
+
+            <div class="stat-item stat-today">
+                <span class="stat-value" id="stat-today">0</span>
+                <span class="stat-label">Milligrams dispensed today</span>
+            </div>
+
+            <div class="stat-item stat-week">
+                <span class="stat-value" id="stat-week">0</span>
+                <span class="stat-label">Milligrams dispensed this week</span>
+            </div>
+
+            <div class="stat-item stat-month">
+                <span class="stat-value" id="stat-month">0</span>
+                <span class="stat-label">Milligrams dispensed this month</span>
+            </div>
+
+            <div class="stat-item stat-overral">
+                <span class="stat-value" id="stat-overral">0</span>
+                <span class="stat-label">Milligrams dispensed overral</span>
+            </div>
+        </div>
+
+        <?php if (!empty($success_message)): ?>
+            <div class="alert alert-success" role="alert">
+                <?php echo htmlspecialchars($success_message); ?>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        <?php endif; ?>
+
+        <div class="d-block d-lg-flex justify-content-between align-items-center">
+            <h2>History</h2>
+            <div>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#pump-content-update">
+                    Switch/Top up content
+                </button>
+                <button type="button" onclick="pump('P')" class="btn btn-primary">
+                    Prime
+                </button>
+                <button id="factor" type="button" onclick="showCalibrationModal()" class="btn btn-info">
+                    Calibrate Pump
+                </button>
+                <button type="button" onclick="pump('D')" class="btn btn-primary">
+                    Reverse Prime
+                </button>
+            </div>
+        </div>
+
+        <!-- Calibration History Table -->
+        <!--<div class="mt-4">
+            <h4>Calibration History</h4>
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th>Pump</th>
+                        <th>Factor</th>
+                        <th>Concentration</th>
+                        <th>Tubing</th>
+                        <th>Calibrated By</th>
+                        <th>Date</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($calibration_history as $history): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($history['pump_label']); ?></td>
+                        <td><?php echo $history['calibration_factor']; ?></td>
+                        <td><?php echo $history['concentration_mg_per_ml']; ?> mg/mL</td>
+                        <td><?php echo htmlspecialchars(isset($history['tubing_type']) ? $history['tubing_type'] : 'system'); ?></td>
+                        <td><?php echo htmlspecialchars($history['calibrated_by']); ?></td>
+                        <td><?php echo date('Y-m-d H:i', strtotime($history['calibrated_at'])); ?></td>
+                        <td><?php echo htmlspecialchars($history['notes']); ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>-->
+
+        <!-- Main History Table -->
+        <table class="table table-striped mt-4">
+            <thead>
+                <tr>
+                    <th scope="col">Device</th>
+                    <th scope="col">Milligrams</th>
+                    <th scope="col">New milligrams</th>
+                    <th scope="col">From</th>
+                    <th scope="col">To</th>
+                    <th scope="col">Dispenses</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($pump_history as $row): ?>
+                    <tr>
+                        <td scope="row"><?php echo htmlspecialchars($row['device_label']); ?> (<?php echo htmlspecialchars($row['device_port']); ?>)</td>
+                        <td><?php echo htmlspecialchars($row['milligrams']); ?></td>
+                        <td><?php echo htmlspecialchars($row['new_milligrams']); ?></td>
+                        <td><?php echo htmlspecialchars($row['topup_from']); ?></td>
+                        <td><?php echo htmlspecialchars($row['topup_to'] ?? ''); ?></td>
+                        <td><?php echo htmlspecialchars($row['dispenses'] ?? 0); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                <?php if (empty($pump_history)): ?>
+                    <tr>
+                        <td scope="row" colspan="5" class="text-center">No history available</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Calibration Modal -->
+    <div class="modal fade" id="calibrationModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Calibrate Pump</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="calibrationForm" method="post">
+                        <input type="hidden" name="update_calibration" value="1">
+                        <div class="form-group">
+                            <label for="calibration_pump_id">Select Pump:</label>
+                            <select class="form-control" id="calibration_pump_id" name="pump_id" required onchange="updateCalibrationInfo()">
+                                <?php foreach ($devices as $row): ?>
+                                    <option value="<?php echo $row['id']; ?>">
+                                        <?php echo htmlspecialchars($row['label']); ?> (<?php echo htmlspecialchars($row['port']); ?>)
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="current_factor">Current Calibration Factor:</label>
+                                    <input type="number" class="form-control" id="current_factor" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="new_factor">New Calibration Factor:</label>
+                                    <input type="number" step="0.01" class="form-control" id="new_factor" name="calibration_factor" required>
+                                    <small class="form-text text-muted">Pump units per mL</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="concentration">Concentration (mg/mL):</label>
+                                    <input type="number" step="0.01" class="form-control" id="concentration" name="concentration" value="5.00" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="tubing_type">Tubing Type:</label>
+                                    <input type="text" class="form-control" id="tubing_type" name="tubing_type" placeholder="e.g., MasterFlex #14">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="calibration_notes">Notes:</label>
+                            <textarea class="form-control" id="calibration_notes" name="notes" rows="2" placeholder="Reason for calibration, tubing change, etc."></textarea>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <strong>Calibration Instructions:</strong><br>
+                            1. Prime the pump with 10mg dose (should dispense 2mL for 5mg/mL concentration)<br>
+                            2. Measure actual dispensed volume<br>
+                            3. Calculate new factor: New Factor = (Actual mL / Expected mL) � Current Factor<br>
+                            4. Enter calculated factor above
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Save Calibration</button>
+                        <button type="button" class="btn btn-secondary" onclick="calculateCalibration()">Calculate Automatically</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Original Top-up Modal -->
+    <div class="modal fade" id="pump-content-update" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Switch/Top up content</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <?php if (!empty($error_message)): ?>
+                        <div class="alert alert-warning" role="alert">
+                            <?php echo htmlspecialchars($error_message); ?>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    <?php endif; ?>
+                    <form id="dispenseForm" action="pump_reservoir.php" method="post">
+                        <div class="form-group">
+                            <label for="device-select">Pump device:</label>
+                            <select class="form-control" name="device" id="device-select" required>
+                                <?php if (count($devices) !== 1): ?>
+                                    <option value="" disabled hidden selected>select device</option>
+                                <?php endif; ?>
+                                <?php foreach ($devices as $row): ?>
+                                    <option value="<?php echo $row['id'] ?>" <?php if (count($devices) === 1 || (isset($form_values['device']) && $form_values['device'] === $row['id'])) echo 'selected' ?>>
+                                        <?php echo $row['label'] ?> (<?php echo $row['port'] ?>)
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="milligrams">Milligrams:</label>
+                            <input class="form-control" type="number" placeholder="milligrams" name="milligrams" id="milligrams" step="5" min="5" max="12000" required value="<?php echo isset($form_values['milligrams']) ? $form_values['milligrams'] : ''; ?>">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/jquery-3.7.1.min.js"></script>
+    <script src="../assets/js/bootstrap.min.js"></script>
+
+    <script>
+        var selectedPumpId = null;
+        var currentCalibrationFactor = 500;
+        var currentConcentration = 5.00;
+        var port = null;
+
+        function updateCalibrationInfo() {
+            selectedPumpId = $('#calibration_pump_id').val();
+            var selectedOption = $('#filter-select option[value="' + selectedPumpId + '"]');
+
+            if (selectedOption.length) {
+                currentCalibrationFactor = parseFloat(selectedOption.data('factor')) || 500;
+                currentConcentration = parseFloat(selectedOption.data('concentration')) || 5.00;
+                $('#current_factor').val(currentCalibrationFactor);
+                $('#new_factor').val(currentCalibrationFactor);
+                $('#concentration').val(currentConcentration);
+
+                // Extract port for pump commands
+                var selectedText = selectedOption.text();
+                var portMatch = selectedText.match(/COM\d+/);
+                port = portMatch ? portMatch[0] : null;
+            }
+        }
+
+        function showCalibrationModal() {
+            updateCalibrationInfo();
+            $('#calibrationModal').modal('show');
+        }
+
+        function calculateCalibration() {
+            var actualDispensed = prompt('Enter ACTUAL volume dispensed (in mL) for 10mg prime:');
+
+            if (actualDispensed && !isNaN(actualDispensed)) {
+                var expectedmL = 10 / currentConcentration; // 10mg divided by concentration
+                var newFactor = (actualDispensed / expectedmL) * currentCalibrationFactor;
+                $('#new_factor').val(newFactor.toFixed(2));
+
+                // Auto-fill notes
+                var notes = 'Auto-calibrated. Actual: ' + actualDispensed + 'mL, Expected: ' + expectedmL.toFixed(2) + 'mL';
+                $('#calibration_notes').val($('#calibration_notes').val() + notes);
+            }
+        }
+
+        function pump(opt) {
+            if (port) {
+                const xhr = new XMLHttpRequest();
+                xhr.open("GET", "http://localhost/iorpms/api.php?cmd=" + opt + "&port=" + port, true);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            if (!isNaN(xhr.responseText)) {
+                                alert('Pump operation successful. New factor: ' + xhr.responseText);
+                            }
+                        } else {
+                            alert("Error: " + xhr.status + ' - ' + xhr.responseText);
+                        }
+                    }
+                };
+                xhr.send();
+            } else {
+                alert("Please select a pump first!");
+            }
+        }
+
+        // ADD THIS FUNCTION - It saves calibration to database
+        function saveCalibrationToDatabase() {
+            var pumpId = $('#calibration_pump_id').val();
+            var newFactor = $('#new_factor').val();
+            var concentration = $('#concentration').val();
+            var tubingType = $('#tubing_type').val();
+            var notes = $('#calibration_notes').val();
+
+            if (!pumpId || !newFactor) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            // Create form data
+            var formData = new FormData();
+            formData.append('update_calibration', '1');
+            formData.append('pump_id', pumpId);
+            formData.append('calibration_factor', newFactor);
+            formData.append('concentration', concentration);
+            formData.append('tubing_type', tubingType);
+            formData.append('notes', notes);
+
+            // Send AJAX request
+            fetch('update_calibration.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                if (data.includes('successfully')) {
+                    $('#calibrationModal').modal('hide');
+                    location.reload(); // Reload to show updated calibration
+                }
+            })
+            .catch(error => {
+                alert('Error saving calibration: ' + error);
+            });
+        }
+
+        // Initialize
+        $(document).ready(function() {
+            updateCalibrationInfo();
+
+            // Add event listener for the Save Calibration button
+            $('#calibrationForm').on('submit', function(e) {
+                e.preventDefault(); // Prevent form submission
+                saveCalibrationToDatabase();
+            });
+        });
+    </script>
+</body>
+</html>
