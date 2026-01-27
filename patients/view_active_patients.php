@@ -141,6 +141,7 @@ if (isset($_GET['message'])) {
                         <a href='../patients/view_patient.php?p_id=" . $row['p_id'] . "'>View</a> &#124;
                         <a href='../patients/update.php?p_id=" . $row['p_id'] . "'>Update</a> &#124;
                         <a href='../patients/delete.php?p_id=" . $row['p_id'] . "'>Delete</a>
+                        <a href='../referrals/referral.php?mat_id=" . htmlspecialchars($row['mat_id']) . "'>Refer</a>
                     </td>
                 </tr>";
         }

@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
         <input type="hidden" name="user_id" value="<?php echo $user['user_id']; ?>">
         <div class="form-group">
             <label for="username">User Name</label>
-            <input type="text" name="username" value="<?php echo $user['username']; ?>" readonly class="readonly-input">
+            <input type="text" name="username" value="<?php echo $user['username']; ?>">
         </div>
         <div class="form-group">
             <label for="first_name">First Name</label>
