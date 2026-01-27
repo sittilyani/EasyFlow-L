@@ -964,3 +964,22 @@ C:\laragon\bin\python\python-3.13\python.exe pump_controller.py dispense 2
 INSERT INTO `facilities` VALUES('100000', 'Kisauni MAT Clinic', '28293', 'Mombasa', 'Nyali', 'Ministry of Health', 'Stawisha Pwani', 'No Agency', '', 'Active', 'On Premises', 'Not Found', 'Not Found', '2026-01-16 05:15:02');
 INSERT INTO `facilities` VALUES('100001', 'Miritini Treatment And Rehabilitation Center', '29098', 'Mombasa', 'Jomvu', 'Ministry of Health', 'Stawisha Pwani', 'No Agency', '', 'Active', 'On Premises', 'Not Found', 'Not Found', '2026-01-16 05:15:02');
 
+ CREATE TABLE IF NOT EXISTS fingerprints (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    visitDate DATETIME NOT NULL,
+    mat_id VARCHAR(50) NOT NULL,
+    mat_number VARCHAR(50),
+    clientName VARCHAR(100) NOT NULL,
+    nickName VARCHAR(50),
+    dob DATE,
+    sex ENUM('Male', 'Female') NOT NULL,
+    current_status VARCHAR(50),
+    fingerprint_data LONGBLOB NOT NULL,
+    template_data LONGBLOB,
+    quality_score INT,
+    fingerprint_type ENUM('Thumb', 'Index', 'Middle', 'Ring', 'Little') DEFAULT 'Index',
+    capture_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    scanner_type VARCHAR(50) DEFAULT 'ZKTeco',
+    INDEX idx_mat_id (mat_id),
+    INDEX idx_clientName (clientName)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
