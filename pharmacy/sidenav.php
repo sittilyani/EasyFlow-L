@@ -262,7 +262,7 @@ $full_name = getUserFullName();
                     <i class="fa fa-home"></i>Home </a>
                 <a href="../pharmacy/dispensing_pump.php" target="contentFrame" class="nav-link" style="background: yellow; color: #000000; margin-top: 10px;">
                     <i class="fa fa-pump-medical"></i>Dispense with Pump</a>
-                <a href="../pharmacy/pump_reservoir.php" target="contentFrame" class="nav-link">
+                <a href="../pharmacy/pump_reservoir_merged.php" target="contentFrame" class="nav-link">
                     <i class="fa fa-hourglass-half"></i>Pump reservoir</a>
                 <a href="../pharmacy/calibration_table.php" target="contentFrame" class="nav-link">
                     <i class="fa fa-hourglass-half"></i>Calibration History</a>
