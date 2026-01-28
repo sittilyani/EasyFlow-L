@@ -147,19 +147,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $contraception_use = $_POST['contraception_use'] ?? '';
         $contraception_method = isset($_POST['contraception_method']) ? implode(',', $_POST['contraception_method']) : '';
 
-        // Handle pregnancy fields based on sex
+        // Handle pregnancy fields based on sex - FIXED FOR DATABASE CONSTRAINTS
         $sex = $patient['sex'];
         if (strtolower($sex) === 'male') {
             $last_menstrual_period = null;
             $pregnancy_status = 'NA';
             $pregnancy_weeks = null;
+            $breastfeeding = 'NA'; // Explicitly set to 'NA' for males
         } else {
             $last_menstrual_period = !empty($_POST['last_menstrual_period']) ? date('Y-m-d', strtotime($_POST['last_menstrual_period'])) : null;
             $pregnancy_status = $_POST['pregnancy_status'] ?? '';
             $pregnancy_weeks = !empty($_POST['pregnancy_weeks']) ? intval($_POST['pregnancy_weeks']) : null;
-        }
 
-        $breastfeeding = $_POST['breastfeeding'] ?? '';
+            // Handle breastfeeding for females - ensure valid values
+            $breastfeeding_raw = $_POST['breastfeeding'] ?? '';
+            // Only accept 'yes', 'no', or 'NA' values
+            if (in_array(strtolower($breastfeeding_raw), ['yes', 'no', 'na'])) {
+                $breastfeeding = strtolower($breastfeeding_raw);
+            } else {
+                $breastfeeding = ''; // Default empty if invalid
+            }
+        }
 
         // Mental health
         $mental_health_diagnosis = $_POST['mental_health_diagnosis'] ?? '';
@@ -203,6 +211,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $next_appointment = !empty($_POST['next_appointment']) ? date('Y-m-d', strtotime($_POST['next_appointment'])) : null;
         $patient_consent = isset($_POST['patient_consent']) ? 'yes' : 'no';
 
+        // Debug: Show what values are being inserted
+        error_log("Debug - breastfeeding value: " . $breastfeeding);
+        error_log("Debug - pregnancy_status value: " . $pregnancy_status);
+
         // Insert into clinical_encounters
         $sql = "INSERT INTO clinical_encounters (
             triage_id, patient_id, clinician_id,
@@ -222,42 +234,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $conn->prepare($sql);
 
         if ($stmt === false) {
-            die("Prepare failed: " . $conn->error);
+            die("Prepare failed: " . $conn->error . "\nSQL: " . $sql);
         }
 
         // Convert arrays to JSON strings for database storage
-        $medical_history_json = json_encode($medical_history);
-        $medical_medication_json = json_encode($medical_medication);
+        $medical_history_json = json_encode($medical_history, JSON_UNESCAPED_UNICODE);
+        $medical_medication_json = json_encode($medical_medication, JSON_UNESCAPED_UNICODE);
 
-        // Count parameters: There should be 53 parameters (52 + 'completed' status is hardcoded in SQL)
-        // Let me count them manually to ensure accuracy:
-        // 1. triage_id, 2. patient_id, 3. clinician_id (3)
-        // 4-5. medical_history, medical_medication (2) = 5
-        // 6-7. hiv_diagnosis_date, hiv_facility_care (2) = 7
-        // 8. other_medical_problems (1) = 8
-        // 9-10. allergies, allergies_other (2) = 10
-        // 11-12. contraception_use, contraception_method (2) = 12
-        // 13. last_menstrual_period (1) = 13
-        // 14-15. pregnancy_status, pregnancy_weeks (2) = 15
-        // 16. breastfeeding (1) = 16
-        // 17. mental_health_diagnosis (1) = 17
-        // 18-19. mental_health_condition, mental_health_other (2) = 19
-        // 20-21. mental_health_medication, mental_health_medication_details (2) = 21
-        // 22-23. suicidal_thoughts, psychiatric_hospitalization (2) = 23
-        // 24-25. family_drug_use, family_mental_health (2) = 25
-        // 26-27. family_medical_conditions, family_medical_other (2) = 27
-        // 28-44. physical exam fields (17) = 44
-        // 45. diagnosis_opioid_use (1) = 45
-        // 46. other_diagnoses (1) = 46
-        // 47. treatment_plan (1) = 47
-        // 48-49. medication_prescribed, medication_other (2) = 49
-        // 50. initial_dose (1) = 50
-        // 51. next_appointment (1) = 51
-        // 52-53. clinician_name, clinician_signature (2) = 53
-        // 54. patient_consent (1) = 54
+        // Debug the values
+        error_log("medical_history_json length: " . strlen($medical_history_json));
+        error_log("medical_medication_json length: " . strlen($medical_medication_json));
+        error_log("breastfeeding length: " . strlen($breastfeeding));
 
-        // Actually, I count 54 parameters + the hardcoded 'completed' status
-        // Let's verify the parameter count in bind_param
+        // Truncate values that might be too long for the database
+        $medical_history_json = substr($medical_history_json, 0, 5000); // Limit to 5000 chars
+        $medical_medication_json = substr($medical_medication_json, 0, 5000); // Limit to 5000 chars
+        $breastfeeding = substr($breastfeeding, 0, 10); // Limit to 10 chars
+        $pregnancy_status = substr($pregnancy_status, 0, 20); // Limit to 20 chars
 
         $stmt->bind_param(
             'iiisssssssssssssssssssssssssssssssssssssssssssssssss',
@@ -327,13 +320,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $update_patient_stmt = $conn->prepare($update_patient_sql);
             $update_patient_stmt->bind_param('ssss', $patient_drugname, $patient_dosage, $next_appointment, $patient['mat_id']);
             $update_patient_stmt->execute();
+
+            if ($update_patient_stmt->error) {
+                error_log("Patient update error: " . $update_patient_stmt->error);
+            }
+
             $update_patient_stmt->close();
 
             // Redirect to success page
             header("Location: clinical_encounter_search.php?success=1");
             exit();
         } else {
-            die("Error saving clinical encounter: " . $stmt->error);
+            die("Error saving clinical encounter: " . $stmt->error . "\n\nDebug info:\n" .
+                "breastfeeding: '$breastfeeding'\n" .
+                "pregnancy_status: '$pregnancy_status'\n" .
+                "SQL: $sql");
         }
     }
 }
@@ -865,6 +866,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label><input type="radio" name="breastfeeding" value="no" <?php echo (strtolower($patient['sex']) === 'male') ? 'disabled' : ''; ?>> No</label>
                         <?php if (strtolower($patient['sex']) === 'male'): ?>
                             <label><input type="radio" name="breastfeeding" value="NA" checked> N/A</label>
+                        <?php else: ?>
+                            <label><input type="radio" name="breastfeeding" value="NA"> N/A</label>
                         <?php endif; ?>
                     </div>
                 </div>
