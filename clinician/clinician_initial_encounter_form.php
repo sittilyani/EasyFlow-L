@@ -639,6 +639,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label><input type="radio" name="pregnancy_status" value="pregnant"> Pregnant</label>
                         <label><input type="radio" name="pregnancy_status" value="not_pregnant"> Not Pregnant</label>
                         <label><input type="radio" name="pregnancy_status" value="unknown"> Unknown</label>
+                        <label><input type="radio" name="pregnancy_status" value="NA"> Unknown</label>
                     </div>
                 </div>
 

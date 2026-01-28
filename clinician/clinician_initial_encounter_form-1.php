@@ -2,231 +2,301 @@
 session_start();
 include "../includes/config.php";
 
-// Check if the user is logged in and fetch their user_id
 if (!isset($_SESSION['user_id'])) {
-    die("You must be logged in to access this page.");
-}
-$loggedInUserId = $_SESSION['user_id'];
-
-// NEW CODE: Load draft data if available
-$draft_data = [];
-$current_section = 'facility';
-$draft_id = null;
-$encounter_id = null;
-$patient_id = null;
-
-// Get patient ID from URL if available
-if (isset($_GET['p_id'])) {
-    $patient_id = intval($_GET['p_id']);
+    header("Location: ../login.php");
+    exit();
 }
 
-// Load draft data if draft_id is provided
-if (isset($_GET['draft_id'])) {
-    $draft_id = intval($_GET['draft_id']);
-    $draft_sql = "SELECT * FROM clinical_encounter_drafts WHERE id = ? AND clinician_id = ?";
-    $draft_stmt = $conn->prepare($draft_sql);
-    $draft_stmt->bind_param('ii', $draft_id, $loggedInUserId);
-    $draft_stmt->execute();
-    $draft_result = $draft_stmt->get_result();
+$clinician_id = $_SESSION['user_id'];
+$patient_id = $_GET['p_id'] ?? null;
+$action = $_GET['action'] ?? 'start';
+$triage_id = $_GET['triage_id'] ?? null;
 
-    if ($draft_result->num_rows > 0) {
-        $draft_row = $draft_result->fetch_assoc();
-        $draft_data = json_decode($draft_row['form_data'], true);
-        $current_section = $draft_row['current_section'];
-        $patient_id = $draft_row['patient_id']; // Get patient_id from draft
-    }
-    $draft_stmt->close();
-}
-
-// Load from encounter drafts
-if (isset($_GET['encounter_id'])) {
-    $encounter_id = intval($_GET['encounter_id']);
-    $encounter_sql = "SELECT * FROM clinical_encounters WHERE id = ? AND status = 'draft'";
-    $encounter_stmt = $conn->prepare($encounter_sql);
-    $encounter_stmt->bind_param('i', $encounter_id);
-    $encounter_stmt->execute();
-    $encounter_result = $encounter_stmt->get_result();
-
-    if ($encounter_result->num_rows > 0) {
-        $encounter_row = $encounter_result->fetch_assoc();
-        // Convert encounter data to form data format
-        $draft_data = convertEncounterToFormData($encounter_row);
-        $current_section = $encounter_row['current_section'];
-        $patient_id = $encounter_row['patient_id'];
-    }
-    $encounter_stmt->close();
-}
-
-// Function to convert encounter data to form data format
-function convertEncounterToFormData($encounter_row) {
-    $form_data = [];
-    // Map database fields to form field names
-    $form_data['facility_name'] = $encounter_row['facility_name'] ?? '';
-    $form_data['mfl_code'] = $encounter_row['mfl_code'] ?? '';
-    $form_data['county'] = $encounter_row['county'] ?? '';
-    $form_data['sub_county'] = $encounter_row['sub_county'] ?? '';
-    $form_data['enrolment_date'] = $encounter_row['enrolment_date'] ?? '';
-    $form_data['enrolment_time'] = $encounter_row['enrolment_time'] ?? '';
-    // ... add all other field mappings ...
-    return $form_data;
-}
-
-// Fetch patient details if patient_id is available
-$currentSettings = [];
-if ($patient_id) {
-    $query = "SELECT * FROM patients WHERE p_id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param('i', $patient_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $currentSettings = $result->fetch_assoc();
-}
-
-// If no patient_id but we have mat_id in GET (for new forms), find patient by mat_id
-if (!$patient_id && isset($_GET['mat_id']) && !empty($_GET['mat_id'])) {
-    $mat_id = $_GET['mat_id'];
-    $query = "SELECT * FROM patients WHERE mat_id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param('s', $mat_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        $currentSettings = $result->fetch_assoc();
-        $patient_id = $currentSettings['p_id'];
-    }
-}
-
-// Fetch facility name from facility settings table
-$facility_query = "SELECT facility_id, facilityname FROM facility_settings LIMIT 1";
-$facility_result = mysqli_query($conn, $facility_query);
-$facility = mysqli_fetch_assoc($facility_result);
-
-// Fetch the logged-in user's name from tblusers
-$clinician_name = 'Unknown';
-$userQuery = "SELECT first_name, last_name FROM tblusers WHERE user_id = ?";
-$stmt = $conn->prepare($userQuery);
-$stmt->bind_param('i', $loggedInUserId);
-$stmt->execute();
-$result = $stmt->get_result();
-if ($result->num_rows > 0) {
-    $user = $result->fetch_assoc();
-    $clinician_name = $user['first_name'] . ' ' . $user['last_name'];
-}
-$stmt->close();
-
-// Check for save success message
-$save_message = '';
-if (isset($_GET['save_success'])) {
-    $save_message = $_GET['save_success'];
-}
-
-// Check if we have patient data to proceed
-if (!$patient_id && !isset($_GET['search_patient'])) {
-    // Redirect to patient search if no patient is selected
+if (!$patient_id) {
     header("Location: search_patient.php");
     exit();
 }
+
+// Fetch patient details
+$patient_query = "SELECT * FROM patients WHERE p_id = ?";
+$stmt = $conn->prepare($patient_query);
+$stmt->bind_param('i', $patient_id);
+$stmt->execute();
+$patient = $stmt->get_result()->fetch_assoc();
+$stmt->close();
+
+if (!$patient) {
+    die("Patient not found");
+}
+
+// Fetch facility details
+$facility_query = "SELECT facilityname FROM facility_settings LIMIT 1";
+$facility_result = mysqli_query($conn, $facility_query);
+$facility = mysqli_fetch_assoc($facility_result);
+
+// Fetch clinician details
+$clinician_query = "SELECT first_name, last_name FROM tblusers WHERE user_id = ?";
+$stmt = $conn->prepare($clinician_query);
+$stmt->bind_param('i', $clinician_id);
+$stmt->execute();
+$clinician_result = $stmt->get_result();
+$clinician = $clinician_result->fetch_assoc();
+$clinician_name = $clinician['first_name'] . ' ' . $clinician['last_name'];
+$stmt->close();
+
+// Check for existing triage
+$triage_data = null;
+if ($action === 'continue' && $triage_id) {
+    $triage_query = "SELECT * FROM triage_services WHERE id = ? AND patient_id = ? AND status = 'incomplete'";
+    $stmt = $conn->prepare($triage_query);
+    $stmt->bind_param('ii', $triage_id, $patient_id);
+    $stmt->execute();
+    $triage_result = $stmt->get_result();
+    if ($triage_result->num_rows > 0) {
+        $triage_data = $triage_result->fetch_assoc();
+    }
+    $stmt->close();
+}
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['submit_triage'])) {
+        // Save Part A (Triage) data
+        $facility_name = mysqli_real_escape_string($conn, $_POST['facility_name'] ?? '');
+        $mfl_code = mysqli_real_escape_string($conn, $_POST['mfl_code'] ?? '');
+        $county = mysqli_real_escape_string($conn, $_POST['county'] ?? '');
+        $sub_county = mysqli_real_escape_string($conn, $_POST['sub_county'] ?? '');
+        $enrolment_date = !empty($_POST['enrolment_date']) ? date('Y-m-d', strtotime(str_replace('/', '-', $_POST['enrolment_date']))) : null;
+        $enrolment_time = $_POST['enrolment_time'] ?? null;
+        $visit_type = isset($_POST['visit_type']) ? implode(',', $_POST['visit_type']) : '';
+        $client_name = mysqli_real_escape_string($conn, $_POST['client_name'] ?? '');
+        $nickname = mysqli_real_escape_string($conn, $_POST['nickname'] ?? '');
+        $mat_id = mysqli_real_escape_string($conn, $_POST['mat_id'] ?? '');
+        $sex = mysqli_real_escape_string($conn, $_POST['sex'] ?? '');
+        $presenting_complaints = mysqli_real_escape_string($conn, $_POST['presenting_complaints'] ?? '');
+
+        // Vital signs
+        $pulse = !empty($_POST['pulse']) ? intval($_POST['pulse']) : null;
+        $oxygen_saturation = !empty($_POST['oxygen_saturation']) ? intval($_POST['oxygen_saturation']) : null;
+        $blood_pressure = mysqli_real_escape_string($conn, $_POST['blood_pressure'] ?? '');
+        $temperature = !empty($_POST['temperature']) ? floatval($_POST['temperature']) : null;
+        $respiratory_rate = !empty($_POST['respiratory_rate']) ? intval($_POST['respiratory_rate']) : null;
+        $height = !empty($_POST['height']) ? floatval($_POST['height']) : null;
+        $weight = !empty($_POST['weight']) ? floatval($_POST['weight']) : null;
+        $bmi = !empty($_POST['bmi']) ? floatval($_POST['bmi']) : null;
+        $bmi_interpretation = $_POST['bmi_interpretation'] ?? '';
+
+        // COWS data
+        $cows_provider = mysqli_real_escape_string($conn, $_POST['cows_provider'] ?? '');
+        $cows_date = $_POST['cows_date'] ?? null;
+
+        // Insert into triage_services
+        $sql = "INSERT INTO triage_services (
+            patient_id, clinician_id, facility_name, mfl_code, county, sub_county,
+            enrolment_date, enrolment_time, visit_type, client_name, nickname, mat_id, sex, presenting_complaints,
+            pulse, oxygen_saturation, blood_pressure, temperature, respiratory_rate, height, weight, bmi, bmi_interpretation,
+            cows_provider, cows_date, status
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'incomplete')";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param(
+            'iissssssssssssiisdiiddsss',
+            $patient_id, $clinician_id, $facility_name, $mfl_code, $county, $sub_county,
+            $enrolment_date, $enrolment_time, $visit_type, $client_name, $nickname, $mat_id, $sex, $presenting_complaints,
+            $pulse, $oxygen_saturation, $blood_pressure, $temperature, $respiratory_rate, $height, $weight, $bmi, $bmi_interpretation,
+            $cows_provider, $cows_date
+        );
+
+        if ($stmt->execute()) {
+            $triage_id = $stmt->insert_id;
+            $stmt->close();
+
+            // Redirect to continue with clinical assessment
+            header("Location: clinician_initial_encounter_form.php?p_id=$patient_id&action=continue&triage_id=$triage_id");
+            exit();
+        } else {
+            die("Error saving triage data: " . $stmt->error);
+        }
+    } elseif (isset($_POST['submit_complete'])) {
+        // Save complete form
+        $triage_id = $_POST['triage_id'];
+
+        // Process medical history data
+        $medical_history = [];
+        $medical_medication = [];
+        if (isset($_POST['medical_history'])) {
+            foreach ($_POST['medical_history'] as $key => $value) {
+                $medical_history[$key] = $value;
+            }
+        }
+        if (isset($_POST['medical_medication'])) {
+            foreach ($_POST['medical_medication'] as $key => $value) {
+                $medical_medication[$key] = mysqli_real_escape_string($conn, $value);
+            }
+        }
+
+        $hiv_diagnosis_date = !empty($_POST['hiv_diagnosis_date']) ? date('Y-m-d', strtotime($_POST['hiv_diagnosis_date'])) : null;
+        $hiv_facility_care = mysqli_real_escape_string($conn, $_POST['hiv_facility_care'] ?? '');
+        $other_medical_problems = mysqli_real_escape_string($conn, $_POST['other_medical_problems'] ?? '');
+
+        // Allergies
+        $allergies = isset($_POST['allergies']) ? implode(',', $_POST['allergies']) : '';
+        $allergies_other = mysqli_real_escape_string($conn, $_POST['allergies_other'] ?? '');
+
+        // Reproductive health
+        $contraception_use = $_POST['contraception_use'] ?? '';
+        $contraception_method = isset($_POST['contraception_method']) ? implode(',', $_POST['contraception_method']) : '';
+
+        // Handle pregnancy fields based on sex
+        $sex = $patient['sex'];
+        if (strtolower($sex) === 'male') {
+            $last_menstrual_period = null;
+            $pregnancy_status = 'NA';
+            $pregnancy_weeks = null;
+        } else {
+            $last_menstrual_period = !empty($_POST['last_menstrual_period']) ? date('Y-m-d', strtotime($_POST['last_menstrual_period'])) : null;
+            $pregnancy_status = $_POST['pregnancy_status'] ?? '';
+            $pregnancy_weeks = !empty($_POST['pregnancy_weeks']) ? intval($_POST['pregnancy_weeks']) : null;
+        }
+
+        $breastfeeding = $_POST['breastfeeding'] ?? '';
+
+        // Mental health
+        $mental_health_diagnosis = $_POST['mental_health_diagnosis'] ?? '';
+        $mental_health_condition = isset($_POST['mental_health_condition']) ? implode(',', $_POST['mental_health_condition']) : '';
+        $mental_health_other = mysqli_real_escape_string($conn, $_POST['mental_health_other'] ?? '');
+        $mental_health_medication = $_POST['mental_health_medication'] ?? '';
+        $mental_health_medication_details = mysqli_real_escape_string($conn, $_POST['mental_health_medication_details'] ?? '');
+        $suicidal_thoughts = $_POST['suicidal_thoughts'] ?? '';
+        $psychiatric_hospitalization = $_POST['psychiatric_hospitalization'] ?? '';
+
+        // Family history
+        $family_drug_use = $_POST['family_drug_use'] ?? '';
+        $family_mental_health = $_POST['family_mental_health'] ?? '';
+        $family_medical_conditions = isset($_POST['family_medical_conditions']) ? implode(',', $_POST['family_medical_conditions']) : '';
+        $family_medical_other = mysqli_real_escape_string($conn, $_POST['family_medical_other'] ?? '');
+
+        // Physical examination
+        $general_appearance = mysqli_real_escape_string($conn, $_POST['general_appearance'] ?? '');
+        $skin_examination = mysqli_real_escape_string($conn, $_POST['skin_examination'] ?? '');
+        $head_examination = mysqli_real_escape_string($conn, $_POST['head_examination'] ?? '');
+        $eyes_examination = mysqli_real_escape_string($conn, $_POST['eyes_examination'] ?? '');
+        $ears_examination = mysqli_real_escape_string($conn, $_POST['ears_examination'] ?? '');
+        $nose_examination = mysqli_real_escape_string($conn, $_POST['nose_examination'] ?? '');
+        $mouth_throat_examination = mysqli_real_escape_string($conn, $_POST['mouth_throat_examination'] ?? '');
+        $neck_examination = mysqli_real_escape_string($conn, $_POST['neck_examination'] ?? '');
+        $chest_examination = mysqli_real_escape_string($conn, $_POST['chest_examination'] ?? '');
+        $heart_examination = mysqli_real_escape_string($conn, $_POST['heart_examination'] ?? '');
+        $abdomen_examination = mysqli_real_escape_string($conn, $_POST['abdomen_examination'] ?? '');
+        $genitalia_examination = mysqli_real_escape_string($conn, $_POST['genitalia_examination'] ?? '');
+        $extremities_examination = mysqli_real_escape_string($conn, $_POST['extremities_examination'] ?? '');
+        $neurological_examination = mysqli_real_escape_string($conn, $_POST['neurological_examination'] ?? '');
+        $musculoskeletal_examination = mysqli_real_escape_string($conn, $_POST['musculoskeletal_examination'] ?? '');
+
+        // Diagnosis and treatment
+        $diagnosis_opioid_use = $_POST['diagnosis_opioid_use'] ?? '';
+        $other_diagnoses = mysqli_real_escape_string($conn, $_POST['other_diagnoses'] ?? '');
+        $treatment_plan = mysqli_real_escape_string($conn, $_POST['treatment_plan'] ?? '');
+        $medication_prescribed = isset($_POST['medication_prescribed']) ? implode(',', $_POST['medication_prescribed']) : '';
+        $medication_other = mysqli_real_escape_string($conn, $_POST['medication_other'] ?? '');
+        $initial_dose = mysqli_real_escape_string($conn, $_POST['initial_dose'] ?? '');
+        $next_appointment = !empty($_POST['next_appointment']) ? date('Y-m-d', strtotime($_POST['next_appointment'])) : null;
+        $patient_consent = isset($_POST['patient_consent']) ? 'yes' : 'no';
+
+        // Insert into clinical_encounters
+        $sql = "INSERT INTO clinical_encounters (
+            triage_id, patient_id, clinician_id,
+            medical_history, medical_medication, hiv_diagnosis_date, hiv_facility_care, other_medical_problems,
+            allergies, allergies_other, contraception_use, contraception_method, last_menstrual_period,
+            pregnancy_status, pregnancy_weeks, breastfeeding, mental_health_diagnosis, mental_health_condition,
+            mental_health_other, mental_health_medication, mental_health_medication_details, suicidal_thoughts,
+            psychiatric_hospitalization, family_drug_use, family_mental_health, family_medical_conditions,
+            family_medical_other, general_appearance, skin_examination, head_examination, eyes_examination,
+            ears_examination, nose_examination, mouth_throat_examination, neck_examination, chest_examination,
+            heart_examination, abdomen_examination, genitalia_examination, extremities_examination,
+            neurological_examination, musculoskeletal_examination, diagnosis_opioid_use, other_diagnoses,
+            treatment_plan, medication_prescribed, medication_other, initial_dose, next_appointment,
+            clinician_name, clinician_signature, patient_consent, status
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'completed')";
+
+        $stmt = $conn->prepare($sql);
+
+        // Convert arrays to JSON strings for database storage
+        $medical_history_json = json_encode($medical_history);
+        $medical_medication_json = json_encode($medical_medication);
+
+        $stmt->bind_param(
+            'iiisssssssssssssssssssssssssssssssssssssssssssssssss',
+            $triage_id, $patient_id, $clinician_id,
+            $medical_history_json, $medical_medication_json, $hiv_diagnosis_date, $hiv_facility_care, $other_medical_problems,
+            $allergies, $allergies_other, $contraception_use, $contraception_method, $last_menstrual_period,
+            $pregnancy_status, $pregnancy_weeks, $breastfeeding, $mental_health_diagnosis, $mental_health_condition,
+            $mental_health_other, $mental_health_medication, $mental_health_medication_details, $suicidal_thoughts,
+            $psychiatric_hospitalization, $family_drug_use, $family_mental_health, $family_medical_conditions,
+            $family_medical_other, $general_appearance, $skin_examination, $head_examination, $eyes_examination,
+            $ears_examination, $nose_examination, $mouth_throat_examination, $neck_examination, $chest_examination,
+            $heart_examination, $abdomen_examination, $genitalia_examination, $extremities_examination,
+            $neurological_examination, $musculoskeletal_examination, $diagnosis_opioid_use, $other_diagnoses,
+            $treatment_plan, $medication_prescribed, $medication_other, $initial_dose, $next_appointment,
+            $clinician_name, $clinician_name, $patient_consent
+        );
+
+        if ($stmt->execute()) {
+            $encounter_id = $stmt->insert_id;
+            $stmt->close();
+
+            // Update triage status to complete
+            $update_sql = "UPDATE triage_services SET status = 'complete' WHERE id = ?";
+            $update_stmt = $conn->prepare($update_sql);
+            $update_stmt->bind_param('i', $triage_id);
+            $update_stmt->execute();
+            $update_stmt->close();
+
+            // Redirect to success page
+            header("Location: clinical_encounter_search.php?success=1");
+            exit();
+        } else {
+            die("Error saving clinical encounter: " . $stmt->error);
+        }
+    }
+}
 ?>
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAT Clinic Initial Encounter Form</title>
+    <title>Clinical Encounter Form</title>
     <style>
-        /* Your existing CSS styles remain the same */
         * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin: 0; padding: 20px; line-height: 1.6; min-height: 100vh; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: none; margin: 0; padding: 20px; line-height: 1.6; min-height: 100vh; }
         .form-container { width: 90%; max-width: 1200px; margin: 20px auto; padding: 30px; background: #ffffff; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); border: 1px solid #e1e8ed; }
         .form-header { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 25px; margin-bottom: 30px; padding-bottom: 25px; border-bottom: 3px solid #2c3e50; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 25px; border-radius: 10px; }
         .header-center { text-align: center; }
         .form-header h2 { color: #2c3e50; font-size: 28px; margin: 0; font-weight: 700; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
         .form-header h4 { color: #6633CC; font-size: 20px; margin: 8px 0; font-weight: 600; }
         .form-header p { color: #6c757d; font-size: 14px; text-align: right; margin: 0; font-weight: 500; }
-        .form-section { background: #f8f9fa; padding: 25px; margin: 25px 0; border-radius: 12px; border-left: 5px solid #3498db; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .form-section:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12); }
+        .form-section { background: #f8f9fa; padding: 25px; margin: 25px 0; border-radius: 12px; border-left: 5px solid #3498db; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); }
         .section-header { color: #2c3e50; font-size: 22px; margin: 0 0 25px 0; padding-bottom: 12px; border-bottom: 2px solid #3498db; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         .form-group { display: flex; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
         .form-group label { width: 280px; font-weight: 600; color: #2c3e50; font-size: 15px; margin-right: 20px; }
-        .form-group input, .form-group select, .form-group textarea { flex: 1; min-width: 300px; padding: 12px 15px; border: 2px solid #e1e8ed; border-radius: 8px; font-size: 15px; transition: all 0.3s ease; background: #ffffff; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #3498db; outline: none; box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1); transform: translateY(-1px); }
-        .form-group select { background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); cursor: pointer; }
+        .form-group input, .form-group select, .form-group textarea { flex: 1; min-width: 300px; padding: 12px 15px; border: 2px solid #e1e8ed; border-radius: 8px; font-size: 15px; transition: all 0.3s ease; background: #ffffff; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #3498db; outline: none; box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1); }
         .readonly-input, .read-only { cursor: not-allowed; background: #FFCCFF !important; border-color: #dda0dd !important; color: #4b0082; font-weight: 500; }
         .required-field::after { content: " *"; color: #e74c3c; font-weight: bold; }
-        .submit-button { display: block; margin: 40px auto 0; padding: 15px 40px; background: linear-gradient(135deg, #3498db, #2980b9); color: #fff; border: none; border-radius: 8px; font-size: 17px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3); text-transform: uppercase; letter-spacing: 0.5px; }
-        .submit-button:hover { background: linear-gradient(135deg, #2980b9, #1f618d); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4); }
-        .drug-history-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        .drug-history-table th, .drug-history-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        .drug-history-table th { background-color: #f2f2f2; font-weight: bold; }
+        .submit-button { display: block; margin: 40px auto 0; padding: 15px 40px; background: linear-gradient(135deg, #3498db, #2980b9); color: #fff; border: none; border-radius: 8px; font-size: 17px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .submit-button:hover { background: linear-gradient(135deg, #2980b9, #1f618d); transform: translateY(-2px); }
         .checkbox-group { display: flex; gap: 15px; flex-wrap: wrap; }
         .checkbox-group label { width: auto; display: flex; align-items: center; gap: 5px; }
         .checkbox-group input[type="checkbox"] { width: auto; min-width: auto; }
-        .cows-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        .cows-table th, .cows-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        .cows-table th { background-color: #f2f2f2; font-weight: bold; }
-        .cows-table .symptom { text-align: left; }
-        .profile-section { background: linear-gradient(135deg, #e8f5e8 0%, #f0f8ff 100%); border-left: 5px solid #27ae60; }
-        .clinical-section { background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border-left: 5px solid #9b59b6; }
-        .history-section { background: linear-gradient(135deg, #fff3e0 0%, #fce4ec 100%); border-left: 5px solid #e67e22; }
-        .examination-section { background: linear-gradient(135deg, #ffebee 0%, #f3e5f5 100%); border-left: 5px solid #c0392b; }
-        .treatment-section { background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); border-left: 5px solid #43a047; }
-
-        /* Section navigation styles */
-        .section-navigation {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border: 1px solid #e1e8ed;
-        }
-
-        .save-proceed-btn {
-            padding: 10px 20px;
-            background: linear-gradient(135deg, #27ae60, #219a52);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        .save-proceed-btn:hover {
-            background: linear-gradient(135deg, #219a52, #1e8449);
-            transform: translateY(-2px);
-        }
-        .save-proceed-btn:disabled {
-            background: #95a5a6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .section-status {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #2c3e50;
-            font-weight: 600;
-        }
-        .status-saved {
-            color: #27ae60;
-        }
-        .status-unsaved {
-            color: #e74c3c;
-        }
-
-        /* Success message styles */
-        .save-success-message {
-            background: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 5px solid #28a745;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
+        .radio-group { display: flex; gap: 20px; flex-wrap: wrap; margin-left: 300px; }
+        .radio-group label { width: auto; display: flex; align-items: center; gap: 5px; }
+        .radio-group input[type="radio"] { width: auto; min-width: auto; }
+        .drug-history-table, .cows-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .drug-history-table th, .drug-history-table td, .cows-table th, .cows-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .drug-history-table th, .cows-table th { background-color: #f2f2f2; font-weight: bold; }
+        .cows-table input[type="number"] { width: 60px; padding: 4px; }
 
         /* Patient info header */
         .patient-info-header {
@@ -256,22 +326,34 @@ if (!$patient_id && !isset($_GET['search_patient'])) {
             font-weight: 600;
         }
 
-        @media (max-width: 768px) {
-            .form-container { width: 95%; padding: 20px; margin: 10px auto; }
-            .form-header { grid-template-columns: 1fr; text-align: center; gap: 15px; }
-            .form-header p { text-align: center; }
-            .form-group { flex-direction: column; align-items: flex-start; }
-            .form-group label { width: 100%; margin-bottom: 8px; }
-            .form-group input, .form-group select, .form-group textarea { width: 100%; min-width: unset; }
-            .drug-history-table, .cows-table { font-size: 12px; }
-            .patient-info-grid { grid-template-columns: 1fr; }
+        /* Section navigation */
+        .section-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        .section-status {
+            font-size: 14px;
+            color: #666;
+        }
+        .status-unsaved { color: #e74c3c; font-weight: bold; }
+        .status-saved { color: #27ae60; font-weight: bold; }
+
+        /* Disabled fields for males */
+        .disabled-field {
+            background-color: #f5f5f5 !important;
+            color: #999 !important;
+            cursor: not-allowed !important;
         }
     </style>
 </head>
 <body>
     <div class="form-container">
         <div class="form-header">
-            <img src="../assets/images/Government of Kenya.png" width="80" height="60" alt="Government Logo" style="filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));">
+            <img src="../assets/images/Government of Kenya.png" width="80" height="60" alt="Government Logo">
             <div class="header-center">
                 <h2>MEDICALLY ASSISTED THERAPY</h2>
                 <h4>CLINICAL ENCOUNTER FORM</h4>
@@ -279,386 +361,288 @@ if (!$patient_id && !isset($_GET['search_patient'])) {
             <p>VER.APRIL 2023 FORM 3A</p>
         </div>
 
-        <!-- Patient Information Header -->
-        <?php if ($currentSettings): ?>
+        <!-- Patient Information -->
         <div class="patient-info-header">
             <h3 style="margin: 0 0 10px 0; color: white;">PATIENT INFORMATION</h3>
             <div class="patient-info-grid">
                 <div class="patient-info-item">
                     <span class="patient-info-label">CLIENT NAME</span>
-                    <span class="patient-info-value"><?php echo htmlspecialchars($currentSettings['clientName'] . ' ' . $currentSettings['sname']); ?></span>
+                    <span class="patient-info-value"><?php echo htmlspecialchars($patient['clientName'] . ' ' . $patient['sname']); ?></span>
                 </div>
                 <div class="patient-info-item">
                     <span class="patient-info-label">MAT ID</span>
-                    <span class="patient-info-value"><?php echo htmlspecialchars($currentSettings['mat_id']); ?></span>
+                    <span class="patient-info-value"><?php echo htmlspecialchars($patient['mat_id']); ?></span>
                 </div>
                 <div class="patient-info-item">
                     <span class="patient-info-label">AGE</span>
-                    <span class="patient-info-value"><?php echo htmlspecialchars($currentSettings['age'] ?? 'N/A'); ?></span>
+                    <span class="patient-info-value"><?php echo htmlspecialchars($patient['age']); ?></span>
                 </div>
                 <div class="patient-info-item">
                     <span class="patient-info-label">SEX</span>
-                    <span class="patient-info-value"><?php echo htmlspecialchars($currentSettings['sex'] ?? 'N/A'); ?></span>
-                </div>
-                <div class="patient-info-item">
-                    <span class="patient-info-label">PHONE</span>
-                    <span class="patient-info-value"><?php echo htmlspecialchars($currentSettings['client_phone'] ?? 'N/A'); ?></span>
-                </div>
-                <div class="patient-info-item">
-                    <span class="patient-info-label">REGISTRATION DATE</span>
-                    <span class="patient-info-value"><?php echo htmlspecialchars($currentSettings['reg_date'] ?? 'N/A'); ?></span>
+                    <span class="patient-info-value"><?php echo htmlspecialchars($patient['sex']); ?></span>
                 </div>
             </div>
         </div>
-        <?php endif; ?>
 
-        <?php if (!empty($draft_data)): ?>
+        <?php if ($action === 'continue' && $triage_data): ?>
             <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; border-left: 5px solid #27ae60; margin-bottom: 20px;">
-                <strong>? Draft Loaded</strong> - Continuing from <strong><?php echo ucfirst(str_replace('-', ' ', $current_section)); ?></strong> section.
-                Your previous progress has been restored.
+                <strong>? Continuing Incomplete Form</strong> - Please complete the remaining sections below.
             </div>
         <?php endif; ?>
 
-        <?php if (!empty($save_message)): ?>
-            <div class="save-success-message">
-                ? <?php echo htmlspecialchars($save_message); ?>
-            </div>
-        <?php endif; ?>
+        <form method="POST" id="clinicalForm">
+            <input type="hidden" name="patient_id" value="<?php echo $patient_id; ?>">
+            <input type="hidden" name="clinician_id" value="<?php echo $clinician_id; ?>">
+            <input type="hidden" name="triage_id" value="<?php echo $triage_id; ?>">
 
-        <?php if (!$currentSettings): ?>
-            <div style="background: #f8d7da; color: #721c24; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
-                <h3>Patient Not Found</h3>
-                <p>No patient record found. Please ensure you have selected a valid patient.</p>
-                <a href="search_patient.php" style="color: #004085; text-decoration: underline;">Search for Patient</a>
-            </div>
-        <?php else: ?>
-
-        <form action="submit_form3a.php" method="POST" id="clinicalForm">
-            <!-- Hidden fields for save functionality -->
-            <input type="hidden" name="partial_save" id="partial_save" value="false">
-            <input type="hidden" name="current_section" id="current_section" value="<?php echo $current_section; ?>">
-            <input type="hidden" name="draft_id" id="draft_id" value="<?php echo $draft_id; ?>">
-            <input type="hidden" name="encounter_id" id="encounter_id" value="<?php echo $encounter_id; ?>">
-            <input type="hidden" name="p_id" value="<?php echo $patient_id; ?>">
-
-            <!-- FACILITY INFORMATION SECTION -->
-            <div class="form-section profile-section" id="section-facility">
-                <h3 class="section-header" style="color: #27ae60;">Facility Information</h3>
-
-                <div class="form-group">
-                    <label for="facility_name" class="required-field">Facility Name:</label>
-                    <input type="text" name="facility_name" class="readonly-input" readonly value="<?php echo $facility ? htmlspecialchars($facility['facilityname']) : ''; ?>">
-                </div>
-
-                <div class="form-group">
-                    <label for="mfl_code" class="required-field">MFL Code:</label>
-                    <input type="text" name="mfl_code" class="readonly-input" readonly value="<?php echo $currentSettings ? htmlspecialchars($currentSettings['mflcode']) : ''; ?>">
-                </div>
-
-                <div class="form-group">
-                    <label for="county">County:</label>
-                    <input type="text" name="county" class="read-only" readonly value="<?php echo isset($currentSettings['county']) ? htmlspecialchars($currentSettings['county']) : ''; ?>">
-                </div>
-
-                <div class="form-group">
-                    <label for="sub_county">Sub County:</label>
-                    <input type="text" name="sub_county" class="read-only" readonly value="<?php echo isset($currentSettings['scounty']) ? htmlspecialchars($currentSettings['scounty']) : ''; ?>">
-                </div>
-
-                <div class="form-group">
-                    <label for="enrolment_date" class="required-field">Enrolment Date (dd/mm/yyyy):</label>
-                    <input type="text" name="enrolment_date" class="readonly-input" readonly value="<?php echo isset($currentSettings['reg_date']) ? htmlspecialchars($currentSettings['reg_date']) : date('d/m/Y'); ?>">
-                </div>
-
-                <div class="form-group">
-                    <label for="enrolment_time">Time:</label>
-                    <input type="time" name="enrolment_time" value="<?php echo date('H:i'); ?>">
-                </div>
-
-                <div class="form-group">
-                    <label for="visit_type">Visit Type:</label>
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" name="visit_type[]" value="induction"> INDUCTION</label>
-                        <label><input type="checkbox" name="visit_type[]" value="reinduction"> REINDUCTION</label>
+            <?php if ($action === 'start' || !$triage_data): ?>
+                <!-- PART A: FACILITY INFORMATION -->
+                <div class="form-section">
+                    <h3 class="section-header">Facility Information</h3>
+                    <div class="form-group">
+                        <label for="facility_name" class="required-field">Facility Name:</label>
+                        <input type="text" name="facility_name" class="readonly-input" readonly value="<?php echo $facility ? htmlspecialchars($facility['facilityname']) : ''; ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="mfl_code" class="required-field">MFL Code:</label>
+                        <input type="text" name="mfl_code" class="readonly-input" readonly value="<?php echo htmlspecialchars($patient['mflcode']); ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="county">County:</label>
+                        <input type="text" name="county" class="read-only" readonly value="<?php echo htmlspecialchars($patient['county']); ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="sub_county">Sub County:</label>
+                        <input type="text" name="sub_county" class="read-only" readonly value="<?php echo htmlspecialchars($patient['scounty']); ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="enrolment_date" class="required-field">Enrolment Date:</label>
+                        <input type="text" name="enrolment_date" class="readonly-input" readonly value="<?php echo date('d/m/Y'); ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="enrolment_time">Time:</label>
+                        <input type="time" name="enrolment_time" value="<?php echo date('H:i'); ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="visit_type">Visit Type:</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="visit_type[]" value="induction"> INDUCTION</label>
+                            <label><input type="checkbox" name="visit_type[]" value="reinduction"> REINDUCTION</label>
+                        </div>
                     </div>
                 </div>
 
-                <div class="section-navigation">
-                    <div class="section-status" id="facility-status">
-                        Status: <span class="status-<?php echo ($current_section == 'facility' && empty($draft_data)) ? 'unsaved' : 'saved'; ?>">
-                            <?php echo ($current_section == 'facility' && empty($draft_data)) ? 'Unsaved' : 'Saved'; ?>
-                        </span>
+                <!-- PART A: CLIENT PROFILE -->
+                <div class="form-section">
+                    <h3 class="section-header">Client Profile</h3>
+                    <div class="form-group">
+                        <label for="client_name" class="required-field">Client Name:</label>
+                        <input type="text" name="client_name" class="readonly-input" readonly value="<?php echo htmlspecialchars($patient['clientName'] . ' ' . $patient['sname']); ?>">
                     </div>
-                    <button type="button" class="save-proceed-btn" data-section="facility" data-next="client-profile">
-                        Save & Proceed to Client Profile
-                    </button>
-                </div>
-            </div>
-
-            <!-- PART A: CLIENT PROFILE SECTION -->
-            <div class="form-section profile-section" id="section-client-profile">
-                <h3 class="section-header" style="color: #27ae60;">PART A: CLIENT PROFILE</h3>
-
-                <div class="form-group">
-                    <label for="client_name" class="required-field">Client Name:</label>
-                    <input type="text" id="client_name" name="client_name" class="readonly-input" readonly
-                           value="<?php echo isset($currentSettings['clientName']) ? htmlspecialchars($currentSettings['clientName'] . ' ' . $currentSettings['sname']) : ''; ?>" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="nickname">Nickname:</label>
-                    <input type="text" id="nickname" name="nickname" value="<?php echo isset($currentSettings['nickName']) ? htmlspecialchars($currentSettings['nickName']) : ''; ?>">
-                </div>
-
-                <div class="form-group">
-                    <label for="mat_id" class="required-field">MAT/Unique ID Number:</label>
-                    <input type="text" id="mat_id" name="mat_id" class="readonly-input" readonly
-                           value="<?php echo isset($currentSettings['mat_id']) ? htmlspecialchars($currentSettings['mat_id']) : ''; ?>" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="sex" class="required-field">Sex:</label>
-                    <input type="text" id="sex" name="sex" class="readonly-input" readonly
-                           value="<?php echo isset($currentSettings['sex']) ? htmlspecialchars($currentSettings['sex']) : ''; ?>" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="age">Age:</label>
-                    <input type="text" id="age" name="age" class="readonly-input" readonly
-                           value="<?php echo isset($currentSettings['age']) ? htmlspecialchars($currentSettings['age']) : ''; ?>">
-                </div>
-
-                <div class="form-group">
-                    <label for="dob">Date of Birth:</label>
-                    <input type="text" id="dob" name="dob" class="readonly-input" readonly
-                           value="<?php echo isset($currentSettings['dob']) ? htmlspecialchars($currentSettings['dob']) : ''; ?>">
-                </div>
-
-                <div class="form-group">
-                    <label for="presenting_complaints">Presenting Complaints:</label>
-                    <textarea name="presenting_complaints" id="presenting_complaints" cols="30" rows="3"></textarea>
-                </div>
-
-                <!-- Continue with the rest of your form sections... -->
-
-                <div class="section-navigation">
-                    <div class="section-status" id="client-profile-status">
-                        Status: <span class="status-<?php echo ($current_section == 'client-profile') ? 'saved' : 'unsaved'; ?>">
-                            <?php echo ($current_section == 'client-profile') ? 'Saved' : 'Unsaved'; ?>
-                        </span>
+                    <div class="form-group">
+                        <label for="nickname">Nickname:</label>
+                        <input type="text" name="nickname" value="<?php echo htmlspecialchars($patient['nickName'] ?? ''); ?>">
                     </div>
-                    <button type="button" class="save-proceed-btn" data-section="client-profile" data-next="vital-signs">
-                        Save & Proceed to Vital Signs
-                    </button>
-                </div>
-            </div>
-
-            <!-- VITAL SIGNS SECTION -->
-            <div class="form-section clinical-section" id="section-vital-signs">
-                <h3 class="section-header" style="color: #9b59b6;">VITAL SIGNS</h3>
-
-                <div class="form-group">
-                    <label for="pulse">a. Pulse:</label>
-                    <input type="number" name="pulse" min="0" max="200"> bpm
-                </div>
-
-                <div class="form-group">
-                    <label for="oxygen_saturation">b. Oxygen saturation:</label>
-                    <input type="number" name="oxygen_saturation" min="0" max="100"> %
-                </div>
-
-                <div class="form-group">
-                    <label for="blood_pressure">c. Blood pressure:</label>
-                    <input type="text" name="blood_pressure" placeholder="e.g., 120/80"> mmHg
-                </div>
-
-                <div class="form-group">
-                    <label for="temperature">d. Temperature:</label>
-                    <input type="number" name="temperature" step="0.1" min="30" max="45"> °C
-                </div>
-
-                <div class="form-group">
-                    <label for="respiratory_rate">e. Respiratory rate:</label>
-                    <input type="number" name="respiratory_rate" min="0" max="60"> breaths/min
-                </div>
-
-                <div class="form-group">
-                    <label for="height">f. Height:</label>
-                    <input type="number" name="height" step="0.1" min="0" max="250"> cm
-                </div>
-
-                <div class="form-group">
-                    <label for="weight">g. Weight:</label>
-                    <input type="number" name="weight" step="0.1" min="0" max="300"> kg
-                </div>
-
-                <div class="form-group">
-                    <label for="bmi">h. BMI:</label>
-                    <input type="number" name="bmi" step="0.1" min="0" max="100">
-                    <select name="bmi_interpretation">
-                        <option value="">Select interpretation</option>
-                        <option value="underweight">Underweight (<18.5)</option>
-                        <option value="normal">Normal (18.5-24.9)</option>
-                        <option value="overweight">Overweight (25-29.9)</option>
-                        <option value="obesity">Obesity (>30)</option>
-                    </select>
-                </div>
-
-                <div class="section-navigation">
-                    <div class="section-status" id="vital-signs-status">
-                        Status: <span class="status-unsaved">Unsaved</span>
+                    <div class="form-group">
+                        <label for="mat_id" class="required-field">MAT ID:</label>
+                        <input type="text" name="mat_id" class="readonly-input" readonly value="<?php echo htmlspecialchars($patient['mat_id']); ?>">
                     </div>
-                    <button type="button" class="save-proceed-btn" data-section="vital-signs" data-next="cows">
-                        Save & Proceed to COWS
-                    </button>
+                    <div class="form-group">
+                        <label for="sex" class="required-field">Sex:</label>
+                        <input type="text" name="sex" class="readonly-input" readonly value="<?php echo htmlspecialchars($patient['sex']); ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="presenting_complaints">Presenting Complaints:</label>
+                        <textarea name="presenting_complaints" rows="3"></textarea>
+                    </div>
                 </div>
-            </div>
 
-            <!-- CLINICAL OPIATE WITHDRAWAL SCALE (COWS) -->
-            <div class="form-section clinical-section" id="section-cows">
-                <h3 class="section-header" style="color: #9b59b6;">CLINICAL OPIATE WITHDRAWAL SCALE (COWS)</h3>
+                <!-- PART A: VITAL SIGNS -->
+                <div class="form-section">
+                    <h3 class="section-header">Vital Signs</h3>
+                    <div class="form-group">
+                        <label for="pulse">Pulse:</label>
+                        <input type="number" name="pulse" min="0" max="200"> bpm
+                    </div>
+                    <div class="form-group">
+                        <label for="oxygen_saturation">Oxygen Saturation:</label>
+                        <input type="number" name="oxygen_saturation" min="0" max="100"> %
+                    </div>
+                    <div class="form-group">
+                        <label for="blood_pressure">Blood Pressure:</label>
+                        <input type="text" name="blood_pressure" placeholder="e.g., 120/80"> mmHg
+                    </div>
+                    <div class="form-group">
+                        <label for="temperature">Temperature:</label>
+                        <input type="number" name="temperature" step="0.1" min="30" max="45"> ?
+                    </div>
+                    <div class="form-group">
+                        <label for="respiratory_rate">Respiratory Rate:</label>
+                        <input type="number" name="respiratory_rate" min="0" max="60"> breaths/min
+                    </div>
+                    <div class="form-group">
+                        <label for="height">Height:</label>
+                        <input type="number" name="height" step="0.1" min="0" max="250"> cm
+                    </div>
+                    <div class="form-group">
+                        <label for="weight">Weight:</label>
+                        <input type="number" name="weight" step="0.1" min="0" max="300"> kg
+                    </div>
+                    <div class="form-group">
+                        <label for="bmi">BMI:</label>
+                        <input type="number" name="bmi" step="0.1" min="0" max="100" readonly>
+                        <select name="bmi_interpretation">
+                            <option value="">Select interpretation</option>
+                            <option value="underweight">Underweight (<18.5)</option>
+                            <option value="normal">Normal (18.5-24.9)</option>
+                            <option value="overweight">Overweight (25-29.9)</option>
+                            <option value="obesity">Obesity (>30)</option>
+                        </select>
+                    </div>
+                </div>
 
-                <table class="cows-table">
-                    <thead>
-                        <tr>
-                            <th>Symptom</th>
-                            <th>Score</th>
-                            <th>Time 1</th>
-                            <th>Time 2</th>
-                            <th>Time 3</th>
-                            <th>Time 4</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        $cows_symptoms = array(
-                            'Resting Pulse Rate' => array(
-                                '0' => 'pulse rate 80 or below',
-                                '1' => 'pulse rate 81-100',
-                                '2' => 'pulse rate 101-120',
-                                '4' => 'pulse rate greater than 120'
-                            ),
-                            'Sweating' => array(
-                                '1' => 'no report of chills or flushing',
-                                '2' => 'subjective report of chills or flushing',
-                                '3' => 'flushed or observable moistness on face',
-                                '4' => 'beads of sweat on brow or face',
-                                '5' => 'sweat streaming off face'
-                            ),
-                            'Restlessness' => array(
-                                '0' => 'able to sit still',
-                                '1' => 'reports difficulty sitting still, but is able to do so',
-                                '3' => 'frequent shifting or extraneous movements of legs/arms',
-                                '5' => 'Unable to sit still for more than a few seconds'
-                            ),
-                            'Pupil size' => array(
-                                '0' => 'pupils pinned or normal size for room light',
-                                '1' => 'pupils possibly larger than normal for room light',
-                                '2' => 'pupils moderately dilated',
-                                '5' => 'pupils so dilated that only the rim of the iris is visible'
-                            ),
-                            'Bone or Joint aches' => array(
-                                '0' => 'not present',
-                                '1' => 'mild diffuse discomfort',
-                                '2' => 'patient reports severe diffuse aching of joints/muscles',
-                                '4' => 'patient is rubbing joints or muscles and is unable to sit still because of discomfort'
-                            ),
-                            'Runny nose or tearing' => array(
-                                '0' => 'not present',
-                                '1' => 'nasal stuffiness or unusually moist eyes',
-                                '2' => 'nose running or tearing',
-                                '4' => 'nose constantly running or tears streaming down cheeks'
-                            ),
-                            'GI Upset' => array(
-                                '0' => 'no GI symptoms',
-                                '1' => 'stomach cramps',
-                                '2' => 'nausea or loose stool',
-                                '3' => 'vomiting or diarrhea',
-                                '5' => 'Multiple episodes of diarrhea or vomiting'
-                            ),
-                            'Tremor' => array(
-                                '0' => 'No tremor',
-                                '1' => 'tremor can be felt, but not observed',
-                                '2' => 'slight tremor observable',
-                                '4' => 'gross tremor or muscle twitching'
-                            ),
-                            'Yawning' => array(
-                                '0' => 'no yawning',
-                                '1' => 'yawning once or twice during assessment',
-                                '2' => 'yawning three or more times during assessment',
-                                '4' => 'yawning several times/minute'
-                            ),
-                            'Anxiety or Irritability' => array(
-                                '0' => 'none',
-                                '1' => 'patient reports increasing irritability or anxiousness',
-                                '2' => 'patient obviously irritable anxious',
-                                '4' => 'patient so irritable or anxious that participation in the assessment is difficult'
-                            ),
-                            'Gooseflesh skin' => array(
-                                '0' => 'skin is smooth',
-                                '3' => 'piloerrection of skin can be felt or hairs standing up on arms',
-                                '5' => 'prominent piloerrection'
-                            )
-                        );
+                <!-- CLINICAL OPIATE WITHDRAWAL SCALE (COWS) -->
+                <div class="form-section clinical-section" id="section-cows">
+                    <h3 class="section-header" style="color: #9b59b6;">CLINICAL OPIATE WITHDRAWAL SCALE (COWS)</h3>
 
-                        foreach($cows_symptoms as $symptom => $scores) {
-                            echo "<tr>";
-                            echo "<td class='symptom'>$symptom</td>";
-                            echo "<td>";
-                            foreach($scores as $score => $description) {
-                                echo "<div>$score: $description</div>";
+                    <table class="cows-table">
+                        <thead>
+                            <tr>
+                                <th>Symptom</th>
+                                <th>Score</th>
+                                <th>Time 1</th>
+                                <th>Time 2</th>
+                                <th>Time 3</th>
+                                <th>Time 4</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $cows_symptoms = array(
+                                'Resting_Pulse_Rate' => array(
+                                    '0' => 'pulse rate 80 or below',
+                                    '1' => 'pulse rate 81-100',
+                                    '2' => 'pulse rate 101-120',
+                                    '4' => 'pulse rate greater than 120'
+                                ),
+                                'Sweating' => array(
+                                    '1' => 'no report of chills or flushing',
+                                    '2' => 'subjective report of chills or flushing',
+                                    '3' => 'flushed or observable moistness on face',
+                                    '4' => 'beads of sweat on brow or face',
+                                    '5' => 'sweat streaming off face'
+                                ),
+                                'Restlessness' => array(
+                                    '0' => 'able to sit still',
+                                    '1' => 'reports difficulty sitting still, but is able to do so',
+                                    '3' => 'frequent shifting or extraneous movements of legs/arms',
+                                    '5' => 'Unable to sit still for more than a few seconds'
+                                ),
+                                'Pupil_size' => array(
+                                    '0' => 'pupils pinned or normal size for room light',
+                                    '1' => 'pupils possibly larger than normal for room light',
+                                    '2' => 'pupils moderately dilated',
+                                    '5' => 'pupils so dilated that only the rim of the iris is visible'
+                                ),
+                                'Bone_or_Joint_aches' => array(
+                                    '0' => 'not present',
+                                    '1' => 'mild diffuse discomfort',
+                                    '2' => 'patient reports severe diffuse aching of joints/muscles',
+                                    '4' => 'patient is rubbing joints or muscles and is unable to sit still because of discomfort'
+                                ),
+                                'Runny_nose_or_tearing' => array(
+                                    '0' => 'not present',
+                                    '1' => 'nasal stuffiness or unusually moist eyes',
+                                    '2' => 'nose running or tearing',
+                                    '4' => 'nose constantly running or tears streaming down cheeks'
+                                ),
+                                'GI_Upset' => array(
+                                    '0' => 'no GI symptoms',
+                                    '1' => 'stomach cramps',
+                                    '2' => 'nausea or loose stool',
+                                    '3' => 'vomiting or diarrhea',
+                                    '5' => 'Multiple episodes of diarrhea or vomiting'
+                                ),
+                                'Tremor' => array(
+                                    '0' => 'No tremor',
+                                    '1' => 'tremor can be felt, but not observed',
+                                    '2' => 'slight tremor observable',
+                                    '4' => 'gross tremor or muscle twitching'
+                                ),
+                                'Yawning' => array(
+                                    '0' => 'no yawning',
+                                    '1' => 'yawning once or twice during assessment',
+                                    '2' => 'yawning three or more times during assessment',
+                                    '4' => 'yawning several times/minute'
+                                ),
+                                'Anxiety_or_Irritability' => array(
+                                    '0' => 'none',
+                                    '1' => 'patient reports increasing irritability or anxiousness',
+                                    '2' => 'patient obviously irritable anxious',
+                                    '4' => 'patient so irritable or anxious that participation in the assessment is difficult'
+                                ),
+                                'Gooseflesh_skin' => array(
+                                    '0' => 'skin is smooth',
+                                    '3' => 'piloerrection of skin can be felt or hairs standing up on arms',
+                                    '5' => 'prominent piloerrection'
+                                )
+                            );
+
+                            foreach($cows_symptoms as $symptom_key => $scores) {
+                                $display_name = str_replace('_', ' ', $symptom_key);
+                                echo "<tr>";
+                                echo "<td class='symptom'>$display_name</td>";
+                                echo "<td>";
+                                foreach($scores as $score => $description) {
+                                    echo "<div>$score: $description</div>";
+                                }
+                                echo "</td>";
+                                for($i = 1; $i <= 4; $i++) {
+                                    echo "<td><input type='number' class='cows-score' data-time='$i' name='cows_{$symptom_key}_time{$i}' min='0' max='5' style='width: 60px;'></td>";
+                                }
+                                echo "</tr>";
                             }
-                            echo "</td>";
-                            for($i = 1; $i <= 4; $i++) {
-                                echo "<td><input type='number' name='cows_{$symptom}_time{$i}' min='0' max='5' style='width: 50px;'></td>";
-                            }
-                            echo "</tr>";
-                        }
-                        ?>
-                        <tr>
-                            <td colspan="2"><strong>Total scores</strong></td>
-                            <?php for($i = 1; $i <= 4; $i++): ?>
-                            <td><input type="number" name="cows_total_time<?php echo $i; ?>" readonly style="width: 50px; background-color: #f0f0f0;"></td>
-                            <?php endfor; ?>
-                        </tr>
-                        <tr>
-                            <td colspan="2"><strong>Scale Interpretation</strong></td>
-                            <?php for($i = 1; $i <= 4; $i++): ?>
-                            <td>
-                                <select name="cows_interpretation_time<?php echo $i; ?>" style="width: 100%;">
-                                    <option value="">Select</option>
-                                    <option value="mild">Mild (5-12)</option>
-                                    <option value="moderate">Moderate (13-24)</option>
-                                    <option value="moderately_severe">Moderately Severe (25-36)</option>
-                                    <option value="severe">Severe (>36)</option>
-                                </select>
-                            </td>
-                            <?php endfor; ?>
-                        </tr>
-                    </tbody>
-                </table>
+                            ?>
+                            <tr>
+                                <td colspan="2"><strong>Total scores</strong></td>
+                                <?php for($i = 1; $i <= 4; $i++): ?>
+                                <td><input type="number" name="cows_total_time<?php echo $i; ?>" id="cows_total_time<?php echo $i; ?>" readonly style="width: 60px; background-color: #f0f0f0;"></td>
+                                <?php endfor; ?>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><strong>Scale Interpretation</strong></td>
+                                <?php for($i = 1; $i <= 4; $i++): ?>
+                                <td>
+                                    <select name="cows_interpretation_time<?php echo $i; ?>" style="width: 100%;">
+                                        <option value="">Select</option>
+                                        <option value="mild">Mild (5-12)</option>
+                                        <option value="moderate">Moderate (13-24)</option>
+                                        <option value="moderately_severe">Moderately Severe (25-36)</option>
+                                        <option value="severe">Severe (>36)</option>
+                                    </select>
+                                </td>
+                                <?php endfor; ?>
+                            </tr>
+                        </tbody>
+                    </table>
 
-                <div class="form-group">
-                    <label for="cows_provider">Name of Service Provider:</label>
-                    <input type="text" name="cows_provider" value="<?php echo htmlspecialchars($clinician_name); ?>" class="read-only" readonly>
-                </div>
-
-                <div class="form-group">
-                    <label for="cows_date">Date:</label>
-                    <input type="date" name="cows_date" value="<?php echo date('Y-m-d'); ?>">
-                </div>
-
-            <div class="section-navigation">
-                    <div class="section-status" id="cows-status">
-                        Status: <span class="status-unsaved">Unsaved</span>
+                    <div class="form-group">
+                        <label for="cows_provider">Name of Service Provider:</label>
+                        <input type="text" name="cows_provider" value="<?php echo htmlspecialchars($clinician_name); ?>" class="read-only" readonly>
                     </div>
-                    <button type="button" class="save-proceed-btn" data-section="cows" data-next="clinical-assessment">
-                        Save & Proceed to Clinical Assessment
+
+                    <div class="form-group">
+                        <label for="cows_date">Date:</label>
+                        <input type="date" name="cows_date" value="<?php echo date('Y-m-d'); ?>">
+                    </div>
+
+                    <button type="submit" name="submit_triage" class="submit-button">
+                        Save Part A & Continue to Clinical Assessment
                     </button>
                 </div>
-            </div>
 
-            <!-- PART B: CLINICAL ASSESSMENT -->
+            <?php else: ?>
+                <!-- PART B: CLINICAL ASSESSMENT -->
             <div class="form-section clinical-section">
                 <h3 class="section-header" style="color: #9b59b6;">PART B: CLINICAL ASSESSMENT</h3>
 
@@ -692,7 +676,7 @@ if (!$patient_id && !isset($_GET['search_patient'])) {
                             echo "<tr>";
                             echo "<td>$condition</td>";
                             echo "<td>
-                                <div class='checkbox-group'>
+                                <div class='radio-group'>
                                     <label><input type='radio' name='medical_history[$key]' value='yes'> Yes</label>
                                     <label><input type='radio' name='medical_history[$key]' value='no'> No</label>
                                 </div>
@@ -732,7 +716,7 @@ if (!$patient_id && !isset($_GET['search_patient'])) {
 
                 <div class="form-group">
                     <label for="contraception_use">a. Are you using any contraception?</label>
-                    <div class="checkbox-group">
+                    <div class="radio-group">
                         <label><input type="radio" name="contraception_use" value="yes"> Yes</label>
                         <label><input type="radio" name="contraception_use" value="no"> No</label>
                     </div>
@@ -740,7 +724,7 @@ if (!$patient_id && !isset($_GET['search_patient'])) {
 
                 <div class="form-group">
                     <label for="contraception_method">b. If YES, which method are you using? (Mark all responses mentioned)</label>
-                    <div class="checkbox-group" style="flex-direction: column; align-items: flex-start;">
+                    <div class="checkbox-group" style="flex-direction: column; align-items: flex-start; margin-left: 300px;">
                         <?php
                         $contraception_methods = array(
                             'male_condom' => 'Male condom',
@@ -769,28 +753,42 @@ if (!$patient_id && !isset($_GET['search_patient'])) {
 
                 <div class="form-group">
                     <label for="last_menstrual_period">c. Date of Last Menstrual Period (LMP):</label>
-                    <input type="date" name="last_menstrual_period">
+                    <input type="date" name="last_menstrual_period" id="last_menstrual_period" <?php echo (strtolower($patient['sex']) === 'male') ? 'disabled class="disabled-field"' : ''; ?>>
+                    <?php if (strtolower($patient['sex']) === 'male'): ?>
+                        <input type="hidden" name="last_menstrual_period" value="">
+                    <?php endif; ?>
                 </div>
 
                 <div class="form-group">
                     <label for="pregnancy_status">d. Pregnancy status:</label>
-                    <div class="checkbox-group">
-                        <label><input type="radio" name="pregnancy_status" value="pregnant"> Pregnant</label>
-                        <label><input type="radio" name="pregnancy_status" value="not_pregnant"> Not Pregnant</label>
-                        <label><input type="radio" name="pregnancy_status" value="unknown"> Unknown</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="pregnancy_status" value="pregnant" <?php echo (strtolower($patient['sex']) === 'male') ? 'disabled' : ''; ?>> Pregnant</label>
+                        <label><input type="radio" name="pregnancy_status" value="not_pregnant" <?php echo (strtolower($patient['sex']) === 'male') ? 'disabled' : ''; ?>> Not Pregnant</label>
+                        <label><input type="radio" name="pregnancy_status" value="unknown" <?php echo (strtolower($patient['sex']) === 'male') ? 'disabled' : ''; ?>> Unknown</label>
+                        <?php if (strtolower($patient['sex']) === 'male'): ?>
+                            <label><input type="radio" name="pregnancy_status" value="NA" checked> N/A</label>
+                        <?php else: ?>
+                            <label><input type="radio" name="pregnancy_status" value="NA"> N/A</label>
+                        <?php endif; ?>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="pregnancy_weeks">e. If pregnant, how many weeks?</label>
-                    <input type="number" name="pregnancy_weeks" min="0" max="50"> weeks
+                    <input type="number" name="pregnancy_weeks" id="pregnancy_weeks" min="0" max="50" <?php echo (strtolower($patient['sex']) === 'male') ? 'disabled class="disabled-field"' : ''; ?>> weeks
+                    <?php if (strtolower($patient['sex']) === 'male'): ?>
+                        <input type="hidden" name="pregnancy_weeks" value="">
+                    <?php endif; ?>
                 </div>
 
                 <div class="form-group">
                     <label for="breastfeeding">f. Are you breastfeeding?</label>
-                    <div class="checkbox-group">
-                        <label><input type="radio" name="breastfeeding" value="yes"> Yes</label>
-                        <label><input type="radio" name="breastfeeding" value="no"> No</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="breastfeeding" value="yes" <?php echo (strtolower($patient['sex']) === 'male') ? 'disabled' : ''; ?>> Yes</label>
+                        <label><input type="radio" name="breastfeeding" value="no" <?php echo (strtolower($patient['sex']) === 'male') ? 'disabled' : ''; ?>> No</label>
+                        <?php if (strtolower($patient['sex']) === 'male'): ?>
+                            <label><input type="radio" name="breastfeeding" value="NA" checked> N/A</label>
+                        <?php endif; ?>
                     </div>
                 </div>
 
@@ -799,7 +797,7 @@ if (!$patient_id && !isset($_GET['search_patient'])) {
 
                 <div class="form-group">
                     <label for="mental_health_diagnosis">a. Have you ever been diagnosed with a mental health condition?</label>
-                    <div class="checkbox-group">
+                    <div class="radio-group">
                         <label><input type="radio" name="mental_health_diagnosis" value="yes"> Yes</label>
                         <label><input type="radio" name="mental_health_diagnosis" value="no"> No</label>
                     </div>
@@ -807,7 +805,7 @@ if (!$patient_id && !isset($_GET['search_patient'])) {
 
                 <div class="form-group">
                     <label for="mental_health_condition">b. If YES, which condition?</label>
-                    <div class="checkbox-group" style="flex-direction: column; align-items: flex-start;">
+                    <div class="checkbox-group" style="flex-direction: column; align-items: flex-start; margin-left: 300px;">
                         <?php
                         $mental_health_conditions = array(
                             'depression' => 'Depression',
@@ -815,11 +813,15 @@ if (!$patient_id && !isset($_GET['search_patient'])) {
                             'bipolar' => 'Bipolar',
                             'schizophrenia' => 'Schizophrenia',
                             'ptsd' => 'PTSD',
-                            'other' => 'Other (Specify): <input type="text" name="mental_health_other">'
+                            'other' => 'Other (Specify)'
                         );
 
                         foreach($mental_health_conditions as $key => $condition) {
-                            echo "<label><input type='checkbox' name='mental_health_condition[]' value='$key'> $condition</label>";
+                            if ($key === 'other') {
+                                echo "<label><input type='checkbox' name='mental_health_condition[]' value='$key'> $condition: <input type='text' name='mental_health_other'></label>";
+                            } else {
+                                echo "<label><input type='checkbox' name='mental_health_condition[]' value='$key'> $condition</label>";
+                            }
                         }
                         ?>
                     </div>
@@ -827,7 +829,7 @@ if (!$patient_id && !isset($_GET['search_patient'])) {
 
                 <div class="form-group">
                     <label for="mental_health_medication">c. Are you currently taking any medication for mental health?</label>
-                    <div class="checkbox-group">
+                    <div class="radio-group">
                         <label><input type="radio" name="mental_health_medication" value="yes"> Yes</label>
                         <label><input type="radio" name="mental_health_medication" value="no"> No</label>
                     </div>
@@ -840,7 +842,7 @@ if (!$patient_id && !isset($_GET['search_patient'])) {
 
                 <div class="form-group">
                     <label for="suicidal_thoughts">e. Have you had any thoughts of harming yourself or ending your life in the past month?</label>
-                    <div class="checkbox-group">
+                    <div class="radio-group">
                         <label><input type="radio" name="suicidal_thoughts" value="yes"> Yes</label>
                         <label><input type="radio" name="suicidal_thoughts" value="no"> No</label>
                     </div>
@@ -848,7 +850,7 @@ if (!$patient_id && !isset($_GET['search_patient'])) {
 
                 <div class="form-group">
                     <label for="psychiatric_hospitalization">f. Have you ever been hospitalized for psychiatric reasons?</label>
-                    <div class="checkbox-group">
+                    <div class="radio-group">
                         <label><input type="radio" name="psychiatric_hospitalization" value="yes"> Yes</label>
                         <label><input type="radio" name="psychiatric_hospitalization" value="no"> No</label>
                     </div>
@@ -859,7 +861,7 @@ if (!$patient_id && !isset($_GET['search_patient'])) {
 
                 <div class="form-group">
                     <label for="family_drug_use">a. Is there any history of drug use in your family?</label>
-                    <div class="checkbox-group">
+                    <div class="radio-group">
                         <label><input type="radio" name="family_drug_use" value="yes"> Yes</label>
                         <label><input type="radio" name="family_drug_use" value="no"> No</label>
                     </div>
@@ -867,7 +869,7 @@ if (!$patient_id && !isset($_GET['search_patient'])) {
 
                 <div class="form-group">
                     <label for="family_mental_health">b. Is there any history of mental health conditions in your family?</label>
-                    <div class="checkbox-group">
+                    <div class="radio-group">
                         <label><input type="radio" name="family_mental_health" value="yes"> Yes</label>
                         <label><input type="radio" name="family_mental_health" value="no"> No</label>
                     </div>
@@ -875,30 +877,25 @@ if (!$patient_id && !isset($_GET['search_patient'])) {
 
                 <div class="form-group">
                     <label for="family_medical_conditions">c. Is there any history of the following medical conditions in your family?</label>
-                    <div class="checkbox-group" style="flex-direction: column; align-items: flex-start;">
+                    <div class="checkbox-group" style="flex-direction: column; align-items: flex-start; margin-left: 300px;">
                         <?php
                         $family_medical_conditions = array(
                             'diabetes' => 'Diabetes',
                             'hypertension' => 'Hypertension',
                             'heart_disease' => 'Heart Disease',
                             'cancer' => 'Cancer',
-                            'other' => 'Other (Specify): <input type="text" name="family_medical_other">'
+                            'other' => 'Other (Specify)'
                         );
 
                         foreach($family_medical_conditions as $key => $condition) {
-                            echo "<label><input type='checkbox' name='family_medical_conditions[]' value='$key'> $condition</label>";
+                            if ($key === 'other') {
+                                echo "<label><input type='checkbox' name='family_medical_conditions[]' value='$key'> $condition: <input type='text' name='family_medical_other'></label>";
+                            } else {
+                                echo "<label><input type='checkbox' name='family_medical_conditions[]' value='$key'> $condition</label>";
+                            }
                         }
                         ?>
                     </div>
-                </div>
-
-                <div class="section-navigation">
-                        <div class="section-status" id="clinical-assessment-status">
-                            Status: <span class="status-unsaved">Unsaved</span>
-                        </div>
-                        <button type="button" class="save-proceed-btn" data-section="clinical-assessment" data-next="physical-examination">
-                            Save & Proceed to Physical Examination
-                        </button>
                 </div>
             </div>
 
@@ -980,15 +977,6 @@ if (!$patient_id && !isset($_GET['search_patient'])) {
                     <label for="musculoskeletal_examination">o. Musculoskeletal:</label>
                     <textarea name="musculoskeletal_examination" rows="3"></textarea>
                 </div>
-
-            <div class="section-navigation">
-                    <div class="section-status" id="physical-examination-status">
-                        Status: <span class="status-unsaved">Unsaved</span>
-                    </div>
-                    <button type="button" class="save-proceed-btn" data-section="physical-examination" data-next="treatment-plan">
-                        Save & Proceed to Treatment Plan
-                    </button>
-                </div>
             </div>
 
             <!-- DIAGNOSIS AND TREATMENT PLAN -->
@@ -997,7 +985,7 @@ if (!$patient_id && !isset($_GET['search_patient'])) {
 
                 <div class="form-group">
                     <label for="diagnosis_opioid_use">a. Diagnosis of Opioid Use Disorder:</label>
-                    <div class="checkbox-group">
+                    <div class="radio-group">
                         <label><input type="radio" name="diagnosis_opioid_use" value="mild"> Mild</label>
                         <label><input type="radio" name="diagnosis_opioid_use" value="moderate"> Moderate</label>
                         <label><input type="radio" name="diagnosis_opioid_use" value="severe"> Severe</label>
@@ -1016,17 +1004,21 @@ if (!$patient_id && !isset($_GET['search_patient'])) {
 
                 <div class="form-group">
                     <label for="medication_prescribed">d. Medication Prescribed:</label>
-                    <div class="checkbox-group" style="flex-direction: column; align-items: flex-start;">
+                    <div class="checkbox-group" style="flex-direction: column; align-items: flex-start; margin-left: 300px;">
                         <?php
                         $medications = array(
                             'methadone' => 'Methadone',
                             'buprenorphine' => 'Buprenorphine',
                             'naltrexone' => 'Naltrexone',
-                            'other' => 'Other (Specify): <input type="text" name="medication_other">'
+                            'other' => 'Other (Specify)'
                         );
 
                         foreach($medications as $key => $medication) {
-                            echo "<label><input type='checkbox' name='medication_prescribed[]' value='$key'> $medication</label>";
+                            if ($key === 'other') {
+                                echo "<label><input type='checkbox' name='medication_prescribed[]' value='$key'> $medication: <input type='text' name='medication_other'></label>";
+                            } else {
+                                echo "<label><input type='checkbox' name='medication_prescribed[]' value='$key'> $medication</label>";
+                            }
                         }
                         ?>
                     </div>
@@ -1059,15 +1051,11 @@ if (!$patient_id && !isset($_GET['search_patient'])) {
                     </div>
                 </div>
 
-            <button type="submit" class="submit-button">
-                Submit Initial Clinical Encounter Form
-            </button>
-
-            <div class="section-navigation">
+                <div class="section-navigation">
                     <div class="section-status" id="treatment-plan-status">
                         Status: <span class="status-unsaved">Unsaved</span>
                     </div>
-                    <button type="submit" class="submit-button" id="final-submit">
+                    <button type="submit" name="submit_complete" class="submit-button" id="final-submit">
                         Submit Initial Clinical Encounter Form
                     </button>
                 </div>
@@ -1076,25 +1064,15 @@ if (!$patient_id && !isset($_GET['search_patient'])) {
         <?php endif; ?>
     </div>
 
-    <script src="../assets/js/bootstrap.bundle.js"></script>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Set minimum date for appointment to today
-            const today = new Date().toISOString().split('T')[0];
-            const appointmentField = document.querySelector('input[name="next_appointment"]');
-
-            if (appointmentField) {
-                appointmentField.min = today;
-            }
-
-            // Calculate BMI when height and weight are entered
+            // BMI calculation
             const heightField = document.querySelector('input[name="height"]');
             const weightField = document.querySelector('input[name="weight"]');
             const bmiField = document.querySelector('input[name="bmi"]');
 
             function calculateBMI() {
-                if (heightField.value && weightField.value) {
+                if (heightField && heightField.value && weightField && weightField.value && bmiField) {
                     const heightInMeters = heightField.value / 100;
                     const bmi = (weightField.value / (heightInMeters * heightInMeters)).toFixed(1);
                     bmiField.value = bmi;
@@ -1106,243 +1084,93 @@ if (!$patient_id && !isset($_GET['search_patient'])) {
                 weightField.addEventListener('input', calculateBMI);
             }
 
-            // Calculate COWS total scores
-            const cowsTables = document.querySelectorAll('.cows-table');
-            cowsTables.forEach(table => {
-                for (let i = 1; i <= 4; i++) {
-                    const timeInputs = table.querySelectorAll(`input[name$="_time${i}"]`);
-                    const totalField = table.querySelector(`input[name="cows_total_time${i}"]`);
+            // Set minimum date for next appointment
+            const today = new Date().toISOString().split('T')[0];
+            const appointmentField = document.querySelector('input[name="next_appointment"]');
+            if (appointmentField) {
+                appointmentField.min = today;
+            }
 
-                    if (timeInputs && totalField) {
-                        timeInputs.forEach(input => {
-                            input.addEventListener('input', function() {
-                                let total = 0;
-                                timeInputs.forEach(input => {
-                                    if (input.value) {
-                                        total += parseInt(input.value);
-                                    }
-                                });
-                                totalField.value = total;
-                            });
-                        });
+            // COWS total score calculation
+            function calculateCOWSTotals() {
+                const scoresByTime = {
+                    1: 0,
+                    2: 0,
+                    3: 0,
+                    4: 0
+                };
+
+                // Get all score inputs
+                const scoreInputs = document.querySelectorAll('.cows-score');
+                scoreInputs.forEach(input => {
+                    const time = parseInt(input.getAttribute('data-time'));
+                    const value = parseInt(input.value) || 0;
+                    if (time >= 1 && time <= 4) {
+                        scoresByTime[time] += value;
+                    }
+                });
+
+                // Update total fields
+                for (let time = 1; time <= 4; time++) {
+                    const totalField = document.getElementById(`cows_total_time${time}`);
+                    if (totalField) {
+                        totalField.value = scoresByTime[time];
                     }
                 }
+            }
+
+            // Add event listeners to all COWS score inputs
+            const cowsScoreInputs = document.querySelectorAll('.cows-score');
+            cowsScoreInputs.forEach(input => {
+                input.addEventListener('input', calculateCOWSTotals);
+                input.addEventListener('change', calculateCOWSTotals);
             });
 
-            // Section Save and Proceed functionality
-            const saveButtons = document.querySelectorAll('.save-proceed-btn');
+            // Handle pregnancy fields based on patient sex
+            const patientSex = "<?php echo strtolower($patient['sex']); ?>";
+            if (patientSex === 'male') {
+                // Disable pregnancy-related fields for males
+                const pregnancyFields = [
+                    'last_menstrual_period',
+                    'pregnancy_weeks'
+                ];
+
+                pregnancyFields.forEach(fieldName => {
+                    const field = document.getElementById(fieldName);
+                    if (field) {
+                        field.disabled = true;
+                        field.classList.add('disabled-field');
+                    }
+                });
+
+                // Set pregnancy status to N/A for males
+                const pregnancyStatusNA = document.querySelector('input[name="pregnancy_status"][value="NA"]');
+                if (pregnancyStatusNA) {
+                    pregnancyStatusNA.checked = true;
+                }
+
+                // Set breastfeeding to N/A for males
+                const breastfeedingNA = document.querySelector('input[name="breastfeeding"][value="NA"]');
+                if (breastfeedingNA) {
+                    breastfeedingNA.checked = true;
+                }
+            }
+
+            // Form status indicator
             const form = document.getElementById('clinicalForm');
-            const partialSaveField = document.getElementById('partial_save');
-            const currentSectionField = document.getElementById('current_section');
-            const encounterIdField = document.getElementById('encounter_id');
+            const statusElement = document.getElementById('treatment-plan-status');
+            const statusSpan = statusElement.querySelector('span');
 
-            saveButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const section = this.dataset.section;
-                    const nextSection = this.dataset.next;
-
-                    // Set hidden fields for partial save
-                    partialSaveField.value = 'true';
-                    currentSectionField.value = section;
-
-                    // Submit form for partial save
-                    form.submit();
-                });
+            form.addEventListener('input', function() {
+                statusSpan.textContent = 'Unsaved';
+                statusSpan.className = 'status-unsaved';
             });
 
-            // Final submission
-            const finalSubmit = document.getElementById('final-submit');
-            if (finalSubmit) {
-                finalSubmit.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    partialSaveField.value = 'false';
-                    currentSectionField.value = 'complete';
-                    form.submit();
-                });
-            }
-
-            // Check if there's a saved encounter ID in sessionStorage
-            const savedEncounterId = sessionStorage.getItem('encounter_id');
-            if (savedEncounterId) {
-                encounterIdField.value = savedEncounterId;
-            }
-
-            // Auto-save form data to sessionStorage
-            const formFields = form.querySelectorAll('input, select, textarea');
-            formFields.forEach(field => {
-                field.addEventListener('change', function() {
-                    const formData = new FormData(form);
-                    const data = {};
-                    for (let [key, value] of formData.entries()) {
-                        data[key] = value;
-                    }
-                    sessionStorage.setItem('form_autosave', JSON.stringify(data));
-                });
+            form.addEventListener('submit', function() {
+                statusSpan.textContent = 'Saving...';
+                statusSpan.className = 'status-saving';
             });
-
-            // Load auto-saved data
-            const savedData = sessionStorage.getItem('form_autosave');
-            if (savedData) {
-                const data = JSON.parse(savedData);
-                formFields.forEach(field => {
-                    if (data[field.name] !== undefined) {
-                        if (field.type === 'checkbox' || field.type === 'radio') {
-                            field.checked = (data[field.name] === field.value);
-                        } else {
-                            field.value = data[field.name];
-                        }
-                    }
-                });
-            }
         });
-
-        // Handle response from server
-        window.addEventListener('load', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const saveResult = urlParams.get('save_result');
-
-            if (saveResult) {
-                const [action, section, encounterId] = saveResult.split(':');
-
-                if (action === 'SECTION_SAVED' && encounterId) {
-                    // Update encounter ID
-                    document.getElementById('encounter_id').value = encounterId;
-                    sessionStorage.setItem('encounter_id', encounterId);
-
-                    // Update section status
-                    const statusElement = document.getElementById(`${section}-status`);
-                    if (statusElement) {
-                        const statusSpan = statusElement.querySelector('span');
-                        statusSpan.textContent = 'Saved';
-                        statusSpan.className = 'status-saved';
-                    }
-
-                    // Scroll to next section if available
-                    const nextSection = document.querySelector(`[data-section="${section}"]`).dataset.next;
-                    if (nextSection) {
-                        document.getElementById(`section-${nextSection}`).scrollIntoView({
-                            behavior: 'smooth'
-                        });
-                    }
-
-                    // Clear URL parameters
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                }
-            }
-        });
-        / NEW CODE: Add this after your existing JavaScript
-// Auto-scroll to current section when loading draft
-document.addEventListener('DOMContentLoaded', function() {
-    const currentSection = '<?php echo $current_section; ?>';
-    if (currentSection && currentSection !== 'facility') {
-        const sectionElement = document.getElementById(`section-${currentSection}`);
-        if (sectionElement) {
-            setTimeout(() => {
-                sectionElement.scrollIntoView({ behavior: 'smooth' });
-                // Highlight the current section
-                sectionElement.style.boxShadow = '0 0 0 3px #3498db';
-                setTimeout(() => {
-                    sectionElement.style.boxShadow = '';
-                }, 3000);
-            }, 500);
-        }
-    }
-
-    // Populate form with draft data
-    const draftData = <?php echo json_encode($draft_data); ?>;
-    if (draftData && Object.keys(draftData).length > 0) {
-        populateFormWithDraftData(draftData);
-
-        // Show draft loaded message
-        showNotification('Draft loaded successfully! Continuing from ' + currentSection, 'success');
-    }
-});
-
-function populateFormWithDraftData(data) {
-    for (const [key, value] of Object.entries(data)) {
-        try {
-            const elements = document.querySelectorAll(`[name="${key}"]`);
-
-            elements.forEach(element => {
-                if (element.type === 'checkbox') {
-                    // Handle checkboxes (arrays)
-                    if (Array.isArray(value)) {
-                        element.checked = value.includes(element.value);
-                    } else if (typeof value === 'string' && value.includes(',')) {
-                        // Handle comma-separated values
-                        const values = value.split(',');
-                        element.checked = values.includes(element.value);
-                    }
-                } else if (element.type === 'radio') {
-                    // Handle radio buttons
-                    if (element.value === value) {
-                        element.checked = true;
-                    }
-                } else {
-                    // Handle text inputs, selects, textareas
-                    if (element.tagName === 'SELECT' && element.multiple) {
-                        // Handle multiple select
-                        const values = Array.isArray(value) ? value : [value];
-                        Array.from(element.options).forEach(option => {
-                            option.selected = values.includes(option.value);
-                        });
-                    } else {
-                        element.value = value;
-                    }
-                }
-            });
-        } catch (error) {
-            console.log('Error setting field:', key, error);
-        }
-    }
-
-    // Trigger any calculated fields (like BMI, COWS totals)
-    calculateBMI();
-    calculateCOWSTotals();
-}
-
-function showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 15px 20px;
-        background: ${type === 'success' ? '#27ae60' : '#3498db'};
-        color: white;
-        border-radius: 5px;
-        z-index: 10000;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        font-weight: bold;
-    `;
-    notification.textContent = message;
-    document.body.appendChild(notification);
-
-    setTimeout(() => {
-        notification.remove();
-    }, 5000);
-}
-
-function calculateCOWSTotals() {
-    // Recalculate COWS totals after loading draft data
-    const cowsTables = document.querySelectorAll('.cows-table');
-    cowsTables.forEach(table => {
-        for (let i = 1; i <= 4; i++) {
-            const timeInputs = table.querySelectorAll(`input[name$="_time${i}"]`);
-            const totalField = table.querySelector(`input[name="cows_total_time${i}"]`);
-
-            if (timeInputs && totalField) {
-                let total = 0;
-                timeInputs.forEach(input => {
-                    if (input.value) {
-                        total += parseInt(input.value);
-                    }
-                });
-                totalField.value = total;
-            }
-        }
-    });
-}
-</script>
+    </script>
 </body>
 </html>
