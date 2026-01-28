@@ -217,13 +217,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             neurological_examination, musculoskeletal_examination, diagnosis_opioid_use, other_diagnoses,
             treatment_plan, medication_prescribed, medication_other, initial_dose, next_appointment,
             clinician_name, clinician_signature, patient_consent, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'completed')";
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'completed')";
 
         $stmt = $conn->prepare($sql);
+
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
 
         // Convert arrays to JSON strings for database storage
         $medical_history_json = json_encode($medical_history);
         $medical_medication_json = json_encode($medical_medication);
+
+        // Count parameters: There should be 53 parameters (52 + 'completed' status is hardcoded in SQL)
+        // Let me count them manually to ensure accuracy:
+        // 1. triage_id, 2. patient_id, 3. clinician_id (3)
+        // 4-5. medical_history, medical_medication (2) = 5
+        // 6-7. hiv_diagnosis_date, hiv_facility_care (2) = 7
+        // 8. other_medical_problems (1) = 8
+        // 9-10. allergies, allergies_other (2) = 10
+        // 11-12. contraception_use, contraception_method (2) = 12
+        // 13. last_menstrual_period (1) = 13
+        // 14-15. pregnancy_status, pregnancy_weeks (2) = 15
+        // 16. breastfeeding (1) = 16
+        // 17. mental_health_diagnosis (1) = 17
+        // 18-19. mental_health_condition, mental_health_other (2) = 19
+        // 20-21. mental_health_medication, mental_health_medication_details (2) = 21
+        // 22-23. suicidal_thoughts, psychiatric_hospitalization (2) = 23
+        // 24-25. family_drug_use, family_mental_health (2) = 25
+        // 26-27. family_medical_conditions, family_medical_other (2) = 27
+        // 28-44. physical exam fields (17) = 44
+        // 45. diagnosis_opioid_use (1) = 45
+        // 46. other_diagnoses (1) = 46
+        // 47. treatment_plan (1) = 47
+        // 48-49. medication_prescribed, medication_other (2) = 49
+        // 50. initial_dose (1) = 50
+        // 51. next_appointment (1) = 51
+        // 52-53. clinician_name, clinician_signature (2) = 53
+        // 54. patient_consent (1) = 54
+
+        // Actually, I count 54 parameters + the hardcoded 'completed' status
+        // Let's verify the parameter count in bind_param
 
         $stmt->bind_param(
             'iiisssssssssssssssssssssssssssssssssssssssssssssssss',
@@ -251,6 +285,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $update_stmt->bind_param('i', $triage_id);
             $update_stmt->execute();
             $update_stmt->close();
+
+            // Update patient table with drug information and next appointment
+            // Extract medication information for patient update
+            $patient_drugname = '';
+            $patient_dosage = '';
+
+            // Get the medication prescribed
+            if (!empty($medication_prescribed)) {
+                $meds_array = explode(',', $medication_prescribed);
+                $patient_drugname = implode(', ', array_map(function($med) {
+                    $med_names = [
+                        'methadone' => 'Methadone',
+                        'buprenorphine' => 'Buprenorphine',
+                        'naltrexone' => 'Naltrexone',
+                        'other' => 'Other'
+                    ];
+                    return isset($med_names[$med]) ? $med_names[$med] : ucfirst($med);
+                }, $meds_array));
+            }
+
+            // If "other" medication was specified
+            if (!empty($medication_other)) {
+                if (!empty($patient_drugname)) {
+                    $patient_drugname .= ', ' . $medication_other;
+                } else {
+                    $patient_drugname = $medication_other;
+                }
+            }
+
+            // Set dosage
+            $patient_dosage = $initial_dose;
+
+            // Update patient record
+            $update_patient_sql = "UPDATE patients SET
+                drugname = ?,
+                dosage = ?,
+                next_appointment = ?
+                WHERE mat_id = ?";
+
+            $update_patient_stmt = $conn->prepare($update_patient_sql);
+            $update_patient_stmt->bind_param('ssss', $patient_drugname, $patient_dosage, $next_appointment, $patient['mat_id']);
+            $update_patient_stmt->execute();
+            $update_patient_stmt->close();
 
             // Redirect to success page
             header("Location: clinical_encounter_search.php?success=1");

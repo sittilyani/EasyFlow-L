@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
                         </td>
                         <td><?php echo date('M j, Y g:i A', strtotime($result['updated_at'])); ?></td>
                         <td>
-                            <a href="clinician_initial_encounter_form.php?p_id=<?php echo $result['patient_id']; ?>&triage_id=<?php echo $result['id']; ?>&action=continue" class="continue-btn">
+                            <a href="clinician_initial_encounter_form-1.php?p_id=<?php echo $result['patient_id']; ?>&triage_id=<?php echo $result['id']; ?>&action=continue" class="continue-btn">
                                 Continue Form
                             </a>
                         </td>
