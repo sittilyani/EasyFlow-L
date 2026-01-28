@@ -50,7 +50,7 @@ $full_name = getUserFullName();
             <i class="fa fa-home"></i>Home
         </a>
 
-        <a href="../public/reset_password.php" target="contentFrame" class="nav-link">
+        <a href="../public/reset_password.php" class="nav-link">
             <i class="fa fa-key"></i>Change Password</a>
 
         <a href="../profile/profile.php" target="contentFrame" class="nav-link">

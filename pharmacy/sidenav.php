@@ -275,7 +275,7 @@ $full_name = getUserFullName();
                 <a href="../pharmacy/dispensing.php" target="contentFrame" class="nav-link" style="background: #66ccff; color: #000000; margin-top: 10px;">
                     <i class="fa fa-ban"></i>Dispense without pump</a>
                 <a href="../pharmacy/edit_dispensed_dose.php" target="contentFrame" class="nav-link" style="background: #ccccff; color: #000000; margin-top: 10px;">
-                    <i class="fa fa-anchor"></i>Edit dispensed doses</a>
+                    <i class="fa fa-anchor"></i>Delete dispensed doses</a>
                 <a href="../pharmacy/inventory_form.php" target="contentFrame" class="nav-link" style="background: #b1f0c2; color: #000000; margin-top: 10px;">
                     <i class="fa fa-anchor"></i>Daily Stores movements</a>
                 <a href="../pharmacy/add_stocks.php" target="contentFrame" class="nav-link">

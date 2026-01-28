@@ -153,16 +153,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_delete'])) {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 50vh;
+            height: 10vh;
             margin: 0;
-            background-color: #f4f4f4;
+
         }
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 20%;
             background-color: rgba(0, 0, 0, 0.5);
             display: flex;
             justify-content: center;

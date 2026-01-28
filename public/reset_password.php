@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 echo "<script>
                     alert('$success_message');
                     setTimeout(() => {
-                        window.location.href = '../public/signout.php';
+                        window.location.href = '../public/login.php';
                     }, 1000);
                 </script>";
                 exit;
